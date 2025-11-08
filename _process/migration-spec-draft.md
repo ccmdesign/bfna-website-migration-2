@@ -21,9 +21,10 @@ Stand up a Nuxt build that faithfully renders the current 11ty experience with t
 
 - Vue SFC refactors that replace the `css-legacy/` dependency
 - Align tokens and global styles with `src/public/css/styles.css`
-- Re-platform components on top of `src/components/ds`
+- Re-platform components on top of `src/components/ds` (integration with DS components)
 - Rebuild composables/data streams for Directus
 - Full CMS migration (Contentful → Directus)
+- **CSS Integration**: Legacy CSS is preserved but unplugged in Phase 1. Future phases will integrate migrated components with `components/ds/` components, at which point the legacy CSS can be re-enabled or gradually replaced.
 
 ### Open Questions
 
@@ -136,6 +137,7 @@ The goal is to get components working in Vue with minimal data layer changes, kn
 - **Do** maintain BEM naming conventions
 - **Do** preserve responsive breakpoints
 - **Do** keep all design tokens
+- **Do** keep legacy CSS in place but "unplug" it from `nuxt.config.ts` (comment out or conditionally disable) so it can be easily re-enabled for future integration with `components/ds/` components
 
 #### Client-Side Functionality
 - **Do** migrate search.js to composable using `useDebounce()` from VueUse (for data operations)
@@ -237,7 +239,8 @@ When migrating to Directus in Phase 2:
 - Copy the legacy asset folders (`favicon/`, `files/`, `fonts/`, `images/`) from `bfna-website-legacy/src/assets` into `bfna-website-nuxt/src/public` (Nuxt `public/` keeps 1:1 URLs)
 - Move the entire legacy CSS tree (`bfna-website-legacy/src/assets/css`) into `bfna-website-nuxt/src/public/css-legacy/**` with zero edits
 - Create `src/public/css-legacy/legacy-styles.css` that only contains `@import` statements for the legacy partials to preserve order
-- Update `src/nuxt.config.ts` → `css: ['~/public/css/styles.css', '~/public/css-legacy/legacy-styles.css']` ensuring PostCSS still runs for the modern DS stack
+- **CSS "Unplug" Strategy**: Keep all legacy CSS files in place, but "unplug" them from `nuxt.config.ts` by commenting out or conditionally disabling the legacy CSS import. This preserves the CSS for future Phase 2+ integration with `components/ds/` components while keeping Phase 1 focused on component migration. Example: `css: ['~/public/css/styles.css' /* , '~/public/css-legacy/legacy-styles.css' */]` or use environment variable to toggle.
+- Remove the DS boilerplate CSS import from `src/nuxt.config.ts` once legacy CSS structure is in place (keeps the layer stack predictable)
 - Validate font-face URLs and asset paths still resolve after moving to the `public/` root (adjust relative paths if necessary)
 - **Note**: Files in `public/` are static assets and won't be processed by PostCSS/Vite. Consider moving legacy CSS to `src/assets/css-legacy/` if PostCSS processing is needed. Current approach works if CSS is already final/minified.
 

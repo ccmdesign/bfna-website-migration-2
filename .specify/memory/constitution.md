@@ -2,9 +2,13 @@
 
 <!--
 Sync Impact Report:
-Version: 1.0.0 (initial creation)
+Version: 1.0.0 → 1.0.1 (CSS unplug strategy clarification)
 Ratified: 2025-01-27
 Last Amended: 2025-01-27
+
+Changes:
+- Added CSS "unplug" strategy to Phase 1 scope (keep CSS in place, disable in nuxt.config for future integration)
+- Clarified Phase 2 includes DS component integration
 
 Principles Added:
 - I. "Good enough to work, ready to replace"
@@ -111,6 +115,7 @@ Prefer Nuxt/Vue built-in functionality and established libraries over custom imp
 - Maintain BEM naming conventions
 - Preserve responsive breakpoints
 - Keep all design tokens
+- **CSS Integration Strategy**: Keep all legacy CSS in place but "unplug" it from `nuxt.config.ts` (comment out or conditionally disable) so it can be easily re-enabled for future integration with `components/ds/` components. This preserves the CSS for Phase 2+ integration work while keeping Phase 1 focused on component migration.
 
 **Client-Side Functionality**:
 - Migrate search.js to composable using `useDebounce()` from VueUse
@@ -126,7 +131,9 @@ Prefer Nuxt/Vue built-in functionality and established libraries over custom imp
 - Create layout components
 - Maintain URL structure
 
-### Phase 2: Directus Migration (OUT OF SCOPE)
+### Phase 2: Directus Migration & DS Integration (OUT OF SCOPE)
+
+**Note**: Phase 2 will include integration of migrated components with `components/ds/` components. Legacy CSS is preserved but unplugged in Phase 1 to enable this future integration.
 
 **Contentful Integration**:
 - Don't optimize Contentful queries
@@ -218,4 +225,4 @@ This constitution supersedes all other development practices and guidelines for 
 - Deviations from principles must be explicitly justified and documented
 - Use `_process/migration-spec-draft.md` for detailed migration guidance
 
-**Version**: 1.0.0 | **Ratified**: 2025-01-27 | **Last Amended**: 2025-01-27
+**Version**: 1.0.1 | **Ratified**: 2025-01-27 | **Last Amended**: 2025-01-27
