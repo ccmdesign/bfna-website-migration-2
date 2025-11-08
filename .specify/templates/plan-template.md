@@ -31,7 +31,16 @@
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-[Gates determined based on constitution file]
+**Reference**: `.specify/memory/constitution.md`
+
+**Principles to Verify**:
+- **I. "Good enough to work, ready to replace"**: Does this plan defer Phase 2 concerns (Contentful, data optimization) appropriately?
+- **II. CSS-First for Presentation, Composables for Data**: Are presentation concerns handled via CSS? Are data operations using composables/computed?
+- **III. Leverage Nuxt Built-ins & Ecosystem**: Are we using Nuxt built-ins/VueUse instead of custom implementations?
+
+**Decision Framework**: Apply the 7-question framework from constitution when scope is uncertain.
+
+**Compliance Status**: [✅ Compliant / ⚠️ Needs Justification / ❌ Violation - see Complexity Tracking]
 
 ## Project Structure
 

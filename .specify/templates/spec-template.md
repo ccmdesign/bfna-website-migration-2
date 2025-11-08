@@ -77,6 +77,8 @@
 
 ## Requirements *(mandatory)*
 
+**Constitution Reference**: All requirements MUST comply with `.specify/memory/constitution.md`. Use the Decision Framework to determine scope (Phase 1 vs Phase 2).
+
 <!--
   ACTION REQUIRED: The content in this section represents placeholders.
   Fill them out with the right functional requirements.

@@ -12,6 +12,11 @@ description: "Task list template for feature implementation"
 
 **Organization**: Tasks are grouped by user story to enable independent implementation and testing of each story.
 
+**Constitution Compliance**: All tasks MUST align with `.specify/memory/constitution.md` principles:
+- Use Nuxt built-ins/VueUse for data operations (Principle III)
+- Use CSS for presentation, composables for data (Principle II)
+- Defer Phase 2 concerns appropriately (Principle I)
+
 ## Format: `[ID] [P?] [Story] Description`
 
 - **[P]**: Can run in parallel (different files, no dependencies)
