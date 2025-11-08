@@ -3,3 +3,9 @@ node_modules/
 
 
 _archive/
+
+.claude/
+
+.codex/
+
+.gemini/
