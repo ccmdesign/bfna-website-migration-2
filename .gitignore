@@ -1,5 +1,7 @@
 # Dependencies
 node_modules/
+bfna-website-legacy/node_modules/
+bfna-website-nuxt/node_modules/
 
 
 _archive/
