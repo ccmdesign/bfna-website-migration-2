@@ -1,8 +1,6 @@
 # Dependencies
 node_modules/
-bfna-website-legacy/node_modules/
-bfna-website-nuxt/node_modules/
-
+.DS_Store
 
 _archive/
 
