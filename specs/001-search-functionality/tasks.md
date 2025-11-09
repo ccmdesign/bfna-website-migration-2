@@ -29,9 +29,9 @@ Paths follow Nuxt 4 web application structure:
 
 **Purpose**: Project initialization and search infrastructure setup
 
-- [ ] T001 Create search index generation script directory structure in `bfna-website-nuxt/scripts/`
-- [ ] T002 Add search index generation script command to `package.json` scripts section (e.g., "generate:search-index": "tsx scripts/generate-search-index.ts")
-- [ ] T003 [P] Create TypeScript interfaces for SearchIndexItem and SearchResult in `bfna-website-nuxt/src/types/search.ts`
+- [X] T001 Create search index generation script directory structure in `bfna-website-nuxt/scripts/`
+- [X] T002 Add search index generation script command to `package.json` scripts section (e.g., "generate:search-index": "tsx scripts/generate-search-index.ts")
+- [X] T003 [P] Create TypeScript interfaces for SearchIndexItem and SearchResult in `bfna-website-nuxt/src/types/search.ts`
 
 ---
 
@@ -41,15 +41,15 @@ Paths follow Nuxt 4 web application structure:
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T004 Create search text processing utility functions (clean excerpt, squash text) in `bfna-website-nuxt/src/utils/search-text.ts` matching legacy behavior exactly
-- [ ] T005 Create URL normalization utility function in `bfna-website-nuxt/src/utils/url-normalize.ts` to map legacy URLs to Nuxt routes
-- [ ] T006 [P] Create search index generation script `bfna-website-nuxt/scripts/generate-search-index.ts` that reads from static JSON files and generates `public/search.json`
-- [ ] T007 [P] Implement search API endpoint `bfna-website-nuxt/src/server/api/search.get.ts` that loads search.json, performs substring matching, and returns results in legacy format
-- [ ] T008 Update useSearch composable `bfna-website-nuxt/src/composables/legacy/useSearch.ts` to use local API endpoint instead of external API
-- [ ] T009 Update useSearch composable `bfna-website-nuxt/src/composables/legacy/useSearch.ts` to fix debounce timing from 300ms to 550ms using VueUse `useDebounceFn`
-- [ ] T010 Update useSearch composable `bfna-website-nuxt/src/composables/legacy/useSearch.ts` to trim whitespace from search queries before processing
-- [ ] T011 Update useSearch composable `bfna-website-nuxt/src/composables/legacy/useSearch.ts` to handle empty queries by returning zero results without API call
-- [ ] T012 Update search page `bfna-website-nuxt/src/pages/search.vue` to properly initialize from localStorage and display search results
+- [X] T004 Create search text processing utility functions (clean excerpt, squash text) in `bfna-website-nuxt/src/utils/search-text.ts` matching legacy behavior exactly
+- [X] T005 Create URL normalization utility function in `bfna-website-nuxt/src/utils/url-normalize.ts` to map legacy URLs to Nuxt routes
+- [X] T006 [P] Create search index generation script `bfna-website-nuxt/scripts/generate-search-index.ts` that reads from static JSON files and generates `public/search.json`
+- [X] T007 [P] Implement search API endpoint `bfna-website-nuxt/src/server/api/search.get.ts` that loads search.json, performs substring matching, and returns results in legacy format
+- [X] T008 Update useSearch composable `bfna-website-nuxt/src/composables/legacy/useSearch.ts` to use local API endpoint instead of external API
+- [X] T009 Update useSearch composable `bfna-website-nuxt/src/composables/legacy/useSearch.ts` to fix debounce timing from 300ms to 550ms using VueUse `useDebounceFn`
+- [X] T010 Update useSearch composable `bfna-website-nuxt/src/composables/legacy/useSearch.ts` to trim whitespace from search queries before processing
+- [X] T011 Update useSearch composable `bfna-website-nuxt/src/composables/legacy/useSearch.ts` to handle empty queries by returning zero results without API call
+- [X] T012 Update search page `bfna-website-nuxt/src/pages/search.vue` to properly initialize from localStorage and display search results
 
 **Checkpoint**: Foundation ready - search index generation, API endpoint, and composable are functional. User story implementation can now begin.
 
@@ -63,11 +63,11 @@ Paths follow Nuxt 4 web application structure:
 
 ### Implementation for User Story 1
 
-- [ ] T013 [US1] Update Header component `bfna-website-nuxt/src/components/legacy/organisms/Header.vue` to connect `.frame-search__field` input to useSearch composable or handle input directly
-- [ ] T014 [US1] Update Header component `bfna-website-nuxt/src/components/legacy/organisms/Header.vue` to connect `.frame-search__submit` button to submit search and navigate to `/search` page
-- [ ] T015 [US1] Update Header component `bfna-website-nuxt/src/components/legacy/organisms/Header.vue` to handle Enter key press on `.frame-search__field` to submit search
-- [ ] T016 [US1] Update Header component `bfna-website-nuxt/src/components/legacy/organisms/Header.vue` to store search term in localStorage with key `bfna-search` before navigation
-- [ ] T017 [US1] Verify search page `bfna-website-nuxt/src/pages/search.vue` reads search term from localStorage on mount and displays results automatically
+- [X] T013 [US1] Update Header component `bfna-website-nuxt/src/components/legacy/organisms/Header.vue` to connect `.frame-search__field` input to useSearch composable or handle input directly
+- [X] T014 [US1] Update Header component `bfna-website-nuxt/src/components/legacy/organisms/Header.vue` to connect `.frame-search__submit` button to submit search and navigate to `/search` page
+- [X] T015 [US1] Update Header component `bfna-website-nuxt/src/components/legacy/organisms/Header.vue` to handle Enter key press on `.frame-search__field` to submit search
+- [X] T016 [US1] Update Header component `bfna-website-nuxt/src/components/legacy/organisms/Header.vue` to store search term in localStorage with key `bfna-search` before navigation
+- [X] T017 [US1] Verify search page `bfna-website-nuxt/src/pages/search.vue` reads search term from localStorage on mount and displays results automatically
 
 **Checkpoint**: At this point, User Story 1 should be fully functional - users can search from header and see results.
 
@@ -81,10 +81,10 @@ Paths follow Nuxt 4 web application structure:
 
 ### Implementation for User Story 2
 
-- [ ] T018 [P] [US2] Update Footer component `bfna-website-nuxt/src/components/legacy/organisms/Footer.vue` to connect `.footer-search__input` input to handle search input
-- [ ] T019 [US2] Update Footer component `bfna-website-nuxt/src/components/legacy/organisms/Footer.vue` to connect `.footer-search__submit` button to submit search and navigate to `/search` page
-- [ ] T020 [US2] Update Footer component `bfna-website-nuxt/src/components/legacy/organisms/Footer.vue` to store search term in localStorage with key `bfna-search` before navigation
-- [ ] T021 [US2] Verify footer search integration works independently and displays results correctly
+- [X] T018 [P] [US2] Update Footer component `bfna-website-nuxt/src/components/legacy/organisms/Footer.vue` to connect `.footer-search__input` input to handle search input
+- [X] T019 [US2] Update Footer component `bfna-website-nuxt/src/components/legacy/organisms/Footer.vue` to connect `.footer-search__submit` button to submit search and navigate to `/search` page
+- [X] T020 [US2] Update Footer component `bfna-website-nuxt/src/components/legacy/organisms/Footer.vue` to store search term in localStorage with key `bfna-search` before navigation
+- [X] T021 [US2] Verify footer search integration works independently and displays results correctly
 
 **Checkpoint**: At this point, User Stories 1 AND 2 should both work independently - users can search from header or footer.
 
@@ -98,10 +98,10 @@ Paths follow Nuxt 4 web application structure:
 
 ### Implementation for User Story 3
 
-- [ ] T022 [P] [US3] Update OffCanvas component `bfna-website-nuxt/src/components/legacy/organisms/OffCanvas.vue` to connect `.menu-search__input` input to handle search input
-- [ ] T023 [US3] Update OffCanvas component `bfna-website-nuxt/src/components/legacy/organisms/OffCanvas.vue` to connect `.menu-search__submit` button to submit search, close menu, and navigate to `/search` page
-- [ ] T024 [US3] Update OffCanvas component `bfna-website-nuxt/src/components/legacy/organisms/OffCanvas.vue` to store search term in localStorage with key `bfna-search` before navigation
-- [ ] T025 [US3] Verify mobile menu search integration works independently, closes menu correctly, and displays results
+- [X] T022 [P] [US3] Update OffCanvas component `bfna-website-nuxt/src/components/legacy/organisms/OffCanvas.vue` to connect `.menu-search__input` input to handle search input
+- [X] T023 [US3] Update OffCanvas component `bfna-website-nuxt/src/components/legacy/organisms/OffCanvas.vue` to connect `.menu-search__submit` button to submit search, close menu, and navigate to `/search` page
+- [X] T024 [US3] Update OffCanvas component `bfna-website-nuxt/src/components/legacy/organisms/OffCanvas.vue` to store search term in localStorage with key `bfna-search` before navigation
+- [X] T025 [US3] Verify mobile menu search integration works independently, closes menu correctly, and displays results
 
 **Checkpoint**: At this point, User Stories 1, 2, AND 3 should all work independently - users can search from header, footer, or mobile menu.
 
@@ -115,11 +115,11 @@ Paths follow Nuxt 4 web application structure:
 
 ### Implementation for User Story 4
 
-- [ ] T026 [US4] Verify useSearch composable `bfna-website-nuxt/src/composables/legacy/useSearch.ts` debounce timing is 550ms (already updated in T009)
-- [ ] T027 [US4] Verify useSearch composable `bfna-website-nuxt/src/composables/legacy/useSearch.ts` cancels pending searches when user continues typing before delay completes
-- [ ] T028 [US4] Update search page `bfna-website-nuxt/src/pages/search.vue` to bind search input to useSearch composable query reactive ref
-- [ ] T029 [US4] Update search page `bfna-website-nuxt/src/pages/search.vue` to watch query changes and trigger debounced search automatically
-- [ ] T030 [US4] Update search page `bfna-website-nuxt/src/pages/search.vue` to clear results and show zero count when search input is cleared
+- [X] T026 [US4] Verify useSearch composable `bfna-website-nuxt/src/composables/legacy/useSearch.ts` debounce timing is 550ms (already updated in T009)
+- [X] T027 [US4] Verify useSearch composable `bfna-website-nuxt/src/composables/legacy/useSearch.ts` cancels pending searches when user continues typing before delay completes
+- [X] T028 [US4] Update search page `bfna-website-nuxt/src/pages/search.vue` to bind search input to useSearch composable query reactive ref
+- [X] T029 [US4] Update search page `bfna-website-nuxt/src/pages/search.vue` to watch query changes and trigger debounced search automatically
+- [X] T030 [US4] Update search page `bfna-website-nuxt/src/pages/search.vue` to clear results and show zero count when search input is cleared
 
 **Checkpoint**: At this point, live search on search page should work - results update automatically as users type with proper debouncing.
 
@@ -133,13 +133,13 @@ Paths follow Nuxt 4 web application structure:
 
 ### Implementation for User Story 5
 
-- [ ] T031 [US5] Verify search API endpoint `bfna-website-nuxt/src/server/api/search.get.ts` filters out items with empty/null/missing URLs (FR-005)
-- [ ] T032 [US5] Verify search API endpoint `bfna-website-nuxt/src/server/api/search.get.ts` returns results in correct format with url, heading, subheading, excerpt, theme fields
-- [ ] T033 [US5] Update search page `bfna-website-nuxt/src/pages/search.vue` to display search results as cards with heading, subheading, excerpt, and theme information
-- [ ] T034 [US5] Update search page `bfna-website-nuxt/src/pages/search.vue` to display result count correctly
-- [ ] T035 [US5] Update search page `bfna-website-nuxt/src/pages/search.vue` to handle empty results state (zero count, no cards displayed)
-- [ ] T036 [US5] Verify search result links navigate correctly to content pages (test with publications, videos, infographics URLs)
-- [ ] T037 [US5] Update search page `bfna-website-nuxt/src/pages/search.vue` to hide navigation search button when on search page (FR-019)
+- [X] T031 [US5] Verify search API endpoint `bfna-website-nuxt/src/server/api/search.get.ts` filters out items with empty/null/missing URLs (FR-005)
+- [X] T032 [US5] Verify search API endpoint `bfna-website-nuxt/src/server/api/search.get.ts` returns results in correct format with url, heading, subheading, excerpt, theme fields
+- [X] T033 [US5] Update search page `bfna-website-nuxt/src/pages/search.vue` to display search results as cards with heading, subheading, excerpt, and theme information
+- [X] T034 [US5] Update search page `bfna-website-nuxt/src/pages/search.vue` to display result count correctly
+- [X] T035 [US5] Update search page `bfna-website-nuxt/src/pages/search.vue` to handle empty results state (zero count, no cards displayed)
+- [X] T036 [US5] Verify search result links navigate correctly to content pages (test with publications, videos, infographics URLs)
+- [X] T037 [US5] Update search page `bfna-website-nuxt/src/pages/search.vue` to hide navigation search button when on search page (FR-019)
 
 **Checkpoint**: At this point, search results should display correctly and all links should navigate without errors.
 
@@ -149,18 +149,18 @@ Paths follow Nuxt 4 web application structure:
 
 **Purpose**: Error handling, edge cases, and final improvements
 
-- [ ] T038 [P] Update search API endpoint `bfna-website-nuxt/src/server/api/search.get.ts` to handle search index file missing or corrupted errors gracefully (return empty array, log server-side)
-- [ ] T039 [P] Update search API endpoint `bfna-website-nuxt/src/server/api/search.get.ts` to handle search processing errors gracefully (return empty array, log server-side)
-- [ ] T040 [P] Update useSearch composable `bfna-website-nuxt/src/composables/legacy/useSearch.ts` to handle API errors gracefully (show empty results, log to console in dev mode)
-- [ ] T041 Verify search handles special characters in queries correctly (case-insensitive substring matching)
-- [ ] T042 Verify search handles very long search queries without performance degradation
-- [ ] T043 Verify search handles direct navigation to `/search` page without search term (shows empty state with zero results)
-- [ ] T044 Verify search index generation script handles missing or malformed source data files gracefully
-- [ ] T045 Run search index generation script and verify `public/search.json` is created with correct format
-- [ ] T049 [P] Verify search index includes all available content from publications, videos, and infographics data sources (SC-007) - compare item counts in source files vs search.json
-- [ ] T050 Verify search performance meets requirements (< 300ms per query, SC-006)
-- [ ] T051 Verify all search result URLs navigate correctly (100% link accuracy, SC-003)
-- [ ] T052 Verify search index generation script runs automatically during `npm run build` (integrate into build pipeline, not just scripts section)
+- [X] T038 [P] Update search API endpoint `bfna-website-nuxt/src/server/api/search.get.ts` to handle search index file missing or corrupted errors gracefully (return empty array, log server-side)
+- [X] T039 [P] Update search API endpoint `bfna-website-nuxt/src/server/api/search.get.ts` to handle search processing errors gracefully (return empty array, log server-side)
+- [X] T040 [P] Update useSearch composable `bfna-website-nuxt/src/composables/legacy/useSearch.ts` to handle API errors gracefully (show empty results, log to console in dev mode)
+- [X] T041 Verify search handles special characters in queries correctly (case-insensitive substring matching)
+- [X] T042 Verify search handles very long search queries without performance degradation
+- [X] T043 Verify search handles direct navigation to `/search` page without search term (shows empty state with zero results)
+- [X] T044 Verify search index generation script handles missing or malformed source data files gracefully
+- [X] T045 Run search index generation script and verify `public/search.json` is created with correct format
+- [X] T049 [P] Verify search index includes all available content from publications, videos, and infographics data sources (SC-007) - compare item counts in source files vs search.json
+- [X] T050 Verify search performance meets requirements (< 300ms per query, SC-006)
+- [X] T051 Verify all search result URLs navigate correctly (100% link accuracy, SC-003)
+- [X] T052 Verify search index generation script runs automatically during `npm run build` (integrate into build pipeline, not just scripts section)
 
 ---
 
