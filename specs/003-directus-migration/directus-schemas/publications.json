@@ -1,0 +1,262 @@
+{
+  "collection": "publications",
+  "meta": {
+    "collection": "publications",
+    "icon": "article",
+    "note": "Publication content items",
+    "display_template": "{{heading}}",
+    "hidden": false,
+    "singleton": false,
+    "translations": null,
+    "archive_field": null,
+    "archive_app_filter": true,
+    "archive_value": null,
+    "unarchive_value": null,
+    "archive_label": null,
+    "sort_field": null
+  },
+  "schema": {
+    "name": "publications"
+  },
+  "fields": [
+    {
+      "field": "id",
+      "type": "uuid",
+      "meta": {
+        "hidden": true,
+        "interface": "input",
+        "readonly": true
+      },
+      "schema": {
+        "is_primary_key": true,
+        "has_auto_increment": false
+      }
+    },
+    {
+      "field": "brow",
+      "type": "string",
+      "meta": {
+        "interface": "input",
+        "width": "half"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    },
+    {
+      "field": "theme",
+      "type": "string",
+      "meta": {
+        "interface": "select-dropdown",
+        "options": {
+          "choices": [
+            { "text": "Politics & Society", "value": "politics-society" },
+            { "text": "Democracy", "value": "democracy" },
+            { "text": "Digital World", "value": "digital-world" },
+            { "text": "Future Leadership", "value": "future-leadership" },
+            { "text": "Default", "value": "default" }
+          ]
+        },
+        "width": "half"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    },
+    {
+      "field": "heading",
+      "type": "string",
+      "meta": {
+        "required": true,
+        "interface": "input",
+        "width": "full"
+      },
+      "schema": {
+        "is_nullable": false
+      }
+    },
+    {
+      "field": "subheading",
+      "type": "string",
+      "meta": {
+        "interface": "input",
+        "width": "full"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    },
+    {
+      "field": "excerpt",
+      "type": "text",
+      "meta": {
+        "interface": "input-multiline",
+        "width": "full"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    },
+    {
+      "field": "excerpt_from_contentful",
+      "type": "boolean",
+      "meta": {
+        "interface": "boolean",
+        "width": "half"
+      },
+      "schema": {
+        "is_nullable": true,
+        "default_value": false
+      }
+    },
+    {
+      "field": "by_line",
+      "type": "string",
+      "meta": {
+        "interface": "input",
+        "width": "full"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    },
+    {
+      "field": "content",
+      "type": "text",
+      "meta": {
+        "interface": "input-rich-text-html",
+        "width": "full"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    },
+    {
+      "field": "authors",
+      "type": "json",
+      "meta": {
+        "interface": "input-code",
+        "width": "full",
+        "note": "Object with all, external, collab, internal arrays"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    },
+    {
+      "field": "original_publication",
+      "type": "json",
+      "meta": {
+        "interface": "input-code",
+        "width": "full",
+        "note": "Object with publish_date and url"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    },
+    {
+      "field": "button",
+      "type": "json",
+      "meta": {
+        "interface": "input-code",
+        "width": "full",
+        "note": "Object with url and label"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    },
+    {
+      "field": "download_media",
+      "type": "string",
+      "meta": {
+        "interface": "input",
+        "width": "full"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    },
+    {
+      "field": "workstream",
+      "type": "string",
+      "meta": {
+        "interface": "input",
+        "width": "half"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    },
+    {
+      "field": "og_description",
+      "type": "text",
+      "meta": {
+        "interface": "input-multiline",
+        "width": "full"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    },
+    {
+      "field": "breadcrumbs",
+      "type": "json",
+      "meta": {
+        "interface": "input-code",
+        "width": "full",
+        "note": "Object with currentPage and items array"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    },
+    {
+      "field": "default_published",
+      "type": "string",
+      "meta": {
+        "interface": "input",
+        "width": "half"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    },
+    {
+      "field": "order_by",
+      "type": "string",
+      "meta": {
+        "interface": "input",
+        "width": "half"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    },
+    {
+      "field": "createdAt",
+      "type": "timestamp",
+      "meta": {
+        "interface": "datetime",
+        "width": "half"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    },
+    {
+      "field": "updatedAt",
+      "type": "timestamp",
+      "meta": {
+        "interface": "datetime",
+        "width": "half"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    }
+  ],
+  "relations": []
+}
+

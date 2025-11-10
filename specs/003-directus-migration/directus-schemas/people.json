@@ -1,0 +1,132 @@
+{
+  "collection": "people",
+  "meta": {
+    "collection": "people",
+    "icon": "people",
+    "note": "Team members and people",
+    "display_template": "{{name}}",
+    "hidden": false,
+    "singleton": false
+  },
+  "schema": {
+    "name": "people"
+  },
+  "fields": [
+    {
+      "field": "id",
+      "type": "uuid",
+      "meta": {
+        "hidden": true
+      },
+      "schema": {
+        "is_primary_key": true
+      }
+    },
+    {
+      "field": "name",
+      "type": "string",
+      "meta": {
+        "required": true,
+        "interface": "input",
+        "width": "full"
+      },
+      "schema": {
+        "is_nullable": false
+      }
+    },
+    {
+      "field": "job_title",
+      "type": "string",
+      "meta": {
+        "interface": "input",
+        "width": "full"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    },
+    {
+      "field": "job",
+      "type": "string",
+      "meta": {
+        "interface": "input",
+        "width": "full",
+        "note": "Alternative job field (legacy)"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    },
+    {
+      "field": "email",
+      "type": "string",
+      "meta": {
+        "interface": "input",
+        "width": "half"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    },
+    {
+      "field": "bio",
+      "type": "text",
+      "meta": {
+        "interface": "input-multiline",
+        "width": "full"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    },
+    {
+      "field": "image",
+      "type": "string",
+      "meta": {
+        "interface": "input",
+        "width": "full",
+        "note": "Image URL"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    },
+    {
+      "field": "linkedin",
+      "type": "string",
+      "meta": {
+        "interface": "input",
+        "width": "half"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    },
+    {
+      "field": "twitter",
+      "type": "string",
+      "meta": {
+        "interface": "input",
+        "width": "half"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    },
+    {
+      "field": "is_board_member",
+      "type": "boolean",
+      "meta": {
+        "interface": "boolean",
+        "width": "half",
+        "note": "Whether person is on board of directors"
+      },
+      "schema": {
+        "is_nullable": true,
+        "default_value": false
+      }
+    }
+  ],
+  "relations": []
+}
+

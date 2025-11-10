@@ -1,0 +1,62 @@
+{
+  "collection": "announcements",
+  "meta": {
+    "collection": "announcements",
+    "icon": "campaign",
+    "note": "Announcement content",
+    "hidden": false,
+    "singleton": true
+  },
+  "schema": {
+    "name": "announcements"
+  },
+  "fields": [
+    {
+      "field": "id",
+      "type": "integer",
+      "meta": {
+        "hidden": true
+      },
+      "schema": {
+        "is_primary_key": true,
+        "has_auto_increment": true
+      }
+    },
+    {
+      "field": "workstream",
+      "type": "string",
+      "meta": {
+        "interface": "input",
+        "width": "half"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    },
+    {
+      "field": "message",
+      "type": "json",
+      "meta": {
+        "interface": "input-code",
+        "width": "full",
+        "note": "Array of strings"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    },
+    {
+      "field": "url",
+      "type": "string",
+      "meta": {
+        "interface": "input",
+        "width": "full"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    }
+  ],
+  "relations": []
+}
+

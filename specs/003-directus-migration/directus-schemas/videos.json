@@ -1,0 +1,175 @@
+{
+  "collection": "videos",
+  "meta": {
+    "collection": "videos",
+    "icon": "videocam",
+    "note": "Video content items",
+    "display_template": "{{heading}}",
+    "hidden": false,
+    "singleton": false
+  },
+  "schema": {
+    "name": "videos"
+  },
+  "fields": [
+    {
+      "field": "id",
+      "type": "uuid",
+      "meta": {
+        "hidden": true,
+        "interface": "input",
+        "readonly": true
+      },
+      "schema": {
+        "is_primary_key": true
+      }
+    },
+    {
+      "field": "brow",
+      "type": "string",
+      "meta": {
+        "interface": "input",
+        "width": "half"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    },
+    {
+      "field": "theme",
+      "type": "string",
+      "meta": {
+        "interface": "select-dropdown",
+        "width": "half"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    },
+    {
+      "field": "video",
+      "type": "json",
+      "meta": {
+        "interface": "input-code",
+        "width": "full",
+        "note": "Object with url and thumbnail"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    },
+    {
+      "field": "heading",
+      "type": "string",
+      "meta": {
+        "required": true,
+        "interface": "input",
+        "width": "full"
+      },
+      "schema": {
+        "is_nullable": false
+      }
+    },
+    {
+      "field": "content",
+      "type": "text",
+      "meta": {
+        "interface": "input-rich-text-html",
+        "width": "full"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    },
+    {
+      "field": "button",
+      "type": "json",
+      "meta": {
+        "interface": "input-code",
+        "width": "full"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    },
+    {
+      "field": "by_line",
+      "type": "string",
+      "meta": {
+        "interface": "input",
+        "width": "full"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    },
+    {
+      "field": "authors",
+      "type": "json",
+      "meta": {
+        "interface": "input-code",
+        "width": "full"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    },
+    {
+      "field": "workstream",
+      "type": "string",
+      "meta": {
+        "interface": "input",
+        "width": "half"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    },
+    {
+      "field": "og_description",
+      "type": "text",
+      "meta": {
+        "interface": "input-multiline",
+        "width": "full"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    },
+    {
+      "field": "breadcrumbs",
+      "type": "json",
+      "meta": {
+        "interface": "input-code",
+        "width": "full"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    },
+    {
+      "field": "default_published",
+      "type": "string",
+      "meta": {
+        "interface": "input",
+        "width": "half"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    },
+    {
+      "field": "order_by",
+      "type": "string",
+      "meta": {
+        "interface": "input",
+        "width": "half"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    }
+  ],
+  "relations": []
+}
+

@@ -1,0 +1,46 @@
+{
+  "collection": "video_updates",
+  "meta": {
+    "collection": "video_updates",
+    "icon": "update",
+    "note": "Video updates",
+    "hidden": false,
+    "singleton": false
+  },
+  "schema": {
+    "name": "video_updates"
+  },
+  "fields": [
+    {
+      "field": "id",
+      "type": "uuid",
+      "meta": {
+        "hidden": true
+      },
+      "schema": {
+        "is_primary_key": true
+      }
+    },
+    {
+      "field": "video_id",
+      "type": "uuid",
+      "meta": {
+        "note": "Reference to videos collection"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    }
+  ],
+  "relations": [
+    {
+      "collection": "video_updates",
+      "field": "video_id",
+      "related_collection": "videos",
+      "schema": {
+        "on_delete": "SET NULL"
+      }
+    }
+  ]
+}
+

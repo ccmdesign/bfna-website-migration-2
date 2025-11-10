@@ -1,0 +1,46 @@
+{
+  "collection": "infographic_homepage_updates",
+  "meta": {
+    "collection": "infographic_homepage_updates",
+    "icon": "home",
+    "note": "Infographics featured on homepage",
+    "hidden": false,
+    "singleton": false
+  },
+  "schema": {
+    "name": "infographic_homepage_updates"
+  },
+  "fields": [
+    {
+      "field": "id",
+      "type": "uuid",
+      "meta": {
+        "hidden": true
+      },
+      "schema": {
+        "is_primary_key": true
+      }
+    },
+    {
+      "field": "infographic_id",
+      "type": "uuid",
+      "meta": {
+        "note": "Reference to infographics collection"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    }
+  ],
+  "relations": [
+    {
+      "collection": "infographic_homepage_updates",
+      "field": "infographic_id",
+      "related_collection": "infographics",
+      "schema": {
+        "on_delete": "SET NULL"
+      }
+    }
+  ]
+}
+

@@ -1,0 +1,96 @@
+{
+  "collection": "news",
+  "meta": {
+    "collection": "news",
+    "icon": "newspaper",
+    "note": "News items",
+    "display_template": "{{heading}}",
+    "hidden": false,
+    "singleton": false
+  },
+  "schema": {
+    "name": "news"
+  },
+  "fields": [
+    {
+      "field": "id",
+      "type": "uuid",
+      "meta": {
+        "hidden": true
+      },
+      "schema": {
+        "is_primary_key": true
+      }
+    },
+    {
+      "field": "heading",
+      "type": "string",
+      "meta": {
+        "required": true,
+        "interface": "input",
+        "width": "full"
+      },
+      "schema": {
+        "is_nullable": false
+      }
+    },
+    {
+      "field": "excerpt",
+      "type": "text",
+      "meta": {
+        "interface": "input-multiline",
+        "width": "full"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    },
+    {
+      "field": "image",
+      "type": "json",
+      "meta": {
+        "interface": "input-code",
+        "width": "full",
+        "note": "Object with url and title"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    },
+    {
+      "field": "url",
+      "type": "string",
+      "meta": {
+        "interface": "input",
+        "width": "full"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    },
+    {
+      "field": "buttonLabel",
+      "type": "string",
+      "meta": {
+        "interface": "input",
+        "width": "half"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    },
+    {
+      "field": "type",
+      "type": "string",
+      "meta": {
+        "interface": "input",
+        "width": "half"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    }
+  ],
+  "relations": []
+}
+

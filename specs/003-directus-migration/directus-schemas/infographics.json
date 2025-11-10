@@ -1,0 +1,185 @@
+{
+  "collection": "infographics",
+  "meta": {
+    "collection": "infographics",
+    "icon": "image",
+    "note": "Infographic content items",
+    "display_template": "{{heading}}",
+    "hidden": false,
+    "singleton": false
+  },
+  "schema": {
+    "name": "infographics"
+  },
+  "fields": [
+    {
+      "field": "id",
+      "type": "uuid",
+      "meta": {
+        "hidden": true
+      },
+      "schema": {
+        "is_primary_key": true
+      }
+    },
+    {
+      "field": "brow",
+      "type": "string",
+      "meta": {
+        "interface": "input",
+        "width": "half"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    },
+    {
+      "field": "theme",
+      "type": "string",
+      "meta": {
+        "interface": "select-dropdown",
+        "width": "half"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    },
+    {
+      "field": "image",
+      "type": "json",
+      "meta": {
+        "interface": "input-code",
+        "width": "full",
+        "note": "Object with url, title, width, height"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    },
+    {
+      "field": "infographic",
+      "type": "json",
+      "meta": {
+        "interface": "input-code",
+        "width": "full",
+        "note": "Object with url and title"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    },
+    {
+      "field": "content",
+      "type": "text",
+      "meta": {
+        "interface": "input-rich-text-html",
+        "width": "full"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    },
+    {
+      "field": "original_publication",
+      "type": "json",
+      "meta": {
+        "interface": "input-code",
+        "width": "full"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    },
+    {
+      "field": "by_line",
+      "type": "string",
+      "meta": {
+        "interface": "input",
+        "width": "full"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    },
+    {
+      "field": "authors",
+      "type": "json",
+      "meta": {
+        "interface": "input-code",
+        "width": "full"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    },
+    {
+      "field": "heading",
+      "type": "string",
+      "meta": {
+        "required": true,
+        "interface": "input",
+        "width": "full"
+      },
+      "schema": {
+        "is_nullable": false
+      }
+    },
+    {
+      "field": "subheading",
+      "type": "string",
+      "meta": {
+        "interface": "input",
+        "width": "full"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    },
+    {
+      "field": "button",
+      "type": "json",
+      "meta": {
+        "interface": "input-code",
+        "width": "full"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    },
+    {
+      "field": "workstream",
+      "type": "string",
+      "meta": {
+        "interface": "input",
+        "width": "half"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    },
+    {
+      "field": "og_description",
+      "type": "text",
+      "meta": {
+        "interface": "input-multiline",
+        "width": "full"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    },
+    {
+      "field": "breadcrumbs",
+      "type": "json",
+      "meta": {
+        "interface": "input-code",
+        "width": "full"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    }
+  ],
+  "relations": []
+}
+

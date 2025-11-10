@@ -9,6 +9,8 @@ Auto-generated from all feature plans. Last updated: 2025-11-08
 - Static JSON files in `src/content/data/` (migrating to individual Nuxt Content format files in `src/content/workstreams/`) (002-phase-2-migration)
 - TypeScript 5.x, Vue 3.x, Nuxt 3.x + Nuxt 3, Vue 3, @nuxt/content, @nuxt/image (001-verify-infographic-news-pages)
 - Static JSON files in `src/content/data/` (no database) (001-verify-infographic-news-pages)
+- TypeScript 5.0+ / JavaScript (ES2020+) (003-directus-migration)
+- Directus CMS (external API), static JSON files (fallback during migration) (003-directus-migration)
 
 - TypeScript 5.0+, Vue 3.5+, Nuxt 4.2.0 (Nuxt 3.13 runtime with Nuxt 4 compatibility date) + Nuxt 4, Vue 3, VueUse (@vueuse/core), @nuxt/image, @nuxt/content, Pinia (001-nuxt-migration)
 
@@ -28,9 +30,9 @@ npm test && npm run lint
 TypeScript 5.0+, Vue 3.5+, Nuxt 4.2.0 (Nuxt 3.13 runtime with Nuxt 4 compatibility date): Follow standard conventions
 
 ## Recent Changes
+- 003-directus-migration: Added TypeScript 5.0+ / JavaScript (ES2020+)
 - 001-verify-infographic-news-pages: Added TypeScript 5.x, Vue 3.x, Nuxt 3.x + Nuxt 3, Vue 3, @nuxt/content, @nuxt/image
 - 002-phase-2-migration: Added TypeScript 5.0+, Vue 3.5.13, Nuxt 4.2.0 + `@nuxt/content` (^3.7.1), `@nuxt/image` (^2.0.0), `@vueuse/core` (^14.0.0), `@vueuse/nuxt` (^14.0.0)
-- 001-search-functionality: Added TypeScript 5.0+, Node.js (via Nuxt 4.2.0) + Nuxt 4.2.0, Vue 3.5.13, @vueuse/core 14.0.0, @nuxt/content 3.7.1
 
 
 <!-- MANUAL ADDITIONS START -->

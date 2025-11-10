@@ -1,0 +1,226 @@
+{
+  "collection": "products",
+  "meta": {
+    "collection": "products",
+    "icon": "inventory_2",
+    "note": "Product content items (reports, websites, videos)",
+    "display_template": "{{title}}",
+    "hidden": false,
+    "singleton": false,
+    "translations": null,
+    "archive_field": null,
+    "archive_app_filter": true,
+    "archive_value": null,
+    "unarchive_value": null,
+    "archive_label": null,
+    "sort_field": null
+  },
+  "schema": {
+    "name": "products"
+  },
+  "fields": [
+    {
+      "field": "id",
+      "type": "uuid",
+      "meta": {
+        "hidden": true,
+        "interface": "input",
+        "readonly": true
+      },
+      "schema": {
+        "is_primary_key": true,
+        "has_auto_increment": false
+      }
+    },
+    {
+      "field": "title",
+      "type": "string",
+      "meta": {
+        "required": true,
+        "interface": "input",
+        "width": "full"
+      },
+      "schema": {
+        "is_nullable": false
+      }
+    },
+    {
+      "field": "type",
+      "type": "string",
+      "meta": {
+        "required": true,
+        "interface": "select-dropdown",
+        "options": {
+          "choices": [
+            { "text": "Report", "value": "report" },
+            { "text": "Website", "value": "website" },
+            { "text": "Video", "value": "video" }
+          ]
+        },
+        "width": "half"
+      },
+      "schema": {
+        "is_nullable": false
+      }
+    },
+    {
+      "field": "subheading",
+      "type": "string",
+      "meta": {
+        "interface": "input",
+        "width": "full"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    },
+    {
+      "field": "description",
+      "type": "text",
+      "meta": {
+        "interface": "input-rich-text-html",
+        "width": "full"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    },
+    {
+      "field": "image",
+      "type": "json",
+      "meta": {
+        "interface": "input-code",
+        "width": "full",
+        "note": "Object with url and title fields"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    },
+    {
+      "field": "hasVideo",
+      "type": "boolean",
+      "meta": {
+        "interface": "boolean",
+        "width": "half"
+      },
+      "schema": {
+        "is_nullable": true,
+        "default_value": false
+      }
+    },
+    {
+      "field": "buttons",
+      "type": "json",
+      "meta": {
+        "interface": "input-code",
+        "width": "full",
+        "note": "Array of button objects with type, url, label"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    },
+    {
+      "field": "theme",
+      "type": "string",
+      "meta": {
+        "interface": "select-dropdown",
+        "options": {
+          "choices": [
+            { "text": "Politics & Society", "value": "politics-society" },
+            { "text": "Democracy", "value": "democracy" },
+            { "text": "Digital World", "value": "digital-world" },
+            { "text": "Future Leadership", "value": "future-leadership" },
+            { "text": "Default", "value": "default" }
+          ]
+        },
+        "width": "half"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    },
+    {
+      "field": "permalink",
+      "type": "string",
+      "meta": {
+        "interface": "input",
+        "width": "full"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    },
+    {
+      "field": "workstream",
+      "type": "string",
+      "meta": {
+        "interface": "input",
+        "width": "half"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    },
+    {
+      "field": "og_description",
+      "type": "text",
+      "meta": {
+        "interface": "input-multiline",
+        "width": "full"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    },
+    {
+      "field": "breadcrumbs",
+      "type": "json",
+      "meta": {
+        "interface": "input-code",
+        "width": "full",
+        "note": "Object with currentPage and items array"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    },
+    {
+      "field": "team_section",
+      "type": "json",
+      "meta": {
+        "interface": "input-code",
+        "width": "full",
+        "note": "Object with heading, subheading, team array"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    },
+    {
+      "field": "createdAt",
+      "type": "timestamp",
+      "meta": {
+        "interface": "datetime",
+        "width": "half"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    },
+    {
+      "field": "updatedAt",
+      "type": "timestamp",
+      "meta": {
+        "interface": "datetime",
+        "width": "half"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    }
+  ],
+  "relations": []
+}
+

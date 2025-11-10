@@ -1,0 +1,46 @@
+{
+  "collection": "podcast_homepage_updates",
+  "meta": {
+    "collection": "podcast_homepage_updates",
+    "icon": "home",
+    "note": "Podcasts featured on homepage",
+    "hidden": false,
+    "singleton": false
+  },
+  "schema": {
+    "name": "podcast_homepage_updates"
+  },
+  "fields": [
+    {
+      "field": "id",
+      "type": "uuid",
+      "meta": {
+        "hidden": true
+      },
+      "schema": {
+        "is_primary_key": true
+      }
+    },
+    {
+      "field": "podcast_id",
+      "type": "uuid",
+      "meta": {
+        "note": "Reference to podcasts collection"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    }
+  ],
+  "relations": [
+    {
+      "collection": "podcast_homepage_updates",
+      "field": "podcast_id",
+      "related_collection": "podcasts",
+      "schema": {
+        "on_delete": "SET NULL"
+      }
+    }
+  ]
+}
+

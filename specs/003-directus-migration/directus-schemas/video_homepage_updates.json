@@ -1,0 +1,46 @@
+{
+  "collection": "video_homepage_updates",
+  "meta": {
+    "collection": "video_homepage_updates",
+    "icon": "home",
+    "note": "Videos featured on homepage",
+    "hidden": false,
+    "singleton": false
+  },
+  "schema": {
+    "name": "video_homepage_updates"
+  },
+  "fields": [
+    {
+      "field": "id",
+      "type": "uuid",
+      "meta": {
+        "hidden": true
+      },
+      "schema": {
+        "is_primary_key": true
+      }
+    },
+    {
+      "field": "video_id",
+      "type": "uuid",
+      "meta": {
+        "note": "Reference to videos collection"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    }
+  ],
+  "relations": [
+    {
+      "collection": "video_homepage_updates",
+      "field": "video_id",
+      "related_collection": "videos",
+      "schema": {
+        "on_delete": "SET NULL"
+      }
+    }
+  ]
+}
+

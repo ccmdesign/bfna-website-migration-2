@@ -1,0 +1,73 @@
+{
+  "collection": "people_config",
+  "meta": {
+    "collection": "people_config",
+    "icon": "settings",
+    "note": "Configuration for people page (heading, subheading, image)",
+    "hidden": false,
+    "singleton": true
+  },
+  "schema": {
+    "name": "people_config"
+  },
+  "fields": [
+    {
+      "field": "id",
+      "type": "integer",
+      "meta": {
+        "hidden": true
+      },
+      "schema": {
+        "is_primary_key": true,
+        "has_auto_increment": true
+      }
+    },
+    {
+      "field": "heading",
+      "type": "string",
+      "meta": {
+        "interface": "input",
+        "width": "full"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    },
+    {
+      "field": "subheading",
+      "type": "text",
+      "meta": {
+        "interface": "input-multiline",
+        "width": "full"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    },
+    {
+      "field": "theme",
+      "type": "string",
+      "meta": {
+        "interface": "input",
+        "width": "half"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    },
+    {
+      "field": "image",
+      "type": "json",
+      "meta": {
+        "interface": "input-code",
+        "width": "full",
+        "note": "Object with url and title"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    }
+  ],
+  "relations": []
+}
+

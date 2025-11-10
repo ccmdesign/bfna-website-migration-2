@@ -1,0 +1,63 @@
+{
+  "collection": "publication_homepage_updates",
+  "meta": {
+    "collection": "publication_homepage_updates",
+    "icon": "home",
+    "note": "Publications featured on homepage",
+    "display_template": "{{heading}}",
+    "hidden": false,
+    "singleton": false
+  },
+  "schema": {
+    "name": "publication_homepage_updates"
+  },
+  "fields": [
+    {
+      "field": "id",
+      "type": "uuid",
+      "meta": {
+        "hidden": true,
+        "interface": "input",
+        "readonly": true
+      },
+      "schema": {
+        "is_primary_key": true
+      }
+    },
+    {
+      "field": "publication_id",
+      "type": "uuid",
+      "meta": {
+        "interface": "input",
+        "note": "Reference to publications collection"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    }
+  ],
+  "relations": [
+    {
+      "collection": "publication_homepage_updates",
+      "field": "publication_id",
+      "related_collection": "publications",
+      "meta": {
+        "one_field": null,
+        "sort_field": null,
+        "one_deselect_action": "nullify",
+        "one_allowed_collections": null,
+        "junction_field": null,
+        "many_collection": null,
+        "many_field": null,
+        "one_collection_field": null,
+        "one_collection": null,
+        "many_collection_field": null,
+        "many_allowed_collections": null
+      },
+      "schema": {
+        "on_delete": "SET NULL"
+      }
+    }
+  ]
+}
+

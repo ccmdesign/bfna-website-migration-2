@@ -1,0 +1,136 @@
+{
+  "collection": "workstreams",
+  "meta": {
+    "collection": "workstreams",
+    "icon": "category",
+    "note": "Content workstreams/categories",
+    "display_template": "{{heading}}",
+    "hidden": false,
+    "singleton": false
+  },
+  "schema": {
+    "name": "workstreams"
+  },
+  "fields": [
+    {
+      "field": "id",
+      "type": "uuid",
+      "meta": {
+        "hidden": true
+      },
+      "schema": {
+        "is_primary_key": true
+      }
+    },
+    {
+      "field": "slug",
+      "type": "string",
+      "meta": {
+        "required": true,
+        "interface": "input",
+        "width": "half",
+        "note": "URL-safe identifier (e.g., 'politics-society', 'democracy')"
+      },
+      "schema": {
+        "is_nullable": false,
+        "is_unique": true
+      }
+    },
+    {
+      "field": "heading",
+      "type": "string",
+      "meta": {
+        "required": true,
+        "interface": "input",
+        "width": "full"
+      },
+      "schema": {
+        "is_nullable": false
+      }
+    },
+    {
+      "field": "description",
+      "type": "text",
+      "meta": {
+        "interface": "input-multiline",
+        "width": "full"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    },
+    {
+      "field": "theme",
+      "type": "string",
+      "meta": {
+        "interface": "select-dropdown",
+        "width": "half"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    },
+    {
+      "field": "button",
+      "type": "json",
+      "meta": {
+        "interface": "input-code",
+        "width": "full",
+        "note": "Object with url and label"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    },
+    {
+      "field": "image",
+      "type": "json",
+      "meta": {
+        "interface": "input-code",
+        "width": "full",
+        "note": "Object with url and title"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    },
+    {
+      "field": "products_list",
+      "type": "json",
+      "meta": {
+        "interface": "input-code",
+        "width": "full",
+        "note": "Array of product objects"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    },
+    {
+      "field": "updates_list",
+      "type": "json",
+      "meta": {
+        "interface": "input-code",
+        "width": "full",
+        "note": "Array of update/content objects"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    },
+    {
+      "field": "navigation_order",
+      "type": "integer",
+      "meta": {
+        "interface": "input",
+        "width": "half",
+        "note": "Order for navigation display"
+      },
+      "schema": {
+        "is_nullable": true
+      }
+    }
+  ],
+  "relations": []
+}
+

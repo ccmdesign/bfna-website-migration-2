@@ -97,16 +97,16 @@ See `specs/001-nuxt-migration/DEVIATIONS.md` for:
 - Update data models if needed
 - Implement proper error handling and caching
 
-**Design System Integration**:
-- Integrate migrated components with `components/ds/` components
-- Replace legacy CSS gradually with DS tokens
-- CSS is currently "unplugged" - will be re-enabled/integrated in Phase 2
-
 **Data Layer Improvements**:
 - Optimize data fetching patterns
 - Implement caching strategies
 - Add data validation/schema enforcement
 - Refactor data transformation logic
+
+**Design System Integration**:
+- Integrate migrated components with `components/ds/` components
+- Replace legacy CSS gradually with DS tokens
+- CSS is currently "unplugged" - will be re-enabled/integrated in Phase 2
 
 **Image Optimization**:
 - Migrate `contentfulImage` filter if needed
