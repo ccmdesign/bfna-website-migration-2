@@ -1,0 +1,21 @@
+# CRITICAL: Never Edit node_modules
+
+**ABSOLUTE PROHIBITION**: Under NO circumstances should you EVER edit, modify, or create files in the `node_modules/` directory or any subdirectory within it.
+
+**Why this is critical**:
+- Files in `node_modules/` are managed by package managers (npm, yarn, pnpm)
+- Any changes will be overwritten on the next `npm install` or package update
+- Editing dependencies directly breaks the dependency management system
+- This is a fundamental violation of proper software development practices
+
+**What to do instead**:
+- If you need to modify a dependency's behavior, create a wrapper, patch, or fork the package properly
+- Use package.json patches, patch-package, or fork the package and reference your fork
+- If you encounter issues with a dependency, report it upstream or find an alternative solution
+- Never suggest editing files in `node_modules/` as a solution
+
+**Enforcement**:
+- If you see a file path containing `node_modules/`, immediately reject the operation
+- If a user requests editing something in `node_modules/`, explain why this is not allowed and suggest proper alternatives
+- This rule applies to ALL operations: reading, writing, editing, deleting, or creating files
+
