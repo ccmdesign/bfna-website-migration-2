@@ -3,7 +3,7 @@
 **Feature Branch**: `001-search-functionality`  
 **Created**: 2025-01-27  
 **Status**: Draft  
-**Input**: User description: "Implement search functionality: Generate search index from static JSON files, create server API endpoint, integrate with header/footer search inputs, fix debounce timing, and ensure search results navigate correctly"
+**Input**: User description: "Search functionality - Generate search.json from publications, videos, infographics. Create /api/search endpoint. Connect search inputs in Header/Footer/OffCanvas. Fix debounce timing (550ms)"
 
 ## Clarifications
 
