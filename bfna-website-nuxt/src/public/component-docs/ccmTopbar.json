@@ -1,0 +1,12 @@
+{
+  "displayName": "ccmTopbar",
+  "description": "Topbar navigation component providing site header with logo and main navigation.\n\nA horizontal navigation bar component that displays the site logo/branding on the left\nand primary navigation links on the right. Uses CUBE CSS cluster utility for flexible\nlayout. Includes semantic HTML with proper navigation role for accessibility.\n\nThe logo slot allows custom branding content, defaulting to a site name link. Navigation\nmenu items use semantic link styling with hover states. Designed to work seamlessly\nwithin layout components like ccmHero or standalone in page headers.",
+  "props": [],
+  "examples": [],
+  "codeSnippets": [],
+  "tags": {
+    "component": "ccmTopbar",
+    "category": "organism",
+    "standards": "all-10"
+  }
+}

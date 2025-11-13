@@ -1,0 +1,198 @@
+[
+  {
+    "heading": "Transatlantic Barometer | New Indicator: Energy and Emissions",
+    "excerpt": "As COP 30 approaches and the Paris Agreement marks its tenth anniversary, the Transatlantic Barometer delves into energy and emissions in our newest thematic indicator. The Barometer examines key figures in energy usage and greenhouse gas emissions for each of its 30 featured countries and the European Union using data from the Energy Institute’s Statistical Review of World Energy, the EU Emissions Database for Global Atmospheric Research, and the Climate Change Performance Index.",
+    "image": {
+      "url": "https://images.ctfassets.net/9vgcz0fppkl3/5puyAs7cGDaRckAccK5Cek/6239f5532e1ce728eac030a24e61a1a3/Barometer_Energy_and_Emissions_photo.png?w=800&fm=webp&q=80&fit=fill",
+      "title": "Barometer Energy Emissions"
+    },
+    "url": "https://www.transatlanticbarometer.org/",
+    "buttonLabel": "Visit the Site",
+    "type": "news"
+  },
+  {
+    "heading": "New Infographic | Strength in Numbers",
+    "excerpt": "Multilateral organizations play a huge role in the Indo-Pacific. But what are those organizations, and what members do they include?",
+    "image": {
+      "url": "https://images.ctfassets.net/9vgcz0fppkl3/5w5TpgdcbjcuYEu9u9dL0u/24a1eb0f3c3e2c8cad3ae317ca4a7b7e/BFNA_Indopacific-infographic-SQHD.webp?w=800&fm=webp&q=80&fit=fill",
+      "title": "Strength in Numbers Infographic"
+    },
+    "url": "https://www.bfna.org/politics-society/strength-in-numbers-2bfro5dcbt/",
+    "buttonLabel": "Learn More",
+    "type": "news"
+  },
+  {
+    "heading": "New Episode | Out of Darkness: Transforming Public Spaces in Barcelona",
+    "excerpt": "Following the death of Spanish dictator Francisco Franco in 1975, Spain began the transformation from authoritarianism to thriving member of the democratic family of nations. Cities and public spaces became key drivers in shaping a vibrant, creative nation that learned from its past to build a lasting democratic future. This film is part of the Democracy in Cities series, presented with the GMF Cities program.",
+    "image": {
+      "url": "https://images.ctfassets.net/9vgcz0fppkl3/3kcyCccS8cAy39GGJcMFH7/00a97888d69fd1e20d2ee15a650e37ad/BFNA_Barcelona_LAND.webp?w=800&fm=webp&q=80&fit=fill",
+      "title": "Out of Darkness"
+    },
+    "url": "https://bfnadocs.org/out-of-the-darkness",
+    "buttonLabel": "Watch Here",
+    "type": "news"
+  },
+  {
+    "heading": "New Publication | Lithium Rising: The Race for Critical Minerals",
+    "excerpt": "Journey to the frontlines of the 21st-century resource scramble—from Bolivian salt flats to Congolese cobalt mines—uncover how lithium, cobalt, and nickel have become central to clean energy, national security, and economic power. This is more than a policy report—it's a vivid, human-centered exploration of the communities, politics, and power plays behind the battery revolution.",
+    "image": {
+      "url": "https://images.ctfassets.net/9vgcz0fppkl3/2setEYEGQMGuoOPoZ51vwQ/ea8bb7aa51b288d2b0aed36263bd316b/Lithium_Rising_Verticle.webp?w=800&fm=webp&q=80&fit=fill",
+      "title": "Lithium Rising Cover"
+    },
+    "url": "https://www.bfna.org/politics-society/lithium-rising-the-race-for-critical-minerals/",
+    "buttonLabel": "Read Here",
+    "type": "news"
+  },
+  {
+    "heading": "New Episode | Blueprint in the Bluegrass",
+    "excerpt": "In this episode of the Democracies in Cities series, five elements of civic health are explored: education, the public realm, local news and reporting, convening and bridging, and civic transformation. Follow the work of the Lexington NGO CivicLex, which has pioneered this comprehensive approach to engagement in order to strengthen democratic resilience and performance in the city. Blueprint in the Bluegrass provides a roadmap to solutions that can be replicated in cities here and abroad.",
+    "image": {
+      "url": "https://images.ctfassets.net/9vgcz0fppkl3/47Ppj0h4UzY7gQTRiLPc3f/c4a8c81006d0220aec991b45d506772e/Title_Card_Still.jpg?w=800&fm=webp&q=80&fit=fill",
+      "title": "Blueprint in the Bluegrass"
+    },
+    "url": "https://youtu.be/rwX3tKM4-qk",
+    "buttonLabel": "Watch Here",
+    "type": "news"
+  },
+  {
+    "heading": "Latest Issue | Transponder: The Future",
+    "excerpt": "The seventh issue of Transponder Magazine explores the critical choices shaping the future of our world, from the geopolitics of space and the race for rare earth minerals to the rise of AI and its societal impact. The challenges and opportunities ahead are vast. The future is in our hands—how will we shape it?",
+    "image": {
+      "url": "https://images.ctfassets.net/9vgcz0fppkl3/19ZPsFw4j0ztVqKQwW16U8/3f1f06dd320d947ccd65d438984c23a7/Transponder_7_Cover.png?w=800&fm=webp&q=80&fit=fill",
+      "title": "Issue 7 Cover"
+    },
+    "url": "https://www.bfna.org/politics-society/transponder-magazine/",
+    "buttonLabel": "Read Here",
+    "products": {
+      "metadata": {
+        "tags": [],
+        "concepts": []
+      },
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "9vgcz0fppkl3"
+          }
+        },
+        "id": "2axcaEtbM0bZNs9x5ZYWHa",
+        "type": "Entry",
+        "createdAt": "2025-05-23T15:47:38.391Z",
+        "updatedAt": "2025-05-23T16:03:03.507Z",
+        "environment": {
+          "sys": {
+            "id": "master",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        },
+        "publishedVersion": 29,
+        "revision": 2,
+        "contentType": {
+          "sys": {
+            "type": "Link",
+            "linkType": "ContentType",
+            "id": "product"
+          }
+        },
+        "locale": "en-US"
+      },
+      "fields": {
+        "workstream": "politics-society",
+        "type": "report",
+        "title": "Transponder Issue #7: The Future",
+        "excerpt": "The seventh issue of Transponder Magazine explores the critical choices shaping the future of our world, from the geopolitics of space and the race for rare earth minerals to the rise of AI and its societal impact. Global perspectives include young voices in Taiwan and South Korea, a deep dive into France’s democratic aspirations, and historical memory’s role in the Balkans’ EU accession. The challenges and opportunities ahead are vast. The future is in our hands—how will we shape it?",
+        "description": "In this issue, Transponder Magazine explores the critical choices shaping our world, from the geopolitics of space and the race for rare earth minerals to the rise of AI and its societal impact. We bring you global perspectives, including insights from young voices in Taiwan and South Korea, a deep dive into France’s democratic aspirations, and an examination of historical memory’s role in the Balkans’ EU accession. The challenges ahead are vast, but so are the opportunities. The future is in our hands—how will we shape it?",
+        "cover_image": {
+          "metadata": {
+            "tags": [],
+            "concepts": []
+          },
+          "sys": {
+            "space": {
+              "sys": {
+                "type": "Link",
+                "linkType": "Space",
+                "id": "9vgcz0fppkl3"
+              }
+            },
+            "id": "19ZPsFw4j0ztVqKQwW16U8",
+            "type": "Asset",
+            "createdAt": "2023-12-11T21:19:16.487Z",
+            "updatedAt": "2025-03-19T15:03:09.460Z",
+            "environment": {
+              "sys": {
+                "id": "master",
+                "type": "Link",
+                "linkType": "Environment"
+              }
+            },
+            "publishedVersion": 18,
+            "revision": 4,
+            "locale": "en-US"
+          },
+          "fields": {
+            "title": "Issue 7 Cover",
+            "description": "",
+            "file": {
+              "url": "//images.ctfassets.net/9vgcz0fppkl3/19ZPsFw4j0ztVqKQwW16U8/3f1f06dd320d947ccd65d438984c23a7/Transponder_7_Cover.png",
+              "details": {
+                "size": 4035394,
+                "image": {
+                  "width": 2499,
+                  "height": 3235
+                }
+              },
+              "fileName": "Transponder 7 Cover.png",
+              "contentType": "image/png"
+            }
+          }
+        },
+        "report": {
+          "metadata": {
+            "tags": [],
+            "concepts": []
+          },
+          "sys": {
+            "space": {
+              "sys": {
+                "type": "Link",
+                "linkType": "Space",
+                "id": "9vgcz0fppkl3"
+              }
+            },
+            "id": "1w25O5bqAImNIvRiebWdzL",
+            "type": "Asset",
+            "createdAt": "2025-05-23T15:38:09.665Z",
+            "updatedAt": "2025-05-23T15:42:55.819Z",
+            "environment": {
+              "sys": {
+                "id": "master",
+                "type": "Link",
+                "linkType": "Environment"
+              }
+            },
+            "publishedVersion": 7,
+            "revision": 2,
+            "locale": "en-US"
+          },
+          "fields": {
+            "title": "Transponder Issue 7",
+            "description": "",
+            "file": {
+              "url": "//assets.ctfassets.net/9vgcz0fppkl3/1w25O5bqAImNIvRiebWdzL/03225fa88ad92d21173d3365e11c52aa/Transponder_7_Digital_Spreads__1_.pdf",
+              "details": {
+                "size": 4389143
+              },
+              "fileName": "Transponder 7 Digital Spreads (1).pdf",
+              "contentType": "application/pdf"
+            }
+          }
+        },
+        "publishDate": "2025-03-18T00:00-04:00"
+      }
+    },
+    "type": "news"
+  }
+]

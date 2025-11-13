@@ -1,0 +1,21 @@
+@layer tokens {
+  /*
+   * ⚠️ IMPORTANT - READ BEFORE EDITING ⚠️
+   * This file is part of the design token system.
+   * Before making any changes, please review the token documentation at:
+   * src/content/docs/tokens/
+   *
+   * Key docs:
+   * - architecture.md: Token system structure and principles
+   * - maintenance.md: How to safely add, modify, or remove tokens
+   * - guide.md: Usage guidelines and best practices
+   *
+   * This applies to both human developers and AI assistants.
+   */
+  
+    :root {
+      --border-radius-s: 4px;
+      --border-radius-m: 8px;
+      --border-radius-l: 12px;
+    }
+}

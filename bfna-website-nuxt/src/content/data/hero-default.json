@@ -1,0 +1,8 @@
+{
+  "webp": "/images/hero/homepage.webp",
+  "fallback": "/images/hero/homepage.jpg",
+  "width": 1600,
+  "height": 1067,
+  "theme": "default"
+}
+

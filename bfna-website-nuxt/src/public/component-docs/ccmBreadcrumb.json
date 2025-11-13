@@ -1,0 +1,79 @@
+{
+  "displayName": "ccmBreadcrumb",
+  "description": "",
+  "props": [
+    {
+      "name": "is",
+      "description": "Root element tag rendered by `<component>`. Defaults to `nav` for landmark semantics; switch to `div`\nwhen placing the breadcrumb inside an existing `nav` or header.",
+      "type": "string",
+      "required": false,
+      "defaultValue": "'nav'"
+    },
+    {
+      "name": "items",
+      "description": "Ordered set of breadcrumb items. The final entry is surfaced as the current page (`aria-current`).\nProvide `ariaLabel` when the visual label would be ambiguous or truncated.",
+      "type": "BreadcrumbItem[]",
+      "required": false,
+      "defaultValue": "() => []"
+    },
+    {
+      "name": "size",
+      "description": "Link size forwarded to `ccmButton` (link variant). `s` keeps breadcrumbs compact; `m` aligns with hero headers\nand increases spacing tokens applied to the `.cluster` wrapper.",
+      "type": "string",
+      "required": false,
+      "defaultValue": "'s'"
+    },
+    {
+      "name": "variant",
+      "description": "Layout variant controlling line wrapping. Use `default` to keep all items on one line; use `wrap` to allow\nmulti-line breadcrumbs for deep IA while keeping tokens intact.",
+      "type": "string",
+      "required": false,
+      "defaultValue": "'default'"
+    },
+    {
+      "name": "separator",
+      "description": "Separator presentation. `chevron` uses an icon glyph, `slash` renders `/`, and `custom` defers entirely to the\n`#separator` slot. Custom separators should follow iconography rules from the design system.",
+      "type": "string",
+      "required": false,
+      "defaultValue": "'chevron'"
+    },
+    {
+      "name": "iconName",
+      "description": "Icon glyph used when `separator` is `chevron`. Must map to a material/icon font name recognised by the `.icon` utility.",
+      "type": "string",
+      "required": false,
+      "defaultValue": "'chevron_right'"
+    },
+    {
+      "name": "itemPaddingInline",
+      "description": "Space token applied to inline padding on link items (`var(--space-{token})`). Reference semantic keys in\nthe tokens guideline to ensure consistency across navigation components.",
+      "type": "string",
+      "required": false,
+      "defaultValue": "'2xs'"
+    },
+    {
+      "name": "ariaLabel",
+      "description": "Aria-label describing the breadcrumb navigation. Override when multiple breadcrumb regions exist on a page\n(e.g., admin + marketing shells) to keep landmarks unique.",
+      "type": "string",
+      "required": false,
+      "defaultValue": "'Breadcrumbs'"
+    },
+    {
+      "name": "includeJsonLd",
+      "description": "Toggles schema.org `BreadcrumbList` JSON-LD injection via `useHead`. Disable when another breadcrumb script\nalready exists to avoid duplicate structured data in the document head.",
+      "type": "boolean",
+      "required": false,
+      "defaultValue": "true"
+    },
+    {
+      "name": "baseUrl",
+      "description": "Absolute site origin used to convert relative `to`/`href` values into canonical URLs inside the JSON-LD payload.\nProvide `null` to leave relative paths untouched (search engines may warn if they remain relative).",
+      "type": "string | null",
+      "required": false,
+      "defaultValue": "null"
+    }
+  ],
+  "examples": [],
+  "codeSnippets": [],
+  "tags": {}
+}

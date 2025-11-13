@@ -1,0 +1,69 @@
+{
+  "displayName": "ccmFormGroup",
+  "description": "Container component for grouping related buttons with shared borders and spacing.\n\nGroups multiple button elements together, removing border radius between them\nand applying negative margins to create a visually connected button group.\nSupports semantic variants via attribute selectors and customizable spacing\nthrough design tokens. Includes accessibility support with ARIA roles and labels.\n\nUse for action groups, toolbar-style controls, or any context where buttons\nshould appear as a single cohesive unit.",
+  "props": [
+    {
+      "name": "is",
+      "description": "Root HTML element tag for the group container. Common values: 'div', 'nav', 'section'.",
+      "type": "string",
+      "required": false,
+      "defaultValue": "'div'"
+    },
+    {
+      "name": "size",
+      "description": "Padding scale for the group container; uses space tokens (e.g., 2xs, xs, s, m, l). Maps to --_ccm-form-group-padding.",
+      "type": "string",
+      "required": false,
+      "defaultValue": "'m'"
+    },
+    {
+      "name": "variant",
+      "description": "Presentation style variant. Use attribute selectors in CSS to style variants (e.g., [variant='attached']).",
+      "type": "string",
+      "required": false,
+      "defaultValue": "'default'"
+    },
+    {
+      "name": "gap",
+      "description": "Gap spacing between grouped buttons; uses space tokens (e.g., 2xs, xs, s, m, l). Maps to --_ccm-form-group-gap.",
+      "type": "string",
+      "required": false,
+      "defaultValue": "'xs'"
+    },
+    {
+      "name": "backgroundColor",
+      "description": "Background color design token name (without -- prefix). Example: 'color-surface-subtle' or 'color-brand-500'. Maps to --_ccm-form-group-background-color.",
+      "type": "string",
+      "required": false,
+      "defaultValue": "'transparent'"
+    },
+    {
+      "name": "borderRadius",
+      "description": "Border radius token for outer corners (e.g., s, m, l, pill). Maps to --_ccm-form-group-border-radius.",
+      "type": "string",
+      "required": false,
+      "defaultValue": "'m'"
+    },
+    {
+      "name": "ariaLabel",
+      "description": "Accessible label for the group when no visible label exists. Recommended for toolbar or split button variants.",
+      "type": "string",
+      "required": false,
+      "defaultValue": "null"
+    },
+    {
+      "name": "role",
+      "description": "ARIA role for the container. Common values: 'group', 'toolbar'. Use 'toolbar' for action toolbars.",
+      "type": "string",
+      "required": false,
+      "defaultValue": "null"
+    }
+  ],
+  "examples": [],
+  "codeSnippets": [],
+  "tags": {
+    "component": "ccmFormGroup",
+    "category": "molecule",
+    "standards": "all-10"
+  }
+}

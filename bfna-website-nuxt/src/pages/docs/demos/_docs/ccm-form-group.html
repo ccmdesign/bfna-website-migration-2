@@ -1,0 +1,46 @@
+<div class="stack" data-space="xs">
+  <article class="stack" data-space="2xs">
+    <h3>Component: ccmFormGroup</h3>
+    <p>Container component for grouping related buttons with shared borders and spacing.</p>
+    <p>Groups multiple button elements together, removing border radius between them<br />and applying negative margins to create a visually connected button group.<br />Supports semantic variants via attribute selectors and customizable spacing<br />through design tokens. Includes accessibility support with ARIA roles and labels.</p>
+    <p>Use for action groups, toolbar-style controls, or any context where buttons<br />should appear as a single cohesive unit.</p>
+    <dl class="stack" data-space="4xs">
+      <dt>Category</dt>
+      <dd>molecule</dd>
+      <dt>Standards</dt>
+      <dd>all-10</dd>
+    </dl>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: is</h3>
+    <p>Root HTML element tag for the group container. Common values: 'div', 'nav', 'section'.</p>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: size</h3>
+    <p>Padding scale for the group container; uses space tokens (e.g., 2xs, xs, s, m, l). Maps to --_ccm-form-group-padding.</p>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: variant</h3>
+    <p>Presentation style variant. Use attribute selectors in CSS to style variants (e.g., [variant='attached']).</p>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: gap</h3>
+    <p>Gap spacing between grouped buttons; uses space tokens (e.g., 2xs, xs, s, m, l). Maps to --_ccm-form-group-gap.</p>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: backgroundColor</h3>
+    <p>Background color design token name (without -- prefix). Example: 'color-surface-subtle' or 'color-brand-500'. Maps to --_ccm-form-group-background-color.</p>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: borderRadius</h3>
+    <p>Border radius token for outer corners (e.g., s, m, l, pill). Maps to --_ccm-form-group-border-radius.</p>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: ariaLabel</h3>
+    <p>Accessible label for the group when no visible label exists. Recommended for toolbar or split button variants.</p>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: role</h3>
+    <p>ARIA role for the container. Common values: 'group', 'toolbar'. Use 'toolbar' for action toolbars.</p>
+  </article>
+</div>

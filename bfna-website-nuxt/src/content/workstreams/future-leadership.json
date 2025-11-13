@@ -1,0 +1,80 @@
+{
+  "heading": "Future Leadership",
+  "description": "Leaders around the world have been forced to grapple with a series of unfamiliar threats to domestic and international stability. From the COVID-19 pandemic to right-wing populism and escalating state-sponsored and rogue cyberattacks, the need for effective leadership at this moment is critical. This can only be achieved through international exchange, idea-sharing, and learning from prior successes and failures of transatlantic leadership. Through research, polling, and our transatlantic legislative exchange program, the Bertelsmann Foundation Fellowship (BFF), we seek to foster stronger transatlantic ties through a deeper mutual understanding.",
+  "theme": "future-leadership",
+  "button": {
+    "url": "/future-leadership",
+    "label": "Learn More"
+  },
+  "image": {
+    "url": "https://images.ctfassets.net/9vgcz0fppkl3/1JsSVGcREPqtH8IVWbPNCN/943eacad669eca2e285090dfc4049209/future-of-work_2x.webp?w=800&fm=webp&q=80&fit=fill",
+    "title": "future leadership cover"
+  },
+  "products_list": [
+    {
+      "theme": "future-leadership",
+      "type": "website",
+      "heading": "The Bertelsmann Foundation Fellowship",
+      "excerpt": "The Bertelsmann Foundation Fellowship (BFF), formerly known as the Congressional European Parliamentary Initiative (CEPI), offers a unique transatlantic hybrid experience spanning five months, designed to foster connections, knowledge transfer, and learning. Each year, the fellowship delves into global challenges confronting the transatlantic alliance. Commencing with an in-person trip to Washington, D.C., fellows then embark on a three-month virtual program, meeting weekly with experts relevant to the year's theme. The fellowship culminates with a visit to Brussels facilitating further in-person engagement. At the program's conclusion, fellows collaborate on a final publication presenting concrete policy recommendations pertaining to the chosen topic, released as an outcome of the BFF initiative. Fellows then also become a part of a larger, active Alumni network- finding opportunities to engage with the Bertelsmann Foundation Fellowship beyond their fellowship year.",
+      "image": {
+        "url": "https://images.ctfassets.net/9vgcz0fppkl3/1DaDJZYgISmNTWg3lfRiEz/27b3a75e462dbf343590ef34a1ec7b11/bff_image.png?w=800&fm=webp&q=80&fit=fill",
+        "title": "CEPI 2019 Group Image"
+      },
+      "button": {
+        "url": "/future-leadership/the-bertelsmann-foundation-fellowship/",
+        "label": "Learn More"
+      }
+    },
+    {
+      "theme": "future-leadership",
+      "type": "website",
+      "heading": "Summer Enrichment Series",
+      "excerpt": "The Summer Enrichment Series (SES) is a Bertelsmann Foundation program was launched in 2022. Each summer, the SES brings together a diverse group of graduate students and young professionals who have a strong interest in the transatlantic relationship.  Monthly roundtable events in June, July, and August have a thematic focus corresponding with relevant geopolitical events shaping the transatlantic alliance.",
+      "image": {
+        "url": "https://images.ctfassets.net/9vgcz0fppkl3/HFrHWldjvrLqXpSq4kFPz/7df5e173757c06795ecd2941100b1c90/SES_mock.png?w=800&fm=webp&q=80&fit=fill",
+        "title": "SES mock"
+      },
+      "button": {
+        "url": "/future-leadership/summer-enrichment-series/",
+        "label": "Learn More"
+      }
+    },
+    {
+      "theme": "future-leadership",
+      "type": "website",
+      "heading": "Leadership in Action",
+      "excerpt": "In its third season, Leadership in Action explores the strategies of skilled negotiators and practitioners as they tackle some of the world’s most intractable challenges. The first episode features Jan Eliasson, former Swedish Foreign Minister and Deputy Secretary-General of the United Nations, reflecting on pivotal moments in his career spent resolving global conflicts. The second episode highlights Ugandan opposition leader Bobi Wine, who takes us on a harrowing journey from repression to mobilizing a nation in the fight for democracy. The third episode focuses on Tzipi Livni, former Israeli Foreign Minister, filmed prior to the Hamas terror attack on October 7, 2023, and the ongoing conflict. It explores her role as Israel's chief negotiator during peace talks with the Palestinian Authority in the final rounds of negotiations in the 2000s.",
+      "image": {
+        "url": "https://images.ctfassets.net/9vgcz0fppkl3/1NbUdoeyxEB4c38NvAz5SW/c0f617462da7c52e768682e5319dda8a/LIA_season_2_mock.png?w=800&fm=webp&q=80&fit=fill",
+        "title": "Leadership in Action Season 2"
+      },
+      "button": {
+        "url": "/future-leadership/leadership-in-action/",
+        "label": "Learn More"
+      }
+    }
+  ],
+  "updates_list": [
+    {
+      "theme": "future-leadership",
+      "excerpt": "“Americans innovate while Europeans regulate.” \n\nThis old trope misses a fundamental point. Both peoples are actually powerhouses of innovation. But it is their respective fundamental societal beliefs in individual and government responsibility that steer their creative energies in different paths.",
+      "heading": "From Idea to Impact",
+      "subheading": "How Transatlantic Rights Philosophies Shape Innovation",
+      "by_line": "By Chloe Ladd, on Oct 23, 2025",
+      "button": {
+        "url": "/future-leadership/from-idea-to-impact-6g1tpk5svy/",
+        "label": "Learn More"
+      },
+      "publish_date": "2025-10-23"
+    }
+  ],
+  "slug": "future-leadership",
+  "navigation_order": 3,
+  "visible": true,
+  "hero": {
+    "webp": "/images/hero/future-leadership@2x.webp",
+    "fallback": "/images/hero/future-leadership@2x.jpg",
+    "width": 1600,
+    "height": 1066
+  }
+}

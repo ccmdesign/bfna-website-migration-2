@@ -1,0 +1,30 @@
+@layer composition {
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(var(--_grid-min-width, 240px), 1fr));
+    gap: var(--_grid-gap, var(--space-s));
+  }
+  
+  /* ========================================
+     Data Attribute Controls for Spacing
+     ======================================== */
+  
+  /* Grid gap */
+  .grid[data-gap="3xs"] { --_grid-gap: var(--space-3xs); }
+  .grid[data-gap="2xs"] { --_grid-gap: var(--space-2xs); }
+  .grid[data-gap="xs"] { --_grid-gap: var(--space-xs); }
+  .grid[data-gap="s"] { --_grid-gap: var(--space-s); }
+  .grid[data-gap="m"] { --_grid-gap: var(--space-m); }
+  .grid[data-gap="l"] { --_grid-gap: var(--space-l); }
+  .grid[data-gap="xl"] { --_grid-gap: var(--space-xl); }
+  .grid[data-gap="2xl"] { --_grid-gap: var(--space-2xl); }
+  .grid[data-gap="3xl"] { --_grid-gap: var(--space-3xl); }
+  
+  /* Grid min-width */
+  .grid[data-min-width="xs"] { --_grid-min-width: 160px; }
+  .grid[data-min-width="s"] { --_grid-min-width: 200px; }
+  .grid[data-min-width="m"] { --_grid-min-width: 240px; }
+  .grid[data-min-width="l"] { --_grid-min-width: 300px; }
+  .grid[data-min-width="xl"] { --_grid-min-width: 400px; }
+  .grid[data-min-width="2xl"] { --_grid-min-width: 500px; }
+}

@@ -1,0 +1,31 @@
+@layer composition {
+  .frame {
+    --_frame-ratio: var(--theme-frame-ratio, 16 / 9);
+  
+    aspect-ratio: var(--_frame-ratio);
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .frame > * {
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+  }
+  
+  /* ========================================
+     Data Attribute Controls for Ratio
+     ======================================== */
+  
+  /* Common aspect ratios */
+  .frame[data-ratio="1:1"] { --_frame-ratio: 1 / 1; }
+  .frame[data-ratio="4:3"] { --_frame-ratio: 4 / 3; }
+  .frame[data-ratio="3:2"] { --_frame-ratio: 3 / 2; }
+  .frame[data-ratio="16:9"] { --_frame-ratio: 16 / 9; }
+  .frame[data-ratio="21:9"] { --_frame-ratio: 21 / 9; }
+  .frame[data-ratio="9:16"] { --_frame-ratio: 9 / 16; }
+  .frame[data-ratio="3:4"] { --_frame-ratio: 3 / 4; }
+  .frame[data-ratio="2:3"] { --_frame-ratio: 2 / 3; }
+}

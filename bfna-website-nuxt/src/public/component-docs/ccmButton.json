@@ -1,0 +1,97 @@
+{
+  "displayName": "ccmButton",
+  "description": "Primary button component following all 10 Component Standards.\n\nA versatile button component that supports multiple variants, sizes, and colors.\nCan render as button, link (NuxtLink), or anchor based on props. Includes full\naccessibility support with proper ARIA attributes and keyboard navigation.\n\nUses semantic color tokens for variants. Sizes follow s/m/l/xl scale.\nSee Component Design Decisions for full rationale.",
+  "props": [
+    {
+      "name": "is",
+      "description": "HTML tag to render when not using to/href. Defaults to 'button' for standard button behavior.",
+      "type": "string",
+      "required": false,
+      "defaultValue": "'button'"
+    },
+    {
+      "name": "to",
+      "description": "Internal route for NuxtLink navigation. When provided, renders as NuxtLink component.",
+      "type": "string|object",
+      "required": false,
+      "defaultValue": "null"
+    },
+    {
+      "name": "href",
+      "description": "External URL for anchor link. When provided, renders as <a> tag with href attribute.",
+      "type": "string",
+      "required": false,
+      "defaultValue": "null"
+    },
+    {
+      "name": "label",
+      "description": "Button text label used as fallback when slot is empty. Takes precedence over slot content for accessibility.",
+      "type": "string",
+      "required": false,
+      "defaultValue": "''"
+    },
+    {
+      "name": "size",
+      "description": "Button size following the s/m/l/xl scale. Controls padding and font size. Valid values: s, m, l, xl",
+      "type": "string",
+      "required": false,
+      "defaultValue": "'m'"
+    },
+    {
+      "name": "color",
+      "description": "Color theme using semantic design tokens. Valid values: primary, secondary, base, accent, white, success, fail, warning, info",
+      "type": "string",
+      "required": false,
+      "defaultValue": "'base'"
+    },
+    {
+      "name": "backgroundColor",
+      "description": "Custom background color override using CSS custom property name (without -- prefix). Use 'transparent' for default behavior.",
+      "type": "string",
+      "required": false,
+      "defaultValue": "'transparent'"
+    },
+    {
+      "name": "variant",
+      "description": "Visual style variant affecting appearance. Valid values: primary (filled), secondary (outlined), ghost (no border), link (text-only), unstyled (no styles)",
+      "type": "string",
+      "required": false,
+      "defaultValue": "'primary'"
+    },
+    {
+      "name": "ariaLabel",
+      "description": "Custom aria-label for screen readers. Overrides automatic label generation. Use for buttons with icon-only content.",
+      "type": "string",
+      "required": false,
+      "defaultValue": "null"
+    },
+    {
+      "name": "isPressed",
+      "description": "Toggle button pressed state. Set to true/false for toggle buttons, null for non-toggle buttons. Controls aria-pressed attribute.",
+      "type": "boolean",
+      "required": false,
+      "defaultValue": "null"
+    },
+    {
+      "name": "isExpanded",
+      "description": "Expandable button expanded state. Set to true/false for expandable buttons, null for non-expandable buttons. Controls aria-expanded attribute.",
+      "type": "boolean",
+      "required": false,
+      "defaultValue": "null"
+    },
+    {
+      "name": "disabled",
+      "description": "Disable the button and prevent all interactions. Sets aria-disabled and removes pointer events.",
+      "type": "boolean",
+      "required": false,
+      "defaultValue": "false"
+    }
+  ],
+  "examples": [],
+  "codeSnippets": [],
+  "tags": {
+    "component": "ccmButton",
+    "category": "atom",
+    "standards": "all-10"
+  }
+}

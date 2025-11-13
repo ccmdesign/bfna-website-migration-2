@@ -1,0 +1,76 @@
+[
+  {
+    "layer": "components",
+    "files": [
+      "src/public/css/components/prose.css"
+    ]
+  },
+  {
+    "layer": "composition",
+    "files": [
+      "src/public/css/composition/box.css",
+      "src/public/css/composition/center.css",
+      "src/public/css/composition/cluster.css",
+      "src/public/css/composition/container.css",
+      "src/public/css/composition/cover.css",
+      "src/public/css/composition/frame.css",
+      "src/public/css/composition/grid.css",
+      "src/public/css/composition/imposter.css",
+      "src/public/css/composition/reel.css",
+      "src/public/css/composition/stack.css",
+      "src/public/css/composition/switcher.css"
+    ]
+  },
+  {
+    "layer": "defaults",
+    "files": [
+      "src/public/css/base/forms.css",
+      "src/public/css/base/tables.css",
+      "src/public/css/base/typography.css"
+    ]
+  },
+  {
+    "layer": "overrides",
+    "files": [
+      "src/public/css/dev.css"
+    ]
+  },
+  {
+    "layer": "reset",
+    "files": [
+      "src/public/css/base/reset.css",
+      "src/public/css/styles.css"
+    ]
+  },
+  {
+    "layer": "themes",
+    "files": [
+      "src/public/css/themes/theme.css"
+    ]
+  },
+  {
+    "layer": "tokens",
+    "files": [
+      "src/public/css/tokens/fonts.css",
+      "src/public/css/tokens/primitive-colors-shades-and-tints.css",
+      "src/public/css/tokens/primitive-colors.css",
+      "src/public/css/tokens/primitive-misc.css",
+      "src/public/css/tokens/primitive-spacing.css",
+      "src/public/css/tokens/semantic-colors-shades-and-tints.css",
+      "src/public/css/tokens/semantic-colors.css",
+      "src/public/css/tokens/semantic-misc.css",
+      "src/public/css/tokens/semantic-spacing.css"
+    ]
+  },
+  {
+    "layer": "utils",
+    "files": [
+      "src/public/css/utils/color-utils-background-color.css",
+      "src/public/css/utils/color-utils-border-color.css",
+      "src/public/css/utils/color-utils-color.css",
+      "src/public/css/utils/space-utils.css",
+      "src/public/css/utils/typography-utils.css",
+      "src/public/css/utils/utils.css"
+    ]
+  }
+]

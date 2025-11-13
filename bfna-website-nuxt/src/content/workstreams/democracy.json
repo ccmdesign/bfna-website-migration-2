@@ -1,0 +1,200 @@
+{
+  "heading": "Democracy",
+  "description": "Democratic decline in the U.S. and Europe is weakening the transatlantic relationship and undermining its influence around the world. America and its European allies need to recalibrate their values and practices at home in order to serve as beacons to aspiring democracies abroad. But disruptions to our democratic traditions keep emerging: from new technologies changing the way we communicate and work to pandemics and economic shocks. Our work analyzes how these disruptions are playing out, and it will be up to civil society, lawmakers, and the people to prepare our democracies for the future.",
+  "theme": "democracy",
+  "button": {
+    "url": "/democracy",
+    "label": "Learn More"
+  },
+  "image": {
+    "url": "https://images.ctfassets.net/9vgcz0fppkl3/3PO05zIyelFiZFt4mTjcVZ/2624c6c892a41ebcc45e91ba8c74d82c/democracy_2x.webp?w=800&fm=webp&q=80&fit=fill",
+    "title": "Democracy"
+  },
+  "products_list": [
+    {
+      "theme": "democracy",
+      "type": "website",
+      "heading": "How to Fix Democracy",
+      "excerpt": "Host Andrew Keen interviews prominent thinkers, writers, politicians, technologists, and business leaders who enlighten and challenge us as we seek the answers to How to Fix Democracy.",
+      "image": {
+        "url": "https://images.ctfassets.net/9vgcz0fppkl3/4Weo6AzLa0sJUNLISFPzJM/6de27e24998e9bf0ab4fc5a718034578/how-to-fix-democracy.png?w=800&fm=webp&q=80&fit=fill",
+        "title": "How to fix democracy"
+      },
+      "button": {
+        "url": "/podcasts/how-to-fix-democracy/",
+        "label": "Learn More"
+      }
+    },
+    {
+      "theme": "democracy",
+      "type": "website",
+      "heading": "City Solutions Series",
+      "excerpt": "The commitment to liberal democracy is a core value of the transatlantic community. And while democracy has always faced external threats, a second front has emerged in recent years, challenging its fundamental principles from within. On every continent, local and national governments are experimenting with new methods of tackling the threats to public confidence and democratic governance by addressing a range of common challenges. The drivers of democratic backsliding are now clear, so this project focuses on uncovering solutions, then amplifies these best practices for a transatlantic audience searching for innovative approaches to reverse democratic decline.",
+      "image": {
+        "url": "https://images.ctfassets.net/9vgcz0fppkl3/u9sDOjBIA3mPwT61QXQpB/4bbc014763aabcc55216177a19f1c1ac/browser.png?w=800&fm=webp&q=80&fit=fill",
+        "title": "City Solutions cover photo"
+      },
+      "button": {
+        "url": "/democracy/city-solutions-series/",
+        "label": "Learn More"
+      }
+    },
+    {
+      "theme": "democracy",
+      "type": "report",
+      "heading": "Graphic Images: Autocrats and the Use of Power",
+      "excerpt": "In this fourth and final installment of our Disrupting Democracy series, \"Graphic Images: Autocrats and the Use of Power,\" we will look at how three authoritarian regimes undermine the prospects for democracy and stability in their respective regions. Drawing from the more than 15 years of data from the Bertelsmann Transformation Index, this publication reimagines country and regional level data into infographics that shine a light on three distinct cases: Russia, Iran and China.",
+      "image": {
+        "url": "https://images.ctfassets.net/9vgcz0fppkl3/3GMjG0JQTHBHwY6hLyfA9/54dd15f59ed66af93d35b28a808363a4/graphic_images_2_mock.png?w=800&fm=webp&q=80&fit=fill",
+        "title": "graphic-images"
+      },
+      "button": {
+        "url": "/democracy/graphic-images-autocrats-and-the-use-of-power/",
+        "label": "Learn More"
+      }
+    },
+    {
+      "theme": "democracy",
+      "type": "report",
+      "heading": "Disrupting Democracy Vol. II",
+      "excerpt": "In 2018, for our second instalment of the Disrupting Democracy project we turned our attention to elections. From the rise of Five Star and Lega in Italy to U.S. Democrats’ success winning the U.S. House of Representatives, and from to Morena and Andrés Manuel López Obrador’s victory in Mexico to a cultural and linguistic divide in Latvia, Disrupting Democracy Vol. II: Election Series recorded how technology was put to work to make a difference at the ballot box.",
+      "image": {
+        "url": "https://images.ctfassets.net/9vgcz0fppkl3/29Xl7jvUVM50wu8PBMEonD/b97ffc8cf1ff61ee26cecf5dd49cbff6/Disrupting-Democracy-vol-2.png?w=800&fm=webp&q=80&fit=fill",
+        "title": "Disrupting-Democracy-vol-2"
+      },
+      "button": {
+        "url": "/democracy/disrupting-democracy-vol-ii/",
+        "label": "Learn More"
+      }
+    },
+    {
+      "theme": "democracy",
+      "type": "report",
+      "heading": "Disrupting Democracy Vol. I",
+      "excerpt": "Beginning January 2017, the Bertelsmann Foundation embarked on a journey to explore how digital innovation impacts democracies and societies around the world in a series called \"Disrupting Democracy.\" In volume one, we focused on key challenges that have emerged as a result of technological disruption from the rival capitals of Washington and Havana, the bustling streets of New Delhi, the dynamic tech startups in Tel Aviv, and the efficient order of Berlin.",
+      "image": {
+        "url": "https://images.ctfassets.net/9vgcz0fppkl3/1mjWJReHvjjCfvUFWGRkpK/9cb45a27bd4d8fb12f15d60e9652fd8c/disrupting-democracy-vol-1.png?w=800&fm=webp&q=80&fit=fill",
+        "title": "Disrupting-Democracy-Cover-1"
+      },
+      "button": {
+        "url": "/democracy/disrupting-democracy-vol-i/",
+        "label": "Learn More"
+      }
+    }
+  ],
+  "updates_list": [
+    {
+      "theme": "democracy",
+      "excerpt": "October 7, 1989 marked 40 years of the German Democratic Republic (GDR), or East Germany, a repressive Communist state that divided post-war Germany politically, economically, socially and culturally. ",
+      "heading": "Demonstrations, Democracy and Dreams Deferred",
+      "subheading": "35 Years of Reunification in Thuringia",
+      "by_line": "By Courtney Flynn Martino, on Sep 29, 2025",
+      "button": {
+        "url": "/democracy/demonstrations-democracy-and-dreams-deferred-1avt3jxzlb/",
+        "label": "Learn More"
+      },
+      "publish_date": "2025-09-29"
+    },
+    {
+      "theme": "democracy",
+      "excerpt": "The price of democratic backsliding may soon rise. ",
+      "heading": "Accounting for Autocracy",
+      "subheading": "Rule of Law in the Next EU Budget",
+      "by_line": "By Zachary Stoor, on Sep 25, 2025",
+      "button": {
+        "url": "/democracy/accounting-for-autocracy-5put1jotzu/",
+        "label": "Learn More"
+      },
+      "publish_date": "2025-09-25"
+    },
+    {
+      "theme": "democracy",
+      "excerpt": "2025 is shaping up to be a pivotal year for Japan.",
+      "heading": "Tokyo Drifting?",
+      "subheading": "Japan Debates an Uncertain Future",
+      "by_line": "By Marshall Reid, on Sep 10, 2025",
+      "button": {
+        "url": "/democracy/tokyo-drifting-k4vkdveosg/",
+        "label": "Learn More"
+      },
+      "publish_date": "2025-09-10"
+    },
+    {
+      "theme": "democracy",
+      "excerpt": "Italian Prime Minister Giorgia Meloni, once heralded as a danger to EU cohesion, has become Brussels’ favored bridge-builder. ",
+      "heading": "Pianissimo: ",
+      "subheading": "Brussels’ Silence on Italy’s Democratic Decline",
+      "by_line": "By Zachary Stoor, on Apr 7, 2025",
+      "button": {
+        "url": "/democracy/pianissimo-5dcjfhhho7/",
+        "label": "Learn More"
+      },
+      "publish_date": "2025-04-07"
+    },
+    {
+      "theme": "democracy",
+      "excerpt": "In May 2024, tensions in New Caledonia reached a breaking point. ",
+      "heading": "The Third Way",
+      "subheading": "New Caledonia and French Strategy in the Indo-Pacific",
+      "by_line": "By Chloe Ladd and Marshall Reid, on Mar 12, 2025",
+      "button": {
+        "url": "/democracy/the-third-way-4w6copbpxr/",
+        "label": "Learn More"
+      },
+      "publish_date": "2025-03-12"
+    },
+    {
+      "theme": "democracy",
+      "excerpt": "French President Emmanuel Macron had to shake things up. His government was unable to secure parliamentary majorities for two hot-button issues, pension reform and immigration, each a major setback. “La Macronie”, as the French have nicknamed his political brand, now finds itself at a difficult crossroads. France’s next presidential election may still be far off, but the incumbent must take steps now to protect his legacy and ensure that an increasingly popular far right does not gain power. ",
+      "heading": "Macron’s Millennial Minister: Winning Over the Next Generation ",
+      "by_line": "By Chloe Ladd, on Mar 12, 2024",
+      "button": {
+        "url": "/democracy/macrons-millennial-minister-winning-over-the-next-generation-4ystiwjkmx/",
+        "label": "Learn More"
+      },
+      "publish_date": "2024-03-12"
+    },
+    {
+      "theme": "democracy",
+      "excerpt": "On October 8, 2023, Bavaria hosted its state election. Ranked second in gross regional product and population, Bavaria has always had a sizable influence on German politics, with many seeing this year’s state election as a bellwether for what to expect at the national level in 2025. ",
+      "heading": "Pictures Worth a Thousand Policies: Campaign Imagery from Bavaria’s State Election",
+      "by_line": "By Courtney Flynn Martino, on Oct 26, 2023",
+      "button": {
+        "url": "/democracy/pictures-worth-a-thousand-policies-campaign-imagery-from-bavarias-state-election-3gc8dhcf1n/",
+        "label": "Learn More"
+      },
+      "publish_date": "2023-10-26"
+    },
+    {
+      "theme": "democracy",
+      "excerpt": "28% of French citizens chose not to vote in the second, and final, round of the April 2022 French presidential election. This was the highest rate of abstention in over 50 years and the second highest rate in the history of the Fifth Republic.",
+      "heading": "On the Fringe",
+      "by_line": "By Chloe Ladd, on Sep 14, 2023",
+      "button": {
+        "url": "/democracy/on-the-fringe-fx4yxa65oh/",
+        "label": "Learn More"
+      },
+      "publish_date": "2023-09-14"
+    },
+    {
+      "theme": "democracy",
+      "excerpt": "An August 2023 ARD-Deutschlandtrend survey found that 79% of Germans are dissatisfied with the governing coalition of Social Democrats (SPD), Greens, and Free Democrats (FDP), including a majority of SPD and FDP voters and 48% of Greens. In-fighting over climate, budget, and defense have worn down the so-called traffic light coalition, causing consensus on these and other crucial issues to remain elusive. ",
+      "heading": "Two’s Company, Three’s a Crowd, and Four’s a Misfortune: Germany’s Next Coalition",
+      "by_line": "By Courtney Flynn Martino, on Aug 10, 2023",
+      "button": {
+        "url": "/democracy/twos-company-threes-a-crowd-and-fours-a-misfortune-germanys-next-coalition-1a4gxdlnlg/",
+        "label": "Learn More"
+      },
+      "publish_date": "2023-08-10"
+    }
+  ],
+  "slug": "democracy",
+  "navigation_order": 1,
+  "visible": true,
+  "hero": {
+    "webp": "/images/hero/democracy@2x.webp",
+    "fallback": "/images/hero/democracy@2x.jpg",
+    "width": 1600,
+    "height": 1600
+  }
+}

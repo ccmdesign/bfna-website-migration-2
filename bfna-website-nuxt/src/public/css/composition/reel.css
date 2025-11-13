@@ -1,0 +1,56 @@
+@layer composition {
+  .reel {
+    display: flex;
+    block-size: auto;
+    overflow: auto hidden;
+    scrollbar-color: #fff #000;
+  
+    --_reel-space: var(--space-s);
+  }
+  
+  .reel::-webkit-scrollbar {
+    block-size: 1rem;
+  }
+  
+  .reel::-webkit-scrollbar-track {
+    background-color: #000;
+  }
+  
+  .reel::-webkit-scrollbar-thumb {
+    background-color: #000;
+    background-image: linear-gradient(#000 0, #000 0.25rem, #fff 0.25rem, #fff 0.75rem, #000 0.75rem);
+  }
+  
+  .reel > * {
+    flex: 0 0 auto;
+  }
+  
+  .reel > img {
+    block-size: 100%;
+    flex-basis: auto;
+    width: auto;
+  }
+  
+  .reel > * + * {
+    margin-inline-start: var(--_reel-space);
+  }
+  
+  .reel.overflowing {
+    padding-block-end: 1rem;
+  }
+  
+  /* ========================================
+     Data Attribute Controls for Spacing
+     ======================================== */
+  
+  /* Reel spacing (for the gap between items) */
+  .reel[data-space="3xs"] { --_reel-space: var(--space-3xs); }
+  .reel[data-space="2xs"] { --_reel-space: var(--space-2xs); }
+  .reel[data-space="xs"] { --_reel-space: var(--space-xs); }
+  .reel[data-space="s"] { --_reel-space: var(--space-s); }
+  .reel[data-space="m"] { --_reel-space: var(--space-m); }
+  .reel[data-space="l"] { --_reel-space: var(--space-l); }
+  .reel[data-space="xl"] { --_reel-space: var(--space-xl); }
+  .reel[data-space="2xl"] { --_reel-space: var(--space-2xl); }
+  .reel[data-space="3xl"] { --_reel-space: var(--space-3xl); }
+}

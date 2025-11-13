@@ -1,0 +1,57 @@
+<div class="stack" data-space="xs">
+  <article class="stack" data-space="2xs">
+    <h3>Component: ccmFormField</h3>
+    <p>Slot-first form field wrapper with labels, validation messages, and a11y wiring.</p>
+    <p>Wraps any input/textarea/select via the default slot and provides automatic<br />label association, aria-describedby wiring for help/validation messages, and<br />consistent styles across sizes and validation states. Gracefully degrades by<br />rendering a default text input when no slot content is provided.</p>
+    <dl class="stack" data-space="4xs">
+      <dt>Category</dt>
+      <dd>ds-form</dd>
+      <dt>Standards</dt>
+      <dd>all-10</dd>
+    </dl>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: id</h3>
+    <p>Custom element id for the input. If omitted, a stable id is auto-generated and associated with the label.</p>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: labelPosition</h3>
+    <p>Label placement. Valid values: top (default), inline, hidden</p>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: label</h3>
+    <p>Visible label text. When labelPosition=&quot;hidden&quot;, keep for a11y but hide visually; also consider aria-label on the input.</p>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: helpText</h3>
+    <p>Helper text shown only in the default validation state. Included in aria-describedby.</p>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: errorMessage</h3>
+    <p>Error message shown when validationState=&quot;error&quot;. Included in aria-describedby and sets aria-invalid.</p>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: successMessage</h3>
+    <p>Success message shown when validationState=&quot;success&quot;. Included in aria-describedby.</p>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: warningMessage</h3>
+    <p>Warning message shown when validationState=&quot;warning&quot;. Included in aria-describedby.</p>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: size</h3>
+    <p>Control spacing and typography scale. Valid values: s, m, l, xl</p>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: validationState</h3>
+    <p>Visual and a11y state. Valid values: default, success, error, warning</p>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: required</h3>
+    <p>Adds a visual asterisk in the label. Use native required on the input to enforce validation.</p>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: showValidationIcon</h3>
+    <p>Toggle the inline validation icon for non-default states.</p>
+  </article>
+</div>

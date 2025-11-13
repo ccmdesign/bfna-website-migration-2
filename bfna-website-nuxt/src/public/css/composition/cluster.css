@@ -1,0 +1,28 @@
+@layer composition {
+  .cluster {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--_cluster-space, var(--space-s));
+    justify-content: flex-start;
+    align-items: center;
+  
+    /* data-split - isso é um modifier do cluster, que empurra os elementos para o lado oposto do parent */
+    [split-left] { margin-left: auto; }
+    [split-right] { margin-right: auto; }
+  }
+  
+  /* ========================================
+     Data Attribute Controls for Spacing
+     ======================================== */
+  
+  /* Cluster spacing */
+  .cluster[data-space="3xs"] { --_cluster-space: var(--space-3xs); }
+  .cluster[data-space="2xs"] { --_cluster-space: var(--space-2xs); }
+  .cluster[data-space="xs"] { --_cluster-space: var(--space-xs); }
+  .cluster[data-space="s"] { --_cluster-space: var(--space-s); }
+  .cluster[data-space="m"] { --_cluster-space: var(--space-m); }
+  .cluster[data-space="l"] { --_cluster-space: var(--space-l); }
+  .cluster[data-space="xl"] { --_cluster-space: var(--space-xl); }
+  .cluster[data-space="2xl"] { --_cluster-space: var(--space-2xl); }
+  .cluster[data-space="3xl"] { --_cluster-space: var(--space-3xl); }
+}

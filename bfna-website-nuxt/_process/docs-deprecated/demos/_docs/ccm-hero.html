@@ -1,0 +1,46 @@
+<div class="stack" data-space="xs">
+  <article class="stack" data-space="2xs">
+    <h3>Component: ccmHero</h3>
+    <p>Hero section component for page headers and landing sections.</p>
+    <p>A flexible banner component that provides structured slots for top navigation, main content,<br />and bottom metadata. Supports multiple layout variants (default, minimal, full-screen) and<br />size-based spacing. Uses semantic HTML with role=&quot;banner&quot; for accessibility.</p>
+    <p>Default variant uses 16:7 aspect ratio. Minimal removes aspect ratio constraints.<br />Full-screen variant stretches to 100vh for immersive landing experiences.</p>
+    <dl class="stack" data-space="4xs">
+      <dt>Category</dt>
+      <dd>organism</dd>
+      <dt>Standards</dt>
+      <dd>all-10</dd>
+    </dl>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: brow</h3>
+    <p>Optional eyebrow text displayed above the main title. Renders as h4 when provided.</p>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: title</h3>
+    <p>Main hero heading text. Renders as h1 when provided. Falls back to default slot if not provided.</p>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: tagline</h3>
+    <p>Supporting tagline text displayed below the title. Renders as h3 when provided.</p>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: backgroundColor</h3>
+    <p>Custom background color using CSS custom property name (without -- prefix). Overrides default background.</p>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: size</h3>
+    <p>Padding size following the s/m/l/xl scale. Controls vertical padding via --space-{size} token. Valid values: s, m, l, xl</p>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: variant</h3>
+    <p>Layout variant affecting aspect ratio and height. Valid values: default (16:7 aspect), minimal (auto height), full-screen (100vh)</p>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: hideTop</h3>
+    <p>Hide the top section (top-bar and top slots). When true, top navigation and related content is hidden.</p>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: hideBottom</h3>
+    <p>Hide the bottom section (bottom slot). When true, bottom metadata and CTAs are hidden. Defaults to true.</p>
+  </article>
+</div>

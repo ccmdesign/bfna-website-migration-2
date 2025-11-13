@@ -1,0 +1,50 @@
+@layer tokens {
+  /*
+   * ⚠️ IMPORTANT - READ BEFORE EDITING ⚠️
+   * This file is part of the design token system.
+   * Before making any changes, please review the token documentation at:
+   * src/content/docs/tokens/
+   *
+   * Key docs:
+   * - architecture.md: Token system structure and principles
+   * - maintenance.md: How to safely add, modify, or remove tokens
+   * - guide.md: Usage guidelines and best practices
+   *
+   * This applies to both human developers and AI assistants.
+   */
+  
+    /* Miscellaneous semantic tokens that unify radii, shadows, and outlines */
+    :root {
+      --radius-s: 0.375rem;
+      --radius-m: 0.75rem;
+      --radius-l: 1.25rem;
+      --radius-pill: 999px;
+      --shadow-soft: 0 10px 30px rgb(22 28 45 / 8%);
+      --shadow-strong: 0 20px 60px rgb(17 24 39 / 16%);
+      --outline-focus: 0 0 0 3px color-mix(in srgb, var(--color-blue) 45%, transparent);
+      --link-color: var(--color-primary);
+      --link-color-visited: var(--color-navy);
+    }
+  
+    /* Border width semantic tokens */
+    :root {
+      --border-width-none: 0;
+      --border-width-thin: 1px;
+      --border-width-medium: 2px;
+      --border-width-thick: 4px;
+    }
+  
+    /* Typography semantic tokens */
+    :root {
+      /* Font families */
+      --font-family-display: "Sentinel SSm A", "Sentinel SSm B", sans-serif;
+      --font-family-body: "trade-gothic-next", sans-serif;
+      --font-family-icon: "Material Icons";
+  
+      /* Font weights */
+      --font-weight-normal: 400;
+      --font-weight-medium: 500;
+      --font-weight-semibold: 600;
+      --font-weight-bold: 700;
+    }
+}

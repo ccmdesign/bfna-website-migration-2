@@ -1,0 +1,252 @@
+{
+  "items": [
+    {
+      "workstream": "democracy",
+      "theme": "democracy",
+      "heading": "Out of the Darkness",
+      "subheading": "Transforming Public Spaces in Barcelona (2025, 19 minutes)",
+      "by": "Anthony Silberfeld",
+      "button": {
+        "label": "Watch",
+        "url": "https://vimeo.com/1119430814"
+      },
+      "description": "Out of the Darkness follows the transformation of Barcelona’s once-oppressive sites into vibrant centers of civic participation and democratic renewal",
+      "backgroundImage": "https://images.ctfassets.net/i3vkqp3u3738/HJJO6BGlq1Bgm8h4Fia4F/18d3a11f0c81ab0005f1d882c34e265c/BFNA_Democracy_in_cities_POSTERS_TEXTLESS11.jpg?w=800&fm=webp&q=80&fit=fill",
+      "tags": [
+        "democracy"
+      ],
+      "videoInfo": {
+        "sys": {
+          "type": "Link",
+          "linkType": "Entry",
+          "id": "5stxh45OUlQ6f99F0cQ4W8"
+        }
+      },
+      "source": "vimeo",
+      "objectType": "docs"
+    },
+    {
+      "workstream": "democracy",
+      "theme": "democracy",
+      "heading": "Blueprint in the Bluegrass",
+      "subheading": "Civic Health in Lexington (2025, 20 minutes)",
+      "by": "Anthony Silberfeld",
+      "button": {
+        "label": "Watch",
+        "url": "https://vimeo.com/1111418460"
+      },
+      "description": "Blueprint in the Bluegrass follows CivicLex in Lexington, Kentucky, as it revitalizes civic life through education, public space, local news, community bridging, and democratic transformation.\n",
+      "backgroundImage": "https://images.ctfassets.net/i3vkqp3u3738/6AT6duWGU0qSoo0EF3ybqR/489a53cfbec59a0f005632cd897b6efc/Blueprint_No_Text.jpg?w=800&fm=webp&q=80&fit=fill",
+      "tags": [
+        "Democracy",
+        "Civil Health",
+        "Education",
+        "Local News"
+      ],
+      "videoInfo": {
+        "sys": {
+          "type": "Link",
+          "linkType": "Entry",
+          "id": "57UkvR2Mp6uJMIWJU7bjb6"
+        }
+      },
+      "source": "vimeo",
+      "objectType": "docs"
+    },
+    {
+      "workstream": "democracy",
+      "theme": "democracy",
+      "heading": "Still Here",
+      "subheading": "Preserving Native American Communities in Minneapolis (2024, 22 Minutes)",
+      "by": "Anthony Silberfeld",
+      "button": {
+        "label": "Watch",
+        "url": "https://vimeo.com/video/1020726571"
+      },
+      "description": "In Minneapolis, one of the largest urban Native American communities in the U.S. fights to preserve its languages, cultures, and histories while building civic power through grassroots organizations.",
+      "backgroundImage": "https://images.ctfassets.net/i3vkqp3u3738/4N064g3tA0yHK7Bwevjp5p/e1cf945a4020296a535e31a2563e349b/BFNA_Democracy_in_cities_POSTERS_TEXTLESS7.jpg?w=800&fm=webp&q=80&fit=fill",
+      "tags": [
+        "Minneapolis",
+        "Native American",
+        "Culture",
+        "Community"
+      ],
+      "videoInfo": {
+        "sys": {
+          "type": "Link",
+          "linkType": "Entry",
+          "id": "40eAyuX8XS9RtFuAqYY2Dl"
+        }
+      },
+      "source": "vimeo",
+      "objectType": "docs"
+    },
+    {
+      "workstream": "democracy",
+      "theme": "democracy",
+      "heading": "Rising Voices",
+      "subheading": "(2024, 21 minutes)",
+      "by": "Anthony Silberfeld",
+      "button": {
+        "label": "Watch",
+        "url": "https://vimeo.com/1036845140"
+      },
+      "description": "In Vienna, Rising Voices follows young students partnering with city leaders to shape their neighborhoods, showing how even five-year-olds can spark lasting democratic change.",
+      "backgroundImage": "https://images.ctfassets.net/i3vkqp3u3738/4cXxLieTksKON6trDo2qv5/3f1a226d921bc2f98a5ae7226eb62871/BFNA_Democracy_in_cities_POSTERS_TEXTLESS3.jpg?w=800&fm=webp&q=80&fit=fill",
+      "tags": [
+        "Vienna",
+        "Democracy",
+        "Youth",
+        "Civic Engagement"
+      ],
+      "videoInfo": {
+        "sys": {
+          "type": "Link",
+          "linkType": "Entry",
+          "id": "1Jpn0PmUmNgPdJn4eeM8IB"
+        }
+      },
+      "source": "vimeo",
+      "objectType": "docs"
+    },
+    {
+      "workstream": "future-leadership",
+      "theme": "future-leadership",
+      "heading": "Bobi Wine: A Dream of Democracy",
+      "subheading": "Leadership in Action (2024, 15 minutes)",
+      "by": "Samuel George and Anthony Silberfeld",
+      "button": {
+        "label": "Watch",
+        "url": "https://vimeo.com/819893327"
+      },
+      "description": "Bobi Wine rose from Kampala’s dance halls to lead a defiant movement for democracy, daring to challenge authoritarian rule.",
+      "backgroundImage": "https://images.ctfassets.net/i3vkqp3u3738/PWGqBj3o8W8u869a8YF8L/f0f11231a35b5a3254766d05322719a8/Bobi_Clean_Horizontal.png?w=800&fm=webp&q=80&fit=fill",
+      "tags": [
+        "Democracy",
+        "Uganda",
+        "Leadership",
+        "Politics"
+      ],
+      "videoInfo": {
+        "sys": {
+          "type": "Link",
+          "linkType": "Entry",
+          "id": "6BheH2uGBoHLUz6sx96H0l"
+        }
+      },
+      "source": "vimeo",
+      "objectType": "docs"
+    }
+  ],
+  "homePageDocs": [
+    {
+      "workstream": "democracy",
+      "theme": "democracy",
+      "heading": "Out of the Darkness",
+      "subheading": "Transforming Public Spaces in Barcelona (2025, 19 minutes)",
+      "by": "Anthony Silberfeld",
+      "button": {
+        "label": "Watch",
+        "url": "https://vimeo.com/1119430814"
+      },
+      "description": "Out of the Darkness follows the transformation of Barcelona’s once-oppressive sites into vibrant centers of civic participation and democratic renewal",
+      "backgroundImage": "https://images.ctfassets.net/i3vkqp3u3738/HJJO6BGlq1Bgm8h4Fia4F/18d3a11f0c81ab0005f1d882c34e265c/BFNA_Democracy_in_cities_POSTERS_TEXTLESS11.jpg?w=800&fm=webp&q=80&fit=fill",
+      "tags": [
+        "democracy"
+      ],
+      "videoInfo": {
+        "sys": {
+          "type": "Link",
+          "linkType": "Entry",
+          "id": "5stxh45OUlQ6f99F0cQ4W8"
+        }
+      },
+      "source": "vimeo",
+      "objectType": "docs"
+    },
+    {
+      "workstream": "democracy",
+      "theme": "democracy",
+      "heading": "Blueprint in the Bluegrass",
+      "subheading": "Civic Health in Lexington (2025, 20 minutes)",
+      "by": "Anthony Silberfeld",
+      "button": {
+        "label": "Watch",
+        "url": "https://vimeo.com/1111418460"
+      },
+      "description": "Blueprint in the Bluegrass follows CivicLex in Lexington, Kentucky, as it revitalizes civic life through education, public space, local news, community bridging, and democratic transformation.\n",
+      "backgroundImage": "https://images.ctfassets.net/i3vkqp3u3738/6AT6duWGU0qSoo0EF3ybqR/489a53cfbec59a0f005632cd897b6efc/Blueprint_No_Text.jpg?w=800&fm=webp&q=80&fit=fill",
+      "tags": [
+        "Democracy",
+        "Civil Health",
+        "Education",
+        "Local News"
+      ],
+      "videoInfo": {
+        "sys": {
+          "type": "Link",
+          "linkType": "Entry",
+          "id": "57UkvR2Mp6uJMIWJU7bjb6"
+        }
+      },
+      "source": "vimeo",
+      "objectType": "docs"
+    },
+    {
+      "workstream": "democracy",
+      "theme": "democracy",
+      "heading": "Still Here",
+      "subheading": "Preserving Native American Communities in Minneapolis (2024, 22 Minutes)",
+      "by": "Anthony Silberfeld",
+      "button": {
+        "label": "Watch",
+        "url": "https://vimeo.com/video/1020726571"
+      },
+      "description": "In Minneapolis, one of the largest urban Native American communities in the U.S. fights to preserve its languages, cultures, and histories while building civic power through grassroots organizations.",
+      "backgroundImage": "https://images.ctfassets.net/i3vkqp3u3738/4N064g3tA0yHK7Bwevjp5p/e1cf945a4020296a535e31a2563e349b/BFNA_Democracy_in_cities_POSTERS_TEXTLESS7.jpg?w=800&fm=webp&q=80&fit=fill",
+      "tags": [
+        "Minneapolis",
+        "Native American",
+        "Culture",
+        "Community"
+      ],
+      "videoInfo": {
+        "sys": {
+          "type": "Link",
+          "linkType": "Entry",
+          "id": "40eAyuX8XS9RtFuAqYY2Dl"
+        }
+      },
+      "source": "vimeo",
+      "objectType": "docs"
+    },
+    {
+      "workstream": "democracy",
+      "theme": "democracy",
+      "heading": "Rising Voices",
+      "subheading": "(2024, 21 minutes)",
+      "by": "Anthony Silberfeld",
+      "button": {
+        "label": "Watch",
+        "url": "https://vimeo.com/1036845140"
+      },
+      "description": "In Vienna, Rising Voices follows young students partnering with city leaders to shape their neighborhoods, showing how even five-year-olds can spark lasting democratic change.",
+      "backgroundImage": "https://images.ctfassets.net/i3vkqp3u3738/4cXxLieTksKON6trDo2qv5/3f1a226d921bc2f98a5ae7226eb62871/BFNA_Democracy_in_cities_POSTERS_TEXTLESS3.jpg?w=800&fm=webp&q=80&fit=fill",
+      "tags": [
+        "Vienna",
+        "Democracy",
+        "Youth",
+        "Civic Engagement"
+      ],
+      "videoInfo": {
+        "sys": {
+          "type": "Link",
+          "linkType": "Entry",
+          "id": "1Jpn0PmUmNgPdJn4eeM8IB"
+        }
+      },
+      "source": "vimeo",
+      "objectType": "docs"
+    }
+  ]
+}

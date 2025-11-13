@@ -1,0 +1,1273 @@
+[
+  {
+    "title": "The Bertelsmann Foundation Fellowship",
+    "type": "website",
+    "description": "<html><head></head><body><p>The Bertelsmann Foundation Fellowship (BFF), formerly known as the Congressional European Parliamentary Initiative (CEPI), offers a unique transatlantic hybrid experience spanning five months, designed to foster connections, knowledge transfer, and learning. Each year, the fellowship delves into global challenges confronting the transatlantic alliance. Commencing with an in-person trip to Washington, D.C., fellows then embark on a three-month virtual program, meeting weekly with experts relevant to the year's theme. The fellowship culminates with a visit to Brussels facilitating further in-person engagement. At the program's conclusion, fellows collaborate on a final publication presenting concrete policy recommendations pertaining to the chosen topic, released as an outcome of the BFF initiative. Fellows then also become a part of a larger, active Alumni network- finding opportunities to engage with the Bertelsmann Foundation Fellowship beyond their fellowship year.</p>\n<p><em>Applications for the Class of 2025 have now closed.</em></p></body></html>",
+    "image": {
+      "url": "https://images.ctfassets.net/9vgcz0fppkl3/1DaDJZYgISmNTWg3lfRiEz/27b3a75e462dbf343590ef34a1ec7b11/bff_image.png?w=800&fm=webp&q=80&fit=fill",
+      "title": "CEPI 2019 Group Image"
+    },
+    "buttons": [],
+    "theme": "future-leadership",
+    "permalink": "/future-leadership/the-bertelsmann-foundation-fellowship/",
+    "workstream": "Future Leadership",
+    "og_description": "The Bertelsmann Foundation Fellowship (BFF), formerly known as the Congressional European Parliamentary Initiative (CEPI), offers a unique transatlantic hybrid experience spanning five months, designed to foster connections, knowledge transfer, and learning. Each year, the fellowship delves into global challenges confronting the transatlantic alliance. Commencing with an in-person trip to Washington, D.C., fellows then embark on a three-month virtual program, meeting weekly with experts relevant to the year's theme. The fellowship culminates with a visit to Brussels facilitating further in-person engagement. At the program's conclusion, fellows collaborate on a final publication presenting concrete policy recommendations pertaining to the chosen topic, released as an outcome of the BFF initiative. Fellows then also become a part of a larger, active Alumni network- finding opportunities to engage with the Bertelsmann Foundation Fellowship beyond their fellowship year.\n\n*Applications for the Class of 2025 have now closed.*",
+    "breadcrumbs": {
+      "currentPage": "The Bertelsmann Foundation Fellowship",
+      "items": [
+        {
+          "link": "/",
+          "title": "Home"
+        },
+        {
+          "link": "/future-leadership/",
+          "title": "Future Leadership"
+        }
+      ]
+    },
+    "products_section": {
+      "heading": "Editions",
+      "items": [
+        {
+          "theme": "future-leadership",
+          "type": "report",
+          "heading": "Class of 2025",
+          "description": "The Class of 2025 will focus on EU-U.S. Space Cooperation, regulatory alignment, and industrial competitiveness.",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/33oZ45rd6fMLAOQc9HUbdk/ba3aa9bfa1e1da1f15db238ae91ebce1/BFF_CFA_2025HR.png?w=800&fm=webp&q=80&fit=fill",
+            "title": "BFF 2025 Space"
+          },
+          "button": {
+            "url": "/future-leadership/class-of-2025/",
+            "label": "Learn More"
+          }
+        },
+        {
+          "theme": "future-leadership",
+          "type": "report",
+          "heading": "Class of 2024",
+          "description": "The BFF Class of 2024 centered around defending democracy.  ",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/5VES3UlOUVSKd1FLH4ea7q/40b67465b83109b78e259e0b6068a0f0/Casting_ballot.jpg?w=800&fm=webp&q=80&fit=fill",
+            "title": "Cast ballot"
+          },
+          "button": {
+            "url": "//assets.ctfassets.net/9vgcz0fppkl3/3rFn5lejaRqLO2LLGjhO4I/3d50db6001788bf79833e54e021483af/BFFVersion14May2025.pdf",
+            "label": "Open full report"
+          }
+        },
+        {
+          "theme": "future-leadership",
+          "type": "report",
+          "heading": "Class of 2023",
+          "description": "The BFF Class of 2023 focused on the future of work.",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/4WZBzGzMzBrGfUXVZiePA5/2ee841b81c3f3e1d895d393943e8bc57/Class_of_2023_mock.png?w=800&fm=webp&q=80&fit=fill",
+            "title": "Class of 2023 mock"
+          },
+          "button": {
+            "url": "//assets.ctfassets.net/9vgcz0fppkl3/3XO2r9DncF2OBXmq3yMYfJ/6316350091fe225fe38907a68cc96444/25012024_-2.pdf",
+            "label": "Open full report"
+          }
+        },
+        {
+          "theme": "future-leadership",
+          "type": "website",
+          "heading": "Class of 2022",
+          "description": "The BFF Class of 2022 focused on the topic of a Transatlantic Approach to the Developing World.",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/6mkNvtfSW5AkpYQNe1zcwH/ca0b73f041ed9a7ff3fe8db36cc6b25c/bff_2022.png?w=800&fm=webp&q=80&fit=fill",
+            "title": "bff 2022"
+          },
+          "button": {
+            "url": "//assets.ctfassets.net/9vgcz0fppkl3/7BXkSDCIOzTOnzYMvkbFyz/c60cfc5077894edd8d73c361f2bb26cc/BFF_2022_SinglePages.pdf",
+            "label": "Open full report"
+          }
+        },
+        {
+          "theme": "future-leadership",
+          "type": "website",
+          "heading": "Class of 2021",
+          "description": "CEPI 2021 focused on sustainable innovation.",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/1mDvh0XuJaIt761cEAnBKz/0632590d358e6edd6cd9faec1d281d70/website-cover-image.png?w=800&fm=webp&q=80&fit=fill",
+            "title": "CEPI 2021 Cover"
+          },
+          "button": {
+            "url": "//downloads.ctfassets.net/9vgcz0fppkl3/5tlvjHKHsL0rVt6RHwSJfB/59f819b64850a44f1d432e1a57f63786/CEPI_GreenIdeas_SinglePage_final.pdf",
+            "label": "Open full report"
+          }
+        },
+        {
+          "theme": "future-leadership",
+          "type": "website",
+          "heading": "Class of 2020",
+          "description": "CEPI 2020 focused on artificial intelligence.",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/3wHVNIcyYu3RCVDGnYQuRR/c8053ee9c8370f09e9e2173c4fe31532/cepi-program-cover.png?w=800&fm=webp&q=80&fit=fill",
+            "title": "CEPI 2020 AI"
+          },
+          "button": {
+            "url": "//downloads.ctfassets.net/9vgcz0fppkl3/32sgTmrPHa5MTpoe6Ysbho/2e16bf431afbd1430e53850b1ecdacc2/Human_Program_FINAL.pdf",
+            "label": "Open full report"
+          }
+        },
+        {
+          "theme": "future-leadership",
+          "type": "website",
+          "heading": "Class of 2019",
+          "description": "CEPI 2019 focused on policy and regulatory challenges for the digital economy.",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/1H23rtxCRmFwKKCqZvoT9z/4f4c9831e57f29b674afc43c5b22f58a/cepi-2019r.png?w=800&fm=webp&q=80&fit=fill",
+            "title": "CEPI 2019"
+          },
+          "button": {
+            "url": "/future-leadership/class-of-2019/",
+            "label": "Learn More"
+          }
+        },
+        {
+          "theme": "future-leadership",
+          "type": "website",
+          "heading": "Class of 2018",
+          "description": "CEPI 2018 centered on topics crucial to the digital economy, including GDPR and transatlantic data flows, technological innovation, and artificial intelligence.",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/24xf2Wl7fQ49F1D7PaSj9/84f606bc8bbbefd3421f2b2b04037585/cepi-2018.png?w=800&fm=webp&q=80&fit=fill",
+            "title": "CEPI 2018 cover"
+          },
+          "button": {
+            "url": "/future-leadership/class-of-2018/",
+            "label": "Learn More"
+          }
+        },
+        {
+          "theme": "future-leadership",
+          "type": "website",
+          "heading": "Class of 2017",
+          "description": "CEPI 2017 focused on transatlantic cybersecurity policy and strategy.",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/7cO3GzPCQB1hFP6OwrWYhI/33fcd6c1c929df8c5ca126ce53f730ea/cepi-2017.png?w=800&fm=webp&q=80&fit=fill",
+            "title": "CEPI 2017 cover"
+          },
+          "button": {
+            "url": "/future-leadership/class-of-2017/",
+            "label": "Learn More"
+          }
+        },
+        {
+          "theme": "future-leadership",
+          "type": "website",
+          "heading": "Class of 2016",
+          "description": "CEPI 2016 brought together participants to discuss migration.",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/4DP0DhBtPygxbk4vfXTBuv/3d29e8ba5b3596e1fbdea76b6646723d/cepi-2016.png?w=800&fm=webp&q=80&fit=fill",
+            "title": "CEPI 2016 Cover"
+          },
+          "button": {
+            "url": "/future-leadership/class-of-2016/",
+            "label": "Learn More"
+          }
+        },
+        {
+          "theme": "future-leadership",
+          "type": "website",
+          "heading": "Class of 2015",
+          "description": "CEPI 2015's program tackled challenges of international trade.",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/1Dp49rLne6LBwY2ln4pxuY/a93eab06a0b1bc852f60a504e3aa5667/cepi-2015.png?w=800&fm=webp&q=80&fit=fill",
+            "title": "CEPI 2015 Cover"
+          },
+          "button": {
+            "url": "/future-leadership/class-of-2015/",
+            "label": "Learn More"
+          }
+        },
+        {
+          "theme": "future-leadership",
+          "type": "website",
+          "heading": "Class of 2014",
+          "description": "CEPI 2014 participants met for a dual program on cybersecurity and trade.",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/7H3Tj1vf3AbiXDb6J0a3x6/825a13a3d00b03c81c3a059c63cd250b/cepi-2014.png?w=800&fm=webp&q=80&fit=fill",
+            "title": "CEPI 2014 cover"
+          },
+          "button": {
+            "url": "/future-leadership/class-of-2014/",
+            "label": "Learn More"
+          }
+        },
+        {
+          "theme": "future-leadership",
+          "type": "website",
+          "heading": "Class of 2013",
+          "description": "CEPI 2013 focused on cybersecurity and trade.",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/5LazgjVnrDwD8Sk946mOUr/3c2ada0057264f493bd1fca031c48d73/cepi-2013.png?w=800&fm=webp&q=80&fit=fill",
+            "title": "CEPI 2013 cover"
+          },
+          "button": {
+            "url": "/future-leadership/class-of-2013/",
+            "label": "Learn More"
+          }
+        },
+        {
+          "theme": "future-leadership",
+          "type": "website",
+          "heading": "Class of 2012",
+          "description": "CEPI 2012 addressed finance and agriculture in the U.S. and Europe.",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/TnpqsjbxDIW3lWQ6A0YFw/a20506e4579401ab44af11b6e089cf46/cepi-2012.png?w=800&fm=webp&q=80&fit=fill",
+            "title": "CEPI 2012 cover"
+          },
+          "button": {
+            "url": "/future-leadership/class-of-2012/",
+            "label": "Learn More"
+          }
+        },
+        {
+          "theme": "future-leadership",
+          "type": "website",
+          "heading": "Class of 2011",
+          "description": "The 2011 program convened around the topic of immigration and border control as well as energy and raw governance.",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/6cb7BpawtP844fhfph5EbM/20055b5a2ef94d8f4a9fa6d1db39d751/CEPI_2011.png?w=800&fm=webp&q=80&fit=fill",
+            "title": "CEPI 2011"
+          },
+          "button": {
+            "url": "/future-leadership/class-of-2011/",
+            "label": "Learn More"
+          }
+        },
+        {
+          "theme": "future-leadership",
+          "type": "website",
+          "heading": "Class of 2010",
+          "description": "The 2010 program met on financial service regulation as well as energy and climate change policy. ",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/4L1oIU63dT8JcjMv2CcPOV/7e2f4de1a6f01536e8f0c7c99da2d91f/CEPI_2010.png?w=800&fm=webp&q=80&fit=fill",
+            "title": "CEPI 2010"
+          },
+          "button": {
+            "url": "/future-leadership/class-of-2010/",
+            "label": "Learn More"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "title": "Leadership in Action",
+    "type": "website",
+    "description": "<html><head></head><body><p>In its third season, Leadership in Action explores the strategies of skilled negotiators and practitioners as they tackle some of the world’s most intractable challenges. The first episode features Jan Eliasson, former Swedish Foreign Minister and Deputy Secretary-General of the United Nations, reflecting on pivotal moments in his career spent resolving global conflicts. The second episode highlights Ugandan opposition leader Bobi Wine, who takes us on a harrowing journey from repression to mobilizing a nation in the fight for democracy. The third episode focuses on Tzipi Livni, former Israeli Foreign Minister, filmed prior to the Hamas terror attack on October 7, 2023, and the ongoing conflict. It explores her role as Israel's chief negotiator during peace talks with the Palestinian Authority in the final rounds of negotiations in the 2000s.</p>\n<p>Leadership in Action is part of an ongoing collaboration between the Bertelsmann Foundation and the Aspen Institute’s Aspen Ministers Forum.</p></body></html>",
+    "image": {
+      "url": "https://images.ctfassets.net/9vgcz0fppkl3/1NbUdoeyxEB4c38NvAz5SW/c0f617462da7c52e768682e5319dda8a/LIA_season_2_mock.png?w=800&fm=webp&q=80&fit=fill",
+      "title": "Leadership in Action Season 2"
+    },
+    "buttons": [],
+    "theme": "future-leadership",
+    "permalink": "/future-leadership/leadership-in-action/",
+    "workstream": "Future Leadership",
+    "og_description": "In its third season, Leadership in Action explores the strategies of skilled negotiators and practitioners as they tackle some of the world’s most intractable challenges. The first episode features Jan Eliasson, former Swedish Foreign Minister and Deputy Secretary-General of the United Nations, reflecting on pivotal moments in his career spent resolving global conflicts. The second episode highlights Ugandan opposition leader Bobi Wine, who takes us on a harrowing journey from repression to mobilizing a nation in the fight for democracy. The third episode focuses on Tzipi Livni, former Israeli Foreign Minister, filmed prior to the Hamas terror attack on October 7, 2023, and the ongoing conflict. It explores her role as Israel's chief negotiator during peace talks with the Palestinian Authority in the final rounds of negotiations in the 2000s.\n\nLeadership in Action is part of an ongoing collaboration between the Bertelsmann Foundation and the Aspen Institute’s Aspen Ministers Forum.",
+    "breadcrumbs": {
+      "currentPage": "Leadership in Action",
+      "items": [
+        {
+          "link": "/",
+          "title": "Home"
+        },
+        {
+          "link": "/future-leadership/",
+          "title": "Future Leadership"
+        }
+      ]
+    },
+    "products_section": {
+      "heading": "Episodes:",
+      "items": [
+        {
+          "theme": "future-leadership",
+          "type": "video",
+          "heading": "Season 3, Episode 3 | Tzipi Livni",
+          "description": "The Bertelsmann Foundation and the Aspen Ministers Forum are proud to release the final episode of season three’s Leadership in Action video series. This episode features former Israeli Foreign Minister, former opposition leader in the Knesset, Tzipi Livni.",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/5SZhoUacKh0CrVx083RtK2/1a685ccb9bf75f0383c829fbf67f86fe/LiA_Livni.jpg?w=800&fm=webp&q=80&fit=fill",
+            "title": "LiA Livni"
+          },
+          "button": {
+            "url": "/future-leadership/season-3-episode-3-tzipi-livni/",
+            "label": "Learn More"
+          }
+        },
+        {
+          "theme": "future-leadership",
+          "type": "video",
+          "heading": "Season 3, Episode 2 | Bobi Wine",
+          "description": "The Bertelsmann Foundation and Aspen Institute are pleased to announce the premiere of Season Three of the Leadership in Action series. In episode two, Bobi Wine, a beloved musician turned opposition political leader takes viewers inside his perilous fight for democracy in Uganda.\n\nThis is his story, in his own words – his dream for democracy.",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/6ZO2HVS9to8zXpId94g2NY/27983cb6d717adcd3ec00d4fd6fda696/Bobi_Wine_Horizontal_4.png?w=800&fm=webp&q=80&fit=fill",
+            "title": "Bobi Wine - Cover photo horizontal"
+          },
+          "button": {
+            "url": "/future-leadership/season-3-episode-2-bobi-wine/",
+            "label": "Learn More"
+          }
+        },
+        {
+          "theme": "future-leadership",
+          "type": "video",
+          "heading": "Season 3, Episode 1 | Jan Eliasson",
+          "description": "The Bertelsmann Foundation and Aspen Institute are pleased to announce the premiere of Season Three of the Leadership in Action series.\n\nIn episode one, Jan Eliasson, is a Swedish diplomat and former Deputy Secretary-General of the United Nations, takes us through key moments of leadership in his career of diplomacy and peace keeping.\n\nThis is his story, in his own words.",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/swCU1nRiZ7ZRSonsHk3xI/2ad0986daf049fc19aa84c1e94ac0ca8/Jan_Eliasson_Horizontal3.jpg?w=800&fm=webp&q=80&fit=fill",
+            "title": "Jan Eliasson Cover Horizontal"
+          },
+          "button": {
+            "url": "/future-leadership/season-3-episode-1-jan-eliasson/",
+            "label": "Learn More"
+          }
+        },
+        {
+          "theme": "future-leadership",
+          "type": "video",
+          "heading": "Season 2, Episode 3 | Federica Mogherini on negotiating the Iran Nuclear Deal",
+          "description": "In Episode 3 of Leadership in Action Season 2, Federica Mogherini, the European Union’s former High Representative for Foreign Affairs and Security Policy, takes viewers on a journey from her early years working in Rome and London to the halls of the Italian foreign ministry. Along the way, Mogherini shares her candid memories as a young woman rising to positions of influence in politics, and the lessons drawn from overcoming the obstacles placed in her path.",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/7hN4j2PO2hYuTGVXp6aUUq/77bd125b49d691eda319a51cbcce275c/LIA_s2_Mogherini.png?w=800&fm=webp&q=80&fit=fill",
+            "title": "LIA s2 Mogherini"
+          },
+          "button": {
+            "url": "/future-leadership/season-2-episode-3-federica-mogherini-on-negotiating-the-iran-nuclear-deal/",
+            "label": "Learn More"
+          }
+        },
+        {
+          "theme": "future-leadership",
+          "type": "video",
+          "heading": "Season 2, Episode 2 | Malcolm Rifkind on the transfer of power in Hong Kong",
+          "description": "In this episode, former British Foreign Secretary Malcolm Rifkind goes back in time to the 1990s, to examine the steps leading to the transfer of power in Hong Kong from the United Kingdom to the People’s Republic of China. This episode offers a unique account of the contentious dialogue between London and Beijing that aimed to preserve democracy in Hong Kong after the British departure.",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/2koCfU4ZHprOCXWpUtRFJ4/db2c9682d9ae3db98122d5c03c4aedf4/LIA_s2_Rifkind.png?w=800&fm=webp&q=80&fit=fill",
+            "title": "LIA s2 Rifkind"
+          },
+          "button": {
+            "url": "/future-leadership/season-2-episode-2-malcolm-rifkind-on-the-transfer-of-power-in-hong-kong/",
+            "label": "Learn More"
+          }
+        },
+        {
+          "theme": "future-leadership",
+          "type": "video",
+          "heading": "Season 2, Episode 1 | Susana Malcorra on the UN's efforts to stop the spread of Ebola",
+          "description": "In Leadership in Action’s season two, episode one, Susana Malcorra, former Argentine Foreign Minister and Chef de Cabinet of UN Secretary General Ban Ki-moon, takes viewers inside the United Nations’ efforts to combat the spread of Ebola across West Africa.",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/01r3kLAM1SEtJ7uwbeaMpU/7221f20182e4936a316e0d8ede82a788/LIA_s2_Malcorra.png?w=800&fm=webp&q=80&fit=fill",
+            "title": "LIA s2 Malcorra"
+          },
+          "button": {
+            "url": "/future-leadership/season-2-episode-1-susana-malcorra-on-the-uns-efforts-to-stop-the-spread-of-ebola/",
+            "label": "Learn More"
+          }
+        },
+        {
+          "theme": "future-leadership",
+          "type": "video",
+          "heading": "Season 1, Episode 1 | Russian Cyber-Attack on Estonia",
+          "description": "In the premiere episode, former Estonian Foreign Minister Marina Kaljurand takes us back in time to the Russian cyber-attack against Estonia in 2007, one of the first operations of its kind, which resulted in the paralysis of Estonian banks, media outlets, and government institutions. This episode provides a cautionary tale for those searching for additional tools to combat modern-day warfare in cyberspace. The tactics may have changed over time, but the lessons endure.",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/2JCSIiLpcnfB7zaqMQnYmi/9989e3a45fd122c05e68b0ea8b18b700/LIA_s1_Kaljurand.png?w=800&fm=webp&q=80&fit=fill",
+            "title": "LIA s1 Kaljurand"
+          },
+          "button": {
+            "url": "/future-leadership/season-1-episode-1-russian-cyber-attack-on-estonia/",
+            "label": "Learn More"
+          }
+        },
+        {
+          "theme": "future-leadership",
+          "type": "video",
+          "heading": "Season 1, Episode 2 | Madeleine Albright on the U.S. Response to the Conflict in Kosovo",
+          "description": "Former American Secretary of State Madeleine Albright returns to one of the defining moments of her career to reflect on the U.S. intervention to end ethnic cleansing in Kosovo. From assessing the intentions of an unpredictable Serbian leader to managing the fallout from an accidental bombing of the Chinese Embassy in Belgrade, this installment tells the tale of high stakes geopolitical negotiations, overcoming adversity, and what it takes to find one's voice. ",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/7A80H7xXVgw3uZhZstB5ys/f899b77087d09db1cf986229e07f9419/LIA_s1_Albright.png?w=800&fm=webp&q=80&fit=fill",
+            "title": "LIA s1 Albright"
+          },
+          "button": {
+            "url": "/future-leadership/season-1-episode-2-madeleine-albright-on-the-us-response-to-the-conflict-in-kosovo/",
+            "label": "Learn More"
+          }
+        },
+        {
+          "theme": "future-leadership",
+          "type": "video",
+          "heading": "Season 1, Episode 3 | George Papandreou on the Euro Crisis in Greece",
+          "description": "Former Greek Prime Minister George Papandreou takes us back to 2009, when Greece was on the brink of economic collapse due to the European debt crisis. This is a story about sacrifice, difficult choices, and national resilience against imposing odds.",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/63OAyhiRohCBU5OjGxR83l/0677b1c4b857dae8e5a724479d59b54f/LIA_s1_Papandreou.png?w=800&fm=webp&q=80&fit=fill",
+            "title": "LIA s1 Papandreou"
+          },
+          "button": {
+            "url": "/future-leadership/season-1-episode-3-george-papandreou-on-the-euro-crisis-in-greece/",
+            "label": "Learn More"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "title": "Transponder Magazine",
+    "type": "report",
+    "description": "<html><head></head><body><p>The Transponder is the Bertelsmann Foundation’s biannual publication focusing on issues that impact the transatlantic relationship. The magazine features short-form and long-form articles, interviews, infographics and photo essays that explore topics related to democracy, technology, and geopolitics through a transatlantic lens. </p>\n<p>Want to receive Transponder updates and future issues? <a href=\"https://mailchi.mp/bfna.org/transponder-sign-up\">Subscribe here.</a></p></body></html>",
+    "image": {
+      "url": "https://images.ctfassets.net/9vgcz0fppkl3/19ZPsFw4j0ztVqKQwW16U8/3f1f06dd320d947ccd65d438984c23a7/Transponder_7_Cover.png?w=800&fm=webp&q=80&fit=fill",
+      "title": "Issue 7 Cover"
+    },
+    "buttons": [],
+    "theme": "politics-society",
+    "permalink": "/politics-society/transponder-magazine/",
+    "workstream": "Politics & Society",
+    "og_description": "The Transponder is the Bertelsmann Foundation’s biannual publication focusing on issues that impact the transatlantic relationship. The magazine features short-form and long-form articles, interviews, infographics and photo essays that explore topics related to democracy, technology, and geopolitics through a transatlantic lens. \n\nWant to receive Transponder updates and future issues? [Subscribe here.](https://mailchi.mp/bfna.org/transponder-sign-up)",
+    "breadcrumbs": {
+      "currentPage": "Transponder Magazine",
+      "items": [
+        {
+          "link": "/",
+          "title": "Home"
+        },
+        {
+          "link": "/politics-society/",
+          "title": "Politics & Society"
+        }
+      ]
+    },
+    "products_section": {
+      "items": [
+        {
+          "theme": "politics-society",
+          "type": "report",
+          "heading": "Transponder Issue #7: The Future",
+          "description": "The seventh issue of Transponder Magazine explores the critical choices shaping the future of our world, from the geopolitics of space and the race for rare earth minerals to the rise of AI and its societal impact. Global perspectives include young voices in Taiwan and South Korea, a deep dive into France’s democratic aspirations, and historical memory’s role in the Balkans’ EU accession. The challenges and opportunities ahead are vast. The future is in our hands—how will we shape it?",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/19ZPsFw4j0ztVqKQwW16U8/3f1f06dd320d947ccd65d438984c23a7/Transponder_7_Cover.png?w=800&fm=webp&q=80&fit=fill",
+            "title": "Issue 7 Cover"
+          },
+          "button": {
+            "url": "//assets.ctfassets.net/9vgcz0fppkl3/1w25O5bqAImNIvRiebWdzL/03225fa88ad92d21173d3365e11c52aa/Transponder_7_Digital_Spreads__1_.pdf",
+            "label": "Open full report"
+          }
+        },
+        {
+          "theme": "politics-society",
+          "type": "report",
+          "heading": "Transponder Issue #6: Elections",
+          "description": "The sixth issue of Transponder is dedicated to the seismic event that is the 2024 election year. Promising to be one of the most consequential election cycles in modern history, this issue takes you around the globe, exploring electoral topics and elections in Finland, Germany, Taiwan, India, Mexico, and many more. ",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/6WYHZ7xV1TCue4rnuJq7R1/69f71fd5f90e7af0edccdb13f0b922c1/Transponder_6_Cover_Website.png?w=800&fm=webp&q=80&fit=fill",
+            "title": "Transponder 6"
+          },
+          "button": {
+            "url": "//downloads.ctfassets.net/9vgcz0fppkl3/3igfH65ckaxjZsMaMbiOwe/6ad8aa3f500ae5aeef407f9a92fa86da/Issue6_FinalVersion_DoubleSpread.pdf",
+            "label": "Open full report"
+          }
+        },
+        {
+          "theme": "politics-society",
+          "type": "report",
+          "heading": "Transponder Issue #5: Democracy",
+          "description": "The fifth issue of Transponder features a range of compelling articles that illuminate the many facets of citizenship and electoral politics leading up to a momentous year of major parliamentary and presidential elections.",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/11AmdS8XPzkJlwTWwJnVSS/e90a530a6ed34514fa3b2caadedb44a3/Transponder_5_cover.png?w=800&fm=webp&q=80&fit=fill",
+            "title": "Transponder 5 Democracy"
+          },
+          "button": {
+            "url": "//downloads.ctfassets.net/9vgcz0fppkl3/6jNAp3MqIpvFcggdS5uHgx/603afba3e12bc30b3d416dc7db646a11/Transponder_5_SPREADS.pdf",
+            "label": "Open full report"
+          }
+        },
+        {
+          "theme": "politics-society",
+          "type": "report",
+          "heading": "Transponder Issue #4: Identity",
+          "description": "The fourth issue of Transponder features a collection of written and visual works that explore the diversity and breadth of identity on both sides of the Atlantic, revealing themes of citizenship, belonging, personhood, heritage, and online persona.",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/4bwOqX15VUq2Swt43vGxU/4d1f23f074dc438ec16a45586307da3b/transponder_4_4.png?w=800&fm=webp&q=80&fit=fill",
+            "title": "transponder 4 4"
+          },
+          "button": {
+            "url": "//downloads.ctfassets.net/9vgcz0fppkl3/5Op6A785jHUN7bROIIOENL/d8f08e833810587320d7e4f3908cd920/Transponder_4.pdf",
+            "label": "Open full report"
+          }
+        },
+        {
+          "theme": "politics-society",
+          "type": "report",
+          "heading": "Transponder Issue #3: Resilience",
+          "description": "The topic of the Third Issue of the Transponder Magazine is Resilience, featuring a collection of written and visual works that explore how members of the transatlantic community can remain resilient in the face of new and old challenges.",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/56AnLmfhD7AtXbHu94pVkK/e641c0c87075a9b2f18769f086e7a0ad/transponder_3_4_transparent.png?w=800&fm=webp&q=80&fit=fill",
+            "title": "transponder 3 4 transparent"
+          },
+          "button": {
+            "url": "//downloads.ctfassets.net/9vgcz0fppkl3/2cEHm8IDbuUXEMOqR4jRqh/3d1595d3ad443e5f4c6c54ab2faa9470/Transponder_3_web.pdf",
+            "label": "Open full report"
+          }
+        },
+        {
+          "theme": "politics-society",
+          "type": "report",
+          "heading": "Transponder Issue #2: Cities",
+          "description": "In this second issue of the Transponder, we explore how transatlantic cities confront global challenges and bolster the transatlantic relationship. As more than half of the world’s population currently resides in metropolitan areas, we see that cities are becoming the epicenter for political, economic, environmental, democratic, and social change.",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/1tnpoGwvf9ENm2ejkUyEZf/2411bde6eb13bc7bb62f92024a76dbbe/Transponder_issue_2.png?w=800&fm=webp&q=80&fit=fill",
+            "title": "Transponder issue 2"
+          },
+          "button": {
+            "url": "//downloads.ctfassets.net/9vgcz0fppkl3/3eiAavLDiT3dCI7NYL6aBV/5d78f4df14221039f214e7bce821d59d/Transponder_for_Website.pdf",
+            "label": "Open full report"
+          }
+        },
+        {
+          "theme": "politics-society",
+          "type": "report",
+          "heading": "Transponder Issue #1: The Transatlantic Relationship",
+          "description": "The first issue provides insight into a past and present that bodes well for the future, while exploring the question, “What is rocking the transatlantic relationship today?” Topics include Angela Merkel’s legacy, climate security and action, transatlantic trends, diplomacy, democracy, and how film making is paving a new front in exploring the transatlantic relationship.",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/3X6Q1TOk0MWm8biOJrJJzm/bbab8e9651849953580ee0624367306f/transponder.png?w=800&fm=webp&q=80&fit=fill",
+            "title": "Transponder Magazine"
+          },
+          "button": {
+            "url": "//downloads.ctfassets.net/9vgcz0fppkl3/1wxmmxX3MuqnjPnYdscSMV/33558b36f65c667a32b0874612cec12a/Transponder_Final.pdf",
+            "label": "Open full report"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "title": "How to Fix Democracy",
+    "type": "website",
+    "subheading": "Interviews on democracy's past, present, and future",
+    "description": "<html><head></head><body><p>Host Andrew Keen interviews prominent thinkers, writers, politicians, technologists, and business leaders who enlighten and challenge us as we seek the answers to How to Fix Democracy.</p>\n<p>Launched in January 2019, this series explores why democracy is not delivering in Europe and North America and how it can be reinvigorated. These interviews bring our audience face to face with the origins, controversies, triumphs, and failures of democracy in the 21st century. Our goal is to analyze what is wrong with democracy and spark conversations about how to fix it.</p></body></html>",
+    "image": {
+      "url": "https://images.ctfassets.net/9vgcz0fppkl3/4Weo6AzLa0sJUNLISFPzJM/6de27e24998e9bf0ab4fc5a718034578/how-to-fix-democracy.png?w=800&fm=webp&q=80&fit=fill",
+      "title": "How to fix democracy"
+    },
+    "buttons": [
+      {
+        "type": "website",
+        "url": "https://www.howtofixdemocracy.org/",
+        "label": "Go to project website"
+      }
+    ],
+    "theme": "podcasts",
+    "permalink": "/podcasts/how-to-fix-democracy/",
+    "workstream": "Podcasts",
+    "og_description": "Host Andrew Keen interviews prominent thinkers, writers, politicians, technologists, and business leaders who enlighten and challenge us as we seek the answers to How to Fix Democracy.\n\nLaunched in January 2019, this series explores why democracy is not delivering in Europe and North America and how it can be reinvigorated. These interviews bring our audience face to face with the origins, controversies, triumphs, and failures of democracy in the 21st century. Our goal is to analyze what is wrong with democracy and spark conversations about how to fix it.",
+    "breadcrumbs": {
+      "currentPage": "How to Fix Democracy",
+      "items": [
+        {
+          "link": "/",
+          "title": "Home"
+        },
+        {
+          "link": "/podcasts/",
+          "title": "Podcasts"
+        }
+      ]
+    },
+    "products_section": {
+      "items": [
+        {
+          "theme": "democracy",
+          "type": "website",
+          "heading": "Season 5, Episode 15 | Jacob Heilbrunn",
+          "description": "American journalist Jacob Heilbrunn outlines the continuous history of the close association of conservative views and the Republican Party in the early to Mid-Twentieth Century.",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/41nH4Qle2rkmioPsgw2MCq/824da246f93b5a73717f464ef9d6fd78/Jacob_Heilbrunn_template.png?w=800&fm=webp&q=80&fit=fill",
+            "title": "Jacob Heilbrunn"
+          },
+          "button": {
+            "url": "/democracy/season-5-episode-15-jacob-heilbrunn/",
+            "label": "Learn More"
+          }
+        },
+        {
+          "theme": "democracy",
+          "type": "website",
+          "heading": "Season 5, Episode 14 | James Kirchick",
+          "description": "James Kirchick discusses the historical exclusion of gay individuals within American democracy, with a particular emphasis on the challenges--from legal persecution to professional exclusion and social stigmatization.",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/2ceeydce8ZNhEu3io7aXDw/68674df7dc157b62c3bab7d189f42643/Jamie_Kirchick_template.png?w=800&fm=webp&q=80&fit=fill",
+            "title": "James Kirchick"
+          },
+          "button": {
+            "url": "/democracy/season-5-episode-14-james-kirchick/",
+            "label": "Learn More"
+          }
+        },
+        {
+          "theme": "democracy",
+          "type": "website",
+          "heading": "Season 5, Episode 13 | Jeffrey Rosen",
+          "description": "In this episode we delve into Jeffrey Rosen's latest work The Pursuit of Happiness.",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/1nrEdo0EcZT6iKJSRf7xW9/1da5e5bacd472b26e9edc6b8c6d85e43/Jeffrey_Rosen_template.png?w=800&fm=webp&q=80&fit=fill",
+            "title": "Jeffrey Rosen"
+          },
+          "button": {
+            "url": "/democracy/season-5-episode-13-jeffrey-rosen/",
+            "label": "Learn More"
+          }
+        },
+        {
+          "theme": "democracy",
+          "type": "website",
+          "heading": "Season 5, Episode 12 | James Traub",
+          "description": "In this episode journalist and historian James Traub delves into the paradoxical nature of liberalism in the postwar years.",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/1lOi5zix3JMf78VQKKO0Dr/ce033d0ba715a5a511cb756ab5881616/James_Traub_template.png?w=800&fm=webp&q=80&fit=fill",
+            "title": "James Traub"
+          },
+          "button": {
+            "url": "/democracy/season-5-episode-12-james-traub/",
+            "label": "Learn More"
+          }
+        },
+        {
+          "theme": "democracy",
+          "type": "website",
+          "heading": "Season 5, Episode 11 | Sarah Snyder",
+          "description": "In conversation with Prof. Sarah Snyder, an historian of Cold War international relations, Andrew Keen examines the relationship of democratic goals with the realities of American foreign policy. ",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/7K9IcMDGI0Aq8Na65BVzDq/5a282413d14b9aaf32e66c13c89e5fd6/Podcast-Sarah_Snyder_template.png?w=800&fm=webp&q=80&fit=fill",
+            "title": "HTFD Cover_Sarah Snyder"
+          },
+          "button": {
+            "url": "/democracy/season-5-episode-11-sarah-snyder/",
+            "label": "Learn More"
+          }
+        },
+        {
+          "theme": "democracy",
+          "type": "website",
+          "heading": "Season 5, Episode 10 | Carol Anderson",
+          "description": "In this episode, host Andrew Keen speaks with Dr. Carol Anderson, Professor of History at Emory University. They discuss America in the post-World War II years when America emerged as the world's leading democratic country.",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/2Vxbhgol80mD5GafAWbrzw/f9d844c14600db3807c641678f83b387/Carol_Anderson_template.png?w=800&fm=webp&q=80&fit=fill",
+            "title": "HTFD Carol Anderson Cover"
+          },
+          "button": {
+            "url": "/democracy/season-5-episode-10-carol-anderson/",
+            "label": "Learn More"
+          }
+        },
+        {
+          "theme": "podcasts",
+          "type": "website",
+          "heading": "Season 5, Episode 9 | Kevin Baker",
+          "description": "Kevin Baker, discusses with host Andrew Keen the multifaceted changes and growth of American democracy between the two World Wars.",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/6ch7rVAMpOqzdMAGRbuXf1/9db544a273613ad00e7c1fa1a2298aa0/Kevin_Baker_template.png?w=800&fm=webp&q=80&fit=fill",
+            "title": "Kevin Baker"
+          },
+          "button": {
+            "url": "/podcasts/season-5-episode-9-kevin-baker/",
+            "label": "Learn More"
+          }
+        },
+        {
+          "theme": "podcasts",
+          "type": "video",
+          "heading": "Season 5, Episode 8 | Jill Watts",
+          "description": "In this How to Fix Democracy episode, host Andrew Keen talks to Jill Watts, author of The Black Cabinet, about the untold story of African Americans and politics during the age of Franklin Delano Roosevelt.",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/5CFdhEioqLm0PhsK7SWGO1/a04cdf885f766f9f0f58e539a941d1a9/Jill_Watts_template.png?w=800&fm=webp&q=80&fit=fill",
+            "title": "Jill Watts"
+          },
+          "button": {
+            "url": "/podcasts/season-5-episode-8-jill-watts/",
+            "label": "Learn More"
+          }
+        },
+        {
+          "theme": "podcasts",
+          "type": "website",
+          "heading": "Season 5, Episode 7 | Allida Black",
+          "description": "Allida Black speaks with host Andrew Keen about the history of women in politics and the impact of their noteworthy political and social activism, which dates back a time well before the Women's Right to Vote.",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/6wKG6uvDkritFqGBIqZozx/6136b28c66de93761df9e250473a9895/Allida_Black_template.png?w=800&fm=webp&q=80&fit=fill",
+            "title": "Allida Black"
+          },
+          "button": {
+            "url": "/podcasts/season-5-episode-7-allida-black/",
+            "label": "Learn More"
+          }
+        },
+        {
+          "theme": "podcasts",
+          "type": "website",
+          "heading": "Season 5, Episode 6 | Richard Norton Smith",
+          "description": "In this episode of How to Fix Democracy, host Andrew Keen engages in a conversation with the author and historian Richard Norton Smith, delving into a discussion about the Hoover presidency and its profound relevance for the United States during a time of upheaval and economic depression.",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/3Ie0FW6A6QitjugFXJ4xHa/3a8b7f35d9660c26aca680d806d23fad/season_5_episode_6.png?w=800&fm=webp&q=80&fit=fill",
+            "title": "season 5 episode 6"
+          },
+          "button": {
+            "url": "/podcasts/season-5-episode-6-richard-norton-smith/",
+            "label": "Learn More"
+          }
+        },
+        {
+          "theme": "podcasts",
+          "type": "video",
+          "heading": "Season 5, Episode 5 | Paul Sparrow",
+          "description": "Paul Sparrow, former Director of the Franklin D. Roosevelt Presidential Library and Museum, speaks with Andrew Keen about the immense challenges and legacies of FDR and his administration. Sparrow maintains that Roosevelt saved American democracy from an existential crisis caused by the Great Depression and the failure of previous administrations to provide for the welfare of the public.",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/6WSst4lUgOvf8DI4QoPqab/ad3d4665b588d4da58b3789bbea11045/season_5_episode_5.png?w=800&fm=webp&q=80&fit=fill",
+            "title": "season 5 episode 5"
+          },
+          "button": {
+            "url": "/podcasts/season-5-episode-5-paul-sparrow/",
+            "label": "Learn More"
+          }
+        },
+        {
+          "theme": "podcasts",
+          "type": "video",
+          "heading": "Season 5, Episode 4 | Derek Leebaert",
+          "description": "In this episode of How to Fix Democracy, author and historian Derek Leebaert provides a revisionist account of President Franklin Roosevelt and four members of his Cabinet. According to Leebaert, the 1920s were beset by economic distress and labor unrest that culminated in the Great Depression.",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/1RzTyzKTOhdVyScFTOkV4u/79f432f3f672b24942c836318d57a8bd/season_5_episode_4.png?w=800&fm=webp&q=80&fit=fill",
+            "title": "season 5 episode 4"
+          },
+          "button": {
+            "url": "/podcasts/season-5-episode-4-derek-leebaert/",
+            "label": "Learn More"
+          }
+        },
+        {
+          "theme": "podcasts",
+          "type": "video",
+          "heading": "Season 5, Episode 3 | Robert Kagan",
+          "description": "In this 3rd episode of the season, host Andrew Keen talks to Robert Kagan, the distinguished Brookings Institute scholar of foreign policy, about America’s dramatically changing place in the world during the Twenties and Thirties. ",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/3rIdUWDBKWH8BlhYSsUbi6/ec4f3f01e55f362cf606df0a52864349/season_5_episode_3.png?w=800&fm=webp&q=80&fit=fill",
+            "title": "season 5 episode 3"
+          },
+          "button": {
+            "url": "/podcasts/season-5-episode-3-robert-kagan/",
+            "label": "Learn More"
+          }
+        },
+        {
+          "theme": "podcasts",
+          "type": "website",
+          "heading": "Season 5, Episode 2 | Edward Larson",
+          "description": "In 1924, John Scopes, an instructor in a public school in Dayton, Tennessee, was indicted for violating the Tennessee Butler Act for teaching evolution in a publicly funded school. The \"trial of the century,\" as it was called, revealed profound cultural and religious issues. Historian and legal scholar Edward Larson illuminates that history and relevance for us today.",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/77GWJe3eb2vv2OMSkEZRxG/784912950e11762d8c4c4b5a5aba9a9a/season_5_episode_2.png?w=800&fm=webp&q=80&fit=fill",
+            "title": "season 5 episode 2"
+          },
+          "button": {
+            "url": "/podcasts/season-5-episode-2-edward-larson/",
+            "label": "Learn More"
+          }
+        },
+        {
+          "theme": "podcasts",
+          "type": "video",
+          "heading": "Season 5, Episode 1 | Adam Hochschild",
+          "description": "In the first episode of Season 5, host Andrew Keen sits down with Adam Hochschild, historian, journalist, and award-winning author of “American Midnight: The Great War, a Violent Peace, and Democracy's Forgotten Crisis.\" Hochschild takes us on a journey to America in the aftermath of World War I – a country divided by labor strife, xenophobia, and massive violations of civil rights.",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/74Jpp2W8K91Rq7gwKGR7ol/b6d04c0b544f17ba33a9387524efd51c/season_5_episode_1.png?w=800&fm=webp&q=80&fit=fill",
+            "title": "season 5 episode 1"
+          },
+          "button": {
+            "url": "/podcasts/season-5-episode-1-adam-hochschild/",
+            "label": "Learn More"
+          }
+        },
+        {
+          "theme": "podcasts",
+          "type": "website",
+          "heading": "Season 4 Special Episode | Moisés Naím",
+          "description": "On October 20, 2022, Moisés Naím joined host Andrew Keen for a live episode of How to Fix Democracy in the Bertelsmann Foundation office in Washington, DC to discuss how authoritarian leaders wield and maintain power in contemporary politics.",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/6a7VerLbHQiNLQAQik95We/1e5672abc661b11bbb9e2cd2d76d1ca2/season_4_moises_naim_special_1.png?w=800&fm=webp&q=80&fit=fill",
+            "title": " "
+          },
+          "button": {
+            "url": "/podcasts/season-4-special-episode-moiss-nam/",
+            "label": "Learn More"
+          }
+        },
+        {
+          "theme": "podcasts",
+          "type": "video",
+          "heading": "Season 4, Episode 11 | Larry Diamond",
+          "description": "Author Larry Diamond joins host Andrew Keen to discuss the state of democracy in the United States post-January 6th.",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/740Na26thz6rpBxEM34Qxi/5a4ef2e1f7ce516edcc3cb2d94ae7a72/season_4_episode_11-01.png?w=800&fm=webp&q=80&fit=fill",
+            "title": "season 4 episode 11-01"
+          },
+          "button": {
+            "url": "/podcasts/season-4-episode-11-larry-diamond/",
+            "label": "Learn More"
+          }
+        },
+        {
+          "theme": "podcasts",
+          "type": "video",
+          "heading": "Season 4, Episode 10 | Michael Thorning",
+          "description": "In this episode of How to Fix Democracy, he joins host Andrew Keen to discuss the implications for the current and upcoming voting rights legislation, as well as the need for bipartisanship in order to defend democracy in the United States.",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/5fCNEZsvAhpotyg1qxE7T9/d99318104ba38ff0d5bb8a8d015b42fb/season_4_episode_10-01.png?w=800&fm=webp&q=80&fit=fill",
+            "title": "season 4 episode 10-01"
+          },
+          "button": {
+            "url": "/podcasts/season-4-episode-10-michael-thorning/",
+            "label": "Learn More"
+          }
+        },
+        {
+          "theme": "podcasts",
+          "type": "video",
+          "heading": "Season 4, Episode 9 | Dana Milbank",
+          "description": "In this episode of How to Fix Democracy, Dana Milbank joins host Andrew Keen to discuss the new voices of the Republican Party, how they came to power, and whether or not the party will be forced to change. Take a listen!",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/v9T5S52PUUyZkkSGSSnS8/ca3b565fc1037c34c4a2e515a0253990/season_4_episode_9-01.png?w=800&fm=webp&q=80&fit=fill",
+            "title": "season 4 episode 9-01"
+          },
+          "button": {
+            "url": "/podcasts/season-4-episode-9-dana-milbank/",
+            "label": "Learn More"
+          }
+        },
+        {
+          "theme": "podcasts",
+          "type": "video",
+          "heading": "Season 4, Midterm Elections Special | Rebekah Caruthers",
+          "description": "In this episode of How to Fix Democracy, Rebekah Caruthers joins host Andrew Keen to discuss the implications for the 2022 Midterm Elections and gives advice for citizens on Election Day. ",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/4Fkw9H8fxGAG1h6IxFL46Y/eaddaa7feefcd70efddeb73cac2361bb/season_4_midterm_special_1-01.png?w=800&fm=webp&q=80&fit=fill",
+            "title": "season 4 midterm special 1-01"
+          },
+          "button": {
+            "url": "/podcasts/season-4-midterm-elections-special-rebekah-caruthers/",
+            "label": "Learn More"
+          }
+        },
+        {
+          "theme": "podcasts",
+          "type": "video",
+          "heading": "Season 4, Episode 8 | Darrell M. West",
+          "description": "“Trumpism'' has emerged as a powerful force in American political ideology since the 2016 election. In this episode of How to Fix Democracy, Darrell M. West joins host Andrew Keen to discuss how Trumpism came to be, and how it is influencing the structures of American democracy.",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/3s4QSyW5QJGbQD5GtZDgZt/017a43c97ab419ca39d9b54d6ec66587/season_4_episode_8.png?w=800&fm=webp&q=80&fit=fill",
+            "title": "season 4 episode 8"
+          },
+          "button": {
+            "url": "/podcasts/season-4-episode-8-darrell-m-west/",
+            "label": "Learn More"
+          }
+        },
+        {
+          "theme": "podcasts",
+          "type": "video",
+          "heading": "Season 4, Episode 7 | Dahlia Lithwick",
+          "description": "In this episode of How to Fix Democracy, Dahlia Lithwick joins host Andrew Keen to discuss the implications of the Dobbs Ruling, the decline in popularity of the U.S. Supreme Court, and whether or not the court can maintain its legitimacy moving forward.",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/6SnNsty89wnP0H6CHyJEa3/4bfe7b579eb711e383798c61e38c1dbb/season_4_episode_7.png?w=800&fm=webp&q=80&fit=fill",
+            "title": "season 4 episode 7"
+          },
+          "button": {
+            "url": "/podcasts/season-4-episode-7-dahlia-lithwick/",
+            "label": "Learn More"
+          }
+        },
+        {
+          "theme": "podcasts",
+          "type": "video",
+          "heading": "Season 4, Episode 6 | Katherine Stewart",
+          "description": " In this episode of How to Fix Democracy, Katherine Stewart joins host Andrew Keen to discuss how religious nationalism has been cultivated by leaders on the far-right for political gain. ",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/2cIYRNY1ukBTEPf0DbLc8F/00611a0aa9f1c4ac24f63bc2c60501c6/season_4_episode_6.png?w=800&fm=webp&q=80&fit=fill",
+            "title": "season 4 episode 6"
+          },
+          "button": {
+            "url": "/podcasts/season-4-episode-6-katherine-stewart/",
+            "label": "Learn More"
+          }
+        },
+        {
+          "theme": "podcasts",
+          "type": "video",
+          "heading": "Season 4, Episode 5 | Cynthia Miller-Idriss",
+          "description": " In this episode of How to Fix Democracy, Dr. Miller-Idriss joins host Andrew Keen to discuss the state of American democracy today, the rise of extremism and radicalization, and strategies for curing what is seemingly irreversible polarization.",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/HqDByDjZGyrphmncYAqIQ/e7d467d9b53524a4dbc3d173fbf28018/season_4_episode_5-01.png?w=800&fm=webp&q=80&fit=fill",
+            "title": "season 4 episode 5-01"
+          },
+          "button": {
+            "url": "/podcasts/season-4-episode-5-cynthia-miller-idriss/",
+            "label": "Learn More"
+          }
+        },
+        {
+          "theme": "podcasts",
+          "type": "video",
+          "heading": "Season 4, Episode 4 | Andrea Young",
+          "description": "In this episode of How to Fix Democracy, Andrea Young discusses the history of structural racial injustice in the United States, the need for a multicultural democracy, and the role that Georgia is playing in paving the way to a stronger democratic system in which everyone’s voice can be heard and affirmed. ",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/70knyuwLMcSiiE9nQQPYrk/deceac5e3486c0e3a4ab63032831445d/season_4_episode_4-01.png?w=800&fm=webp&q=80&fit=fill",
+            "title": "Andrea Young"
+          },
+          "button": {
+            "url": "/podcasts/season-4-episode-4-andrea-young/",
+            "label": "Learn More"
+          }
+        },
+        {
+          "theme": "podcasts",
+          "type": "video",
+          "heading": "Season 4, Episode 3 | Mónica Guzmán",
+          "description": "What does it mean to engage with someone on the other side of the political aisle? Mónica Guzmán has made it her mission to answer this question and facilitate thoughtful, constructive dialogue between the political left and right in the United States. In this episode of How to Fix Democracy, she joins host Andrew Keen to discuss the dire state of the political landscape in the United States today, as well steps that we can take to fix it.",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/1GUUbUEk43zOiNePNuGUSY/472fa43e50291a7714c6a765686afe60/season_4_episode_3-01.png?w=800&fm=webp&q=80&fit=fill",
+            "title": "season 4 episode 3-01"
+          },
+          "button": {
+            "url": "/podcasts/season-4-episode-3-mnica-guzmn/",
+            "label": "Learn More"
+          }
+        },
+        {
+          "theme": "podcasts",
+          "type": "report",
+          "heading": "Season 4, Episode 2 | Peter Wehner and Jonathan Rauch",
+          "description": "In the latest episode of How to Fix Democracy, Peter Wehner and Jon Rauch join host Andrew Keen to discuss the history and implications of the stark transformation undergone by the Republican Party during and after Donald Trump’s presidency. As conservative researchers, they have a unique position to observe and analyze the recent shifts in the American political right.",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/6kqB76MuCK3eqVN99G7Fb3/c755b68c391f91631cec92c46b9343c6/season_4_episode_2-01.png?w=800&fm=webp&q=80&fit=fill",
+            "title": "season 4 episode 2-01"
+          },
+          "button": {
+            "url": "/podcasts/season-4-episode-2-peter-wehner-and-jonathan-rauch/",
+            "label": "Learn More"
+          }
+        },
+        {
+          "theme": "podcasts",
+          "type": "report",
+          "heading": "Season 4, Episode 1 | Cheryl Welch and Arthur Goldhammer",
+          "description": "Host Andrew Keen kicks off Season 4 with a discussion of Tocqueville's famous observational text, \"Democracy in America.\" Our fourth season of the podcast will focus on just that: democracy in the United States.",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/7buOOEvKnMgTBuiMKmMOmd/dabb4913905ac689603dd3513dca7c69/season_4_episode_1-01.png?w=800&fm=webp&q=80&fit=fill",
+            "title": "season 4 episode 1-01"
+          },
+          "button": {
+            "url": "/podcasts/season-4-episode-1-cheryl-welch-and-arthur-goldhammer/",
+            "label": "Learn More"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "title": "City Solutions Series",
+    "type": "website",
+    "description": "<html><head></head><body><p>The commitment to liberal democracy is a core value of the transatlantic community. And while democracy has always faced external threats, a second front has emerged in recent years, challenging its fundamental principles from within. On every continent, local and national governments are experimenting with new methods of tackling the threats to public confidence and democratic governance by addressing a range of common challenges. The drivers of democratic backsliding are now clear, so this project focuses on uncovering solutions, then amplifies these best practices for a transatlantic audience searching for innovative approaches to reverse democratic decline.</p>\n<p>It is often said that local government serves as a laboratory of democracy where new ideas and civic innovation transform the public space. It is also local government and civic leaders who offer the stoutest resistance when democracy is under attack. The objective of this joint project created by the Bertelsmann Foundation and the cities program at the German Marshall Fund is to surface those local innovations in democratic practice, and elevate them to national and international stakeholders who are constantly in search of positive evolutions to strengthen institutions, to make democracy more inclusive, and to stem the tide of authoritarianism. The hybrid approach to our research will make our deliverables accessible to policymakers and the public, with the goal of reshaping democracy around the globe by educating stakeholders at both ends of the influence spectrum. </p></body></html>",
+    "image": {
+      "url": "https://images.ctfassets.net/9vgcz0fppkl3/u9sDOjBIA3mPwT61QXQpB/4bbc014763aabcc55216177a19f1c1ac/browser.png?w=800&fm=webp&q=80&fit=fill",
+      "title": "City Solutions cover photo"
+    },
+    "buttons": [],
+    "theme": "democracy",
+    "permalink": "/democracy/city-solutions-series/",
+    "workstream": "Democracy",
+    "og_description": "The commitment to liberal democracy is a core value of the transatlantic community. And while democracy has always faced external threats, a second front has emerged in recent years, challenging its fundamental principles from within. On every continent, local and national governments are experimenting with new methods of tackling the threats to public confidence and democratic governance by addressing a range of common challenges. The drivers of democratic backsliding are now clear, so this project focuses on uncovering solutions, then amplifies these best practices for a transatlantic audience searching for innovative approaches to reverse democratic decline.\n\nIt is often said that local government serves as a laboratory of democracy where new ideas and civic innovation transform the public space. It is also local government and civic leaders who offer the stoutest resistance when democracy is under attack. The objective of this joint project created by the Bertelsmann Foundation and the cities program at the German Marshall Fund is to surface those local innovations in democratic practice, and elevate them to national and international stakeholders who are constantly in search of positive evolutions to strengthen institutions, to make democracy more inclusive, and to stem the tide of authoritarianism. The hybrid approach to our research will make our deliverables accessible to policymakers and the public, with the goal of reshaping democracy around the globe by educating stakeholders at both ends of the influence spectrum. \n",
+    "breadcrumbs": {
+      "currentPage": "City Solutions Series",
+      "items": [
+        {
+          "link": "/",
+          "title": "Home"
+        },
+        {
+          "link": "/democracy/",
+          "title": "Democracy"
+        }
+      ]
+    },
+    "products_section": {
+      "items": [
+        {
+          "theme": "democracy",
+          "type": "video",
+          "heading": "Oklahoma City, United States",
+          "description": "Today, we almost take our polarization for granted. Red States and Blue States. Facts and Alternative Facts. Electors and Alternate Electors. But what happens when communication truly breaks down? Nearly three decades after the Oklahoma City bombing, this film is built around six conversations with folks impacted by the blast. One salient theme emerges: If we want to keep this from happening again, we need to keep talking. This film was produced in collaboration with GMF Cities.",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/16WPMXex1ZS5iUOMRcbm1U/e0824ca7d59d761d865f1e50c4253bb9/15__1_.png?w=800&fm=webp&q=80&fit=fill",
+            "title": "Keep Talking cover photo"
+          },
+          "button": {
+            "url": "/democracy/oklahoma-city-united-states/",
+            "label": "Learn More"
+          }
+        },
+        {
+          "theme": "democracy",
+          "type": "video",
+          "heading": "Athens, Greece",
+          "description": "From laundry for the homeless, to drug recovery programs, to new employment opportunities, this documentary tracks NGOs in Athens that organized to help their neighbors survive, ultimately teaching the government a few lessons along the way.",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/1zgTiFsO2x0Yi2dm2I21jy/e14f9d0d6cb1e41b2e0383becb028964/Screenshot_2023-05-16_at_5.59.38_PM.png?w=800&fm=webp&q=80&fit=fill",
+            "title": "Agora cover photo"
+          },
+          "button": {
+            "url": "/democracy/athens-greece/",
+            "label": "Learn More"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "title": "Wisdom of the Crowd",
+    "type": "website",
+    "subheading": "A podcast miniseries by the Bertelsmann Foundation and Are We Europe",
+    "description": "<html><head></head><body><p>Welcome to “Wisdom of the Crowd”, a podcast miniseries that explores the future of transatlantic relations. From democracy and geopolitics to climate change and technology, we take a closer look at the most pressing issues impacting the transatlantic alliance by interviewing top experts and using a strategy of crowd-sourced forecasting. We don’t just rely on experts and policy makers; we listen to a crowd of forecasters, and YOU, to determine the outcome of future events. We call that “the wisdom of the crowd”. Wisdom of the Crowd is produced by the Bertelsmann Foundation, Are We Europe, and Awe Studio. Sound design is done by Stefano Montali and the podcast artwork is by Tamara Tasić. This series is hosted by Rylie Munn.</p>\n<p>Listen wherever you get your podcasts: <a href=\"https://open.spotify.com/show/3FZNWMZJIEclBonA0V6wLx?si=68c852b2fb7d42c7\">Spotify</a>, <a href=\"https://podcasts.apple.com/us/podcast/wisdom-of-the-crowd/id1674421315\">Apple Music</a>, <a href=\"https://podcasts.google.com/feed/aHR0cHM6Ly9mZWVkcy5zaW1wbGVjYXN0LmNvbS9SMmxVYmwyaA?sa=X&amp;ved=0CAMQ4aUDahcKEwjQtIi4sbv9AhUAAAAAHQAAAAAQBg\">Google Podcasts</a>, and more.</p>\n<p>Sign up to become a forecaster on <a href=\"https://www.rangeforecasting.org/\">RANGE</a> and join the conversation!</p></body></html>",
+    "image": {
+      "url": "https://images.ctfassets.net/9vgcz0fppkl3/6EPlmo9b2X5wrgAsLZXhka/2bba95abd0eef7d8580488f8b5576c66/wisdom_of_the_crowd_mock.png?w=800&fm=webp&q=80&fit=fill",
+      "title": "wisdom of the crowd mock"
+    },
+    "buttons": [
+      {
+        "type": "website",
+        "url": "https://wisdom-of-the-crowd.simplecast.com/",
+        "label": "Go to project website"
+      }
+    ],
+    "theme": "podcasts",
+    "permalink": "/podcasts/wisdom-of-the-crowd/",
+    "workstream": "Podcasts",
+    "og_description": "Welcome to “Wisdom of the Crowd”, a podcast miniseries that explores the future of transatlantic relations. From democracy and geopolitics to climate change and technology, we take a closer look at the most pressing issues impacting the transatlantic alliance by interviewing top experts and using a strategy of crowd-sourced forecasting. We don’t just rely on experts and policy makers; we listen to a crowd of forecasters, and YOU, to determine the outcome of future events. We call that “the wisdom of the crowd”. Wisdom of the Crowd is produced by the Bertelsmann Foundation, Are We Europe, and Awe Studio. Sound design is done by Stefano Montali and the podcast artwork is by Tamara Tasić. This series is hosted by Rylie Munn.\n\nListen wherever you get your podcasts: [Spotify](https://open.spotify.com/show/3FZNWMZJIEclBonA0V6wLx?si=68c852b2fb7d42c7), [Apple Music](https://podcasts.apple.com/us/podcast/wisdom-of-the-crowd/id1674421315), [Google Podcasts](https://podcasts.google.com/feed/aHR0cHM6Ly9mZWVkcy5zaW1wbGVjYXN0LmNvbS9SMmxVYmwyaA?sa=X&ved=0CAMQ4aUDahcKEwjQtIi4sbv9AhUAAAAAHQAAAAAQBg), and more.\n\nSign up to become a forecaster on [RANGE](https://www.rangeforecasting.org/) and join the conversation!",
+    "breadcrumbs": {
+      "currentPage": "Wisdom of the Crowd",
+      "items": [
+        {
+          "link": "/",
+          "title": "Home"
+        },
+        {
+          "link": "/podcasts/",
+          "title": "Podcasts"
+        }
+      ]
+    },
+    "products_section": {
+      "heading": "Latest Episodes",
+      "items": [
+        {
+          "theme": "podcasts",
+          "type": "website",
+          "heading": "Partner, Competitor, or Rival: The Transatlantic Relationship with China - 6",
+          "description": "This sixth and final episode of Wisdom of the Crowd is all about China. From the race to define the use of Artificial Intelligence, to securing critical materials around the globe, the issues on the horizon are both new and daunting. ",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/4qI9gV1nrgsUqdePPWFbUO/a8f208046612e4605f15c9ec3a6b7a3b/WOTC_cover_with_Stiftung_logo.png?w=800&fm=webp&q=80&fit=fill",
+            "title": " "
+          },
+          "button": {
+            "url": "/podcasts/partner-competitor-or-rival-the-transatlantic-relationship-with-china-6/",
+            "label": "Learn More"
+          }
+        },
+        {
+          "theme": "podcasts",
+          "type": "video",
+          "heading": "A Trillion Dollar Partnership: The Future of the Transatlantic Economy - 5",
+          "description": "In this fifth episode of Wisdom of the Crowd we explore the intricate trade and economic relationship between the United States and Europe. Within this trillion-dollar partnership lies a complex history of agreements, conflicts, and transformative shifts that have altered its course throughout the years. ",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/4qI9gV1nrgsUqdePPWFbUO/a8f208046612e4605f15c9ec3a6b7a3b/WOTC_cover_with_Stiftung_logo.png?w=800&fm=webp&q=80&fit=fill",
+            "title": " "
+          },
+          "button": {
+            "url": "/podcasts/a-trillion-dollar-partnership-the-future-of-the-transatlantic-economy-5/",
+            "label": "Learn More"
+          }
+        },
+        {
+          "theme": "podcasts",
+          "type": "website",
+          "heading": "The 21st Century Space Race: Geopolitical Competition or Cooperation? - 4",
+          "description": "In this fourth episode of Wisdom of the Crowd, we take a look at geopolitics, but not just how geopolitics play out here on earth. We’re going to zoom out a bit – looking at how space continues to operate as a stage for geopolitical competition, long after the Cold War of the last century.",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/4qI9gV1nrgsUqdePPWFbUO/a8f208046612e4605f15c9ec3a6b7a3b/WOTC_cover_with_Stiftung_logo.png?w=800&fm=webp&q=80&fit=fill",
+            "title": " "
+          },
+          "button": {
+            "url": "/podcasts/the-21st-century-space-race-geopolitical-competition-or-cooperation-4/",
+            "label": "Learn More"
+          }
+        },
+        {
+          "theme": "podcasts",
+          "type": "video",
+          "heading": "The Great Tech Policy Debate: Should Innovation be Regulated? - 3",
+          "description": "In this third episode of Wisdom of the Crowd we take a look at technology. Specifically, we’ll hone in on the relationship between the U.S. and EU in the world of tech and trade policy. We’ll discuss how transatlantic partners are working together to tackle the biggest challenges in this field, including data privacy, artificial intelligence and tech regulation.",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/4qI9gV1nrgsUqdePPWFbUO/a8f208046612e4605f15c9ec3a6b7a3b/WOTC_cover_with_Stiftung_logo.png?w=800&fm=webp&q=80&fit=fill",
+            "title": " "
+          },
+          "button": {
+            "url": "/podcasts/the-great-tech-policy-debate-should-innovation-be-regulated-3/",
+            "label": "Learn More"
+          }
+        },
+        {
+          "theme": "podcasts",
+          "type": "website",
+          "heading": "Are democracies a dying breed? - 2",
+          "description": "In this second episode of Wisdom of the Crowd we take a look at the state of global democracy. More specifically, we discuss why some democratic societies are on the decline, and whether democracies are equipped to face the challenges that arise in this particularly volatile period. ",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/4qI9gV1nrgsUqdePPWFbUO/a8f208046612e4605f15c9ec3a6b7a3b/WOTC_cover_with_Stiftung_logo.png?w=800&fm=webp&q=80&fit=fill",
+            "title": " "
+          },
+          "button": {
+            "url": "/podcasts/are-democracies-a-dying-breed-2/",
+            "label": "Learn More"
+          }
+        },
+        {
+          "theme": "podcasts",
+          "type": "website",
+          "heading": "Intro to crowdsourced forecasting - 1",
+          "description": "Wisdom of the Crowd is a podcast miniseries that explores the future of transatlantic relations. From democracy and geopolitics to climate change and technology, we take a closer look at the most pressing issues impacting the transatlantic alliance by interviewing top experts and using a strategy of crowd-sourced forecasting.",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/4qI9gV1nrgsUqdePPWFbUO/a8f208046612e4605f15c9ec3a6b7a3b/WOTC_cover_with_Stiftung_logo.png?w=800&fm=webp&q=80&fit=fill",
+            "title": " "
+          },
+          "button": {
+            "url": "/podcasts/intro-to-crowdsourced-forecasting-1/",
+            "label": "Learn More"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "title": "Bridging the Atlantic",
+    "type": "website",
+    "subheading": "Transatlantic Relations in the 21st Century",
+    "description": "<html><head></head><body><p><em>Bridging the Atlantic</em> is a 6-part miniseries, created with <a href=\"https://www.areweeurope.com/\">Are We Europe</a>, that will take stock of transatlantic relations today and examine it beyond the usual touchstones. After a tumultuous four years with the Trump administration, many following the transatlantic relationship are eager to understand how the transatlantic relationship can bounce back and become more resilient in the future. But a reset is perhaps not the right goal. </p>\n<p>In the 21st century, people on both sides of the Atlantic are no longer satisfied with “back to normal” and want more. Through interviews with experts on various aspects of the transatlantic relationship, this podcast will pit our understanding of transatlantic relations over the last several years against ideas from people re-imagining what the transatlantic relationship can and should be. The outcome, we hope, is a clearer sense of the alliance that shapes our lives in visible and invisible ways.</p></body></html>",
+    "image": {
+      "url": "https://images.ctfassets.net/9vgcz0fppkl3/1Wlx8T14zlvdLPlLyzoKUQ/ce5e6403a967525779b9473d0f3de013/browser.png?w=800&fm=webp&q=80&fit=fill",
+      "title": "Bridging the Atlantic no logos or writing"
+    },
+    "buttons": [],
+    "theme": "podcasts",
+    "permalink": "/podcasts/bridging-the-atlantic/",
+    "workstream": "Podcasts",
+    "og_description": "*Bridging the Atlantic* is a 6-part miniseries, created with [Are We Europe](https://www.areweeurope.com/), that will take stock of transatlantic relations today and examine it beyond the usual touchstones. After a tumultuous four years with the Trump administration, many following the transatlantic relationship are eager to understand how the transatlantic relationship can bounce back and become more resilient in the future. But a reset is perhaps not the right goal. \n\nIn the 21st century, people on both sides of the Atlantic are no longer satisfied with “back to normal” and want more. Through interviews with experts on various aspects of the transatlantic relationship, this podcast will pit our understanding of transatlantic relations over the last several years against ideas from people re-imagining what the transatlantic relationship can and should be. The outcome, we hope, is a clearer sense of the alliance that shapes our lives in visible and invisible ways.",
+    "breadcrumbs": {
+      "currentPage": "Bridging the Atlantic",
+      "items": [
+        {
+          "link": "/",
+          "title": "Home"
+        },
+        {
+          "link": "/podcasts/",
+          "title": "Podcasts"
+        }
+      ]
+    },
+    "products_section": {
+      "items": [
+        {
+          "theme": "podcasts",
+          "type": "video",
+          "heading": "Episode 6 | The Near Future of Transatlantic Relations",
+          "description": "In the European Union, Spain took over the presidency of the Council of the EU through the end of this year, and in 2024, both sides of the Atlantic will be shaped by elections. First, European elections will bring changes to the European Parliament and European Commission, and then all eyes will be on the US presidential election. I speak with experts on what to expect in the near future for the transatlantic relationship.",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/1Y9J9oylqQd6GHT17186Bh/fd53dc72d6154b69b38309c873234d80/Bridging_the_Atlantic__w_o_logos_.png?w=800&fm=webp&q=80&fit=fill",
+            "title": "Bridging the Atlantic"
+          },
+          "button": {
+            "url": "/podcasts/episode-6-the-near-future-of-transatlantic-relations/",
+            "label": "Learn More"
+          }
+        },
+        {
+          "theme": "podcasts",
+          "type": "website",
+          "heading": "Episode 5 | Transatlantic Generational Divide",
+          "description": "In this episode, we dive into generational divides on both sides of the Atlantic and discuss why different generations have different political mindsets. Millennials and Gen Z already exert their political influence through voting—and in some cases as legislators or even heads of government—but for the most part the transatlantic political agenda is set by older generations.",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/1Y9J9oylqQd6GHT17186Bh/fd53dc72d6154b69b38309c873234d80/Bridging_the_Atlantic__w_o_logos_.png?w=800&fm=webp&q=80&fit=fill",
+            "title": "Bridging the Atlantic"
+          },
+          "button": {
+            "url": "/podcasts/episode-5-transatlantic-generational-divide/",
+            "label": "Learn More"
+          }
+        },
+        {
+          "theme": "podcasts",
+          "type": "website",
+          "heading": "Episode 4 | Change Beyond Climate",
+          "description": "Earlier this year, the United Nations’ Intergovernmental Panel on Climate Change (IPCC) announced that keeping global warming below 1.5 degrees Celsius was no longer feasible. A summer of wildfires and droughts from the west coast of the United States to southern Spain kept the impact of climate change in the transatlantic headlines. Yet somehow, it seemed like there were always more salient political issues stealing attention away from climate action.",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/1Y9J9oylqQd6GHT17186Bh/fd53dc72d6154b69b38309c873234d80/Bridging_the_Atlantic__w_o_logos_.png?w=800&fm=webp&q=80&fit=fill",
+            "title": "Bridging the Atlantic"
+          },
+          "button": {
+            "url": "/podcasts/episode-4-change-beyond-climate/",
+            "label": "Learn More"
+          }
+        },
+        {
+          "theme": "podcasts",
+          "type": "website",
+          "heading": "Episode 3 | Transatlantic Security",
+          "description": "Vladimir Putin has brought war back to Europe, presenting transatlantic security with the massive challenge of supporting Ukraine and shoring up their own defenses. As the response to the war in Ukraine has shown, NATO and the EU work well together when the need arises, but questions remain about how to enhance EU security while strengthening NATO.",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/1Y9J9oylqQd6GHT17186Bh/fd53dc72d6154b69b38309c873234d80/Bridging_the_Atlantic__w_o_logos_.png?w=800&fm=webp&q=80&fit=fill",
+            "title": "Bridging the Atlantic"
+          },
+          "button": {
+            "url": "/podcasts/episode-3-transatlantic-security/",
+            "label": "Learn More"
+          }
+        },
+        {
+          "theme": "podcasts",
+          "type": "website",
+          "heading": "Episode 2 | Online Platform Regulation, Content Moderation, & Free Speech",
+          "description": "Disagreement over free speech online has been a thorn in the side of a common transatlantic approach to dealing with internet platform giants wielding huge influence over our online communication. Over time, the divide narrowed, but more importantly, policy approaches became more sophisticated. Our guests explain how, in the case of platform regulation, the United States and the European Union have converged despite different perspectives.",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/1Y9J9oylqQd6GHT17186Bh/fd53dc72d6154b69b38309c873234d80/Bridging_the_Atlantic__w_o_logos_.png?w=800&fm=webp&q=80&fit=fill",
+            "title": "Bridging the Atlantic"
+          },
+          "button": {
+            "url": "/podcasts/episode-2-online-platform-regulation-content-moderation-free-speech/",
+            "label": "Learn More"
+          }
+        },
+        {
+          "theme": "podcasts",
+          "type": "website",
+          "heading": "Episode 1 | What Are Transatlantic Relations Today?",
+          "description": "This episode reaches back into the past to one of the most important artifacts of transatlantic history. Then, Rachel Rizzo, nonresident senior fellow at the Atlantic Council's Europe Center, explains the foundations of the Euro-Atlantic alliance today. And finally, former NPR foreign correspondent Soraya Sarhaddi Nelson reflects on her experience as a journalist linking Germany and the United States and talks about the importance of finding common ground over disagreement.",
+          "image": {
+            "url": "https://images.ctfassets.net/9vgcz0fppkl3/1Y9J9oylqQd6GHT17186Bh/fd53dc72d6154b69b38309c873234d80/Bridging_the_Atlantic__w_o_logos_.png?w=800&fm=webp&q=80&fit=fill",
+            "title": "Bridging the Atlantic"
+          },
+          "button": {
+            "url": "/podcasts/episode-1-what-are-transatlantic-relations-today/",
+            "label": "Learn More"
+          }
+        }
+      ]
+    }
+  }
+]

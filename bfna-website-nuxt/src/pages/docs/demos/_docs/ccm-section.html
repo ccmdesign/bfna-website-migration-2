@@ -1,0 +1,42 @@
+<div class="stack" data-space="xs">
+  <article class="stack" data-space="2xs">
+    <h3>Component: ccmSection</h3>
+    <p>Layout section component with flexible content areas and optional side images.</p>
+    <p>Provides a structured container for page sections with configurable padding and background.<br />Supports three content slots (default, left, right) for flexible layouts. When image props<br />are provided, they render in the left/right slots automatically. Uses semantic design tokens<br />for consistent spacing and theming across the application.</p>
+    <p>Follows all 10 Component Standards with positional slot naming and CSS variable patterns.</p>
+    <dl class="stack" data-space="4xs">
+      <dt>Category</dt>
+      <dd>ds-layout</dd>
+      <dt>Standards</dt>
+      <dd>all-10</dd>
+    </dl>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: size</h3>
+    <p>Padding size using design token scale (s, m, l, xl, 2xl). Controls vertical padding via --space-{size} token.</p>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: backgroundColor</h3>
+    <p>Background color token name (e.g., 'color-surface', 'color-primary'). Maps to --{backgroundColor} CSS variable.</p>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: fullWidth</h3>
+    <p>When true, section spans full viewport width. When false, content is constrained to container max-width.</p>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: imageLeft</h3>
+    <p>Source URL for left-side image. Renders in #left slot when provided.</p>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: imageLeftAlt</h3>
+    <p>Alt text for left-side image. Required for accessibility when imageLeft is provided.</p>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: imageRight</h3>
+    <p>Source URL for right-side image. Renders in #right slot when provided.</p>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: imageRightAlt</h3>
+    <p>Alt text for right-side image. Required for accessibility when imageRight is provided.</p>
+  </article>
+</div>

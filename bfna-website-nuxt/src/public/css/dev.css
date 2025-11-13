@@ -1,0 +1,21 @@
+@layer overrides {
+  :root {
+    
+  }
+
+  .component-card {
+    background-color: var(--color-white);
+    box-shadow: var(--shadow-soft);
+    border-radius: var(--radius-s);
+
+    a {
+      color: inherit;
+      font-weight: var(--font-weight-medium);
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}

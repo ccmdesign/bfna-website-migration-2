@@ -1,0 +1,375 @@
+@layer utils {
+  
+  .background-color\:test { background-color: #f00; }
+  
+  
+  .background-color\:base-color,
+  .background-color\:base-100-tint { background-color: var(--color-base) !important; }
+  .background-color\:base-98-tint { background-color: var(--color-base-tint-98) !important; }
+  .background-color\:base-90-tint { background-color: var(--color-base-tint-90) !important; }
+  .background-color\:base-80-tint { background-color: var(--color-base-tint-80) !important; }
+  
+  .background-color\:base-color-light,
+  .background-color\:base-73-tint { background-color: var(--color-base-tint-73) !important; }
+  .background-color\:base-70-tint { background-color: var(--color-base-tint-70) !important; }
+  .background-color\:base-60-tint { background-color: var(--color-base-tint-60) !important; }
+  .background-color\:base-50-tint { background-color: var(--color-base-tint-50) !important; }
+  .background-color\:base-40-tint { background-color: var(--color-base-tint-40) !important; }
+  .background-color\:base-30-tint { background-color: var(--color-base-tint-30) !important; }
+  .background-color\:base-20-tint { background-color: var(--color-base-tint-20) !important; }
+  
+  .background-color\:base-color-super-light,
+  .background-color\:base-11-tint { background-color: var(--color-base-super-light) !important; }
+  .background-color\:base-10-tint { background-color: var(--color-base-tint-10) !important; }
+  .background-color\:base-7-tint { background-color: var(--color-base-tint-07) !important; }
+  .background-color\:base-5-tint { background-color: var(--color-base-tint-05) !important; }
+  .background-color\:base-2-tint { background-color: var(--color-base-tint-02) !important; }
+  
+  .background-color\:primary-color,
+  .background-color\:primary-100-tint { background-color: var(--color-primary) !important; }
+  .background-color\:primary-98-tint { background-color: var(--color-primary-tint-98) !important; }
+  .background-color\:primary-90-tint { background-color: var(--color-primary-tint-90) !important; }
+  .background-color\:primary-80-tint { background-color: var(--color-primary-tint-80) !important; }
+  
+  .background-color\:primary-color-light,
+  .background-color\:primary-73-tint { background-color: var(--color-primary-tint-73) !important; }
+  .background-color\:primary-70-tint { background-color: var(--color-primary-tint-70) !important; }
+  .background-color\:primary-60-tint { background-color: var(--color-primary-tint-60) !important; }
+  .background-color\:primary-50-tint { background-color: var(--color-primary-tint-50) !important; }
+  .background-color\:primary-40-tint { background-color: var(--color-primary-tint-40) !important; }
+  .background-color\:primary-30-tint { background-color: var(--color-primary-tint-30) !important; }
+  .background-color\:primary-20-tint { background-color: var(--color-primary-tint-20) !important; }
+  
+  .background-color\:primary-color-super-light,
+  .background-color\:primary-11-tint { background-color: var(--color-primary-super-light) !important; }
+  .background-color\:primary-10-tint { background-color: var(--color-primary-tint-10) !important; }
+  .background-color\:primary-5-tint { background-color: var(--color-primary-tint-05) !important; }
+  .background-color\:primary-2-tint { background-color: var(--color-primary-tint-02) !important; }
+  
+  .background-color\:secondary-color,
+  .background-color\:secondary-100-tint { background-color: var(--color-secondary) !important; }
+  .background-color\:secondary-98-tint { background-color: var(--color-secondary-tint-98) !important; }
+  .background-color\:secondary-90-tint { background-color: var(--color-secondary-tint-90) !important; }
+  .background-color\:secondary-80-tint { background-color: var(--color-secondary-tint-80) !important; }
+  
+  .background-color\:secondary-color-light,
+  .background-color\:secondary-73-tint { background-color: var(--color-secondary-tint-73) !important; }
+  .background-color\:secondary-70-tint { background-color: var(--color-secondary-tint-70) !important; }
+  .background-color\:secondary-60-tint { background-color: var(--color-secondary-tint-60) !important; }
+  .background-color\:secondary-50-tint { background-color: var(--color-secondary-tint-50) !important; }
+  .background-color\:secondary-40-tint { background-color: var(--color-secondary-tint-40) !important; }
+  .background-color\:secondary-30-tint { background-color: var(--color-secondary-tint-30) !important; }
+  .background-color\:secondary-20-tint { background-color: var(--color-secondary-tint-20) !important; }
+  
+  .background-color\:secondary-color-super-light,
+  .background-color\:secondary-11-tint { background-color: var(--color-secondary-super-light) !important; }
+  .background-color\:secondary-10-tint { background-color: var(--color-secondary-tint-10) !important; }
+  .background-color\:secondary-5-tint { background-color: var(--color-secondary-tint-05) !important; }
+  .background-color\:secondary-2-tint { background-color: var(--color-secondary-tint-02) !important; }
+  
+  .background-color\:accent-color,
+  .background-color\:accent-100-tint { background-color: var(--color-accent) !important; }
+  .background-color\:accent-98-tint { background-color: var(--color-accent-tint-98) !important; }
+  .background-color\:accent-90-tint { background-color: var(--color-accent-tint-90) !important; }
+  .background-color\:accent-80-tint { background-color: var(--color-accent-tint-80) !important; }
+  
+  .background-color\:accent-color-light,
+  .background-color\:accent-73-tint { background-color: var(--color-accent-tint-73) !important; }
+  .background-color\:accent-70-tint { background-color: var(--color-accent-tint-70) !important; }
+  .background-color\:accent-60-tint { background-color: var(--color-accent-tint-60) !important; }
+  .background-color\:accent-50-tint { background-color: var(--color-accent-tint-50) !important; }
+  .background-color\:accent-40-tint { background-color: var(--color-accent-tint-40) !important; }
+  .background-color\:accent-30-tint { background-color: var(--color-accent-tint-30) !important; }
+  .background-color\:accent-20-tint { background-color: var(--color-accent-tint-20) !important; }
+  
+  .background-color\:accent-color-super-light,
+  .background-color\:accent-11-tint { background-color: var(--color-accent-super-light) !important; }
+  .background-color\:accent-10-tint { background-color: var(--color-accent-tint-10) !important; }
+  .background-color\:accent-5-tint { background-color: var(--color-accent-tint-05) !important; }
+  .background-color\:accent-2-tint { background-color: var(--color-accent-tint-02) !important; }
+  
+  .background-color\:black-color,
+  .background-color\:black-100-tint { background-color: var(--color-black) !important; }
+  .background-color\:black-98-tint { background-color: var(--color-black-tint-98) !important; }
+  .background-color\:black-90-tint { background-color: var(--color-black-tint-90) !important; }
+  .background-color\:black-80-tint { background-color: var(--color-black-tint-80) !important; }
+  
+  .background-color\:black-color-light,
+  .background-color\:black-73-tint { background-color: var(--color-black-tint-73) !important; }
+  .background-color\:black-70-tint { background-color: var(--color-black-tint-70) !important; }
+  .background-color\:black-60-tint { background-color: var(--color-black-tint-60) !important; }
+  .background-color\:black-50-tint { background-color: var(--color-black-tint-50) !important; }
+  .background-color\:black-40-tint { background-color: var(--color-black-tint-40) !important; }
+  .background-color\:black-30-tint { background-color: var(--color-black-tint-30) !important; }
+  .background-color\:black-20-tint { background-color: var(--color-black-tint-20) !important; }
+  
+  .background-color\:black-color-super-light,
+  .background-color\:black-11-tint { background-color: var(--color-black-super-light) !important; }
+  .background-color\:black-10-tint { background-color: var(--color-black-tint-10) !important; }
+  .background-color\:black-5-tint { background-color: var(--color-black-tint-05) !important; }
+  .background-color\:black-2-tint { background-color: var(--color-black-tint-02) !important; }
+  
+  .background-color\:success-color,
+  .background-color\:success-100-tint { background-color: var(--color-success) !important; }
+  .background-color\:success-98-tint { background-color: var(--color-success-tint-98) !important; }
+  .background-color\:success-90-tint { background-color: var(--color-success-tint-90) !important; }
+  .background-color\:success-80-tint { background-color: var(--color-success-tint-80) !important; }
+  
+  .background-color\:success-color-light,
+  .background-color\:success-73-tint { background-color: var(--color-success-tint-73) !important; }
+  .background-color\:success-70-tint { background-color: var(--color-success-tint-70) !important; }
+  .background-color\:success-60-tint { background-color: var(--color-success-tint-60) !important; }
+  .background-color\:success-50-tint { background-color: var(--color-success-tint-50) !important; }
+  .background-color\:success-40-tint { background-color: var(--color-success-tint-40) !important; }
+  .background-color\:success-30-tint { background-color: var(--color-success-tint-30) !important; }
+  .background-color\:success-20-tint { background-color: var(--color-success-tint-20) !important; }
+  
+  .background-color\:success-color-super-light,
+  .background-color\:success-11-tint { background-color: var(--color-success-super-light) !important; }
+  .background-color\:success-10-tint { background-color: var(--color-success-tint-10) !important; }
+  .background-color\:success-5-tint { background-color: var(--color-success-tint-05) !important; }
+  .background-color\:success-2-tint { background-color: var(--color-success-tint-02) !important; }
+  
+  .background-color\:fail-color,
+  .background-color\:fail-100-tint { background-color: var(--color-fail) !important; }
+  .background-color\:fail-98-tint { background-color: var(--color-fail-tint-98) !important; }
+  .background-color\:fail-90-tint { background-color: var(--color-fail-tint-90) !important; }
+  .background-color\:fail-80-tint { background-color: var(--color-fail-tint-80) !important; }
+  
+  .background-color\:fail-color-light,
+  .background-color\:fail-73-tint { background-color: var(--color-fail-tint-73) !important; }
+  .background-color\:fail-70-tint { background-color: var(--color-fail-tint-70) !important; }
+  .background-color\:fail-60-tint { background-color: var(--color-fail-tint-60) !important; }
+  .background-color\:fail-50-tint { background-color: var(--color-fail-tint-50) !important; }
+  .background-color\:fail-40-tint { background-color: var(--color-fail-tint-40) !important; }
+  .background-color\:fail-30-tint { background-color: var(--color-fail-tint-30) !important; }
+  .background-color\:fail-20-tint { background-color: var(--color-fail-tint-20) !important; }
+  
+  .background-color\:fail-color-super-light,
+  .background-color\:fail-11-tint { background-color: var(--color-fail-super-light) !important; }
+  .background-color\:fail-10-tint { background-color: var(--color-fail-tint-10) !important; }
+  .background-color\:fail-5-tint { background-color: var(--color-fail-tint-05) !important; }
+  .background-color\:fail-2-tint { background-color: var(--color-fail-tint-02) !important; }
+  
+  .background-color\:warning-color,
+  .background-color\:warning-100-tint { background-color: var(--color-warning) !important; }
+  .background-color\:warning-98-tint { background-color: var(--color-warning-tint-98) !important; }
+  .background-color\:warning-90-tint { background-color: var(--color-warning-tint-90) !important; }
+  .background-color\:warning-80-tint { background-color: var(--color-warning-tint-80) !important; }
+  
+  .background-color\:warning-color-light,
+  .background-color\:warning-73-tint { background-color: var(--color-warning-tint-73) !important; }
+  .background-color\:warning-70-tint { background-color: var(--color-warning-tint-70) !important; }
+  .background-color\:warning-60-tint { background-color: var(--color-warning-tint-60) !important; }
+  .background-color\:warning-50-tint { background-color: var(--color-warning-tint-50) !important; }
+  .background-color\:warning-40-tint { background-color: var(--color-warning-tint-40) !important; }
+  .background-color\:warning-30-tint { background-color: var(--color-warning-tint-30) !important; }
+  .background-color\:warning-20-tint { background-color: var(--color-warning-tint-20) !important; }
+  
+  .background-color\:warning-color-super-light,
+  .background-color\:warning-11-tint { background-color: var(--color-warning-super-light) !important; }
+  .background-color\:warning-10-tint { background-color: var(--color-warning-tint-10) !important; }
+  .background-color\:warning-5-tint { background-color: var(--color-warning-tint-05) !important; }
+  .background-color\:warning-2-tint { background-color: var(--color-warning-tint-02) !important; }
+  
+  .background-color\:info-color,
+  .background-color\:info-100-tint { background-color: var(--color-info) !important; }
+  .background-color\:info-98-tint { background-color: var(--color-info-tint-98) !important; }
+  .background-color\:info-90-tint { background-color: var(--color-info-tint-90) !important; }
+  .background-color\:info-80-tint { background-color: var(--color-info-tint-80) !important; }
+  
+  .background-color\:info-color-light,
+  .background-color\:info-73-tint { background-color: var(--color-info-tint-73) !important; }
+  .background-color\:info-70-tint { background-color: var(--color-info-tint-70) !important; }
+  .background-color\:info-60-tint { background-color: var(--color-info-tint-60) !important; }
+  .background-color\:info-50-tint { background-color: var(--color-info-tint-50) !important; }
+  .background-color\:info-40-tint { background-color: var(--color-info-tint-40) !important; }
+  .background-color\:info-30-tint { background-color: var(--color-info-tint-30) !important; }
+  .background-color\:info-20-tint { background-color: var(--color-info-tint-20) !important; }
+  
+  .background-color\:info-color-super-light,
+  .background-color\:info-11-tint { background-color: var(--color-info-super-light) !important; }
+  .background-color\:info-10-tint { background-color: var(--color-info-tint-10) !important; }
+  .background-color\:info-5-tint { background-color: var(--color-info-tint-05) !important; }
+  .background-color\:info-2-tint { background-color: var(--color-info-tint-02) !important; }
+  
+  .background-color\:base-color { background-color: var(--color-base) !important; }
+  .background-color\:base-98-shade { background-color: var(--color-base-shade-98) !important; }
+  .background-color\:base-90-shade { background-color: var(--color-base-shade-90) !important; }
+  .background-color\:base-80-shade { background-color: var(--color-base-shade-80) !important; }
+  
+  .background-color\:base-color-dark,
+  .background-color\:base-73-shade { background-color: var(--color-base-dark) !important; }
+  .background-color\:base-70-shade { background-color: var(--color-base-shade-70) !important; }
+  .background-color\:base-60-shade { background-color: var(--color-base-shade-60) !important; }
+  .background-color\:base-50-shade { background-color: var(--color-base-shade-50) !important; }
+  .background-color\:base-40-shade { background-color: var(--color-base-shade-40) !important; }
+  .background-color\:base-30-shade { background-color: var(--color-base-shade-30) !important; }
+  .background-color\:base-20-shade { background-color: var(--color-base-shade-20) !important; }
+  
+  .background-color\:base-color-super-dark,
+  .background-color\:base-11-shade { background-color: var(--color-base-super-dark) !important; }
+  .background-color\:base-10-shade { background-color: var(--color-base-shade-10) !important; }
+  .background-color\:base-5-shade { background-color: var(--color-base-shade-05) !important; }
+  .background-color\:base-2-shade { background-color: var(--color-base-shade-02) !important; }
+  
+  .background-color\:primary-color { background-color: var(--color-primary) !important; }
+  .background-color\:primary-98-shade { background-color: var(--color-primary-shade-98) !important; }
+  .background-color\:primary-90-shade { background-color: var(--color-primary-shade-90) !important; }
+  .background-color\:primary-80-shade { background-color: var(--color-primary-shade-80) !important; }
+  
+  .background-color\:primary-color-dark,
+  .background-color\:primary-73-shade { background-color: var(--color-primary-dark) !important; }
+  .background-color\:primary-70-shade { background-color: var(--color-primary-shade-70) !important; }
+  .background-color\:primary-60-shade { background-color: var(--color-primary-shade-60) !important; }
+  .background-color\:primary-50-shade { background-color: var(--color-primary-shade-50) !important; }
+  .background-color\:primary-40-shade { background-color: var(--color-primary-shade-40) !important; }
+  .background-color\:primary-30-shade { background-color: var(--color-primary-shade-30) !important; }
+  .background-color\:primary-20-shade { background-color: var(--color-primary-shade-20) !important; }
+  
+  .background-color\:primary-color-super-dark,
+  .background-color\:primary-11-shade { background-color: var(--color-primary-super-dark) !important; }
+  .background-color\:primary-10-shade { background-color: var(--color-primary-shade-10) !important; }
+  .background-color\:primary-5-shade { background-color: var(--color-primary-shade-05) !important; }
+  .background-color\:primary-2-shade { background-color: var(--color-primary-shade-02) !important; }
+  
+  .background-color\:secondary-color { background-color: var(--color-secondary) !important; }
+  .background-color\:secondary-98-shade { background-color: var(--color-secondary-shade-98) !important; }
+  .background-color\:secondary-90-shade { background-color: var(--color-secondary-shade-90) !important; }
+  .background-color\:secondary-80-shade { background-color: var(--color-secondary-shade-80) !important; }
+  
+  .background-color\:secondary-color-dark,
+  .background-color\:secondary-73-shade { background-color: var(--color-secondary-dark) !important; }
+  .background-color\:secondary-70-shade { background-color: var(--color-secondary-shade-70) !important; }
+  .background-color\:secondary-60-shade { background-color: var(--color-secondary-shade-60) !important; }
+  .background-color\:secondary-50-shade { background-color: var(--color-secondary-shade-50) !important; }
+  .background-color\:secondary-40-shade { background-color: var(--color-secondary-shade-40) !important; }
+  .background-color\:secondary-30-shade { background-color: var(--color-secondary-shade-30) !important; }
+  .background-color\:secondary-20-shade { background-color: var(--color-secondary-shade-20) !important; }
+  
+  .background-color\:secondary-color-super-dark,
+  .background-color\:secondary-11-shade { background-color: var(--color-secondary-super-dark) !important; }
+  .background-color\:secondary-10-shade { background-color: var(--color-secondary-shade-10) !important; }
+  .background-color\:secondary-5-shade { background-color: var(--color-secondary-shade-05) !important; }
+  .background-color\:secondary-2-shade { background-color: var(--color-secondary-shade-02) !important; }
+  
+  .background-color\:accent-color { background-color: var(--color-accent) !important; }
+  .background-color\:accent-98-shade { background-color: var(--color-accent-shade-98) !important; }
+  .background-color\:accent-90-shade { background-color: var(--color-accent-shade-90) !important; }
+  .background-color\:accent-80-shade { background-color: var(--color-accent-shade-80) !important; }
+  
+  .background-color\:accent-color-dark,
+  .background-color\:accent-73-shade { background-color: var(--color-accent-dark) !important; }
+  .background-color\:accent-70-shade { background-color: var(--color-accent-shade-70) !important; }
+  .background-color\:accent-60-shade { background-color: var(--color-accent-shade-60) !important; }
+  .background-color\:accent-50-shade { background-color: var(--color-accent-shade-50) !important; }
+  .background-color\:accent-40-shade { background-color: var(--color-accent-shade-40) !important; }
+  .background-color\:accent-30-shade { background-color: var(--color-accent-shade-30) !important; }
+  .background-color\:accent-20-shade { background-color: var(--color-accent-shade-20) !important; }
+  
+  .background-color\:accent-color-super-dark,
+  .background-color\:accent-11-shade { background-color: var(--color-accent-super-dark) !important; }
+  .background-color\:accent-10-shade { background-color: var(--color-accent-shade-10) !important; }
+  .background-color\:accent-5-shade { background-color: var(--color-accent-shade-05) !important; }
+  .background-color\:accent-2-shade { background-color: var(--color-accent-shade-02) !important; }
+  
+  .background-color\:black-color { background-color: var(--color-black) !important; }
+  .background-color\:black-98-shade { background-color: var(--color-black-shade-98) !important; }
+  .background-color\:black-90-shade { background-color: var(--color-black-shade-90) !important; }
+  .background-color\:black-80-shade { background-color: var(--color-black-shade-80) !important; }
+  
+  .background-color\:black-color-dark,
+  .background-color\:black-73-shade { background-color: var(--color-black-shade-73) !important; }
+  .background-color\:black-70-shade { background-color: var(--color-black-shade-70) !important; }
+  .background-color\:black-60-shade { background-color: var(--color-black-shade-60) !important; }
+  .background-color\:black-50-shade { background-color: var(--color-black-shade-50) !important; }
+  .background-color\:black-40-shade { background-color: var(--color-black-shade-40) !important; }
+  .background-color\:black-30-shade { background-color: var(--color-black-shade-30) !important; }
+  .background-color\:black-20-shade { background-color: var(--color-black-shade-20) !important; }
+  
+  .background-color\:black-color-super-dark,
+  .background-color\:black-11-shade { background-color: var(--color-black-shade-11) !important; }
+  .background-color\:black-10-shade { background-color: var(--color-black-shade-10) !important; }
+  .background-color\:black-5-shade { background-color: var(--color-black-shade-05) !important; }
+  .background-color\:black-2-shade { background-color: var(--color-black-shade-02) !important; }
+  
+  .background-color\:success-color { background-color: var(--color-success) !important; }
+  .background-color\:success-98-shade { background-color: var(--color-success-shade-98) !important; }
+  .background-color\:success-90-shade { background-color: var(--color-success-shade-90) !important; }
+  .background-color\:success-80-shade { background-color: var(--color-success-shade-80) !important; }
+  
+  .background-color\:success-color-dark,
+  .background-color\:success-73-shade { background-color: var(--color-success-dark) !important; }
+  .background-color\:success-70-shade { background-color: var(--color-success-shade-70) !important; }
+  .background-color\:success-60-shade { background-color: var(--color-success-shade-60) !important; }
+  .background-color\:success-50-shade { background-color: var(--color-success-shade-50) !important; }
+  .background-color\:success-40-shade { background-color: var(--color-success-shade-40) !important; }
+  .background-color\:success-30-shade { background-color: var(--color-success-shade-30) !important; }
+  .background-color\:success-20-shade { background-color: var(--color-success-shade-20) !important; }
+  
+  .background-color\:success-color-super-dark,
+  .background-color\:success-11-shade { background-color: var(--color-success-super-dark) !important; }
+  .background-color\:success-10-shade { background-color: var(--color-success-shade-10) !important; }
+  .background-color\:success-5-shade { background-color: var(--color-success-shade-05) !important; }
+  .background-color\:success-2-shade { background-color: var(--color-success-shade-02) !important; }
+  
+  .background-color\:fail-color { background-color: var(--color-fail) !important; }
+  .background-color\:fail-98-shade { background-color: var(--color-fail-shade-98) !important; }
+  .background-color\:fail-90-shade { background-color: var(--color-fail-shade-90) !important; }
+  .background-color\:fail-80-shade { background-color: var(--color-fail-shade-80) !important; }
+  
+  .background-color\:fail-color-dark,
+  .background-color\:fail-73-shade { background-color: var(--color-fail-dark) !important; }
+  .background-color\:fail-70-shade { background-color: var(--color-fail-shade-70) !important; }
+  .background-color\:fail-60-shade { background-color: var(--color-fail-shade-60) !important; }
+  .background-color\:fail-50-shade { background-color: var(--color-fail-shade-50) !important; }
+  .background-color\:fail-40-shade { background-color: var(--color-fail-shade-40) !important; }
+  .background-color\:fail-30-shade { background-color: var(--color-fail-shade-30) !important; }
+  .background-color\:fail-20-shade { background-color: var(--color-fail-shade-20) !important; }
+  
+  .background-color\:fail-color-super-dark,
+  .background-color\:fail-11-shade { background-color: var(--color-fail-super-dark) !important; }
+  .background-color\:fail-10-shade { background-color: var(--color-fail-shade-10) !important; }
+  .background-color\:fail-5-shade { background-color: var(--color-fail-shade-05) !important; }
+  .background-color\:fail-2-shade { background-color: var(--color-fail-shade-02) !important; }
+  
+  .background-color\:warning-color { background-color: var(--color-warning) !important; }
+  .background-color\:warning-98-shade { background-color: var(--color-warning-shade-98) !important; }
+  .background-color\:warning-90-shade { background-color: var(--color-warning-shade-90) !important; }
+  .background-color\:warning-80-shade { background-color: var(--color-warning-shade-80) !important; }
+  
+  .background-color\:warning-color-dark,
+  .background-color\:warning-73-shade { background-color: var(--color-warning-dark) !important; }
+  .background-color\:warning-70-shade { background-color: var(--color-warning-shade-70) !important; }
+  .background-color\:warning-60-shade { background-color: var(--color-warning-shade-60) !important; }
+  .background-color\:warning-50-shade { background-color: var(--color-warning-shade-50) !important; }
+  .background-color\:warning-40-shade { background-color: var(--color-warning-shade-40) !important; }
+  .background-color\:warning-30-shade { background-color: var(--color-warning-shade-30) !important; }
+  .background-color\:warning-20-shade { background-color: var(--color-warning-shade-20) !important; }
+  
+  .background-color\:warning-color-super-dark,
+  .background-color\:warning-11-shade { background-color: var(--color-warning-super-dark) !important; }
+  .background-color\:warning-10-shade { background-color: var(--color-warning-shade-10) !important; }
+  .background-color\:warning-5-shade { background-color: var(--color-warning-shade-05) !important; }
+  .background-color\:warning-2-shade { background-color: var(--color-warning-shade-02) !important; }
+  
+  .background-color\:info-color { background-color: var(--color-info) !important; }
+  .background-color\:info-98-shade { background-color: var(--color-info-shade-98) !important; }
+  .background-color\:info-90-shade { background-color: var(--color-info-shade-90) !important; }
+  .background-color\:info-80-shade { background-color: var(--color-info-shade-80) !important; }
+  
+  .background-color\:info-color-dark,
+  .background-color\:info-73-shade { background-color: var(--color-info-dark) !important; }
+  .background-color\:info-70-shade { background-color: var(--color-info-shade-70) !important; }
+  .background-color\:info-60-shade { background-color: var(--color-info-shade-60) !important; }
+  .background-color\:info-50-shade { background-color: var(--color-info-shade-50) !important; }
+  .background-color\:info-40-shade { background-color: var(--color-info-shade-40) !important; }
+  .background-color\:info-30-shade { background-color: var(--color-info-shade-30) !important; }
+  .background-color\:info-20-shade { background-color: var(--color-info-shade-20) !important; }
+  
+  .background-color\:info-color-super-dark,
+  .background-color\:info-11-shade { background-color: var(--color-info-super-dark) !important; }
+  .background-color\:info-10-shade { background-color: var(--color-info-shade-10) !important; }
+  .background-color\:info-5-shade { background-color: var(--color-info-shade-05) !important; }
+  .background-color\:info-2-shade { background-color: var(--color-info-shade-02) !important; }
+}

@@ -1,0 +1,48 @@
+{
+  "displayName": "ccmCard",
+  "description": "",
+  "props": [
+    {
+      "name": "to",
+      "description": "Destination path or absolute URL for the card link.\nUse app-relative routes (e.g., \"/blog/post\") or full URLs (e.g., \"https://example.com\").",
+      "type": "string",
+      "required": false
+    },
+    {
+      "name": "title",
+      "description": "Human-readable title used for the link's aria-label and the image alt text.\nAlso used to generate a stable id for the CTA description.",
+      "type": "string",
+      "required": false
+    },
+    {
+      "name": "image",
+      "description": "Image URL used by the default image rendering. Provide this when not supplying the #image slot.",
+      "type": "string",
+      "required": false
+    },
+    {
+      "name": "action",
+      "description": "CTA copy rendered in the `action` area and referenced by aria-describedby.\nProvide a short, imperative phrase (e.g., \"Read more →\").",
+      "type": "string",
+      "required": false,
+      "defaultValue": "''"
+    },
+    {
+      "name": "size",
+      "description": "Spacing scale key controlling internal padding and gaps.\nValid values typically include: \"s\", \"m\", \"l\", \"xl\". Default is \"l\".",
+      "type": "string",
+      "required": false,
+      "defaultValue": "'l'"
+    },
+    {
+      "name": "backgroundColor",
+      "description": "Design token name (without the var(--) wrapper) controlling the image area's background color.\nExample: \"color-neutral-tint-90\" → applied as var(--color-neutral-tint-90).",
+      "type": "string",
+      "required": false,
+      "defaultValue": "'color-primary-tint-20'"
+    }
+  ],
+  "examples": [],
+  "codeSnippets": [],
+  "tags": {}
+}

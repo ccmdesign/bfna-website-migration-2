@@ -1,0 +1,62 @@
+<div class="stack" data-space="xs">
+  <article class="stack" data-space="2xs">
+    <h3>Component: ccmButton</h3>
+    <p>Primary button component following all 10 Component Standards.</p>
+    <p>A versatile button component that supports multiple variants, sizes, and colors.<br />Can render as button, link (NuxtLink), or anchor based on props. Includes full<br />accessibility support with proper ARIA attributes and keyboard navigation.</p>
+    <p>Uses semantic color tokens for variants. Sizes follow s/m/l/xl scale.<br />See Component Design Decisions for full rationale.</p>
+    <dl class="stack" data-space="4xs">
+      <dt>Category</dt>
+      <dd>atom</dd>
+      <dt>Standards</dt>
+      <dd>all-10</dd>
+    </dl>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: is</h3>
+    <p>HTML tag to render when not using to/href. Defaults to 'button' for standard button behavior.</p>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: to</h3>
+    <p>Internal route for NuxtLink navigation. When provided, renders as NuxtLink component.</p>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: href</h3>
+    <p>External URL for anchor link. When provided, renders as &lt;a&gt; tag with href attribute.</p>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: label</h3>
+    <p>Button text label used as fallback when slot is empty. Takes precedence over slot content for accessibility.</p>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: size</h3>
+    <p>Button size following the s/m/l/xl scale. Controls padding and font size. Valid values: s, m, l, xl</p>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: color</h3>
+    <p>Color theme using semantic design tokens. Valid values: primary, secondary, base, accent, white, success, fail, warning, info</p>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: backgroundColor</h3>
+    <p>Custom background color override using CSS custom property name (without -- prefix). Use 'transparent' for default behavior.</p>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: variant</h3>
+    <p>Visual style variant affecting appearance. Valid values: primary (filled), secondary (outlined), ghost (no border), link (text-only), unstyled (no styles)</p>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: ariaLabel</h3>
+    <p>Custom aria-label for screen readers. Overrides automatic label generation. Use for buttons with icon-only content.</p>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: isPressed</h3>
+    <p>Toggle button pressed state. Set to true/false for toggle buttons, null for non-toggle buttons. Controls aria-pressed attribute.</p>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: isExpanded</h3>
+    <p>Expandable button expanded state. Set to true/false for expandable buttons, null for non-expandable buttons. Controls aria-expanded attribute.</p>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: disabled</h3>
+    <p>Disable the button and prevent all interactions. Sets aria-disabled and removes pointer events.</p>
+  </article>
+</div>

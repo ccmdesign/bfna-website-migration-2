@@ -1,0 +1,195 @@
+{
+  "heading": "Digital World",
+  "description": "Around the world, humanity navigates a digital revolution that’s upending life as we know it. And while the United States and Europe are the nexus of the world's data flows and digital trade for now, the rest of the world is expanding digital output exponentially. It’s now more essential than ever that the conversation about these changes be inclusive. A successful transition to a digital world requires input from all sectors of society. Through analysis, data visualization, and documentary storytelling, we bring you inside the issues shaping today's global digital economy and society.",
+  "theme": "digital-world",
+  "button": {
+    "url": "/digital-world",
+    "label": "Learn More"
+  },
+  "image": {
+    "url": "https://images.ctfassets.net/9vgcz0fppkl3/Pf3tFouaWUFcaAhsOkJ49/66e3845013778f403675a3007183aef1/digital-economy_2x.webp?w=800&fm=webp&q=80&fit=fill",
+    "title": "digital economy"
+  },
+  "products_list": [
+    {
+      "theme": "digital-world",
+      "type": "report",
+      "heading": "Hotspots",
+      "excerpt": "Over the last decade, a degree of cynicism has set in regarding how society views the internet’s impact on democracy. What is the impact of digital tools on non-democracies when a majority of the global population lives in far less than “full democracy.” Does the internet offer repressed citizens an arena to network, organize, and, ultimately, make their voices heard offline, or is the internet simply another tool wielded by authoritarian regimes to maintain dominance? \n",
+      "image": {
+        "url": "https://images.ctfassets.net/9vgcz0fppkl3/70H4crtqWxRFR1NVHrOMi4/b3a5b06b4d5a2e2444229a28690f879f/Hotspots_formated.png?w=800&fm=webp&q=80&fit=fill",
+        "title": "Hotspots"
+      },
+      "button": {
+        "url": "/digital-world/hotspots/",
+        "label": "Learn More"
+      }
+    },
+    {
+      "theme": "digital-world",
+      "type": "report",
+      "heading": "The No Collar Economy - Vol. II",
+      "excerpt": "This publication stems from a simple observation: across the world, humanity navigates a digital revolution that upends life as we knew it. And yet, despite the near universal impact of this revolution, the increased connectivity has resulted in misconnections. ",
+      "image": {
+        "url": "https://images.ctfassets.net/9vgcz0fppkl3/42lqluldBR2AgU7XJDvyF/3b38e430c4aafdb9fc525d2aac45012e/no-collar-economy-vol-2?w=800&fm=webp&q=80&fit=fill",
+        "title": "no-collar-economy-vol-2"
+      },
+      "button": {
+        "url": "/digital-world/the-no-collar-economy-vol-ii/",
+        "label": "Learn More"
+      }
+    },
+    {
+      "theme": "digital-world",
+      "type": "report",
+      "heading": "The No Collar Economy - Vol. I",
+      "excerpt": "The digital revolution is turning the global economy on its head. The most valuable workers in today’s labor market—the millennials creating billion-dollar empires with laptops and a case of La Croix—aren’t wearing white collars or blue collars and they certainly don’t own anything in pinstripes. The most coveted employees of our new economy wear no collar at all.",
+      "image": {
+        "url": "https://images.ctfassets.net/9vgcz0fppkl3/4R11cP3xY8NiIJ72rSY020/3cf296aa779f6cb49414a50c0969c668/no-collar-economy-vol-1.png?w=800&fm=webp&q=80&fit=fill",
+        "title": "no-collar-economy-vol-1"
+      },
+      "button": {
+        "url": "/digital-world/the-no-collar-economy-vol-i/",
+        "label": "Learn More"
+      }
+    }
+  ],
+  "updates_list": [
+    {
+      "theme": "digital-world",
+      "image": {
+        "url": "https://images.ctfassets.net/9vgcz0fppkl3/6sRTw2VmgebE0qBGZUHy7z/cd7a93340014ae124cc49ad17dee231c/BFNA_Cybersecurity_infographic_FINAL.png?w=800&fm=webp&q=80&fit=fill",
+        "title": "Infographic Cybersecurity"
+      },
+      "heading": "Infographic: Cybersecurity ",
+      "by_line": "On Nov 14, 2023",
+      "button": {
+        "url": "/digital-world/infographic-cybersecurity-4o9yjyz7sy/",
+        "label": "Learn More"
+      },
+      "publish_date": "2023-11-14"
+    },
+    {
+      "theme": "digital-world",
+      "image": {
+        "url": "https://images.ctfassets.net/9vgcz0fppkl3/2MloeEWPy6tTbl0eNck4mZ/a263c6101b6215dc1e9dd0d071261fa4/BFNA_AI-Research-FULL080923.png?w=800&fm=webp&q=80&fit=fill",
+        "title": "AI Research and Development in the U.S., EU and China"
+      },
+      "heading": "Infographic: AI Research and Development in the U.S., EU and China",
+      "by_line": "On Sep 12, 2023",
+      "button": {
+        "url": "/digital-world/infographic-ai-research-and-development-in-the-us-eu-and-china-4mk29rb8ig/",
+        "label": "Learn More"
+      },
+      "publish_date": "2023-09-12"
+    },
+    {
+      "theme": "digital-world",
+      "excerpt": "Young people have grown up alongside social media platforms and many have never known a world without them. Teens and young adults are often very intentional about what they post on social media and how they present themselves on each platform. Social media allows users to carefully curate content that follows a certain narrative and builds an online identity. However, this on-screen identity can be different to the one users portray offline.",
+      "heading": "Where Online Meets Offline",
+      "subheading": "Social Media's Double-edged Sword",
+      "by_line": "On Jul 13, 2023",
+      "button": {
+        "url": "/digital-world/where-online-meets-offline-6rmihwg5hb/",
+        "label": "Learn More"
+      },
+      "publish_date": "2023-07-13"
+    },
+    {
+      "theme": "digital-world",
+      "image": {
+        "url": "https://images.ctfassets.net/9vgcz0fppkl3/4v9uKl0nRcheDGMW4EvyEi/793b708eea15d287cab7ba054d1cb8ad/BFNA_Regulating_AI_010623.png?w=800&fm=webp&q=80&fit=fill",
+        "title": "BFNA Regulating AI 010623"
+      },
+      "heading": "Which Countries are Regulating AI?",
+      "by_line": "On Jun 7, 2023",
+      "button": {
+        "url": "/digital-world/which-countries-are-regulating-ai-1fkh59sbqv/",
+        "label": "Learn More"
+      },
+      "publish_date": "2023-06-07"
+    },
+    {
+      "theme": "digital-world",
+      "excerpt": "Technological development offers seemingly endless benefits and convenience. Internet connectivity was critical for personal and professional interaction during the COVID-19 pandemic, and, more broadly, everyday emerging technology is saving lives, whether from 3D printed organs or automatic brakes in vehicles. At the same time, the rise of technology creates new issues that threaten social and democratic stability. ",
+      "heading": "Democracy Needs Tech Support",
+      "by_line": "On Feb 16, 2023",
+      "button": {
+        "url": "/digital-world/democracy-needs-tech-support-1uuaz1oniy/",
+        "label": "Learn More"
+      },
+      "publish_date": "2023-02-16"
+    },
+    {
+      "theme": "digital-world",
+      "excerpt": "In April 2007, the Estonian government approved a controversial plan to relocate a statue from the center of its capital, Tallinn. Soviet authorities had unveiled the monument, a life-sized World War II Russian soldier with a clenched right fist and a bowed head, 60 years earlier, after their forces retook the city from Nazi Germany.",
+      "heading": "E-Stonia Rewired",
+      "subheading": "A Nation Transformed from Cyberattack Victim to Cybersecurity Leader",
+      "by_line": "By Sarah Leming, on Feb 9, 2023",
+      "button": {
+        "url": "/digital-world/e-stonia-rewired-3srhri95os/",
+        "label": "Learn More"
+      },
+      "publish_date": "2023-02-09"
+    },
+    {
+      "theme": "digital-world",
+      "video": {
+        "url": "https://www.youtube.com/embed/LE4sz0m0V9k",
+        "thumbnail": "https://i.ytimg.com/vi/LE4sz0m0V9k/hqdefault.jpg"
+      },
+      "heading": "Privacy Shield 2.0 – The New Transatlantic Data Privacy Framework Explained",
+      "button": {
+        "url": "/digital-world/privacy-shield-20-the-new-transatlantic-data-privacy-framework-explained-4umt7irk2u/",
+        "label": "Watch"
+      },
+      "publish_date": "2022-08-15",
+      "by_line": "On Aug 15, 2022",
+      "authors": {
+        "all": "",
+        "external": [],
+        "collab": [],
+        "internal": [
+          {
+            "name": "",
+            "email": "",
+            "job_title": ""
+          }
+        ]
+      }
+    },
+    {
+      "theme": "digital-world",
+      "excerpt": "To many, the future of work is a question of technology and its impact on jobs, workers, the economy, and work itself. This way of looking at it has resulted in policy solutions focusing on workers and what they can do to prepare for the inevitability of technological disruption. ",
+      "heading": "Our Post Pandemic Future of Work Part 2 of 2 ",
+      "subheading": "Policy Approaches for a Contested World",
+      "by_line": "On Apr 22, 2021",
+      "button": {
+        "url": "/digital-world/our-post-pandemic-future-of-work-part-2-of-2-2u5ga9hn6c/",
+        "label": "Learn More"
+      },
+      "publish_date": "2021-04-22"
+    },
+    {
+      "theme": "digital-world",
+      "excerpt": "More than a year has elapsed since the World Health Organization declared COVID-19 a pandemic. The news presaged a public health crisis that generated massive unemployment and upended the world of work as we know it. As the pandemic metastasized, it forced workers, employers, and policymakers into an unplanned future of work trial that many — at least in pre-pandemic times — had envisioned unfolding at a measured pace over decades.  ",
+      "heading": "Our Post-Pandemic Future of Work Part 1 of 2 ",
+      "subheading": "Making Sense of the Debate",
+      "by_line": "On Apr 1, 2021",
+      "button": {
+        "url": "/digital-world/our-post-pandemic-future-of-work-part-1-of-2-32voatcfrq/",
+        "label": "Learn More"
+      },
+      "publish_date": "2021-04-01"
+    }
+  ],
+  "slug": "digital-world",
+  "navigation_order": 4,
+  "visible": true,
+  "hero": {
+    "webp": "/images/hero/digital-world@2x.webp",
+    "fallback": "/images/hero/digital-world.jpg",
+    "width": 1600,
+    "height": 1600
+  }
+}

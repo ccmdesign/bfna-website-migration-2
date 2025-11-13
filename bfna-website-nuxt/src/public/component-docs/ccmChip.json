@@ -1,0 +1,100 @@
+{
+  "displayName": "ccmChip",
+  "description": "",
+  "props": [
+    {
+      "name": "is",
+      "description": "Root HTML tag when not interactive or link.\nUse 'button' only when you need custom semantics; otherwise set `interactive`.\nDefaults to 'span'.",
+      "type": "string",
+      "required": false,
+      "defaultValue": "'span'"
+    },
+    {
+      "name": "to",
+      "description": "NuxtLink target. When provided, chip renders as `NuxtLink` and emits `click` on activation.\nExample: '/docs/ccm-chip'.",
+      "type": "string",
+      "required": false,
+      "defaultValue": "null"
+    },
+    {
+      "name": "label",
+      "description": "Fallback text label if default slot is empty. Also used for `aria-label`\nwhen `ariaLabel` is not provided.",
+      "type": "string",
+      "required": false,
+      "defaultValue": "''"
+    },
+    {
+      "name": "iconBefore",
+      "description": "Optional inline content rendered before the label when `icon-before` slot is unused.\nProvide a short text/icon glyph.",
+      "type": "string",
+      "required": false,
+      "defaultValue": "''"
+    },
+    {
+      "name": "iconAfter",
+      "description": "Optional inline content rendered after the label when `icon-after` slot is unused.\nIgnored when `dismissible` is true (dismiss button is shown instead).",
+      "type": "string",
+      "required": false,
+      "defaultValue": "''"
+    },
+    {
+      "name": "size",
+      "description": "Visual size preset.\nValid values: 'xs' | 's' | 'm'. Defaults to 'm'.",
+      "type": "string",
+      "required": false,
+      "defaultValue": "'s'"
+    },
+    {
+      "name": "variant",
+      "description": "Visual style variant.\nValid values: 'filled' | 'outlined' | 'minimal'. Defaults to 'filled'.",
+      "type": "string",
+      "required": false,
+      "defaultValue": "'filled'"
+    },
+    {
+      "name": "color",
+      "description": "Semantic color token name.\nValid values: 'neutral' | 'primary' | 'success' | 'warning' | 'error' | 'info'.",
+      "type": "string",
+      "required": false,
+      "defaultValue": "'neutral'"
+    },
+    {
+      "name": "customColor",
+      "description": "Custom background color token name (without leading --). When set, overrides\nvariant/color mapping for background and uses a readable foreground.\nExample: 'color-brand-500'.",
+      "type": "string",
+      "required": false,
+      "defaultValue": "null"
+    },
+    {
+      "name": "ariaLabel",
+      "description": "Explicit accessible name. Falls back to `label` or null when not provided.",
+      "type": "string",
+      "required": false,
+      "defaultValue": "null"
+    },
+    {
+      "name": "dismissible",
+      "description": "When true, displays a dismiss button and emits `dismiss` on activation.",
+      "type": "boolean",
+      "required": false,
+      "defaultValue": "false"
+    },
+    {
+      "name": "disabled",
+      "description": "Disables interaction and dims appearance.",
+      "type": "boolean",
+      "required": false,
+      "defaultValue": "false"
+    },
+    {
+      "name": "interactive",
+      "description": "Makes the chip keyboard/mouse interactive, rendering as a `button` when not a link.",
+      "type": "boolean",
+      "required": false,
+      "defaultValue": "false"
+    }
+  ],
+  "examples": [],
+  "codeSnippets": [],
+  "tags": {}
+}

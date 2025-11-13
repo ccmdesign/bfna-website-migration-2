@@ -1,0 +1,161 @@
+{
+  "generatedAt": "2025-11-10T20:17:36.904Z",
+  "components": [
+    {
+      "componentId": "ccmBreadcrumb",
+      "slug": "ccm-breadcrumb",
+      "docsJson": "/component-docs/ccmBreadcrumb.json",
+      "docsJsonExists": true,
+      "overviewPath": "src/content/docs/components/ccm-breadcrumb.md",
+      "overviewExists": true,
+      "demoPath": "src/components/docs/demos/ccm-breadcrumb-demo.vue",
+      "demoExists": true,
+      "guidancePath": "src/pages/docs/demos/_docs/ccm-breadcrumb.html",
+      "guidanceExists": true
+    },
+    {
+      "componentId": "ccmButton",
+      "slug": "ccm-button",
+      "docsJson": "/component-docs/ccmButton.json",
+      "docsJsonExists": true,
+      "overviewPath": "src/content/docs/components/ccm-button.md",
+      "overviewExists": true,
+      "demoPath": "src/components/docs/demos/ccm-button-demo.vue",
+      "demoExists": true,
+      "guidancePath": "src/pages/docs/demos/_docs/ccm-button.html",
+      "guidanceExists": true
+    },
+    {
+      "componentId": "ccmChip",
+      "slug": "ccm-chip",
+      "docsJson": "/component-docs/ccmChip.json",
+      "docsJsonExists": true,
+      "overviewPath": "src/content/docs/components/ccm-chip.md",
+      "overviewExists": true,
+      "demoPath": "src/components/docs/demos/ccm-chip-demo.vue",
+      "demoExists": true,
+      "guidancePath": "src/pages/docs/demos/_docs/ccm-chip.html",
+      "guidanceExists": true
+    },
+    {
+      "componentId": "ccmFormField",
+      "slug": "ccm-form-field",
+      "docsJson": "/component-docs/ccmFormField.json",
+      "docsJsonExists": true,
+      "overviewPath": "src/content/docs/components/ccm-form-field.md",
+      "overviewExists": true,
+      "demoPath": "src/components/docs/demos/ccm-form-field-demo.vue",
+      "demoExists": true,
+      "guidancePath": "src/pages/docs/demos/_docs/ccm-form-field.html",
+      "guidanceExists": true
+    },
+    {
+      "componentId": "ccmFormGroup",
+      "slug": "ccm-form-group",
+      "docsJson": "/component-docs/ccmFormGroup.json",
+      "docsJsonExists": true,
+      "overviewPath": "src/content/docs/components/ccm-form-group.md",
+      "overviewExists": true,
+      "demoPath": "src/components/docs/demos/ccm-form-group-demo.vue",
+      "demoExists": true,
+      "guidancePath": "src/pages/docs/demos/_docs/ccm-form-group.html",
+      "guidanceExists": true
+    },
+    {
+      "componentId": "ccmTabs",
+      "slug": "ccm-tabs",
+      "docsJson": "/component-docs/ccmTabs.json",
+      "docsJsonExists": true,
+      "overviewPath": "src/content/docs/components/ccm-tabs.md",
+      "overviewExists": true,
+      "demoPath": "src/components/docs/demos/ccm-tabs-demo.vue",
+      "demoExists": true,
+      "guidancePath": "src/pages/docs/demos/_docs/ccm-tabs.html",
+      "guidanceExists": true
+    },
+    {
+      "componentId": "ccmTopbar",
+      "slug": "ccm-topbar",
+      "docsJson": "/component-docs/ccmTopbar.json",
+      "docsJsonExists": true,
+      "overviewPath": "src/content/docs/components/ccm-topbar.md",
+      "overviewExists": true,
+      "demoPath": "src/components/docs/demos/ccm-topbar-demo.vue",
+      "demoExists": true,
+      "guidancePath": "src/pages/docs/demos/_docs/ccm-topbar.html",
+      "guidanceExists": true
+    },
+    {
+      "componentId": "ccmByLine",
+      "slug": "ccm-by-line",
+      "docsJson": "/component-docs/ccmByLine.json",
+      "docsJsonExists": true,
+      "overviewPath": "src/content/docs/components/ccm-by-line.md",
+      "overviewExists": true,
+      "demoPath": "src/components/docs/demos/ccm-by-line-demo.vue",
+      "demoExists": true,
+      "guidancePath": "src/pages/docs/demos/_docs/ccm-by-line.html",
+      "guidanceExists": true
+    },
+    {
+      "componentId": "ccmCard",
+      "slug": "ccm-card",
+      "docsJson": "/component-docs/ccmCard.json",
+      "docsJsonExists": true,
+      "overviewPath": "src/content/docs/components/ccm-card.md",
+      "overviewExists": true,
+      "demoPath": "src/components/docs/demos/ccm-card-demo.vue",
+      "demoExists": true,
+      "guidancePath": "src/pages/docs/demos/_docs/ccm-card.html",
+      "guidanceExists": true
+    },
+    {
+      "componentId": "ccmFooter",
+      "slug": "ccm-footer",
+      "docsJson": "/component-docs/ccmFooter.json",
+      "docsJsonExists": true,
+      "overviewPath": "src/content/docs/components/ccm-footer.md",
+      "overviewExists": true,
+      "demoPath": "src/components/docs/demos/ccm-footer-demo.vue",
+      "demoExists": true,
+      "guidancePath": "src/pages/docs/demos/_docs/ccm-footer.html",
+      "guidanceExists": true
+    },
+    {
+      "componentId": "ccmHero",
+      "slug": "ccm-hero",
+      "docsJson": "/component-docs/ccmHero.json",
+      "docsJsonExists": true,
+      "overviewPath": "src/content/docs/components/ccm-hero.md",
+      "overviewExists": true,
+      "demoPath": "src/components/docs/demos/ccm-hero-demo.vue",
+      "demoExists": true,
+      "guidancePath": "src/pages/docs/demos/_docs/ccm-hero.html",
+      "guidanceExists": true
+    },
+    {
+      "componentId": "ccmSection",
+      "slug": "ccm-section",
+      "docsJson": "/component-docs/ccmSection.json",
+      "docsJsonExists": true,
+      "overviewPath": "src/content/docs/components/ccm-section.md",
+      "overviewExists": true,
+      "demoPath": "src/components/docs/demos/ccm-section-demo.vue",
+      "demoExists": true,
+      "guidancePath": "src/pages/docs/demos/_docs/ccm-section.html",
+      "guidanceExists": true
+    },
+    {
+      "componentId": "ccmTable",
+      "slug": "ccm-table",
+      "docsJson": "/component-docs/ccmTable.json",
+      "docsJsonExists": true,
+      "overviewPath": "src/content/docs/components/ccm-table.md",
+      "overviewExists": true,
+      "demoPath": "src/components/docs/demos/ccm-table-demo.vue",
+      "demoExists": true,
+      "guidancePath": "src/pages/docs/demos/_docs/ccm-table.html",
+      "guidanceExists": true
+    }
+  ]
+}

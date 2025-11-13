@@ -1,0 +1,126 @@
+.floating-message {
+  position: fixed;
+  z-index: 100;
+  bottom: 40px;
+  transition: all .3s ease;
+  width: 100%;
+  left: 0;
+}
+
+.floating-message__content {
+  background-color: #fff;
+  border-radius: 4px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+  font-weight: 400;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: auto;
+  margin: 0 auto;
+  padding: 0 24px 4px;
+}
+
+.floating-message__content > p { 
+  flex: 1; 
+  padding: 0 2rem;
+}
+.floating-message__content > label { 
+  margin-top: 8px; 
+  cursor: pointer;
+}
+.floating-message__content a { color: #fa8900; }
+
+#cookie-trigger { display: none; }
+#cookie-trigger:checked + .floating-message { bottom: -150px; }
+
+.profile__icon.email > img { margin-bottom: -4px; }
+
+.about {
+  --button-hsl: var(--navy-hsl);
+}
+
+.spacer {
+  padding-top: var(--s1);
+  padding-bottom: var(--s1);
+}
+
+
+/* Fixes on the Person Modal component */
+
+.modal__content,
+.person-modal__bio {
+  max-height: 80vh;
+}
+
+.person-modal__bio {
+  overflow-y: scroll;
+}
+
+.person-modal__bio.prose p { font-size: 1rem; }
+
+.product-card--default {
+  --theme-hsl: var(--navy-hsl);
+}
+
+
+
+/* Fixes for Transponder Update */
+
+.main-content { padding-bottom: 0 !important; }
+.frame__left-nav {
+  margin-bottom: unset;
+  justify-content: center;
+}
+
+.center-l {
+  max-width: 1280px;
+  margin-inline: auto;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*.card.filtered { display: none; }*/
+
+/*.tabs__panel { padding: var(--s1) 0 !important; }*/
+
+/*.tabs__list {
+  max-width: 100vw;
+  overflow-x: scroll;
+}*/
+
+/*.tabs__label {
+  min-width: 100px !important;
+  font-size: 80% !important;
+}*/
+
+/*.form .select { --padding: var(--s-1) var(--s1); }*/
+/*.form .select option { min-height: 2.4rem; }*/
+/*.form select { height: auto !important; }*/
+/*.select:after { 
+  margin-top: 8px !important; 
+  pointer-events: none;
+}*/
+
+/*.simple-filters { padding: var(--s1) }*/
+
+/*.simple-filters__mobile {
+  --border: 1px solid hsla(var(--default-hsl), .6);
+  --icon-color: var(--default-hsl);
+}*/
+
+
+

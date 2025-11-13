@@ -1,0 +1,51 @@
+/* Syntax for ordering layers */
+@layer reset, defaults, tokens, themes, composition, components, utils, overrides;
+
+/* Reset Layer */
+@import "base/reset.css";
+@import "base/typography.css";
+@import "base/forms.css";
+
+/* Defaults Layer */
+@import "base/tables.css";
+
+/* Tokens Layer */
+@import 'tokens/fonts.css';
+@import 'tokens/primitive-colors.css';
+@import 'tokens/primitive-colors-shades-and-tints.css';
+@import 'tokens/primitive-spacing.css';
+@import 'tokens/primitive-misc.css';
+@import 'tokens/semantic-colors.css';
+@import 'tokens/semantic-colors-shades-and-tints.css';
+@import 'tokens/semantic-spacing.css';
+@import 'tokens/semantic-misc.css';
+
+/* Themes Layer */
+@import 'themes/theme.css';
+
+/* Composition Layer (Layout Primitives) */
+@import "composition/box.css";
+@import "composition/center.css";
+@import "composition/cluster.css";
+@import "composition/container.css";
+@import "composition/cover.css";
+@import "composition/frame.css";
+@import "composition/grid.css";
+@import "composition/imposter.css";
+@import "composition/reel.css";
+@import "composition/stack.css";
+@import "composition/switcher.css";
+
+/* Components Layer */
+@import "components/prose.css";
+
+/* Utils Layer */
+@import "utils/color-utils-background-color.css";
+@import "utils/color-utils-color.css";
+@import "utils/color-utils-border-color.css";
+@import "utils/space-utils.css";
+@import "utils/typography-utils.css";
+@import "utils/utils.css";
+
+/* Development Styles */
+@import "dev.css";

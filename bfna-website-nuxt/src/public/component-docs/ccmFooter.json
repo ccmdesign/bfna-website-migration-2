@@ -1,0 +1,23 @@
+{
+  "displayName": "ccmFooter",
+  "description": "",
+  "props": [
+    {
+      "name": "backgroundColor",
+      "description": "Background color token name (without var()). When provided, the footer\nbackground will use the CSS variable `--<token>` via `var(--<token>)`.\nExamples: `color-neutral-950`, `color-primary-tint-20`.\nDefault `transparent` leaves background unchanged.",
+      "type": "string",
+      "required": false,
+      "defaultValue": "'transparent'"
+    },
+    {
+      "name": "size",
+      "description": "Vertical padding size scale applied via CSS variables.\nValid values: `xs`, `s`, `m`, `l`, `xl`, `2xl`, `3xl`.",
+      "type": "string",
+      "required": false,
+      "defaultValue": "'l'"
+    }
+  ],
+  "examples": [],
+  "codeSnippets": [],
+  "tags": {}
+}

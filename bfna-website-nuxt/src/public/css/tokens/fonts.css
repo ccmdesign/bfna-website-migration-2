@@ -1,0 +1,27 @@
+@layer tokens {
+  @import 'https://fonts.googleapis.com/css2?family=Material+Icons+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap';
+  @import "https://cloud.typography.com/7264818/6341032/css/fonts.css";
+  @import "https://use.typekit.net/tsd2tcy.css";
+  
+  
+  /*
+   * Font Loading & Utilities
+   *
+   * This file handles:
+   * - External font imports (@import statements)
+   * - @font-face declarations for fallback fonts
+   *
+   * Note: Typography tokens are defined in semantic-misc.css
+   * See: src/public/css/tokens/semantic-misc.css for:
+   *   - --font-family-display, --font-family-body, --font-family-icon
+   *   - --font-weight-normal, --font-weight-medium, --font-weight-semibold, --font-weight-bold
+   */
+  
+    /* Material Icons Fallback */
+    @font-face {
+      font-family: 'Material Icons';
+      font-style: normal;
+      font-weight: 400;
+      src: url("https://fonts.gstatic.com/s/materialicons/v139/flUhRq6tzZclQEJ-Vdg-IuiaDsNc.woff2") format('woff2');
+    }
+}

@@ -1,0 +1,52 @@
+@layer composition {
+  .switcher {
+    --_switcher-threshold: var(--theme-switcher-threshold, 768px);
+    --_switcher-space: var(--theme-switcher-space, var(--space-s));
+    --_switcher-limit: var(--theme-switcher-limit, 5);
+  
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--_switcher-space);
+  }
+  
+  .switcher > * {
+    flex-grow: 1;
+    flex-basis: calc((var(--_switcher-threshold) - 100%) * 999);
+  }
+  
+  /* Force stacking when limit is exceeded */
+  .switcher > :nth-last-child(n + var(--_switcher-limit)) ~ *,
+  .switcher > :nth-last-child(n + var(--_switcher-limit)) {
+    flex-basis: 100%;
+  }
+  
+  /* ========================================
+     Data Attribute Controls
+     ======================================== */
+  
+  /* Switcher threshold (breakpoint) */
+  .switcher[data-threshold="xs"] { --_switcher-threshold: 480px; }
+  .switcher[data-threshold="s"] { --_switcher-threshold: 640px; }
+  .switcher[data-threshold="m"] { --_switcher-threshold: 768px; }
+  .switcher[data-threshold="l"] { --_switcher-threshold: 1024px; }
+  .switcher[data-threshold="xl"] { --_switcher-threshold: 1280px; }
+  .switcher[data-threshold="2xl"] { --_switcher-threshold: 1536px; }
+  
+  /* Switcher spacing */
+  .switcher[data-space="3xs"] { --_switcher-space: var(--space-3xs); }
+  .switcher[data-space="2xs"] { --_switcher-space: var(--space-2xs); }
+  .switcher[data-space="xs"] { --_switcher-space: var(--space-xs); }
+  .switcher[data-space="s"] { --_switcher-space: var(--space-s); }
+  .switcher[data-space="m"] { --_switcher-space: var(--space-m); }
+  .switcher[data-space="l"] { --_switcher-space: var(--space-l); }
+  .switcher[data-space="xl"] { --_switcher-space: var(--space-xl); }
+  .switcher[data-space="2xl"] { --_switcher-space: var(--space-2xl); }
+  .switcher[data-space="3xl"] { --_switcher-space: var(--space-3xl); }
+  
+  /* Switcher limit (max items before forcing stack) */
+  .switcher[data-limit="2"] { --_switcher-limit: 2; }
+  .switcher[data-limit="3"] { --_switcher-limit: 3; }
+  .switcher[data-limit="4"] { --_switcher-limit: 4; }
+  .switcher[data-limit="5"] { --_switcher-limit: 5; }
+  .switcher[data-limit="6"] { --_switcher-limit: 6; }
+}

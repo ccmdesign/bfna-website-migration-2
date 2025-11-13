@@ -1,0 +1,38 @@
+@layer composition {
+  .box {
+    --_box-padding: var(--theme-box-padding, var(--space-s));
+    --_box-border-width: var(--theme-box-border-width, var(--border-width-thin));
+  
+    padding: var(--_box-padding);
+    border-width: var(--_box-border-width);
+    border-style: solid;
+    border-color: currentcolor;
+  }
+  
+  /* Inverted variant for dark backgrounds */
+  .box[data-invert] {
+    color: var(--color-background);
+    background-color: var(--color-text);
+  }
+  
+  /* ========================================
+     Data Attribute Controls for Spacing
+     ======================================== */
+  
+  /* Box padding */
+  .box[data-padding="3xs"] { --_box-padding: var(--space-3xs); }
+  .box[data-padding="2xs"] { --_box-padding: var(--space-2xs); }
+  .box[data-padding="xs"] { --_box-padding: var(--space-xs); }
+  .box[data-padding="s"] { --_box-padding: var(--space-s); }
+  .box[data-padding="m"] { --_box-padding: var(--space-m); }
+  .box[data-padding="l"] { --_box-padding: var(--space-l); }
+  .box[data-padding="xl"] { --_box-padding: var(--space-xl); }
+  .box[data-padding="2xl"] { --_box-padding: var(--space-2xl); }
+  .box[data-padding="3xl"] { --_box-padding: var(--space-3xl); }
+  
+  /* Box border width */
+  .box[data-border="none"] { --_box-border-width: var(--border-width-none); }
+  .box[data-border="thin"] { --_box-border-width: var(--border-width-thin); }
+  .box[data-border="medium"] { --_box-border-width: var(--border-width-medium); }
+  .box[data-border="thick"] { --_box-border-width: var(--border-width-thick); }
+}

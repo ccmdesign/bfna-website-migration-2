@@ -1,0 +1,67 @@
+[
+  {
+    "name": "ccmBreadcrumb",
+    "displayName": "ccmBreadcrumb",
+    "description": ""
+  },
+  {
+    "name": "ccmButton",
+    "displayName": "ccmButton",
+    "description": "Primary button component following all 10 Component Standards.\n\nA versatile button component that supports multiple variants, sizes, and colors.\nCan render as button, link (NuxtLink), or anchor based on props. Includes full\naccessibility support with proper ARIA attributes and keyboard navigation.\n\nUses semantic color tokens for variants. Sizes follow s/m/l/xl scale.\nSee Component Design Decisions for full rationale."
+  },
+  {
+    "name": "ccmByLine",
+    "displayName": "ccmByLine",
+    "description": "Footer byline component displaying copyright and attribution information.\n\nA simple, horizontal layout component that combines copyright notice with a link\nto the designer's site. Uses the cluster layout utility for automatic spacing\nand aligns the attribution link to the right. Ideal for page footers.\n\nCurrently displays fixed content with dynamic year calculation. The cluster\nlayout provides responsive spacing between copyright text and attribution link."
+  },
+  {
+    "name": "ccmCard",
+    "displayName": "ccmCard",
+    "description": ""
+  },
+  {
+    "name": "ccmChip",
+    "displayName": "ccmChip",
+    "description": ""
+  },
+  {
+    "name": "ccmFooter",
+    "displayName": "ccmFooter",
+    "description": ""
+  },
+  {
+    "name": "ccmFormField",
+    "displayName": "ccmFormField",
+    "description": "Slot-first form field wrapper with labels, validation messages, and a11y wiring.\n\nWraps any input/textarea/select via the default slot and provides automatic\nlabel association, aria-describedby wiring for help/validation messages, and\nconsistent styles across sizes and validation states. Gracefully degrades by\nrendering a default text input when no slot content is provided."
+  },
+  {
+    "name": "ccmFormGroup",
+    "displayName": "ccmFormGroup",
+    "description": "Container component for grouping related buttons with shared borders and spacing.\n\nGroups multiple button elements together, removing border radius between them\nand applying negative margins to create a visually connected button group.\nSupports semantic variants via attribute selectors and customizable spacing\nthrough design tokens. Includes accessibility support with ARIA roles and labels.\n\nUse for action groups, toolbar-style controls, or any context where buttons\nshould appear as a single cohesive unit."
+  },
+  {
+    "name": "ccmHero",
+    "displayName": "ccmHero",
+    "description": "Hero section component for page headers and landing sections.\n\nA flexible banner component that provides structured slots for top navigation, main content,\nand bottom metadata. Supports multiple layout variants (default, minimal, full-screen) and\nsize-based spacing. Uses semantic HTML with role=\"banner\" for accessibility.\n\nDefault variant uses 16:7 aspect ratio. Minimal removes aspect ratio constraints.\nFull-screen variant stretches to 100vh for immersive landing experiences."
+  },
+  {
+    "name": "ccmSection",
+    "displayName": "ccmSection",
+    "description": "Layout section component with flexible content areas and optional side images.\n\nProvides a structured container for page sections with configurable padding and background.\nSupports three content slots (default, left, right) for flexible layouts. When image props\nare provided, they render in the left/right slots automatically. Uses semantic design tokens\nfor consistent spacing and theming across the application.\n\nFollows all 10 Component Standards with positional slot naming and CSS variable patterns."
+  },
+  {
+    "name": "ccmTable",
+    "displayName": "ccmTable",
+    "description": "Accessible, token-driven table with slot-first API and data-driven fallback.\n\nRenders semantic table markup. When the default slot is provided, it renders\nthe given table structure as-is. Otherwise, it can render a simple table from\na 2D data structure via the `data` prop. Visuals are controlled via CSS tokens."
+  },
+  {
+    "name": "ccmTabs",
+    "displayName": "ccmTabs",
+    "description": "Tabs component following all 10 Component Standards.\n\nA flexible tabs component that supports three configuration modes: JSON tabs prop,\ncustom navigation/content slots, or auto-generated fallback navigation from content sections.\nProvides full keyboard navigation (Arrow keys, Home, End, Enter/Space) and comprehensive\nARIA attributes for accessibility.\n\nSupports disabled tabs, external link detection, and programmatic tab selection.\nStyle-agnostic design relies on CSS variables for visual customization."
+  },
+  {
+    "name": "ccmTopbar",
+    "displayName": "ccmTopbar",
+    "description": "Topbar navigation component providing site header with logo and main navigation.\n\nA horizontal navigation bar component that displays the site logo/branding on the left\nand primary navigation links on the right. Uses CUBE CSS cluster utility for flexible\nlayout. Includes semantic HTML with proper navigation role for accessibility.\n\nThe logo slot allows custom branding content, defaulting to a site name link. Navigation\nmenu items use semantic link styling with hover states. Designed to work seamlessly\nwithin layout components like ccmHero or standalone in page headers."
+  }
+]

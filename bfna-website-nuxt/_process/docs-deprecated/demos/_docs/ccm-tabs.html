@@ -1,0 +1,30 @@
+<div class="stack" data-space="xs">
+  <article class="stack" data-space="2xs">
+    <h3>Component: ccmTabs</h3>
+    <p>Tabs component following all 10 Component Standards.</p>
+    <p>A flexible tabs component that supports three configuration modes: JSON tabs prop,<br />custom navigation/content slots, or auto-generated fallback navigation from content sections.<br />Provides full keyboard navigation (Arrow keys, Home, End, Enter/Space) and comprehensive<br />ARIA attributes for accessibility.</p>
+    <p>Supports disabled tabs, external link detection, and programmatic tab selection.<br />Style-agnostic design relies on CSS variables for visual customization.</p>
+    <dl class="stack" data-space="4xs">
+      <dt>Category</dt>
+      <dd>molecule</dd>
+      <dt>Standards</dt>
+      <dd>all-10</dd>
+    </dl>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: defaultTab</h3>
+    <p>Index of the initially active tab (0-based). Defaults to 0 (first tab).</p>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: ariaLabel</h3>
+    <p>ARIA label for the tablist element. Provides accessible name for screen readers. Defaults to 'Tabs'.</p>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: tabs</h3>
+    <p>Array of tab objects for JSON-based configuration. Each tab object: { id?: string, label: string, content: string, name?: string, disabled?: boolean }.<br />When provided, automatically generates navigation and content panels. Takes priority over slots.<br />If null, component uses navigation/content slots or auto-generates navigation from content sections.</p>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Emitted when the active tab changes.</h3>
+    <p>Emitted when the active tab changes. Provides the new tab index (0-based).</p>
+  </article>
+</div>

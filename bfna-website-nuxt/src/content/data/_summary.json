@@ -1,0 +1,106 @@
+{
+  "extractedAt": "2025-11-08T17:26:40.095Z",
+  "files": [
+    "products",
+    "publications",
+    "videos",
+    "infographics",
+    "people",
+    "workstreams",
+    "podcasts",
+    "news",
+    "announcement",
+    "docs",
+    "super_products",
+    "twitter"
+  ],
+  "stats": {
+    "products": {
+      "count": 117
+    },
+    "publications": {
+      "keys": [
+        "items",
+        "updates",
+        "homePageUpdates"
+      ],
+      "itemsCount": 183,
+      "updatesCount": 216,
+      "homePageUpdatesCount": 19
+    },
+    "videos": {
+      "keys": [
+        "items",
+        "updates",
+        "homePageUpdates"
+      ],
+      "itemsCount": 43,
+      "updatesCount": 43,
+      "homePageUpdatesCount": 18
+    },
+    "infographics": {
+      "keys": [
+        "items",
+        "homePageUpdates"
+      ],
+      "itemsCount": 55,
+      "homePageUpdatesCount": 18
+    },
+    "people": {
+      "keys": [
+        "heading",
+        "subheading",
+        "theme",
+        "image",
+        "team_list",
+        "board_list"
+      ]
+    },
+    "workstreams": {
+      "keys": [
+        "archives",
+        "politics-society",
+        "future-leadership",
+        "digital-world",
+        "democracy",
+        "podcasts"
+      ]
+    },
+    "podcasts": {
+      "keys": [
+        "items",
+        "homePageUpdates"
+      ],
+      "itemsCount": 40,
+      "homePageUpdatesCount": 6
+    },
+    "news": {
+      "count": 6
+    },
+    "announcement": {
+      "keys": [
+        "workstream",
+        "message",
+        "url"
+      ]
+    },
+    "docs": {
+      "keys": [
+        "items",
+        "homePageDocs"
+      ],
+      "itemsCount": 5
+    },
+    "super_products": {
+      "count": 7
+    },
+    "twitter": {
+      "keys": [
+        "items",
+        "homePageUpdates"
+      ],
+      "itemsCount": 0,
+      "homePageUpdatesCount": 0
+    }
+  }
+}

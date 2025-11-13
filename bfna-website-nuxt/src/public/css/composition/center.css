@@ -1,0 +1,21 @@
+@layer composition {
+  .center {
+    --_center-measure: var(--theme-center-measure, 1100px);
+    --_center-padding: var(--theme-center-padding, var(--space-s));
+  
+    box-sizing: content-box;
+    margin-inline: auto;
+    padding-inline: var(--_center-padding);
+    max-inline-size: var(--_center-measure);
+  }
+  
+  /* ========================================
+     Data Attribute Controls for Spacing
+     ======================================== */
+  
+  /* Center measure (width) */
+  .center[data-measure="narrow"] { --_center-measure: 60ch; }
+  .center[data-measure="normal"] { --_center-measure: 75ch; }
+  .center[data-measure="wide"] { --_center-measure: 90ch; }
+  .center[data-measure="full"] { --_center-measure: 100%; }
+}

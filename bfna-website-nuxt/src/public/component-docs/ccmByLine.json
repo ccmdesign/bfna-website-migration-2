@@ -1,0 +1,12 @@
+{
+  "displayName": "ccmByLine",
+  "description": "Footer byline component displaying copyright and attribution information.\n\nA simple, horizontal layout component that combines copyright notice with a link\nto the designer's site. Uses the cluster layout utility for automatic spacing\nand aligns the attribution link to the right. Ideal for page footers.\n\nCurrently displays fixed content with dynamic year calculation. The cluster\nlayout provides responsive spacing between copyright text and attribution link.",
+  "props": [],
+  "examples": [],
+  "codeSnippets": [],
+  "tags": {
+    "component": "ccmByLine",
+    "category": "ds-component",
+    "standards": "all-10"
+  }
+}

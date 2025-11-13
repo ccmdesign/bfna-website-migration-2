@@ -1,0 +1,845 @@
+{
+  "archives": {
+    "heading": "Archives",
+    "description": "Our library of older publications and projects.",
+    "theme": "default",
+    "button": {
+      "url": "/archives",
+      "label": "Learn More"
+    },
+    "image": {
+      "url": "https://images.ctfassets.net/9vgcz0fppkl3/4YW23RPQlyY2CkvqR7Yncx/8fd24b99e580121b78c9ee030f07d6a1/archives_2x.webp?w=800&fm=webp&q=80&fit=fill",
+      "title": "archived projects"
+    },
+    "products_list": [
+      {
+        "theme": "default",
+        "type": "report",
+        "heading": "Federalism in Crisis",
+        "excerpt": "In the United States and Germany, two countries with federal systems of government, responses to the COVID-19 pandemic have varied considerably. While conflict and dysfunction have embodied the U.S. response, cooperative and unified strategies have underpinned Germany’s approach. Federalism in Crisis explores these contrasting developments by elucidating the key characteristics of both the U.S. and German federal systems and examining how they have impacted responses to the crisis.   ",
+        "image": {
+          "url": "https://images.ctfassets.net/9vgcz0fppkl3/bmWtp3evuSc0XzBRTYQpi/9c671a4a4e52ae0ef6a7be4660294a9d/cover-3d.png?w=800&fm=webp&q=80&fit=fill",
+          "title": "Federalism in Crisis cover image"
+        },
+        "button": {
+          "url": "//downloads.ctfassets.net/9vgcz0fppkl3/2M9t4FrBedezlNbw0tMQzI/332937fceea6ac87fb2b72e178797f59/federalism-in-crisis-v21-digital-opt.pdf",
+          "label": "Open full report"
+        }
+      },
+      {
+        "theme": "default",
+        "type": "report",
+        "heading": "The Transition 2020",
+        "excerpt": "The Transition is a series of video interviews, infographics, and written briefs outlining a new transatlantic agenda intended to withstand a period of significant tumult in the U.S. and Europe.",
+        "image": {
+          "url": "https://images.ctfassets.net/9vgcz0fppkl3/2bn3J0a80s6PHSXS7GXs2d/6ea90b90927534e89e65a21c42e51083/Transition-browser.png?w=800&fm=webp&q=80&fit=fill",
+          "title": "The Transition Website Cover Image"
+        },
+        "button": {
+          "url": "//assets.ctfassets.net/9vgcz0fppkl3/70rz1q7sKV7W6QuzS0Xt2P/9f861b1a54b89d2e4130a0e84ad2ce25/Compendium_final.pdf",
+          "label": "Open full report"
+        }
+      },
+      {
+        "theme": "default",
+        "type": "website",
+        "heading": "100 Questions ",
+        "excerpt": "Recent technological advances are changing the way we do business, govern, and interact with each other. This shift is causing some concern over the future of work as technological innovations such as artificial intelligence and automation affect work. This challenge requires all members of the society to take action that will ensure technology creates a future that works and benefits everyone.",
+        "image": {
+          "url": "https://images.ctfassets.net/9vgcz0fppkl3/12LCzPTycq1wCPBB7cHO0q/741042217b4eb1bc56cdda764f4deafb/100-questions.png?w=800&fm=webp&q=80&fit=fill",
+          "title": "100-questions"
+        },
+        "button": {
+          "url": "https://future-of-work.the100questions.org",
+          "label": "Open project website"
+        }
+      },
+      {
+        "theme": "default",
+        "type": "report",
+        "heading": "People-Led Innovation",
+        "excerpt": "With more than half the world’s population residing in cities, responsibility for solving societal challenges – ranging from climate change to terrorism and the future of work – is increasingly falling to officials at the local level. However, deteriorating fiscal conditions, coupled with a long-term decline in public trust in government, has diminished local leaders’ ability to meet citizens’ increasingly complex demands.",
+        "image": {
+          "url": "https://images.ctfassets.net/9vgcz0fppkl3/6mglQNvdaDApVQB9WBSR3g/a0f9663dd8e718516a2c269d9cd8a132/people-led-innovation.png?w=800&fm=webp&q=80&fit=fill",
+          "title": "people-led-innovation"
+        },
+        "button": {
+          "url": "//assets.ctfassets.net/9vgcz0fppkl3/2a6KyZC6mMDrbnHbaoRsy3/32f11262d95711d76b8f25be717386db/bertelsmann-report-web.pdf",
+          "label": "Open full report"
+        }
+      }
+    ],
+    "updates_list": [
+      {
+        "theme": "default",
+        "excerpt": "Liberal democracy as we’ve come to understand it over the last century is vulnerable from every angle. Democratically-elected leaders with autocratic leanings are using the very tools of democracy – elections, constitutions, political parties, the media – to undermine the system. ",
+        "heading": "Washington Symposium",
+        "by_line": "On Jun 17, 2019",
+        "button": {
+          "url": "/archives/washington-symposium-5vzvujirns/",
+          "label": "Learn More"
+        },
+        "publish_date": "2019-06-17"
+      }
+    ]
+  },
+  "politics-society": {
+    "heading": "Politics & Society",
+    "description": "As crises and trade disputes escalate, accompanied by the ascendancy of populist movements and fraying international alliances, a notable geopolitical shift is underway, causing a growing divergence between the United States and its European counterparts. We closely monitor the evolving dynamics of the transatlantic relationship, analyzing how political landscapes and societal responses on both sides of the Atlantic are adapting to the complex global challenges of the 21st century. Our analysis, web-based tools, crowd-sourced forecasting and multimedia content from short explainer videos to full-length documentaries bring these challenges to the fore, conveying both the personal impact and the broader geopolitical implications of the forces shaping transatlantic politics and societies.",
+    "theme": "politics-society",
+    "button": {
+      "url": "/politics-society",
+      "label": "Learn More"
+    },
+    "image": {
+      "url": "https://images.ctfassets.net/9vgcz0fppkl3/1AgkTKN7K4ZWMXvqMmDVXN/f27ee0f5827ace0da375ef9b6cde69bd/politics-society_2x.webp?w=800&fm=webp&q=80&fit=fill",
+      "title": "politics and society"
+    },
+    "products_list": [
+      {
+        "theme": "politics-society",
+        "type": "website",
+        "heading": "Transatlantic Periscope",
+        "excerpt": "The Transatlantic Periscope is an interactive, multimedia tool that brings together expert commentary, high-quality media coverage, official policy documents, quantitative data, social media posts, and gray literature. ",
+        "image": {
+          "url": "https://images.ctfassets.net/9vgcz0fppkl3/3iO8cuUP3v0W2kGNw13zNR/4df05931ce28a77e3ce661d23181035d/periscope_mock.png?w=800&fm=webp&q=80&fit=fill",
+          "title": "periscope mock"
+        },
+        "button": {
+          "url": "https://transatlanticperiscope.org/",
+          "label": "Open project website"
+        }
+      },
+      {
+        "theme": "politics-society",
+        "type": "website",
+        "heading": "Transatlantic Barometer",
+        "excerpt": "The Transatlantic Barometer’s main fixture is a website that provides users with a synopsis of the policy positions and engagement of 31 key transatlantic actors: the United States, Canada, the United Kingdom, and the European Union, as well as its 27 member states.",
+        "image": {
+          "url": "https://images.ctfassets.net/9vgcz0fppkl3/1VWlptNnvCsQCdjKbV06Fn/2c15f0d16dc5ff6bc56d35f9a19f774d/barometer_web.png?w=800&fm=webp&q=80&fit=fill",
+          "title": "barometer web"
+        },
+        "button": {
+          "url": "https://www.transatlanticbarometer.org/",
+          "label": "Open project website"
+        }
+      },
+      {
+        "theme": "politics-society",
+        "type": "website",
+        "heading": "RANGE",
+        "excerpt": "RANGE (Rethinking Assumptions in a New Geostrategic Environment) is a crowdsourced forecasting program focused on geopolitics and the transatlantic relationship.",
+        "image": {
+          "url": "https://images.ctfassets.net/9vgcz0fppkl3/1fQatZEisED8zeVK6LIyGm/bfa01b0c67f167e19ba68ab5011332d0/Range_Mock_1.png?w=800&fm=webp&q=80&fit=fill",
+          "title": "Range Mock 1"
+        },
+        "button": {
+          "url": "https://www.rangeforecasting.org/",
+          "label": "Open project website"
+        }
+      },
+      {
+        "theme": "politics-society",
+        "type": "report",
+        "heading": "Lithium Rising: The Race for Critical Minerals ",
+        "excerpt": "Journey to the frontlines of the 21st-century resource scramble—from Bolivian salt flats to Congolese cobalt mines—uncover how lithium, cobalt, and nickel have become central to clean energy, national security, and economic power. Through vivid storytelling, original photography, and information from over 100 interviews, explore the global power plays and local struggles shaping the battery revolution. Who profits, who pays—and can we mine our way to a greener future without repeating the past?",
+        "image": {
+          "url": "https://images.ctfassets.net/9vgcz0fppkl3/2setEYEGQMGuoOPoZ51vwQ/ea8bb7aa51b288d2b0aed36263bd316b/Lithium_Rising_Verticle.webp?w=800&fm=webp&q=80&fit=fill",
+          "title": "Lithium Rising Cover"
+        },
+        "button": {
+          "url": "/politics-society/lithium-rising-the-race-for-critical-minerals/",
+          "label": "Read Report"
+        }
+      },
+      {
+        "theme": "politics-society",
+        "type": "website",
+        "heading": "Wisdom of the Crowd",
+        "excerpt": "Welcome to “Wisdom of the Crowd”, a podcast miniseries that explores the future of transatlantic relations. From democracy and geopolitics to climate change and technology, we take a closer look at the most pressing issues impacting the transatlantic alliance by interviewing top experts and using a strategy of crowd-sourced forecasting. We don’t just rely on experts and policy makers; we listen to a crowd of forecasters, and YOU, to determine the outcome of future events. We call that “the wisdom of the crowd”. Wisdom of the Crowd is produced by the Bertelsmann Foundation, Are We Europe, and Awe Studio. Sound design is done by Stefano Montali and the podcast artwork is by Tamara Tasić. This series is hosted by Rylie Munn.",
+        "image": {
+          "url": "https://images.ctfassets.net/9vgcz0fppkl3/6EPlmo9b2X5wrgAsLZXhka/2bba95abd0eef7d8580488f8b5576c66/wisdom_of_the_crowd_mock.png?w=800&fm=webp&q=80&fit=fill",
+          "title": "wisdom of the crowd mock"
+        },
+        "button": {
+          "url": "/podcasts/wisdom-of-the-crowd/",
+          "label": "Learn More"
+        }
+      },
+      {
+        "theme": "politics-society",
+        "type": "website",
+        "heading": "Bridging the Atlantic",
+        "excerpt": "Bridging the Atlantic is a 6-part miniseries, created with Are We Europe, that will take stock of transatlantic relations today and examine it beyond the usual touchstones. After a tumultuous four years with the Trump administration, many following the transatlantic relationship are eager to understand how the transatlantic relationship can bounce back and become more resilient in the future. But a reset is perhaps not the right goal. ",
+        "image": {
+          "url": "https://images.ctfassets.net/9vgcz0fppkl3/1Wlx8T14zlvdLPlLyzoKUQ/ce5e6403a967525779b9473d0f3de013/browser.png?w=800&fm=webp&q=80&fit=fill",
+          "title": "Bridging the Atlantic no logos or writing"
+        },
+        "button": {
+          "url": "/podcasts/bridging-the-atlantic/",
+          "label": "Learn More"
+        }
+      },
+      {
+        "theme": "politics-society",
+        "type": "report",
+        "heading": "Transatlantic Trends 2022",
+        "excerpt": "The geopolitical turmoil of 2022 presents a multitude of challenges for the transatlantic community. From Russia’s invasion of Ukraine and China’s geostrategic ambitions to the worsening climate crisis and democratic backsliding, greater transatlantic cooperation is of paramount importance. In the face of such challenges, the transatlantic community has largely shown resolve, yet divergences in interests among partners remain.",
+        "image": {
+          "url": "https://images.ctfassets.net/9vgcz0fppkl3/1fhWpYqRX2CfUmisU4TEs7/0e9a1ed1304f15cc9ca7b530fd388568/TTrends_22_updated_image.png?w=800&fm=webp&q=80&fit=fill",
+          "title": "Transatlantic Trends mock for website"
+        },
+        "button": {
+          "url": "/future-leadership/transatlantic-trends-2022-2zdfp27fcj/",
+          "label": "Learn More"
+        }
+      },
+      {
+        "theme": "politics-society",
+        "type": "report",
+        "heading": "Transatlantic Trends 2021",
+        "excerpt": "2021 opens a new chapter for the transatlantic relationship. The change of the U.S. administration as well as the political, economic, and societal implications of the coronavirus pandemic have redefined transatlantic policy dialogues. New priorities have emerged, as the calls for increased cooperation around climate change and common values signal an opportunity for an update of the transatlantic agenda. ",
+        "image": {
+          "url": "https://images.ctfassets.net/9vgcz0fppkl3/3O4zq4MiowkrTyqMmUQ4H2/a405b55985f8294164ee8aa5ae880c2d/TT2021_Cover_3d.png?w=800&fm=webp&q=80&fit=fill",
+          "title": "Transatlantic Trends 2021 cover"
+        },
+        "button": {
+          "url": "/politics-society/transatlantic-trends-2021/",
+          "label": "Learn More"
+        }
+      },
+      {
+        "theme": "politics-society",
+        "type": "report",
+        "heading": "Cross-Cutting Currents",
+        "excerpt": "The U.S. and Europe have an opportunity to engage closely on a broad range of challenges in 2022. To that end, the Bertelsmann Foundation has produced Cross-Cutting Currents, a transatlantic primer, as a foundational and introductory resource for those who seek a better understanding of the transatlantic relationship. This publication addresses the most pressing issues affecting five of the transatlantic community’s key actors—the U.S., Germany, France, Italy, and the UK.",
+        "image": {
+          "url": "https://images.ctfassets.net/9vgcz0fppkl3/GQA8TTOBpdxOrIQjfqKzB/c060e1be40fe2ca2a0c2c2f626274496/cross-cutting-currents-mockup.webp?w=800&fm=webp&q=80&fit=fill",
+          "title": "Cross-Cutting Currents - Transatlantic Primer 2022"
+        },
+        "button": {
+          "url": "/politics-society/cross-cutting-currents/",
+          "label": "Learn More"
+        }
+      }
+    ],
+    "updates_list": [
+      {
+        "theme": "politics-society",
+        "excerpt": "German political parties regularly vie for the coveted designation of being seen as the “voice of the youth”",
+        "heading": "Conscription, Direction, Transformation",
+        "subheading": "Voice of the German Youth",
+        "by_line": "By Courtney Flynn Martino, on Oct 28, 2025",
+        "button": {
+          "url": "/politics-society/conscription-direction-transformation-6ykxrteofo/",
+          "label": "Learn More"
+        },
+        "publish_date": "2025-10-28"
+      },
+      {
+        "theme": "politics-society",
+        "excerpt": "Germany celebrates 35 years of unity on October 3, 2025, following 41 years of division as the German Democratic Republic (East Germany) and the Federal Republic of Germany (West Germany). In the last three decades, substantial progress has been made to foster German unity culturally, economically and politically, but clear divisions remain. ",
+        "heading": "United in Division",
+        "subheading": "Perspectives on 35 Years of German Reunification",
+        "by_line": "By Courtney Flynn Martino, on Oct 2, 2025",
+        "button": {
+          "url": "/politics-society/united-in-division-7k8mo6b4nk/",
+          "label": "Learn More"
+        },
+        "publish_date": "2025-10-02"
+      },
+      {
+        "theme": "politics-society",
+        "image": {
+          "url": "https://images.ctfassets.net/9vgcz0fppkl3/5w5TpgdcbjcuYEu9u9dL0u/24a1eb0f3c3e2c8cad3ae317ca4a7b7e/BFNA_Indopacific-infographic-SQHD.webp?w=800&fm=webp&q=80&fit=fill",
+          "title": "Strength in Numbers Infographic"
+        },
+        "heading": "Strength in Numbers",
+        "subheading": "Multilateral Institutions in the Indo-Pacific",
+        "by_line": "By Marshall Reid, on Oct 1, 2025",
+        "button": {
+          "url": "/politics-society/strength-in-numbers-2bfro5dcbt/",
+          "label": "Learn More"
+        },
+        "publish_date": "2025-10-01"
+      },
+      {
+        "theme": "politics-society",
+        "excerpt": "The U.S. and U.K. are reigniting their nuclear ambitions with bold new policies.",
+        "heading": "Atoms and Ambitions ",
+        "subheading": "How the United States and the United Kingdom are Reimagining Civil Nuclear Energy",
+        "by_line": "By Heaven Sullivan, on Sep 8, 2025",
+        "button": {
+          "url": "/politics-society/atoms-and-ambitions-49lxryj5bo/",
+          "label": "Learn More"
+        },
+        "publish_date": "2025-09-08"
+      },
+      {
+        "theme": "politics-society",
+        "excerpt": "When German Chancellor Friedrich Merz came to Washington on June 5 for his long-awaited meeting with U.S. President Donald Trump, it was unclear what he would encounter. ",
+        "heading": "Kids Fighting in the Park ",
+        "subheading": "Merz, Trump, and the Specter of Musk",
+        "by_line": "By Courtney Flynn Martino, on Jun 25, 2025",
+        "button": {
+          "url": "/politics-society/kids-fighting-in-the-park-4t6cxxldk3/",
+          "label": "Learn More"
+        },
+        "publish_date": "2025-06-25"
+      },
+      {
+        "theme": "politics-society",
+        "excerpt": "Belgium’s June 2024 federal elections yielded a surprising second-place finish for the far-right Vlaams Belang (VB) party. ",
+        "heading": "Swing State? Belgium’s Arizona Coalition Walks a Tightrope",
+        "by_line": "By Zachary Stoor, on Jun 2, 2025",
+        "button": {
+          "url": "/politics-society/swing-state-belgiums-arizona-coalition-walks-a-tightrope-3bbhmi9hbp/",
+          "label": "Learn More"
+        },
+        "publish_date": "2025-06-02"
+      },
+      {
+        "theme": "politics-society",
+        "excerpt": "On the morning of May 6, Friedrich Merz prepared for the formality of being elected Germany’s 11th postwar chancellor. ",
+        "heading": "Roadblocks at Home, Full Speed Abroad",
+        "subheading": "Friedrich Merz’s First 48 Hours",
+        "by_line": "By Courtney Flynn Martino, on May 28, 2025",
+        "button": {
+          "url": "/politics-society/roadblocks-at-home-full-speed-abroad-2f63prjxsv/",
+          "label": "Learn More"
+        },
+        "publish_date": "2025-05-28"
+      },
+      {
+        "theme": "politics-society",
+        "excerpt": "The United States and Germany have long shared many important ties. ",
+        "heading": "An American in Berlin",
+        "subheading": "Why the U.S. Needs an Ambassador to Germany",
+        "by_line": "By Courtney Flynn Martino, on Apr 29, 2025",
+        "button": {
+          "url": "/politics-society/an-american-in-berlin-3hnjombpvv/",
+          "label": "Learn More"
+        },
+        "publish_date": "2025-04-29"
+      },
+      {
+        "theme": "politics-society",
+        "excerpt": "Germany’s 21st Bundestag convened on March 25, the first meeting of a new parliament with 630 members. ",
+        "heading": "Coalition, Opposition, Extinction",
+        "subheading": "Challenges for Germany’s Major Parties",
+        "by_line": "By Courtney Flynn Martino, on Mar 26, 2025",
+        "button": {
+          "url": "/politics-society/coalition-opposition-extinction-btj7ckn2o0/",
+          "label": "Learn More"
+        },
+        "publish_date": "2025-03-26"
+      }
+    ]
+  },
+  "future-leadership": {
+    "heading": "Future Leadership",
+    "description": "Leaders around the world have been forced to grapple with a series of unfamiliar threats to domestic and international stability. From the COVID-19 pandemic to right-wing populism and escalating state-sponsored and rogue cyberattacks, the need for effective leadership at this moment is critical. This can only be achieved through international exchange, idea-sharing, and learning from prior successes and failures of transatlantic leadership. Through research, polling, and our transatlantic legislative exchange program, the Bertelsmann Foundation Fellowship (BFF), we seek to foster stronger transatlantic ties through a deeper mutual understanding.",
+    "theme": "future-leadership",
+    "button": {
+      "url": "/future-leadership",
+      "label": "Learn More"
+    },
+    "image": {
+      "url": "https://images.ctfassets.net/9vgcz0fppkl3/1JsSVGcREPqtH8IVWbPNCN/943eacad669eca2e285090dfc4049209/future-of-work_2x.webp?w=800&fm=webp&q=80&fit=fill",
+      "title": "future leadership cover"
+    },
+    "products_list": [
+      {
+        "theme": "future-leadership",
+        "type": "website",
+        "heading": "The Bertelsmann Foundation Fellowship",
+        "excerpt": "The Bertelsmann Foundation Fellowship (BFF), formerly known as the Congressional European Parliamentary Initiative (CEPI), offers a unique transatlantic hybrid experience spanning five months, designed to foster connections, knowledge transfer, and learning. Each year, the fellowship delves into global challenges confronting the transatlantic alliance. Commencing with an in-person trip to Washington, D.C., fellows then embark on a three-month virtual program, meeting weekly with experts relevant to the year's theme. The fellowship culminates with a visit to Brussels facilitating further in-person engagement. At the program's conclusion, fellows collaborate on a final publication presenting concrete policy recommendations pertaining to the chosen topic, released as an outcome of the BFF initiative. Fellows then also become a part of a larger, active Alumni network- finding opportunities to engage with the Bertelsmann Foundation Fellowship beyond their fellowship year.",
+        "image": {
+          "url": "https://images.ctfassets.net/9vgcz0fppkl3/1DaDJZYgISmNTWg3lfRiEz/27b3a75e462dbf343590ef34a1ec7b11/bff_image.png?w=800&fm=webp&q=80&fit=fill",
+          "title": "CEPI 2019 Group Image"
+        },
+        "button": {
+          "url": "/future-leadership/the-bertelsmann-foundation-fellowship/",
+          "label": "Learn More"
+        }
+      },
+      {
+        "theme": "future-leadership",
+        "type": "website",
+        "heading": "Summer Enrichment Series",
+        "excerpt": "The Summer Enrichment Series (SES) is a Bertelsmann Foundation program was launched in 2022. Each summer, the SES brings together a diverse group of graduate students and young professionals who have a strong interest in the transatlantic relationship.  Monthly roundtable events in June, July, and August have a thematic focus corresponding with relevant geopolitical events shaping the transatlantic alliance.",
+        "image": {
+          "url": "https://images.ctfassets.net/9vgcz0fppkl3/HFrHWldjvrLqXpSq4kFPz/7df5e173757c06795ecd2941100b1c90/SES_mock.png?w=800&fm=webp&q=80&fit=fill",
+          "title": "SES mock"
+        },
+        "button": {
+          "url": "/future-leadership/summer-enrichment-series/",
+          "label": "Learn More"
+        }
+      },
+      {
+        "theme": "future-leadership",
+        "type": "website",
+        "heading": "Leadership in Action",
+        "excerpt": "In its third season, Leadership in Action explores the strategies of skilled negotiators and practitioners as they tackle some of the world’s most intractable challenges. The first episode features Jan Eliasson, former Swedish Foreign Minister and Deputy Secretary-General of the United Nations, reflecting on pivotal moments in his career spent resolving global conflicts. The second episode highlights Ugandan opposition leader Bobi Wine, who takes us on a harrowing journey from repression to mobilizing a nation in the fight for democracy. The third episode focuses on Tzipi Livni, former Israeli Foreign Minister, filmed prior to the Hamas terror attack on October 7, 2023, and the ongoing conflict. It explores her role as Israel's chief negotiator during peace talks with the Palestinian Authority in the final rounds of negotiations in the 2000s.",
+        "image": {
+          "url": "https://images.ctfassets.net/9vgcz0fppkl3/1NbUdoeyxEB4c38NvAz5SW/c0f617462da7c52e768682e5319dda8a/LIA_season_2_mock.png?w=800&fm=webp&q=80&fit=fill",
+          "title": "Leadership in Action Season 2"
+        },
+        "button": {
+          "url": "/future-leadership/leadership-in-action/",
+          "label": "Learn More"
+        }
+      }
+    ],
+    "updates_list": [
+      {
+        "theme": "future-leadership",
+        "excerpt": "“Americans innovate while Europeans regulate.” \n\nThis old trope misses a fundamental point. Both peoples are actually powerhouses of innovation. But it is their respective fundamental societal beliefs in individual and government responsibility that steer their creative energies in different paths.",
+        "heading": "From Idea to Impact",
+        "subheading": "How Transatlantic Rights Philosophies Shape Innovation",
+        "by_line": "By Chloe Ladd, on Oct 23, 2025",
+        "button": {
+          "url": "/future-leadership/from-idea-to-impact-6g1tpk5svy/",
+          "label": "Learn More"
+        },
+        "publish_date": "2025-10-23"
+      }
+    ]
+  },
+  "digital-world": {
+    "heading": "Digital World",
+    "description": "Around the world, humanity navigates a digital revolution that’s upending life as we know it. And while the United States and Europe are the nexus of the world's data flows and digital trade for now, the rest of the world is expanding digital output exponentially. It’s now more essential than ever that the conversation about these changes be inclusive. A successful transition to a digital world requires input from all sectors of society. Through analysis, data visualization, and documentary storytelling, we bring you inside the issues shaping today's global digital economy and society.",
+    "theme": "digital-world",
+    "button": {
+      "url": "/digital-world",
+      "label": "Learn More"
+    },
+    "image": {
+      "url": "https://images.ctfassets.net/9vgcz0fppkl3/Pf3tFouaWUFcaAhsOkJ49/66e3845013778f403675a3007183aef1/digital-economy_2x.webp?w=800&fm=webp&q=80&fit=fill",
+      "title": "digital economy"
+    },
+    "products_list": [
+      {
+        "theme": "digital-world",
+        "type": "report",
+        "heading": "Hotspots",
+        "excerpt": "Over the last decade, a degree of cynicism has set in regarding how society views the internet’s impact on democracy. What is the impact of digital tools on non-democracies when a majority of the global population lives in far less than “full democracy.” Does the internet offer repressed citizens an arena to network, organize, and, ultimately, make their voices heard offline, or is the internet simply another tool wielded by authoritarian regimes to maintain dominance? \n",
+        "image": {
+          "url": "https://images.ctfassets.net/9vgcz0fppkl3/70H4crtqWxRFR1NVHrOMi4/b3a5b06b4d5a2e2444229a28690f879f/Hotspots_formated.png?w=800&fm=webp&q=80&fit=fill",
+          "title": "Hotspots"
+        },
+        "button": {
+          "url": "/digital-world/hotspots/",
+          "label": "Learn More"
+        }
+      },
+      {
+        "theme": "digital-world",
+        "type": "report",
+        "heading": "The No Collar Economy - Vol. II",
+        "excerpt": "This publication stems from a simple observation: across the world, humanity navigates a digital revolution that upends life as we knew it. And yet, despite the near universal impact of this revolution, the increased connectivity has resulted in misconnections. ",
+        "image": {
+          "url": "https://images.ctfassets.net/9vgcz0fppkl3/42lqluldBR2AgU7XJDvyF/3b38e430c4aafdb9fc525d2aac45012e/no-collar-economy-vol-2?w=800&fm=webp&q=80&fit=fill",
+          "title": "no-collar-economy-vol-2"
+        },
+        "button": {
+          "url": "/digital-world/the-no-collar-economy-vol-ii/",
+          "label": "Learn More"
+        }
+      },
+      {
+        "theme": "digital-world",
+        "type": "report",
+        "heading": "The No Collar Economy - Vol. I",
+        "excerpt": "The digital revolution is turning the global economy on its head. The most valuable workers in today’s labor market—the millennials creating billion-dollar empires with laptops and a case of La Croix—aren’t wearing white collars or blue collars and they certainly don’t own anything in pinstripes. The most coveted employees of our new economy wear no collar at all.",
+        "image": {
+          "url": "https://images.ctfassets.net/9vgcz0fppkl3/4R11cP3xY8NiIJ72rSY020/3cf296aa779f6cb49414a50c0969c668/no-collar-economy-vol-1.png?w=800&fm=webp&q=80&fit=fill",
+          "title": "no-collar-economy-vol-1"
+        },
+        "button": {
+          "url": "/digital-world/the-no-collar-economy-vol-i/",
+          "label": "Learn More"
+        }
+      }
+    ],
+    "updates_list": [
+      {
+        "theme": "digital-world",
+        "image": {
+          "url": "https://images.ctfassets.net/9vgcz0fppkl3/6sRTw2VmgebE0qBGZUHy7z/cd7a93340014ae124cc49ad17dee231c/BFNA_Cybersecurity_infographic_FINAL.png?w=800&fm=webp&q=80&fit=fill",
+          "title": "Infographic Cybersecurity"
+        },
+        "heading": "Infographic: Cybersecurity ",
+        "by_line": "On Nov 14, 2023",
+        "button": {
+          "url": "/digital-world/infographic-cybersecurity-4o9yjyz7sy/",
+          "label": "Learn More"
+        },
+        "publish_date": "2023-11-14"
+      },
+      {
+        "theme": "digital-world",
+        "image": {
+          "url": "https://images.ctfassets.net/9vgcz0fppkl3/2MloeEWPy6tTbl0eNck4mZ/a263c6101b6215dc1e9dd0d071261fa4/BFNA_AI-Research-FULL080923.png?w=800&fm=webp&q=80&fit=fill",
+          "title": "AI Research and Development in the U.S., EU and China"
+        },
+        "heading": "Infographic: AI Research and Development in the U.S., EU and China",
+        "by_line": "On Sep 12, 2023",
+        "button": {
+          "url": "/digital-world/infographic-ai-research-and-development-in-the-us-eu-and-china-4mk29rb8ig/",
+          "label": "Learn More"
+        },
+        "publish_date": "2023-09-12"
+      },
+      {
+        "theme": "digital-world",
+        "excerpt": "Young people have grown up alongside social media platforms and many have never known a world without them. Teens and young adults are often very intentional about what they post on social media and how they present themselves on each platform. Social media allows users to carefully curate content that follows a certain narrative and builds an online identity. However, this on-screen identity can be different to the one users portray offline.",
+        "heading": "Where Online Meets Offline",
+        "subheading": "Social Media's Double-edged Sword",
+        "by_line": "On Jul 13, 2023",
+        "button": {
+          "url": "/digital-world/where-online-meets-offline-6rmihwg5hb/",
+          "label": "Learn More"
+        },
+        "publish_date": "2023-07-13"
+      },
+      {
+        "theme": "digital-world",
+        "image": {
+          "url": "https://images.ctfassets.net/9vgcz0fppkl3/4v9uKl0nRcheDGMW4EvyEi/793b708eea15d287cab7ba054d1cb8ad/BFNA_Regulating_AI_010623.png?w=800&fm=webp&q=80&fit=fill",
+          "title": "BFNA Regulating AI 010623"
+        },
+        "heading": "Which Countries are Regulating AI?",
+        "by_line": "On Jun 7, 2023",
+        "button": {
+          "url": "/digital-world/which-countries-are-regulating-ai-1fkh59sbqv/",
+          "label": "Learn More"
+        },
+        "publish_date": "2023-06-07"
+      },
+      {
+        "theme": "digital-world",
+        "excerpt": "Technological development offers seemingly endless benefits and convenience. Internet connectivity was critical for personal and professional interaction during the COVID-19 pandemic, and, more broadly, everyday emerging technology is saving lives, whether from 3D printed organs or automatic brakes in vehicles. At the same time, the rise of technology creates new issues that threaten social and democratic stability. ",
+        "heading": "Democracy Needs Tech Support",
+        "by_line": "On Feb 16, 2023",
+        "button": {
+          "url": "/digital-world/democracy-needs-tech-support-1uuaz1oniy/",
+          "label": "Learn More"
+        },
+        "publish_date": "2023-02-16"
+      },
+      {
+        "theme": "digital-world",
+        "excerpt": "In April 2007, the Estonian government approved a controversial plan to relocate a statue from the center of its capital, Tallinn. Soviet authorities had unveiled the monument, a life-sized World War II Russian soldier with a clenched right fist and a bowed head, 60 years earlier, after their forces retook the city from Nazi Germany.",
+        "heading": "E-Stonia Rewired",
+        "subheading": "A Nation Transformed from Cyberattack Victim to Cybersecurity Leader",
+        "by_line": "By Sarah Leming, on Feb 9, 2023",
+        "button": {
+          "url": "/digital-world/e-stonia-rewired-3srhri95os/",
+          "label": "Learn More"
+        },
+        "publish_date": "2023-02-09"
+      },
+      {
+        "theme": "digital-world",
+        "video": {
+          "url": "https://www.youtube.com/embed/LE4sz0m0V9k",
+          "thumbnail": "https://i.ytimg.com/vi/LE4sz0m0V9k/hqdefault.jpg"
+        },
+        "heading": "Privacy Shield 2.0 – The New Transatlantic Data Privacy Framework Explained",
+        "button": {
+          "url": "/digital-world/privacy-shield-20-the-new-transatlantic-data-privacy-framework-explained-4umt7irk2u/",
+          "label": "Watch"
+        },
+        "publish_date": "2022-08-15",
+        "by_line": "On Aug 15, 2022",
+        "authors": {
+          "all": "",
+          "external": [],
+          "collab": [],
+          "internal": [
+            {
+              "name": "",
+              "email": "",
+              "job_title": ""
+            }
+          ]
+        }
+      },
+      {
+        "theme": "digital-world",
+        "excerpt": "To many, the future of work is a question of technology and its impact on jobs, workers, the economy, and work itself. This way of looking at it has resulted in policy solutions focusing on workers and what they can do to prepare for the inevitability of technological disruption. ",
+        "heading": "Our Post Pandemic Future of Work Part 2 of 2 ",
+        "subheading": "Policy Approaches for a Contested World",
+        "by_line": "On Apr 22, 2021",
+        "button": {
+          "url": "/digital-world/our-post-pandemic-future-of-work-part-2-of-2-2u5ga9hn6c/",
+          "label": "Learn More"
+        },
+        "publish_date": "2021-04-22"
+      },
+      {
+        "theme": "digital-world",
+        "excerpt": "More than a year has elapsed since the World Health Organization declared COVID-19 a pandemic. The news presaged a public health crisis that generated massive unemployment and upended the world of work as we know it. As the pandemic metastasized, it forced workers, employers, and policymakers into an unplanned future of work trial that many — at least in pre-pandemic times — had envisioned unfolding at a measured pace over decades.  ",
+        "heading": "Our Post-Pandemic Future of Work Part 1 of 2 ",
+        "subheading": "Making Sense of the Debate",
+        "by_line": "On Apr 1, 2021",
+        "button": {
+          "url": "/digital-world/our-post-pandemic-future-of-work-part-1-of-2-32voatcfrq/",
+          "label": "Learn More"
+        },
+        "publish_date": "2021-04-01"
+      }
+    ]
+  },
+  "democracy": {
+    "heading": "Democracy",
+    "description": "Democratic decline in the U.S. and Europe is weakening the transatlantic relationship and undermining its influence around the world. America and its European allies need to recalibrate their values and practices at home in order to serve as beacons to aspiring democracies abroad. But disruptions to our democratic traditions keep emerging: from new technologies changing the way we communicate and work to pandemics and economic shocks. Our work analyzes how these disruptions are playing out, and it will be up to civil society, lawmakers, and the people to prepare our democracies for the future.",
+    "theme": "democracy",
+    "button": {
+      "url": "/democracy",
+      "label": "Learn More"
+    },
+    "image": {
+      "url": "https://images.ctfassets.net/9vgcz0fppkl3/3PO05zIyelFiZFt4mTjcVZ/2624c6c892a41ebcc45e91ba8c74d82c/democracy_2x.webp?w=800&fm=webp&q=80&fit=fill",
+      "title": "Democracy"
+    },
+    "products_list": [
+      {
+        "theme": "democracy",
+        "type": "website",
+        "heading": "How to Fix Democracy",
+        "excerpt": "Host Andrew Keen interviews prominent thinkers, writers, politicians, technologists, and business leaders who enlighten and challenge us as we seek the answers to How to Fix Democracy.",
+        "image": {
+          "url": "https://images.ctfassets.net/9vgcz0fppkl3/4Weo6AzLa0sJUNLISFPzJM/6de27e24998e9bf0ab4fc5a718034578/how-to-fix-democracy.png?w=800&fm=webp&q=80&fit=fill",
+          "title": "How to fix democracy"
+        },
+        "button": {
+          "url": "/podcasts/how-to-fix-democracy/",
+          "label": "Learn More"
+        }
+      },
+      {
+        "theme": "democracy",
+        "type": "website",
+        "heading": "City Solutions Series",
+        "excerpt": "The commitment to liberal democracy is a core value of the transatlantic community. And while democracy has always faced external threats, a second front has emerged in recent years, challenging its fundamental principles from within. On every continent, local and national governments are experimenting with new methods of tackling the threats to public confidence and democratic governance by addressing a range of common challenges. The drivers of democratic backsliding are now clear, so this project focuses on uncovering solutions, then amplifies these best practices for a transatlantic audience searching for innovative approaches to reverse democratic decline.",
+        "image": {
+          "url": "https://images.ctfassets.net/9vgcz0fppkl3/u9sDOjBIA3mPwT61QXQpB/4bbc014763aabcc55216177a19f1c1ac/browser.png?w=800&fm=webp&q=80&fit=fill",
+          "title": "City Solutions cover photo"
+        },
+        "button": {
+          "url": "/democracy/city-solutions-series/",
+          "label": "Learn More"
+        }
+      },
+      {
+        "theme": "democracy",
+        "type": "report",
+        "heading": "Graphic Images: Autocrats and the Use of Power",
+        "excerpt": "In this fourth and final installment of our Disrupting Democracy series, \"Graphic Images: Autocrats and the Use of Power,\" we will look at how three authoritarian regimes undermine the prospects for democracy and stability in their respective regions. Drawing from the more than 15 years of data from the Bertelsmann Transformation Index, this publication reimagines country and regional level data into infographics that shine a light on three distinct cases: Russia, Iran and China.",
+        "image": {
+          "url": "https://images.ctfassets.net/9vgcz0fppkl3/3GMjG0JQTHBHwY6hLyfA9/54dd15f59ed66af93d35b28a808363a4/graphic_images_2_mock.png?w=800&fm=webp&q=80&fit=fill",
+          "title": "graphic-images"
+        },
+        "button": {
+          "url": "/democracy/graphic-images-autocrats-and-the-use-of-power/",
+          "label": "Learn More"
+        }
+      },
+      {
+        "theme": "democracy",
+        "type": "report",
+        "heading": "Disrupting Democracy Vol. II",
+        "excerpt": "In 2018, for our second instalment of the Disrupting Democracy project we turned our attention to elections. From the rise of Five Star and Lega in Italy to U.S. Democrats’ success winning the U.S. House of Representatives, and from to Morena and Andrés Manuel López Obrador’s victory in Mexico to a cultural and linguistic divide in Latvia, Disrupting Democracy Vol. II: Election Series recorded how technology was put to work to make a difference at the ballot box.",
+        "image": {
+          "url": "https://images.ctfassets.net/9vgcz0fppkl3/29Xl7jvUVM50wu8PBMEonD/b97ffc8cf1ff61ee26cecf5dd49cbff6/Disrupting-Democracy-vol-2.png?w=800&fm=webp&q=80&fit=fill",
+          "title": "Disrupting-Democracy-vol-2"
+        },
+        "button": {
+          "url": "/democracy/disrupting-democracy-vol-ii/",
+          "label": "Learn More"
+        }
+      },
+      {
+        "theme": "democracy",
+        "type": "report",
+        "heading": "Disrupting Democracy Vol. I",
+        "excerpt": "Beginning January 2017, the Bertelsmann Foundation embarked on a journey to explore how digital innovation impacts democracies and societies around the world in a series called \"Disrupting Democracy.\" In volume one, we focused on key challenges that have emerged as a result of technological disruption from the rival capitals of Washington and Havana, the bustling streets of New Delhi, the dynamic tech startups in Tel Aviv, and the efficient order of Berlin.",
+        "image": {
+          "url": "https://images.ctfassets.net/9vgcz0fppkl3/1mjWJReHvjjCfvUFWGRkpK/9cb45a27bd4d8fb12f15d60e9652fd8c/disrupting-democracy-vol-1.png?w=800&fm=webp&q=80&fit=fill",
+          "title": "Disrupting-Democracy-Cover-1"
+        },
+        "button": {
+          "url": "/democracy/disrupting-democracy-vol-i/",
+          "label": "Learn More"
+        }
+      }
+    ],
+    "updates_list": [
+      {
+        "theme": "democracy",
+        "excerpt": "October 7, 1989 marked 40 years of the German Democratic Republic (GDR), or East Germany, a repressive Communist state that divided post-war Germany politically, economically, socially and culturally. ",
+        "heading": "Demonstrations, Democracy and Dreams Deferred",
+        "subheading": "35 Years of Reunification in Thuringia",
+        "by_line": "By Courtney Flynn Martino, on Sep 29, 2025",
+        "button": {
+          "url": "/democracy/demonstrations-democracy-and-dreams-deferred-1avt3jxzlb/",
+          "label": "Learn More"
+        },
+        "publish_date": "2025-09-29"
+      },
+      {
+        "theme": "democracy",
+        "excerpt": "The price of democratic backsliding may soon rise. ",
+        "heading": "Accounting for Autocracy",
+        "subheading": "Rule of Law in the Next EU Budget",
+        "by_line": "By Zachary Stoor, on Sep 25, 2025",
+        "button": {
+          "url": "/democracy/accounting-for-autocracy-5put1jotzu/",
+          "label": "Learn More"
+        },
+        "publish_date": "2025-09-25"
+      },
+      {
+        "theme": "democracy",
+        "excerpt": "2025 is shaping up to be a pivotal year for Japan.",
+        "heading": "Tokyo Drifting?",
+        "subheading": "Japan Debates an Uncertain Future",
+        "by_line": "By Marshall Reid, on Sep 10, 2025",
+        "button": {
+          "url": "/democracy/tokyo-drifting-k4vkdveosg/",
+          "label": "Learn More"
+        },
+        "publish_date": "2025-09-10"
+      },
+      {
+        "theme": "democracy",
+        "excerpt": "Italian Prime Minister Giorgia Meloni, once heralded as a danger to EU cohesion, has become Brussels’ favored bridge-builder. ",
+        "heading": "Pianissimo: ",
+        "subheading": "Brussels’ Silence on Italy’s Democratic Decline",
+        "by_line": "By Zachary Stoor, on Apr 7, 2025",
+        "button": {
+          "url": "/democracy/pianissimo-5dcjfhhho7/",
+          "label": "Learn More"
+        },
+        "publish_date": "2025-04-07"
+      },
+      {
+        "theme": "democracy",
+        "excerpt": "In May 2024, tensions in New Caledonia reached a breaking point. ",
+        "heading": "The Third Way",
+        "subheading": "New Caledonia and French Strategy in the Indo-Pacific",
+        "by_line": "By Chloe Ladd and Marshall Reid, on Mar 12, 2025",
+        "button": {
+          "url": "/democracy/the-third-way-4w6copbpxr/",
+          "label": "Learn More"
+        },
+        "publish_date": "2025-03-12"
+      },
+      {
+        "theme": "democracy",
+        "excerpt": "French President Emmanuel Macron had to shake things up. His government was unable to secure parliamentary majorities for two hot-button issues, pension reform and immigration, each a major setback. “La Macronie”, as the French have nicknamed his political brand, now finds itself at a difficult crossroads. France’s next presidential election may still be far off, but the incumbent must take steps now to protect his legacy and ensure that an increasingly popular far right does not gain power. ",
+        "heading": "Macron’s Millennial Minister: Winning Over the Next Generation ",
+        "by_line": "By Chloe Ladd, on Mar 12, 2024",
+        "button": {
+          "url": "/democracy/macrons-millennial-minister-winning-over-the-next-generation-4ystiwjkmx/",
+          "label": "Learn More"
+        },
+        "publish_date": "2024-03-12"
+      },
+      {
+        "theme": "democracy",
+        "excerpt": "On October 8, 2023, Bavaria hosted its state election. Ranked second in gross regional product and population, Bavaria has always had a sizable influence on German politics, with many seeing this year’s state election as a bellwether for what to expect at the national level in 2025. ",
+        "heading": "Pictures Worth a Thousand Policies: Campaign Imagery from Bavaria’s State Election",
+        "by_line": "By Courtney Flynn Martino, on Oct 26, 2023",
+        "button": {
+          "url": "/democracy/pictures-worth-a-thousand-policies-campaign-imagery-from-bavarias-state-election-3gc8dhcf1n/",
+          "label": "Learn More"
+        },
+        "publish_date": "2023-10-26"
+      },
+      {
+        "theme": "democracy",
+        "excerpt": "28% of French citizens chose not to vote in the second, and final, round of the April 2022 French presidential election. This was the highest rate of abstention in over 50 years and the second highest rate in the history of the Fifth Republic.",
+        "heading": "On the Fringe",
+        "by_line": "By Chloe Ladd, on Sep 14, 2023",
+        "button": {
+          "url": "/democracy/on-the-fringe-fx4yxa65oh/",
+          "label": "Learn More"
+        },
+        "publish_date": "2023-09-14"
+      },
+      {
+        "theme": "democracy",
+        "excerpt": "An August 2023 ARD-Deutschlandtrend survey found that 79% of Germans are dissatisfied with the governing coalition of Social Democrats (SPD), Greens, and Free Democrats (FDP), including a majority of SPD and FDP voters and 48% of Greens. In-fighting over climate, budget, and defense have worn down the so-called traffic light coalition, causing consensus on these and other crucial issues to remain elusive. ",
+        "heading": "Two’s Company, Three’s a Crowd, and Four’s a Misfortune: Germany’s Next Coalition",
+        "by_line": "By Courtney Flynn Martino, on Aug 10, 2023",
+        "button": {
+          "url": "/democracy/twos-company-threes-a-crowd-and-fours-a-misfortune-germanys-next-coalition-1a4gxdlnlg/",
+          "label": "Learn More"
+        },
+        "publish_date": "2023-08-10"
+      }
+    ]
+  },
+  "podcasts": {
+    "heading": "Podcasts",
+    "description": "Here you will find the Bertelsmann Foundation’s ever-expanding collection of podcasts that seek to make complex transatlantic issues more tangible and engaging. Listen here or wherever you get your podcasts",
+    "theme": "podcasts",
+    "button": {
+      "url": "/podcasts",
+      "label": "Learn More"
+    },
+    "image": {
+      "url": "https://images.ctfassets.net/9vgcz0fppkl3/54VUPmPLFfHqMLC5D1jOmV/585ab3b763132eddce68d418667fed2f/podcast.webp?w=800&fm=webp&q=80&fit=fill",
+      "title": "bfna-podcast"
+    },
+    "products_list": [
+      {
+        "theme": "podcasts",
+        "type": "website",
+        "heading": "Wisdom of the Crowd",
+        "excerpt": "Welcome to “Wisdom of the Crowd”, a podcast miniseries that explores the future of transatlantic relations. From democracy and geopolitics to climate change and technology, we take a closer look at the most pressing issues impacting the transatlantic alliance by interviewing top experts and using a strategy of crowd-sourced forecasting. We don’t just rely on experts and policy makers; we listen to a crowd of forecasters, and YOU, to determine the outcome of future events. We call that “the wisdom of the crowd”. Wisdom of the Crowd is produced by the Bertelsmann Foundation, Are We Europe, and Awe Studio. Sound design is done by Stefano Montali and the podcast artwork is by Tamara Tasić. This series is hosted by Rylie Munn.",
+        "image": {
+          "url": "https://images.ctfassets.net/9vgcz0fppkl3/6EPlmo9b2X5wrgAsLZXhka/2bba95abd0eef7d8580488f8b5576c66/wisdom_of_the_crowd_mock.png?w=800&fm=webp&q=80&fit=fill",
+          "title": "wisdom of the crowd mock"
+        },
+        "button": {
+          "url": "/podcasts/wisdom-of-the-crowd/",
+          "label": "Learn More"
+        }
+      },
+      {
+        "theme": "podcasts",
+        "type": "website",
+        "heading": "How to Fix Democracy",
+        "excerpt": "Host Andrew Keen interviews prominent thinkers, writers, politicians, technologists, and business leaders who enlighten and challenge us as we seek the answers to How to Fix Democracy.",
+        "image": {
+          "url": "https://images.ctfassets.net/9vgcz0fppkl3/4Weo6AzLa0sJUNLISFPzJM/6de27e24998e9bf0ab4fc5a718034578/how-to-fix-democracy.png?w=800&fm=webp&q=80&fit=fill",
+          "title": "How to fix democracy"
+        },
+        "button": {
+          "url": "/podcasts/how-to-fix-democracy/",
+          "label": "Learn More"
+        }
+      },
+      {
+        "theme": "podcasts",
+        "type": "website",
+        "heading": "Bridging the Atlantic",
+        "excerpt": "Bridging the Atlantic is a 6-part miniseries, created with Are We Europe, that will take stock of transatlantic relations today and examine it beyond the usual touchstones. After a tumultuous four years with the Trump administration, many following the transatlantic relationship are eager to understand how the transatlantic relationship can bounce back and become more resilient in the future. But a reset is perhaps not the right goal. ",
+        "image": {
+          "url": "https://images.ctfassets.net/9vgcz0fppkl3/1Wlx8T14zlvdLPlLyzoKUQ/ce5e6403a967525779b9473d0f3de013/browser.png?w=800&fm=webp&q=80&fit=fill",
+          "title": "Bridging the Atlantic no logos or writing"
+        },
+        "button": {
+          "url": "/podcasts/bridging-the-atlantic/",
+          "label": "Learn More"
+        }
+      }
+    ],
+    "updates_list": []
+  }
+}

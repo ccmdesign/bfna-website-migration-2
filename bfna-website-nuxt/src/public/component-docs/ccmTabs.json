@@ -1,0 +1,34 @@
+{
+  "displayName": "ccmTabs",
+  "description": "Tabs component following all 10 Component Standards.\n\nA flexible tabs component that supports three configuration modes: JSON tabs prop,\ncustom navigation/content slots, or auto-generated fallback navigation from content sections.\nProvides full keyboard navigation (Arrow keys, Home, End, Enter/Space) and comprehensive\nARIA attributes for accessibility.\n\nSupports disabled tabs, external link detection, and programmatic tab selection.\nStyle-agnostic design relies on CSS variables for visual customization.",
+  "props": [
+    {
+      "name": "defaultTab",
+      "description": "Index of the initially active tab (0-based). Defaults to 0 (first tab).",
+      "type": "number",
+      "required": false,
+      "defaultValue": "0"
+    },
+    {
+      "name": "ariaLabel",
+      "description": "ARIA label for the tablist element. Provides accessible name for screen readers. Defaults to 'Tabs'.",
+      "type": "string",
+      "required": false,
+      "defaultValue": "'Tabs'"
+    },
+    {
+      "name": "tabs",
+      "description": "Array of tab objects for JSON-based configuration. Each tab object: { id?: string, label: string, content: string, name?: string, disabled?: boolean }.\nWhen provided, automatically generates navigation and content panels. Takes priority over slots.\nIf null, component uses navigation/content slots or auto-generates navigation from content sections.",
+      "type": "TabData[]",
+      "required": false,
+      "defaultValue": "null"
+    }
+  ],
+  "examples": [],
+  "codeSnippets": [],
+  "tags": {
+    "component": "ccmTabs",
+    "category": "molecule",
+    "standards": "all-10"
+  }
+}

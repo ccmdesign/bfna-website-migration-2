@@ -1,0 +1,149 @@
+@layer tokens {
+  /*
+   * ⚠️ IMPORTANT - READ BEFORE EDITING ⚠️
+   * This file is part of the design token system.
+   * Before making any changes, please review the token documentation at:
+   * src/content/docs/tokens/
+   *
+   * Key docs:
+   * - architecture.md: Token system structure and principles
+   * - maintenance.md: How to safely add, modify, or remove tokens
+   * - guide.md: Usage guidelines and best practices
+   *
+   * This applies to both human developers and AI assistants.
+   */
+  
+    /* Semantic Color Tokens */
+  
+    :root {
+      /* Brand Colors */
+      --color-primary: var(--color-blue);
+      --color-secondary: var(--color-green);
+      --color-tertiary: var(--color-yellow);
+      --color-accent: var(--color-navy);
+  
+      /* Text & Neutral Colors */
+      --color-dark: var(--color-base);
+      --color-light: var(--color-base-tint-02);
+      --color-text: var(--color-base);
+      --color-neutral: var(--color-black);
+      --color-link: var(--color-blue);
+      --color-link-visited: var(--color-navy);
+  
+      /* UI Feedback Colors */
+      --color-success: var(--color-green);
+      --color-error: var(--color-fail);
+      --color-fail: var(--color-red);
+      --color-warning: var(--color-yellow);
+      --color-info: var(--color-navy);
+      --color-neutral: var(--color-black);
+  
+      /* HSL Tokens for Alpha Variants */
+      --hsl-primary: var(--hsl-blue);
+      --hsl-secondary: var(--hsl-green);
+      --hsl-accent: var(--hsl-navy);
+  
+      /* Light Variants */
+      --color-primary-light: var(--color-primary-tint-73);
+      --color-primary-super-light: var(--color-primary-tint-11);
+      --color-secondary-light: var(--color-secondary-tint-73);
+      --color-secondary-super-light: var(--color-secondary-tint-11);
+      --color-accent-light: var(--color-accent-tint-73);
+      --color-accent-super-light: var(--color-accent-tint-11);
+      --color-success-light: var(--color-success-tint-73);
+      --color-success-super-light: var(--color-success-tint-11);
+      --color-fail-light: var(--color-fail-tint-73);
+      --color-fail-super-light: var(--color-fail-tint-11);
+      --color-warning-light: var(--color-warning-tint-73);
+      --color-warning-super-light: var(--color-warning-tint-11);
+      --color-info-light: var(--color-info-tint-73);
+      --color-info-super-light: var(--color-info-tint-11);
+      --color-base-light: var(--color-base-tint-73);
+      --color-base-super-light: var(--color-base-tint-11);
+      --color-black-light: var(--color-black-tint-73);
+      --color-black-super-light: var(--color-black-tint-11);
+  
+      /* Dark Variants */
+      --color-primary-dark: var(--color-primary-shade-40);
+      --color-primary-super-dark: var(--color-primary-shade-70);
+      --color-secondary-dark: var(--color-secondary-shade-40);
+      --color-secondary-super-dark: var(--color-secondary-shade-70);
+      --color-accent-dark: var(--color-accent-shade-40);
+      --color-accent-super-dark: var(--color-accent-shade-70);
+      --color-success-dark: var(--color-success-shade-40);
+      --color-success-super-dark: var(--color-success-shade-70);
+      --color-fail-dark: var(--color-fail-shade-40);
+      --color-fail-super-dark: var(--color-fail-shade-70);
+      --color-warning-dark: var(--color-warning-shade-40);
+      --color-warning-super-dark: var(--color-warning-shade-70);
+      --color-info-dark: var(--color-info-shade-40);
+      --color-info-super-dark: var(--color-info-shade-70);
+      --color-base-dark: var(--color-base-shade-73);
+      --color-base-super-dark: var(--color-base-shade-11);
+  
+      /* Alpha Variants */
+      --color-primary-alpha-05: hsl(var(--hsl-primary), 0.05);
+      --color-primary-alpha-10: hsl(var(--hsl-primary), 0.1);
+      --color-primary-alpha-11: hsl(var(--hsl-primary), 0.11);
+      --color-primary-alpha-15: hsl(var(--hsl-primary), 0.15);
+      --color-primary-alpha-20: hsl(var(--hsl-primary), 0.2);
+      --color-primary-alpha-25: hsl(var(--hsl-primary), 0.25);
+      --color-primary-alpha-30: hsl(var(--hsl-primary), 0.3);
+      --color-primary-alpha-35: hsl(var(--hsl-primary), 0.35);
+      --color-primary-alpha-40: hsl(var(--hsl-primary), 0.4);
+      --color-primary-alpha-45: hsl(var(--hsl-primary), 0.45);
+      --color-primary-alpha-50: hsl(var(--hsl-primary), 0.5);
+      --color-primary-alpha-55: hsl(var(--hsl-primary), 0.55);
+      --color-primary-alpha-60: hsl(var(--hsl-primary), 0.6);
+      --color-primary-alpha-65: hsl(var(--hsl-primary), 0.65);
+      --color-primary-alpha-70: hsl(var(--hsl-primary), 0.7);
+      --color-primary-alpha-73: hsl(var(--hsl-primary), 0.73);
+      --color-primary-alpha-75: hsl(var(--hsl-primary), 0.75);
+      --color-primary-alpha-80: hsl(var(--hsl-primary), 0.8);
+      --color-primary-alpha-85: hsl(var(--hsl-primary), 0.85);
+      --color-primary-alpha-90: hsl(var(--hsl-primary), 0.9);
+      --color-primary-alpha-95: hsl(var(--hsl-primary), 0.95);
+      --color-secondary-alpha-05: hsl(var(--hsl-secondary), 0.05);
+      --color-secondary-alpha-10: hsl(var(--hsl-secondary), 0.1);
+      --color-secondary-alpha-11: hsl(var(--hsl-secondary), 0.11);
+      --color-secondary-alpha-15: hsl(var(--hsl-secondary), 0.15);
+      --color-secondary-alpha-20: hsl(var(--hsl-secondary), 0.2);
+      --color-secondary-alpha-25: hsl(var(--hsl-secondary), 0.25);
+      --color-secondary-alpha-30: hsl(var(--hsl-secondary), 0.3);
+      --color-secondary-alpha-35: hsl(var(--hsl-secondary), 0.35);
+      --color-secondary-alpha-40: hsl(var(--hsl-secondary), 0.4);
+      --color-secondary-alpha-45: hsl(var(--hsl-secondary), 0.45);
+      --color-secondary-alpha-50: hsl(var(--hsl-secondary), 0.5);
+      --color-secondary-alpha-55: hsl(var(--hsl-secondary), 0.55);
+      --color-secondary-alpha-60: hsl(var(--hsl-secondary), 0.6);
+      --color-secondary-alpha-65: hsl(var(--hsl-secondary), 0.65);
+      --color-secondary-alpha-70: hsl(var(--hsl-secondary), 0.7);
+      --color-secondary-alpha-73: hsl(var(--hsl-secondary), 0.73);
+      --color-secondary-alpha-75: hsl(var(--hsl-secondary), 0.75);
+      --color-secondary-alpha-80: hsl(var(--hsl-secondary), 0.8);
+      --color-secondary-alpha-85: hsl(var(--hsl-secondary), 0.85);
+      --color-secondary-alpha-90: hsl(var(--hsl-secondary), 0.9);
+      --color-secondary-alpha-95: hsl(var(--hsl-secondary), 0.95);
+      --color-accent-alpha-05: hsl(var(--hsl-accent), 0.05);
+      --color-accent-alpha-10: hsl(var(--hsl-accent), 0.1);
+      --color-accent-alpha-11: hsl(var(--hsl-accent), 0.11);
+      --color-accent-alpha-15: hsl(var(--hsl-accent), 0.15);
+      --color-accent-alpha-20: hsl(var(--hsl-accent), 0.2);
+      --color-accent-alpha-25: hsl(var(--hsl-accent), 0.25);
+      --color-accent-alpha-30: hsl(var(--hsl-accent), 0.3);
+      --color-accent-alpha-35: hsl(var(--hsl-accent), 0.35);
+      --color-accent-alpha-40: hsl(var(--hsl-accent), 0.4);
+      --color-accent-alpha-45: hsl(var(--hsl-accent), 0.45);
+      --color-accent-alpha-50: hsl(var(--hsl-accent), 0.5);
+      --color-accent-alpha-55: hsl(var(--hsl-accent), 0.55);
+      --color-accent-alpha-60: hsl(var(--hsl-accent), 0.6);
+      --color-accent-alpha-65: hsl(var(--hsl-accent), 0.65);
+      --color-accent-alpha-70: hsl(var(--hsl-accent), 0.7);
+      --color-accent-alpha-73: hsl(var(--hsl-accent), 0.73);
+      --color-accent-alpha-75: hsl(var(--hsl-accent), 0.75);
+      --color-accent-alpha-80: hsl(var(--hsl-accent), 0.8);
+      --color-accent-alpha-85: hsl(var(--hsl-accent), 0.85);
+      --color-accent-alpha-90: hsl(var(--hsl-accent), 0.9);
+      --color-accent-alpha-95: hsl(var(--hsl-accent), 0.95);
+    }
+}

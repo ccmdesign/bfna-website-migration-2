@@ -1,0 +1,47 @@
+@layer composition {
+  .cover {
+    --_cover-space: var(--theme-cover-space, var(--space-s));
+    --_cover-min-height: var(--theme-cover-min-height, 100vh);
+  
+    display: flex;
+    flex-direction: column;
+    min-block-size: var(--_cover-min-height);
+    padding: var(--_cover-space);
+  }
+  
+  /* The centered element - uses data-centered attribute */
+  .cover > [data-centered] {
+    margin-block: auto;
+  }
+  
+  /* Remove top margin from first child if it's not the centered element */
+  .cover > *:first-child:not([data-centered]) {
+    margin-block-start: 0;
+  }
+  
+  /* Remove bottom margin from last child if it's not the centered element */
+  .cover > *:last-child:not([data-centered]) {
+    margin-block-end: 0;
+  }
+  
+  /* ========================================
+     Data Attribute Controls
+     ======================================== */
+  
+  /* Cover spacing (padding) */
+  .cover[data-space="3xs"] { --_cover-space: var(--space-3xs); }
+  .cover[data-space="2xs"] { --_cover-space: var(--space-2xs); }
+  .cover[data-space="xs"] { --_cover-space: var(--space-xs); }
+  .cover[data-space="s"] { --_cover-space: var(--space-s); }
+  .cover[data-space="m"] { --_cover-space: var(--space-m); }
+  .cover[data-space="l"] { --_cover-space: var(--space-l); }
+  .cover[data-space="xl"] { --_cover-space: var(--space-xl); }
+  .cover[data-space="2xl"] { --_cover-space: var(--space-2xl); }
+  .cover[data-space="3xl"] { --_cover-space: var(--space-3xl); }
+  
+  /* Cover min-height */
+  .cover[data-min-height="50vh"] { --_cover-min-height: 50vh; }
+  .cover[data-min-height="75vh"] { --_cover-min-height: 75vh; }
+  .cover[data-min-height="100vh"] { --_cover-min-height: 100vh; }
+  .cover[data-min-height="auto"] { --_cover-min-height: auto; }
+}

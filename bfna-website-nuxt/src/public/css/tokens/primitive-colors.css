@@ -1,0 +1,39 @@
+@layer tokens {
+  /*
+   * ⚠️ IMPORTANT - READ BEFORE EDITING ⚠️
+   * This file is part of the design token system.
+   * Before making any changes, please review the token documentation at:
+   * src/content/docs/tokens/
+   *
+   * Key docs:
+   * - architecture.md: Token system structure and principles
+   * - maintenance.md: How to safely add, modify, or remove tokens
+   * - guide.md: Usage guidelines and best practices
+   *
+   * This applies to both human developers and AI assistants.
+   */
+  
+    /* Color Values */
+    :root {
+      --hsl-white: 255, 100%, 100%;
+      --hsl-black: 0, 0%, 3%;
+      --hsl-base: var(--hsl-black);
+      --hsl-red: 352, 59%, 55%;
+      --hsl-yellow: 36, 83%, 61%;
+      --hsl-blue: 208, 50%, 38%;
+      --hsl-navy: 201, 100%, 18%;
+      --hsl-green: 188, 97%, 28%;
+    }
+    
+    /* Solid Colors */
+    :root {
+      --color-white: hsl(var(--hsl-white));
+      --color-black: hsl(var(--hsl-black));
+      --color-base: hsl(var(--hsl-base));
+      --color-red: hsl(var(--hsl-red));
+      --color-yellow: hsl(var(--hsl-yellow));
+      --color-blue: hsl(var(--hsl-blue));
+      --color-navy: hsl(var(--hsl-navy));
+      --color-green: hsl(var(--hsl-green));
+    }
+}

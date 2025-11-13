@@ -1,0 +1,22 @@
+{
+  "component": "ccmButton",
+  "slug": "ccm-button",
+  "promptId": "component-demo",
+  "promptVersion": "2.0.0",
+  "promptRunId": "component-demo-1762805857538",
+  "lastPromptRun": "2025-11-10T20:17:37.539Z",
+  "variants": [
+    {
+      "name": "default",
+      "props": {},
+      "tokens": []
+    }
+  ],
+  "states": [
+    "focus-visible",
+    "disabled"
+  ],
+  "dependencies": [
+    "~/components/ds/molecules/ccmButton.vue"
+  ]
+}

@@ -1,0 +1,9 @@
+/* Legacy CSS Import File
+ * This file imports all legacy CSS partials for Phase 1 migration
+ * Note: This CSS is unplugged from nuxt.config.ts during Phase 1
+ */
+
+@import './global.css';
+@import './fixes.css';
+@import './v2updates.css';
+

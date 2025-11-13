@@ -1,0 +1,38 @@
+@layer composition {
+  .container {
+    --_container-max-width: var(--theme-container-max-width, 1200px);
+    --_container-padding: var(--theme-container-padding, var(--space-m));
+  
+    max-inline-size: var(--_container-max-width);
+    margin-inline: auto;
+    padding-inline: var(--_container-padding);
+  }
+  
+  /* Fluid variant - no max-width constraint */
+  .container[data-fluid] {
+    max-inline-size: none;
+  }
+  
+  /* ========================================
+     Data Attribute Controls
+     ======================================== */
+  
+  /* Container max-width */
+  .container[data-max-width="sm"] { --_container-max-width: 640px; }
+  .container[data-max-width="md"] { --_container-max-width: 768px; }
+  .container[data-max-width="lg"] { --_container-max-width: 1024px; }
+  .container[data-max-width="xl"] { --_container-max-width: 1280px; }
+  .container[data-max-width="2xl"] { --_container-max-width: 1536px; }
+  .container[data-max-width="full"] { --_container-max-width: 100%; }
+  
+  /* Container padding */
+  .container[data-padding="3xs"] { --_container-padding: var(--space-3xs); }
+  .container[data-padding="2xs"] { --_container-padding: var(--space-2xs); }
+  .container[data-padding="xs"] { --_container-padding: var(--space-xs); }
+  .container[data-padding="s"] { --_container-padding: var(--space-s); }
+  .container[data-padding="m"] { --_container-padding: var(--space-m); }
+  .container[data-padding="l"] { --_container-padding: var(--space-l); }
+  .container[data-padding="xl"] { --_container-padding: var(--space-xl); }
+  .container[data-padding="2xl"] { --_container-padding: var(--space-2xl); }
+  .container[data-padding="3xl"] { --_container-padding: var(--space-3xl); }
+}

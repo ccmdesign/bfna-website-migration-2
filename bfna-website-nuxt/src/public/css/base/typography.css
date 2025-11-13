@@ -1,0 +1,117 @@
+@layer defaults {
+  :root {
+    font-family: var(--font-family-body);
+    font-optical-sizing: auto;
+    font-weight: var(--font-weight-normal);
+    font-style: normal;
+    font-size: 16px;
+    line-height: 1.5;
+  }
+
+  body {
+    background-color: var(--white-color);
+    color: var(--black-color);
+  }
+
+  h1,
+  .h1,
+  h2,
+  .h2,
+  h3,
+  .h3,
+  h4,
+  .h4,
+  h5,
+  .h5,
+  h6,
+  .h6 {
+    font-family: var(--font-family-display);
+    margin-block: 0;
+  }
+
+  h1,
+  .h1 {
+    font-size: var(--size-4);
+    font-weight: 600;
+  }
+
+  h2,
+  .h2 {
+    font-size: var(--size-2);
+    font-weight: 500;
+  }
+
+  h3,
+  .h3 {
+    font-size: var(--size-1);
+    font-weight: 500;
+  }
+
+  h4,
+  .h4 {
+    font-size: var(--size-0);
+    font-weight: 500;
+  }
+
+  h5,
+  .h5 {
+    font-size: var(--size-0);
+    font-weight: 500;
+  }
+
+  h6,
+  .h6 {
+    font-size: var(--size--1);
+    font-weight: 500;
+    text-transform: uppercase;
+  }
+
+  p,
+  dl,
+  li {
+    font-size: var(--size-0);
+  }
+
+  a:not([class]) {
+    color: var(--link-color, #007bff);
+    text-decoration: none;
+  }
+
+  a:not([class]):hover {
+    text-decoration: underline;
+  }
+}
+
+a:not([class]):visited {
+  color: var(--link-color-visited, #666);
+}
+
+ul:not([class]),
+ol:not([class]) {
+  margin-top: 0;
+  margin-bottom: var(--space-3xs);
+  padding-left: var(--space-s);
+}
+
+li {
+  margin-bottom: 0.5em;
+}
+
+blockquote {
+  margin: 0;
+  padding: 0 var(--base-padding-inline);
+  color: var(--base-color, #666);
+  border-left: 0;
+}
+
+p,
+li,
+input,
+button,
+a {
+  font-weight: 100;
+}
+
+strong {
+  font-weight: 400;
+}

@@ -1,0 +1,69 @@
+{
+  "displayName": "ccmHero",
+  "description": "Hero section component for page headers and landing sections.\n\nA flexible banner component that provides structured slots for top navigation, main content,\nand bottom metadata. Supports multiple layout variants (default, minimal, full-screen) and\nsize-based spacing. Uses semantic HTML with role=\"banner\" for accessibility.\n\nDefault variant uses 16:7 aspect ratio. Minimal removes aspect ratio constraints.\nFull-screen variant stretches to 100vh for immersive landing experiences.",
+  "props": [
+    {
+      "name": "brow",
+      "description": "Optional eyebrow text displayed above the main title. Renders as h4 when provided.",
+      "type": "string",
+      "required": false,
+      "defaultValue": "''"
+    },
+    {
+      "name": "title",
+      "description": "Main hero heading text. Renders as h1 when provided. Falls back to default slot if not provided.",
+      "type": "string",
+      "required": false,
+      "defaultValue": "''"
+    },
+    {
+      "name": "tagline",
+      "description": "Supporting tagline text displayed below the title. Renders as h3 when provided.",
+      "type": "string",
+      "required": false,
+      "defaultValue": "''"
+    },
+    {
+      "name": "backgroundColor",
+      "description": "Custom background color using CSS custom property name (without -- prefix). Overrides default background.",
+      "type": "string",
+      "required": false,
+      "defaultValue": "''"
+    },
+    {
+      "name": "size",
+      "description": "Padding size following the s/m/l/xl scale. Controls vertical padding via --space-{size} token. Valid values: s, m, l, xl",
+      "type": "string",
+      "required": false,
+      "defaultValue": "'l'"
+    },
+    {
+      "name": "variant",
+      "description": "Layout variant affecting aspect ratio and height. Valid values: default (16:7 aspect), minimal (auto height), full-screen (100vh)",
+      "type": "string",
+      "required": false,
+      "defaultValue": "'default'"
+    },
+    {
+      "name": "hideTop",
+      "description": "Hide the top section (top-bar and top slots). When true, top navigation and related content is hidden.",
+      "type": "boolean",
+      "required": false,
+      "defaultValue": "false"
+    },
+    {
+      "name": "hideBottom",
+      "description": "Hide the bottom section (bottom slot). When true, bottom metadata and CTAs are hidden. Defaults to true.",
+      "type": "boolean",
+      "required": false,
+      "defaultValue": "true"
+    }
+  ],
+  "examples": [],
+  "codeSnippets": [],
+  "tags": {
+    "component": "ccmHero",
+    "category": "organism",
+    "standards": "all-10"
+  }
+}

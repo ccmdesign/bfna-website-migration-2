@@ -1,0 +1,26 @@
+# Build outputs
+.output
+.nuxt
+.nitro
+.cache
+dist
+build
+coverage
+
+# Dependencies
+node_modules
+
+# Generated files
+*.min.js
+*.d.ts
+
+# Nuxt-generated
+.nuxt
+.output
+
+# IDE
+.vscode
+.idea
+
+# Other
+*.log

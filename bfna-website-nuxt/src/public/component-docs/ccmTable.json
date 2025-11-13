@@ -1,0 +1,76 @@
+{
+  "displayName": "ccmTable",
+  "description": "Accessible, token-driven table with slot-first API and data-driven fallback.\n\nRenders semantic table markup. When the default slot is provided, it renders\nthe given table structure as-is. Otherwise, it can render a simple table from\na 2D data structure via the `data` prop. Visuals are controlled via CSS tokens.",
+  "props": [
+    {
+      "name": "data",
+      "description": "",
+      "type": "TableData",
+      "required": false,
+      "defaultValue": "undefined"
+    },
+    {
+      "name": "caption",
+      "description": "",
+      "type": "string",
+      "required": false,
+      "defaultValue": "null"
+    },
+    {
+      "name": "rowHeaders",
+      "description": "",
+      "type": "boolean",
+      "required": false,
+      "defaultValue": "false"
+    },
+    {
+      "name": "backgroundColor",
+      "description": "Token base name (e.g., \"brand\"). Derives header/body backgrounds automatically.",
+      "type": "string",
+      "required": false,
+      "defaultValue": "null"
+    },
+    {
+      "name": "color",
+      "description": "Text color token (e.g., \"color-base\").",
+      "type": "string",
+      "required": false,
+      "defaultValue": "'color-base'"
+    },
+    {
+      "name": "borderColor",
+      "description": "Border color token base (e.g., \"color-base\").",
+      "type": "string",
+      "required": false,
+      "defaultValue": "'color-base'"
+    },
+    {
+      "name": "borderRadius",
+      "description": "Border radius for outer table box.",
+      "type": "string",
+      "required": false,
+      "defaultValue": "'0'"
+    },
+    {
+      "name": "padding",
+      "description": "Cell padding for th/td (applies block and inline).",
+      "type": "string",
+      "required": false,
+      "defaultValue": "'var(--space-s)'"
+    },
+    {
+      "name": "variant",
+      "description": "",
+      "type": "string",
+      "required": false,
+      "defaultValue": "'primary'"
+    }
+  ],
+  "examples": [],
+  "codeSnippets": [],
+  "tags": {
+    "component": "ccmTable",
+    "category": "molecule",
+    "standards": "all-10"
+  }
+}

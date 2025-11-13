@@ -1,0 +1,262 @@
+{
+  "heading": "Politics & Society",
+  "description": "As crises and trade disputes escalate, accompanied by the ascendancy of populist movements and fraying international alliances, a notable geopolitical shift is underway, causing a growing divergence between the United States and its European counterparts. We closely monitor the evolving dynamics of the transatlantic relationship, analyzing how political landscapes and societal responses on both sides of the Atlantic are adapting to the complex global challenges of the 21st century. Our analysis, web-based tools, crowd-sourced forecasting and multimedia content from short explainer videos to full-length documentaries bring these challenges to the fore, conveying both the personal impact and the broader geopolitical implications of the forces shaping transatlantic politics and societies.",
+  "theme": "politics-society",
+  "button": {
+    "url": "/politics-society",
+    "label": "Learn More"
+  },
+  "image": {
+    "url": "https://images.ctfassets.net/9vgcz0fppkl3/1AgkTKN7K4ZWMXvqMmDVXN/f27ee0f5827ace0da375ef9b6cde69bd/politics-society_2x.webp?w=800&fm=webp&q=80&fit=fill",
+    "title": "politics and society"
+  },
+  "products_list": [
+    {
+      "theme": "politics-society",
+      "type": "website",
+      "heading": "Transatlantic Periscope",
+      "excerpt": "The Transatlantic Periscope is an interactive, multimedia tool that brings together expert commentary, high-quality media coverage, official policy documents, quantitative data, social media posts, and gray literature. ",
+      "image": {
+        "url": "https://images.ctfassets.net/9vgcz0fppkl3/3iO8cuUP3v0W2kGNw13zNR/4df05931ce28a77e3ce661d23181035d/periscope_mock.png?w=800&fm=webp&q=80&fit=fill",
+        "title": "periscope mock"
+      },
+      "button": {
+        "url": "https://transatlanticperiscope.org/",
+        "label": "Open project website"
+      }
+    },
+    {
+      "theme": "politics-society",
+      "type": "website",
+      "heading": "Transatlantic Barometer",
+      "excerpt": "The Transatlantic Barometer’s main fixture is a website that provides users with a synopsis of the policy positions and engagement of 31 key transatlantic actors: the United States, Canada, the United Kingdom, and the European Union, as well as its 27 member states.",
+      "image": {
+        "url": "https://images.ctfassets.net/9vgcz0fppkl3/1VWlptNnvCsQCdjKbV06Fn/2c15f0d16dc5ff6bc56d35f9a19f774d/barometer_web.png?w=800&fm=webp&q=80&fit=fill",
+        "title": "barometer web"
+      },
+      "button": {
+        "url": "https://www.transatlanticbarometer.org/",
+        "label": "Open project website"
+      }
+    },
+    {
+      "theme": "politics-society",
+      "type": "website",
+      "heading": "RANGE",
+      "excerpt": "RANGE (Rethinking Assumptions in a New Geostrategic Environment) is a crowdsourced forecasting program focused on geopolitics and the transatlantic relationship.",
+      "image": {
+        "url": "https://images.ctfassets.net/9vgcz0fppkl3/1fQatZEisED8zeVK6LIyGm/bfa01b0c67f167e19ba68ab5011332d0/Range_Mock_1.png?w=800&fm=webp&q=80&fit=fill",
+        "title": "Range Mock 1"
+      },
+      "button": {
+        "url": "https://www.rangeforecasting.org/",
+        "label": "Open project website"
+      }
+    },
+    {
+      "theme": "politics-society",
+      "type": "report",
+      "heading": "Lithium Rising: The Race for Critical Minerals ",
+      "excerpt": "Journey to the frontlines of the 21st-century resource scramble—from Bolivian salt flats to Congolese cobalt mines—uncover how lithium, cobalt, and nickel have become central to clean energy, national security, and economic power. Through vivid storytelling, original photography, and information from over 100 interviews, explore the global power plays and local struggles shaping the battery revolution. Who profits, who pays—and can we mine our way to a greener future without repeating the past?",
+      "image": {
+        "url": "https://images.ctfassets.net/9vgcz0fppkl3/2setEYEGQMGuoOPoZ51vwQ/ea8bb7aa51b288d2b0aed36263bd316b/Lithium_Rising_Verticle.webp?w=800&fm=webp&q=80&fit=fill",
+        "title": "Lithium Rising Cover"
+      },
+      "button": {
+        "url": "/politics-society/lithium-rising-the-race-for-critical-minerals/",
+        "label": "Read Report"
+      }
+    },
+    {
+      "theme": "politics-society",
+      "type": "website",
+      "heading": "Wisdom of the Crowd",
+      "excerpt": "Welcome to “Wisdom of the Crowd”, a podcast miniseries that explores the future of transatlantic relations. From democracy and geopolitics to climate change and technology, we take a closer look at the most pressing issues impacting the transatlantic alliance by interviewing top experts and using a strategy of crowd-sourced forecasting. We don’t just rely on experts and policy makers; we listen to a crowd of forecasters, and YOU, to determine the outcome of future events. We call that “the wisdom of the crowd”. Wisdom of the Crowd is produced by the Bertelsmann Foundation, Are We Europe, and Awe Studio. Sound design is done by Stefano Montali and the podcast artwork is by Tamara Tasić. This series is hosted by Rylie Munn.",
+      "image": {
+        "url": "https://images.ctfassets.net/9vgcz0fppkl3/6EPlmo9b2X5wrgAsLZXhka/2bba95abd0eef7d8580488f8b5576c66/wisdom_of_the_crowd_mock.png?w=800&fm=webp&q=80&fit=fill",
+        "title": "wisdom of the crowd mock"
+      },
+      "button": {
+        "url": "/podcasts/wisdom-of-the-crowd/",
+        "label": "Learn More"
+      }
+    },
+    {
+      "theme": "politics-society",
+      "type": "website",
+      "heading": "Bridging the Atlantic",
+      "excerpt": "Bridging the Atlantic is a 6-part miniseries, created with Are We Europe, that will take stock of transatlantic relations today and examine it beyond the usual touchstones. After a tumultuous four years with the Trump administration, many following the transatlantic relationship are eager to understand how the transatlantic relationship can bounce back and become more resilient in the future. But a reset is perhaps not the right goal. ",
+      "image": {
+        "url": "https://images.ctfassets.net/9vgcz0fppkl3/1Wlx8T14zlvdLPlLyzoKUQ/ce5e6403a967525779b9473d0f3de013/browser.png?w=800&fm=webp&q=80&fit=fill",
+        "title": "Bridging the Atlantic no logos or writing"
+      },
+      "button": {
+        "url": "/podcasts/bridging-the-atlantic/",
+        "label": "Learn More"
+      }
+    },
+    {
+      "theme": "politics-society",
+      "type": "report",
+      "heading": "Transatlantic Trends 2022",
+      "excerpt": "The geopolitical turmoil of 2022 presents a multitude of challenges for the transatlantic community. From Russia’s invasion of Ukraine and China’s geostrategic ambitions to the worsening climate crisis and democratic backsliding, greater transatlantic cooperation is of paramount importance. In the face of such challenges, the transatlantic community has largely shown resolve, yet divergences in interests among partners remain.",
+      "image": {
+        "url": "https://images.ctfassets.net/9vgcz0fppkl3/1fhWpYqRX2CfUmisU4TEs7/0e9a1ed1304f15cc9ca7b530fd388568/TTrends_22_updated_image.png?w=800&fm=webp&q=80&fit=fill",
+        "title": "Transatlantic Trends mock for website"
+      },
+      "button": {
+        "url": "/future-leadership/transatlantic-trends-2022-2zdfp27fcj/",
+        "label": "Learn More"
+      }
+    },
+    {
+      "theme": "politics-society",
+      "type": "report",
+      "heading": "Transatlantic Trends 2021",
+      "excerpt": "2021 opens a new chapter for the transatlantic relationship. The change of the U.S. administration as well as the political, economic, and societal implications of the coronavirus pandemic have redefined transatlantic policy dialogues. New priorities have emerged, as the calls for increased cooperation around climate change and common values signal an opportunity for an update of the transatlantic agenda. ",
+      "image": {
+        "url": "https://images.ctfassets.net/9vgcz0fppkl3/3O4zq4MiowkrTyqMmUQ4H2/a405b55985f8294164ee8aa5ae880c2d/TT2021_Cover_3d.png?w=800&fm=webp&q=80&fit=fill",
+        "title": "Transatlantic Trends 2021 cover"
+      },
+      "button": {
+        "url": "/politics-society/transatlantic-trends-2021/",
+        "label": "Learn More"
+      }
+    },
+    {
+      "theme": "politics-society",
+      "type": "report",
+      "heading": "Cross-Cutting Currents",
+      "excerpt": "The U.S. and Europe have an opportunity to engage closely on a broad range of challenges in 2022. To that end, the Bertelsmann Foundation has produced Cross-Cutting Currents, a transatlantic primer, as a foundational and introductory resource for those who seek a better understanding of the transatlantic relationship. This publication addresses the most pressing issues affecting five of the transatlantic community’s key actors—the U.S., Germany, France, Italy, and the UK.",
+      "image": {
+        "url": "https://images.ctfassets.net/9vgcz0fppkl3/GQA8TTOBpdxOrIQjfqKzB/c060e1be40fe2ca2a0c2c2f626274496/cross-cutting-currents-mockup.webp?w=800&fm=webp&q=80&fit=fill",
+        "title": "Cross-Cutting Currents - Transatlantic Primer 2022"
+      },
+      "button": {
+        "url": "/politics-society/cross-cutting-currents/",
+        "label": "Learn More"
+      }
+    }
+  ],
+  "updates_list": [
+    {
+      "theme": "politics-society",
+      "excerpt": "German political parties regularly vie for the coveted designation of being seen as the “voice of the youth”",
+      "heading": "Conscription, Direction, Transformation",
+      "subheading": "Voice of the German Youth",
+      "by_line": "By Courtney Flynn Martino, on Oct 28, 2025",
+      "button": {
+        "url": "/politics-society/conscription-direction-transformation-6ykxrteofo/",
+        "label": "Learn More"
+      },
+      "publish_date": "2025-10-28"
+    },
+    {
+      "theme": "politics-society",
+      "excerpt": "Germany celebrates 35 years of unity on October 3, 2025, following 41 years of division as the German Democratic Republic (East Germany) and the Federal Republic of Germany (West Germany). In the last three decades, substantial progress has been made to foster German unity culturally, economically and politically, but clear divisions remain. ",
+      "heading": "United in Division",
+      "subheading": "Perspectives on 35 Years of German Reunification",
+      "by_line": "By Courtney Flynn Martino, on Oct 2, 2025",
+      "button": {
+        "url": "/politics-society/united-in-division-7k8mo6b4nk/",
+        "label": "Learn More"
+      },
+      "publish_date": "2025-10-02"
+    },
+    {
+      "theme": "politics-society",
+      "image": {
+        "url": "https://images.ctfassets.net/9vgcz0fppkl3/5w5TpgdcbjcuYEu9u9dL0u/24a1eb0f3c3e2c8cad3ae317ca4a7b7e/BFNA_Indopacific-infographic-SQHD.webp?w=800&fm=webp&q=80&fit=fill",
+        "title": "Strength in Numbers Infographic"
+      },
+      "heading": "Strength in Numbers",
+      "subheading": "Multilateral Institutions in the Indo-Pacific",
+      "by_line": "By Marshall Reid, on Oct 1, 2025",
+      "button": {
+        "url": "/politics-society/strength-in-numbers-2bfro5dcbt/",
+        "label": "Learn More"
+      },
+      "publish_date": "2025-10-01"
+    },
+    {
+      "theme": "politics-society",
+      "excerpt": "The U.S. and U.K. are reigniting their nuclear ambitions with bold new policies.",
+      "heading": "Atoms and Ambitions ",
+      "subheading": "How the United States and the United Kingdom are Reimagining Civil Nuclear Energy",
+      "by_line": "By Heaven Sullivan, on Sep 8, 2025",
+      "button": {
+        "url": "/politics-society/atoms-and-ambitions-49lxryj5bo/",
+        "label": "Learn More"
+      },
+      "publish_date": "2025-09-08"
+    },
+    {
+      "theme": "politics-society",
+      "excerpt": "When German Chancellor Friedrich Merz came to Washington on June 5 for his long-awaited meeting with U.S. President Donald Trump, it was unclear what he would encounter. ",
+      "heading": "Kids Fighting in the Park ",
+      "subheading": "Merz, Trump, and the Specter of Musk",
+      "by_line": "By Courtney Flynn Martino, on Jun 25, 2025",
+      "button": {
+        "url": "/politics-society/kids-fighting-in-the-park-4t6cxxldk3/",
+        "label": "Learn More"
+      },
+      "publish_date": "2025-06-25"
+    },
+    {
+      "theme": "politics-society",
+      "excerpt": "Belgium’s June 2024 federal elections yielded a surprising second-place finish for the far-right Vlaams Belang (VB) party. ",
+      "heading": "Swing State? Belgium’s Arizona Coalition Walks a Tightrope",
+      "by_line": "By Zachary Stoor, on Jun 2, 2025",
+      "button": {
+        "url": "/politics-society/swing-state-belgiums-arizona-coalition-walks-a-tightrope-3bbhmi9hbp/",
+        "label": "Learn More"
+      },
+      "publish_date": "2025-06-02"
+    },
+    {
+      "theme": "politics-society",
+      "excerpt": "On the morning of May 6, Friedrich Merz prepared for the formality of being elected Germany’s 11th postwar chancellor. ",
+      "heading": "Roadblocks at Home, Full Speed Abroad",
+      "subheading": "Friedrich Merz’s First 48 Hours",
+      "by_line": "By Courtney Flynn Martino, on May 28, 2025",
+      "button": {
+        "url": "/politics-society/roadblocks-at-home-full-speed-abroad-2f63prjxsv/",
+        "label": "Learn More"
+      },
+      "publish_date": "2025-05-28"
+    },
+    {
+      "theme": "politics-society",
+      "excerpt": "The United States and Germany have long shared many important ties. ",
+      "heading": "An American in Berlin",
+      "subheading": "Why the U.S. Needs an Ambassador to Germany",
+      "by_line": "By Courtney Flynn Martino, on Apr 29, 2025",
+      "button": {
+        "url": "/politics-society/an-american-in-berlin-3hnjombpvv/",
+        "label": "Learn More"
+      },
+      "publish_date": "2025-04-29"
+    },
+    {
+      "theme": "politics-society",
+      "excerpt": "Germany’s 21st Bundestag convened on March 25, the first meeting of a new parliament with 630 members. ",
+      "heading": "Coalition, Opposition, Extinction",
+      "subheading": "Challenges for Germany’s Major Parties",
+      "by_line": "By Courtney Flynn Martino, on Mar 26, 2025",
+      "button": {
+        "url": "/politics-society/coalition-opposition-extinction-btj7ckn2o0/",
+        "label": "Learn More"
+      },
+      "publish_date": "2025-03-26"
+    }
+  ],
+  "slug": "politics-society",
+  "navigation_order": 2,
+  "visible": true,
+  "hero": {
+    "webp": "/images/hero/politics-society@2x.webp",
+    "fallback": "/images/hero/politics-society@2x.jpg",
+    "width": 1600,
+    "height": 1600
+  }
+}

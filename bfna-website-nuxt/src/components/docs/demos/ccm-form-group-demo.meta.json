@@ -1,0 +1,22 @@
+{
+  "component": "ccmFormGroup",
+  "slug": "ccm-form-group",
+  "promptId": "component-demo",
+  "promptVersion": "2.0.0",
+  "promptRunId": "component-demo-1762805857538",
+  "lastPromptRun": "2025-11-10T20:17:37.541Z",
+  "variants": [
+    {
+      "name": "default",
+      "props": {},
+      "tokens": []
+    }
+  ],
+  "states": [
+    "focus-visible",
+    "disabled"
+  ],
+  "dependencies": [
+    "~/components/ds/molecules/ccmFormGroup.vue"
+  ]
+}

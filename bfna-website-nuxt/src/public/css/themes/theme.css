@@ -1,0 +1,132 @@
+@layer themes {
+  /*
+    THEME LAYER - Optional Customization
+  
+    This file is OPTIONAL and only needed if you want to customize the default theme.
+    All variables below are commented out, meaning the app uses the semantic/primitive
+    tokens defined in src/public/css/tokens/ by default.
+  
+    To activate the theme, uncomment any variable you want to override.
+    Each variable can be uncommented independently - just remove the comment markers.
+  
+    EXAMPLES:
+      Uncomment this to customize primary color hue/saturation/lightness:
+      --hsl-primary: 214, 84%, 56%;
+  
+      Uncomment this to use a different card border radius:
+      --theme-card-border-radius: var(--border-radius-l);
+  
+    DEPENDENCIES:
+      - Requires @layer themes to be declared in styles.css
+      - Requires semantic tokens to be loaded first (tokens/semantic-colors.css)
+      - All color variables reference HSL only (tints/shades are auto-generated)
+  */
+  
+    :root {
+      /*
+        COLOR CUSTOMIZATION
+        Override base HSL values to change theme colors.
+        Tints, shades, and derived tokens are auto-generated from these.
+      */
+  
+      /* Uncomment to customize primary color (default: blue) */
+  
+      /* --hsl-primary: 214, 84%, 56%; */
+  
+      /* Uncomment to customize secondary color (default: yellow/orange) */
+  
+      /* --hsl-secondary: 45, 100%, 51%; */
+  
+      /* Uncomment to customize tertiary color (default: pink/magenta) */
+  
+      /* --hsl-tertiary: 342, 75%, 51%; */
+  
+      /* Uncomment to customize accent color (default: teal) */
+  
+      /* --hsl-accent: 159, 64%, 52%; */
+  
+      /*
+        Color solids (auto-computed from HSL above).
+        Only uncomment if you need to override computed colors.
+      */
+  
+      /* Primary color solid (computed from --hsl-primary) */
+  
+      /* --color-primary: hsl(var(--hsl-primary)); */
+  
+      /* Secondary color solid (computed from --hsl-secondary) */
+  
+      /* --color-secondary: hsl(var(--hsl-secondary)); */
+  
+      /* Tertiary color solid (computed from --hsl-tertiary) */
+  
+      /* --color-tertiary: hsl(var(--hsl-tertiary)); */
+  
+      /* Accent color solid (computed from --hsl-accent) */
+  
+      /* --color-accent: hsl(var(--hsl-accent)); */
+  
+      /*
+        LAYOUT & SPACING CUSTOMIZATION
+      */
+  
+      /* Max content width for centered layouts (default: 1100px) */
+  
+      /* --theme-center-measure: 1100px; */
+  
+      /* Default spacing between vertical stack items (default: var(--space-s)) */
+  
+      /* --theme-stack-space: var(--space-s); */
+  
+      /* Border radius for cards and panels (default: var(--border-radius-l)) */
+  
+      /* --theme-card-border-radius: var(--border-radius-l); */
+  
+      /* Border width options (defaults: none=0, thin=1px, medium=2px, thick=4px) */
+  
+      /* --border-width-none: 0; */
+  
+      /* --border-width-thin: 1px; */
+  
+      /* --border-width-medium: 2px; */
+  
+      /* --border-width-thick: 4px; */
+    }
+  
+    /*
+      TYPOGRAPHY CUSTOMIZATION
+      Override font families and sizing rules.
+      These rules apply to body text and headings.
+    */
+  
+    /* Customize body text appearance */
+  
+    /* body {
+      font-family: var(--font-family-body);
+      font-weight: var(--font-weight-normal);
+      font-style: normal;
+      line-height: 1.6;
+    } */
+  
+    /* Customize heading appearance */
+  
+    /* h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      font-family: var(--font-family-display);
+      font-weight: 600;
+      line-height: 1.2;
+      letter-spacing: -0.01em;
+    } */
+  
+    /* Customize small text and captions */
+  
+    /* small,
+    .caption {
+      font-size: clamp(0.75rem, 0.68rem + 0.3vw, 0.875rem);
+      font-weight: 500;
+    } */
+}

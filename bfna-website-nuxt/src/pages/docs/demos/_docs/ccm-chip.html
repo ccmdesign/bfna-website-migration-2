@@ -1,0 +1,77 @@
+<div class="stack" data-space="xs">
+  <article class="stack" data-space="2xs">
+    <h3>Component: ccmChip</h3>
+    <p>Compact label component for status, taxonomy, and quick actions.</p>
+    <p>A versatile chip/badge that supports three visual variants, semantic colors,<br />and sizes. It can behave as static text, a button, or a link. Optional<br />leading/trailing icons and a built-in dismiss affordance are available. Uses<br />design tokens for consistent spacing, typography, and color across themes.</p>
+    <p>Use for inline metadata, filters, tag lists, and light-weight actions. Favor<br />`ccmButton` when the primary intent is an action rather than annotation.</p>
+    <dl class="stack" data-space="4xs">
+      <dt>Category</dt>
+      <dd>atom</dd>
+      <dt>Standards</dt>
+      <dd>all-10</dd>
+    </dl>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: is</h3>
+    <p>Root HTML tag when not interactive or link.<br />Use 'button' only when you need custom semantics; otherwise set `interactive`.<br />Defaults to 'span'.</p>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: to</h3>
+    <p>NuxtLink target. When provided, chip renders as `NuxtLink` and emits `click` on activation.<br />Example: '/docs/ccm-chip'.</p>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: label</h3>
+    <p>Fallback text label if default slot is empty. Also used for `aria-label`<br />when `ariaLabel` is not provided.</p>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: iconBefore</h3>
+    <p>Optional inline content rendered before the label when `icon-before` slot is unused.<br />Provide a short text/icon glyph.</p>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: iconAfter</h3>
+    <p>Optional inline content rendered after the label when `icon-after` slot is unused.<br />Ignored when `dismissible` is true (dismiss button is shown instead).</p>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: size</h3>
+    <p>Visual size preset.<br />Valid values: 'xs' | 's' | 'm'. Defaults to 'm'.</p>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: variant</h3>
+    <p>Visual style variant.<br />Valid values: 'filled' | 'outlined' | 'minimal'. Defaults to 'filled'.</p>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: color</h3>
+    <p>Semantic color token name.<br />Valid values: 'neutral' | 'primary' | 'success' | 'warning' | 'error' | 'info'.</p>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: customColor</h3>
+    <p>Custom background color token name (without leading --). When set, overrides<br />variant/color mapping for background and uses a readable foreground.<br />Example: 'color-brand-500'.</p>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: ariaLabel</h3>
+    <p>Explicit accessible name. Falls back to `label` or null when not provided.</p>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: dismissible</h3>
+    <p>When true, displays a dismiss button and emits `dismiss` on activation.</p>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: disabled</h3>
+    <p>Disables interaction and dims appearance.</p>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: interactive</h3>
+    <p>Makes the chip keyboard/mouse interactive, rendering as a `button` when not a link.</p>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Events</h3>
+    <p>Emitted when the dismiss control is activated.</p>
+    <p>Emitted when the chip is activated (button/link modes only).</p>
+    <dl class="stack" data-space="4xs">
+      <dt>Event</dt>
+      <dd>dismiss</dd>
+      <dt>Event</dt>
+      <dd>click</dd>
+    </dl>
+  </article>
+</div>

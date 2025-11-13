@@ -1,0 +1,90 @@
+{
+  "displayName": "ccmFormField",
+  "description": "Slot-first form field wrapper with labels, validation messages, and a11y wiring.\n\nWraps any input/textarea/select via the default slot and provides automatic\nlabel association, aria-describedby wiring for help/validation messages, and\nconsistent styles across sizes and validation states. Gracefully degrades by\nrendering a default text input when no slot content is provided.",
+  "props": [
+    {
+      "name": "id",
+      "description": "Custom element id for the input. If omitted, a stable id is auto-generated and associated with the label.",
+      "type": "string",
+      "required": false,
+      "defaultValue": "null"
+    },
+    {
+      "name": "labelPosition",
+      "description": "Label placement. Valid values: top (default), inline, hidden",
+      "type": "string",
+      "required": false,
+      "defaultValue": "'top'"
+    },
+    {
+      "name": "label",
+      "description": "Visible label text. When labelPosition=\"hidden\", keep for a11y but hide visually; also consider aria-label on the input.",
+      "type": "string",
+      "required": false,
+      "defaultValue": "''"
+    },
+    {
+      "name": "helpText",
+      "description": "Helper text shown only in the default validation state. Included in aria-describedby.",
+      "type": "string",
+      "required": false,
+      "defaultValue": "''"
+    },
+    {
+      "name": "errorMessage",
+      "description": "Error message shown when validationState=\"error\". Included in aria-describedby and sets aria-invalid.",
+      "type": "string",
+      "required": false,
+      "defaultValue": "''"
+    },
+    {
+      "name": "successMessage",
+      "description": "Success message shown when validationState=\"success\". Included in aria-describedby.",
+      "type": "string",
+      "required": false,
+      "defaultValue": "''"
+    },
+    {
+      "name": "warningMessage",
+      "description": "Warning message shown when validationState=\"warning\". Included in aria-describedby.",
+      "type": "string",
+      "required": false,
+      "defaultValue": "''"
+    },
+    {
+      "name": "size",
+      "description": "Control spacing and typography scale. Valid values: s, m, l, xl",
+      "type": "string",
+      "required": false,
+      "defaultValue": "'m'"
+    },
+    {
+      "name": "validationState",
+      "description": "Visual and a11y state. Valid values: default, success, error, warning",
+      "type": "string",
+      "required": false,
+      "defaultValue": "'default'"
+    },
+    {
+      "name": "required",
+      "description": "Adds a visual asterisk in the label. Use native required on the input to enforce validation.",
+      "type": "boolean",
+      "required": false,
+      "defaultValue": "false"
+    },
+    {
+      "name": "showValidationIcon",
+      "description": "Toggle the inline validation icon for non-default states.",
+      "type": "boolean",
+      "required": false,
+      "defaultValue": "true"
+    }
+  ],
+  "examples": [],
+  "codeSnippets": [],
+  "tags": {
+    "component": "ccmFormField",
+    "category": "ds-form",
+    "standards": "all-10"
+  }
+}

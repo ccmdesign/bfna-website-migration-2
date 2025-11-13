@@ -1,0 +1,64 @@
+<div class="stack" data-space="xs">
+  <article class="stack" data-space="2xs">
+    <h3>Component: ccmBreadcrumb</h3>
+    <p>Breadcrumb navigation component communicating the user's location within the site hierarchy.</p>
+    <p>Overview:<br />- Provides contextual navigation between parent routes without repeating the page title.<br />- Intended for layout headers and hero regions where consistent wayfinding is required.</p>
+    <p>Usage:<br />- Do render before the primary `&lt;h1&gt;` to maintain sequential headings.<br />- Do hide breadcrumbs when a hierarchy has only one level to avoid noise.<br />- Don't combine with tertiary navigations (tabs, pills) in the same cluster.</p>
+    <p>Anatomy:<br />- Wrapper `&lt;component&gt;` defaults to a `&lt;nav&gt;` landmark with `aria-label`.<br />- Ordered list `.cluster` spaces links via `--_ccm-breadcrumb-gap` (see `src/content/docs/guidelines/tokens.md`).<br />- The optional `#separator` slot renders an icon or slash and should align with `.icon` utility guidance.</p>
+    <p>Accessibility:<br />- `aria-label` communicates the navigation purpose; the last item sets `aria-current=&quot;page&quot;`.<br />- Separators are marked `aria-hidden=&quot;true&quot;` so screen readers focus on the links.<br />- Optional JSON-LD `BreadcrumbList` improves SEO without affecting assistive tech behaviour.</p>
+    <p>Content:<br />- Keep labels concise (≤4 words) and title case; mirror IA language from content governance docs.<br />- Avoid emojis or punctuation that would read awkwardly in assistive technologies.<br />- For icon separators, align with tone guidance in `src/content/docs/guidelines/documentation-governance.md`.</p>
+    <p>Demo Variants:<br />- `variant=&quot;default&quot;`, `size=&quot;s&quot;`, chevron separator (baseline path).<br />- `variant=&quot;wrap&quot;` with long labels to demonstrate multi-line wrapping behaviour.<br />- Custom separator slot example using `.icon` utility to show bespoke glyphs.</p>
+    <dl class="stack" data-space="4xs">
+      <dt>Category</dt>
+      <dd>navigation</dd>
+      <dt>Standards</dt>
+      <dd>all-10</dd>
+      <dt>Usage</dt>
+      <dd>Pair with page headers and align spacing tokens via CUBE CSS utilities (`src/content/docs/guidelines/cube-css.md`).</dd>
+    </dl>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Shape for each breadcrumb trail entry consumed by the `items` prop.</h3>
+    <p>Shape for each breadcrumb trail entry consumed by the `items` prop.<br />Prefer `to` for internal Nuxt navigation and `href` for absolute destinations.</p>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: is</h3>
+    <p>Root element tag rendered by `&lt;component&gt;`. Defaults to `nav` for landmark semantics; switch to `div`<br />when placing the breadcrumb inside an existing `nav` or header.</p>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: items</h3>
+    <p>Ordered set of breadcrumb items. The final entry is surfaced as the current page (`aria-current`).<br />Provide `ariaLabel` when the visual label would be ambiguous or truncated.</p>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: size</h3>
+    <p>Link size forwarded to `ccmButton` (link variant). `s` keeps breadcrumbs compact; `m` aligns with hero headers<br />and increases spacing tokens applied to the `.cluster` wrapper.</p>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: variant</h3>
+    <p>Layout variant controlling line wrapping. Use `default` to keep all items on one line; use `wrap` to allow<br />multi-line breadcrumbs for deep IA while keeping tokens intact.</p>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: separator</h3>
+    <p>Separator presentation. `chevron` uses an icon glyph, `slash` renders `/`, and `custom` defers entirely to the<br />`#separator` slot. Custom separators should follow iconography rules from the design system.</p>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: iconName</h3>
+    <p>Icon glyph used when `separator` is `chevron`. Must map to a material/icon font name recognised by the `.icon` utility.</p>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: itemPaddingInline</h3>
+    <p>Space token applied to inline padding on link items (`var(--space-{token})`). Reference semantic keys in<br />the tokens guideline to ensure consistency across navigation components.</p>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: ariaLabel</h3>
+    <p>Aria-label describing the breadcrumb navigation. Override when multiple breadcrumb regions exist on a page<br />(e.g., admin + marketing shells) to keep landmarks unique.</p>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: includeJsonLd</h3>
+    <p>Toggles schema.org `BreadcrumbList` JSON-LD injection via `useHead`. Disable when another breadcrumb script<br />already exists to avoid duplicate structured data in the document head.</p>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: baseUrl</h3>
+    <p>Absolute site origin used to convert relative `to`/`href` values into canonical URLs inside the JSON-LD payload.<br />Provide `null` to leave relative paths untouched (search engines may warn if they remain relative).</p>
+  </article>
+</div>

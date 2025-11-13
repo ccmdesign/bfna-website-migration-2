@@ -1,0 +1,37 @@
+<div class="stack" data-space="xs">
+  <article class="stack" data-space="2xs">
+    <h3>Component: ccmCard</h3>
+    <p>Accessible, themeable card/teaser for links and content previews.</p>
+    <p>The entire card is a single interactive link (NuxtLink) with keyboard-focus styles,<br />optional media via an image slot, and a CTA string/slot referenced by aria-describedby.<br />Spacing and visuals are driven by semantic design tokens exposed as CSS custom properties.</p>
+    <dl class="stack" data-space="4xs">
+      <dt>Category</dt>
+      <dd>ds-component</dd>
+      <dt>Standards</dt>
+      <dd>all-10</dd>
+    </dl>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: to</h3>
+    <p>Destination path or absolute URL for the card link.<br />Use app-relative routes (e.g., &quot;/blog/post&quot;) or full URLs (e.g., &quot;https://example.com&quot;).</p>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: title</h3>
+    <p>Human-readable title used for the link's aria-label and the image alt text.<br />Also used to generate a stable id for the CTA description.</p>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: image</h3>
+    <p>Image URL used by the default image rendering. Provide this when not supplying the #image slot.</p>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: action</h3>
+    <p>CTA copy rendered in the `action` area and referenced by aria-describedby.<br />Provide a short, imperative phrase (e.g., &quot;Read more →&quot;).</p>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: size</h3>
+    <p>Spacing scale key controlling internal padding and gaps.<br />Valid values typically include: &quot;s&quot;, &quot;m&quot;, &quot;l&quot;, &quot;xl&quot;. Default is &quot;l&quot;.</p>
+  </article>
+  <article class="stack" data-space="2xs">
+    <h3>Prop: backgroundColor</h3>
+    <p>Design token name (without the var(--) wrapper) controlling the image area's background color.<br />Example: &quot;color-neutral-tint-90&quot; → applied as var(--color-neutral-tint-90).</p>
+  </article>
+</div>

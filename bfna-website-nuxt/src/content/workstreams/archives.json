@@ -1,0 +1,93 @@
+{
+  "heading": "Archives",
+  "description": "Our library of older publications and projects.",
+  "theme": "default",
+  "button": {
+    "url": "/archives",
+    "label": "Learn More"
+  },
+  "image": {
+    "url": "https://images.ctfassets.net/9vgcz0fppkl3/4YW23RPQlyY2CkvqR7Yncx/8fd24b99e580121b78c9ee030f07d6a1/archives_2x.webp?w=800&fm=webp&q=80&fit=fill",
+    "title": "archived projects"
+  },
+  "products_list": [
+    {
+      "theme": "default",
+      "type": "report",
+      "heading": "Federalism in Crisis",
+      "excerpt": "In the United States and Germany, two countries with federal systems of government, responses to the COVID-19 pandemic have varied considerably. While conflict and dysfunction have embodied the U.S. response, cooperative and unified strategies have underpinned Germany’s approach. Federalism in Crisis explores these contrasting developments by elucidating the key characteristics of both the U.S. and German federal systems and examining how they have impacted responses to the crisis.   ",
+      "image": {
+        "url": "https://images.ctfassets.net/9vgcz0fppkl3/bmWtp3evuSc0XzBRTYQpi/9c671a4a4e52ae0ef6a7be4660294a9d/cover-3d.png?w=800&fm=webp&q=80&fit=fill",
+        "title": "Federalism in Crisis cover image"
+      },
+      "button": {
+        "url": "//downloads.ctfassets.net/9vgcz0fppkl3/2M9t4FrBedezlNbw0tMQzI/332937fceea6ac87fb2b72e178797f59/federalism-in-crisis-v21-digital-opt.pdf",
+        "label": "Open full report"
+      }
+    },
+    {
+      "theme": "default",
+      "type": "report",
+      "heading": "The Transition 2020",
+      "excerpt": "The Transition is a series of video interviews, infographics, and written briefs outlining a new transatlantic agenda intended to withstand a period of significant tumult in the U.S. and Europe.",
+      "image": {
+        "url": "https://images.ctfassets.net/9vgcz0fppkl3/2bn3J0a80s6PHSXS7GXs2d/6ea90b90927534e89e65a21c42e51083/Transition-browser.png?w=800&fm=webp&q=80&fit=fill",
+        "title": "The Transition Website Cover Image"
+      },
+      "button": {
+        "url": "//assets.ctfassets.net/9vgcz0fppkl3/70rz1q7sKV7W6QuzS0Xt2P/9f861b1a54b89d2e4130a0e84ad2ce25/Compendium_final.pdf",
+        "label": "Open full report"
+      }
+    },
+    {
+      "theme": "default",
+      "type": "website",
+      "heading": "100 Questions ",
+      "excerpt": "Recent technological advances are changing the way we do business, govern, and interact with each other. This shift is causing some concern over the future of work as technological innovations such as artificial intelligence and automation affect work. This challenge requires all members of the society to take action that will ensure technology creates a future that works and benefits everyone.",
+      "image": {
+        "url": "https://images.ctfassets.net/9vgcz0fppkl3/12LCzPTycq1wCPBB7cHO0q/741042217b4eb1bc56cdda764f4deafb/100-questions.png?w=800&fm=webp&q=80&fit=fill",
+        "title": "100-questions"
+      },
+      "button": {
+        "url": "https://future-of-work.the100questions.org",
+        "label": "Open project website"
+      }
+    },
+    {
+      "theme": "default",
+      "type": "report",
+      "heading": "People-Led Innovation",
+      "excerpt": "With more than half the world’s population residing in cities, responsibility for solving societal challenges – ranging from climate change to terrorism and the future of work – is increasingly falling to officials at the local level. However, deteriorating fiscal conditions, coupled with a long-term decline in public trust in government, has diminished local leaders’ ability to meet citizens’ increasingly complex demands.",
+      "image": {
+        "url": "https://images.ctfassets.net/9vgcz0fppkl3/6mglQNvdaDApVQB9WBSR3g/a0f9663dd8e718516a2c269d9cd8a132/people-led-innovation.png?w=800&fm=webp&q=80&fit=fill",
+        "title": "people-led-innovation"
+      },
+      "button": {
+        "url": "//assets.ctfassets.net/9vgcz0fppkl3/2a6KyZC6mMDrbnHbaoRsy3/32f11262d95711d76b8f25be717386db/bertelsmann-report-web.pdf",
+        "label": "Open full report"
+      }
+    }
+  ],
+  "updates_list": [
+    {
+      "theme": "default",
+      "excerpt": "Liberal democracy as we’ve come to understand it over the last century is vulnerable from every angle. Democratically-elected leaders with autocratic leanings are using the very tools of democracy – elections, constitutions, political parties, the media – to undermine the system. ",
+      "heading": "Washington Symposium",
+      "by_line": "On Jun 17, 2019",
+      "button": {
+        "url": "/archives/washington-symposium-5vzvujirns/",
+        "label": "Learn More"
+      },
+      "publish_date": "2019-06-17"
+    }
+  ],
+  "slug": "archives",
+  "navigation_order": 5,
+  "visible": true,
+  "hero": {
+    "webp": "/images/hero/homepage.webp",
+    "fallback": "/images/hero/homepage.jpg",
+    "width": 1600,
+    "height": 1067
+  }
+}

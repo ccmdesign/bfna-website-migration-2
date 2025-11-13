@@ -1,0 +1,216 @@
+@layer defaults {
+/*==========
+#Table #Variables
+==========*/
+table {
+  /*=====
+      #Text #Size
+  =====*/
+  --_table-text-size-biggest: var(--theme-table-text-size-biggest, var(--size-1, 1.35rem));
+  --_table-text-size-bigger: var(--theme-table-text-size-bigger, var(--size-0, 1.125rem));
+  --_table-text-size-base: var(--theme-table-text-size-base, var(--size--1, 0.9375rem));
+  --_table-text-size-smaller: var(--theme-table-text-size-smaller, var(--size--2, 0.7813rem));
+  --_table-text-size-smallest: var(--theme-table-text-size-smallest, calc(var(--size--2, 0.75rem) * 0.85));
+
+  /* Variable to be used in td, th*/
+  --_table-cell-font-size: var(--theme-table-cell-font-size, var(--_table-text-size-base));
+
+
+  /*=====
+      #Title #Size
+  =====*/
+  --_table-title-size-biggest: var(--theme-table-title-size-biggest, var(--size-2, 1.62rem));
+  --_table-title-size-bigger: var(--theme-table-title-size-bigger, var(--size-1, 1.35rem));
+  --_table-title-size-base: var(--theme-table-title-size-base, var(--size-0, 1.125rem));
+  --_table-title-size-smaller: var(--theme-table-title-size-smaller, var(--size--1, 0.9375rem));
+  --_table-title-size-smallest: var(--theme-table-title-size-smallest, var(--size--2, 0.7813rem));
+  
+  /* assume for any column headers*/
+  --_table-col-header-size: var(--theme-table-col-header-size, var(--_table-title-size-biggest));
+
+  /* assume for any row headers*/
+  --_table-row-header-size: var(--theme-table-row-header-size, var(--_table-title-size-base));
+
+  /*used by th in the tbody, thead, tfoot*/
+  --_table-header-size: var(--theme-table-header-size, var(--_table-row-header-size));
+
+
+  /*===== 
+      #LineHeight 
+  =====*/
+  --_table-line-height-base: var(--theme-table-line-height, 1.2);
+  --_table-line-height-tight: var(--theme-table-line-height-tight, 1);
+
+
+  /*===== 
+      #Font #FontFamilies #Typeface
+  =====*/
+  --_table-font-family-base: var(--theme-table-font-family-base, var(--font-family-body, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif));
+  --_table-font-family-title: var(--theme-table-font-family-title, var(--font-family-display, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif));
+
+  --_table-caption-transform: var(--theme-table-caption-transform, capitalize);
+  --_table-caption-font-style: var(--theme-table-caption-font-style, italic);
+
+
+  /*===== 
+      #Border
+  =====*/ 
+  --_table-border-collapse: var(--theme-table-border-collapse, collapse);
+  --_table-border-color: var(--theme-table-border-color, var(--color-base-light, #d0d0d0));
+  --_table-border-style: var(--theme-table-border-style, solid);
+
+  --_table-cell-border-width: var(--theme-table-cell-border-width, var(--border-width-medium, 2px));
+  --_table-header-border-width: var(--theme-table-header-border-width, var(--_table-cell-border-width));
+
+
+  /*===== 
+      #Spacing
+  =====*/ 
+  --_table-cell-padding-block: var(--theme-table-cell-padding-block, var(--space-2xs, 0.375rem));
+  --_table-cell-padding-inline: var(--theme-table-cell-padding-inline, var(--space-xs, 0.6875rem));
+  --_table-text-align: var(--theme-table-text-align, left);
+  --_table-vertical-align: var(--theme-table-vertical-align, middle);
+
+
+  /*=====
+      #Colors
+  =====*/
+  --_table-text-color: var(--theme-table-text-color, var(--color-text, #373737));
+
+
+  /*===== 
+      #Background
+  =====*/ 
+  --_table-body-bg: var(--theme-table-body-bg, transparent);
+  --_table-body-bg-alt: var(--theme-table-body-bg-alt, var(--color-base-super-light, #f3f3f3));
+
+  --_table-row-bg: var(--_table-body-bg);
+  --_table-row-bg-alt: var(--_table-body-bg-alt);
+}
+
+
+/*===== #TableSections #Variables
+Variables scoped for the sections of a table
+Rather than adding classes or redeclaring, 
+we have the ability to change styles by changing values of the variables
+=====*/
+thead,
+tfoot,
+tbody {
+  --_table-section-border-width: var(--_table-cell-border-width);
+}
+
+/* Not Necessary, but in case we want the header rows to be different from the body rows*/
+thead,
+tfoot {
+  --_table-row-bg: var(--_table-body-bg-alt);
+  --_table-row-bg-alt: var(--_table-body-bg);
+}
+
+/* thead will have bigger th and td*/
+thead {
+  --_table-header-size: var(--_table-col-header-size);
+  --_table-cell-font-size: var(--_table-text-size-bigger);
+}
+
+/* tfoot will have smaller th and td*/
+tfoot {
+  --_table-header-size: var(--_table-title-size-smallest);
+  --_table-cell-font-size: var(--_table-text-size-smaller);
+}
+
+/* tbody is the standard*/
+tbody {
+  --_table-header-size: var(--_table-row-header-size);
+  --_table-cell-font-size: var(--_table-cell-font-size);
+}
+
+/*=====
+#Table    
+=====*/
+
+/* intentionally separate the settings from the application for readability */ 
+/* stylelint-disable no-duplicate-selectors */
+table {
+  color: var(--_table-text-color);
+  font-family: var(--_table-font-family-base);
+  border-collapse: var(--_table-border-collapse);
+}
+
+/* stylelint-enable no-duplicate-selectors */
+
+caption {
+  font-style: var(--_table-caption-font-style);
+  text-transform: var(--_table-caption-transform);
+  font-size:  var(--_table-text-size-smallest);
+}
+
+
+/*=====
+#Table #Cells   
+=====*/
+th,
+td {
+  text-align: var(--_table-text-align);
+  vertical-align: var(--_table-vertical-align);
+  line-height: var(--_table-line-height-base);
+  padding: var(--_table-cell-padding-block) var(--_table-cell-padding-inline);
+  border-style: var(--_table-border-style);
+  border-color: var(--_table-border-color);
+  background-color: var(--_table-cell-bg);
+}
+
+td {
+  font-size: var(--_table-cell-font-size);
+  border-width: var(--_table-section-border-width);
+}
+
+th {
+  font-family: var(--_table-font-family-title);
+  font-weight: var(--font-weight-bold, 700);
+  font-size: var(--_table-header-size);
+  border-width: var(--_table-header-border-width);
+}
+
+th[scope="rowgroup"] {
+  font-size: var(--_table-title-size-biggest);
+  padding: var(--_table-cell-padding-block);
+  border-width: 0;
+}
+
+thead th {
+  border-bottom-width: var(--_table-section-border-width);
+}
+
+tfoot th {
+border-top-width: var(--_table-section-border-width);
+}
+
+th:empty,
+td:empty {
+  padding: 0;
+  border-width: 0;
+  --_table-cell-bg: transparent;
+}
+
+/*=====
+#Table #Rows
+=====*/
+
+/* 
+background-color could be set on the row, 
+  but then the td:empty rule would have to set a bg color that matches the web page's bg color.
+By setting variable on the row and passing into the cell, 
+  we don't need to add a color to match the web page's bg color. 
+This also means that setting a color based on nth column has lower specificity:
+  td:nth-of-type(even) { --tableCellBgColor: rgba(220,220,165, .3);}
+*/
+
+tr {
+  --_table-cell-bg: var(--_table-row-bg);
+}
+
+tr:nth-child(even) {
+  --_table-cell-bg: var(--_table-row-bg-alt);
+}
+}

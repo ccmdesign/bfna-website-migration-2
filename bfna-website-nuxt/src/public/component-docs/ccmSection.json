@@ -1,0 +1,62 @@
+{
+  "displayName": "ccmSection",
+  "description": "Layout section component with flexible content areas and optional side images.\n\nProvides a structured container for page sections with configurable padding and background.\nSupports three content slots (default, left, right) for flexible layouts. When image props\nare provided, they render in the left/right slots automatically. Uses semantic design tokens\nfor consistent spacing and theming across the application.\n\nFollows all 10 Component Standards with positional slot naming and CSS variable patterns.",
+  "props": [
+    {
+      "name": "size",
+      "description": "Padding size using design token scale (s, m, l, xl, 2xl). Controls vertical padding via --space-{size} token.",
+      "type": "string",
+      "required": false,
+      "defaultValue": "'l'"
+    },
+    {
+      "name": "backgroundColor",
+      "description": "Background color token name (e.g., 'color-surface', 'color-primary'). Maps to --{backgroundColor} CSS variable.",
+      "type": "string",
+      "required": false,
+      "defaultValue": "'transparent'"
+    },
+    {
+      "name": "fullWidth",
+      "description": "When true, section spans full viewport width. When false, content is constrained to container max-width.",
+      "type": "boolean",
+      "required": false,
+      "defaultValue": "false"
+    },
+    {
+      "name": "imageLeft",
+      "description": "Source URL for left-side image. Renders in #left slot when provided.",
+      "type": "string",
+      "required": false,
+      "defaultValue": "''"
+    },
+    {
+      "name": "imageLeftAlt",
+      "description": "Alt text for left-side image. Required for accessibility when imageLeft is provided.",
+      "type": "string",
+      "required": false,
+      "defaultValue": "''"
+    },
+    {
+      "name": "imageRight",
+      "description": "Source URL for right-side image. Renders in #right slot when provided.",
+      "type": "string",
+      "required": false,
+      "defaultValue": "''"
+    },
+    {
+      "name": "imageRightAlt",
+      "description": "Alt text for right-side image. Required for accessibility when imageRight is provided.",
+      "type": "string",
+      "required": false,
+      "defaultValue": "''"
+    }
+  ],
+  "examples": [],
+  "codeSnippets": [],
+  "tags": {
+    "component": "ccmSection",
+    "category": "ds-layout",
+    "standards": "all-10"
+  }
+}

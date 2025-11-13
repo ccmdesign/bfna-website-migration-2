@@ -1,0 +1,32 @@
+@layer composition {
+  .stack {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+  
+    --_stack-space: var(--theme-stack-space, var(--space-s));
+  }
+  
+  .stack > * {
+    margin-block: 0;
+  }
+  
+  .stack > * + * {
+    margin-block-start: var(--_stack-space);
+  }
+  
+  /* ========================================
+     Data Attribute Controls for Spacing
+     ======================================== */
+  
+  /* Stack spacing */
+  .stack[data-space="3xs"] { --_stack-space: var(--space-3xs); }
+  .stack[data-space="2xs"] { --_stack-space: var(--space-2xs); }
+  .stack[data-space="xs"] { --_stack-space: var(--space-xs); }
+  .stack[data-space="s"] { --_stack-space: var(--space-s); }
+  .stack[data-space="m"] { --_stack-space: var(--space-m); }
+  .stack[data-space="l"] { --_stack-space: var(--space-l); }
+  .stack[data-space="xl"] { --_stack-space: var(--space-xl); }
+  .stack[data-space="2xl"] { --_stack-space: var(--space-2xl); }
+  .stack[data-space="3xl"] { --_stack-space: var(--space-3xl); }
+}

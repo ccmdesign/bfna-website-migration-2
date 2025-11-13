@@ -1,0 +1,67 @@
+{
+  "heading": "Podcasts",
+  "description": "Here you will find the Bertelsmann Foundation’s ever-expanding collection of podcasts that seek to make complex transatlantic issues more tangible and engaging. Listen here or wherever you get your podcasts",
+  "theme": "podcasts",
+  "button": {
+    "url": "/podcasts",
+    "label": "Learn More"
+  },
+  "image": {
+    "url": "https://images.ctfassets.net/9vgcz0fppkl3/54VUPmPLFfHqMLC5D1jOmV/585ab3b763132eddce68d418667fed2f/podcast.webp?w=800&fm=webp&q=80&fit=fill",
+    "title": "bfna-podcast"
+  },
+  "products_list": [
+    {
+      "theme": "podcasts",
+      "type": "website",
+      "heading": "Wisdom of the Crowd",
+      "excerpt": "Welcome to “Wisdom of the Crowd”, a podcast miniseries that explores the future of transatlantic relations. From democracy and geopolitics to climate change and technology, we take a closer look at the most pressing issues impacting the transatlantic alliance by interviewing top experts and using a strategy of crowd-sourced forecasting. We don’t just rely on experts and policy makers; we listen to a crowd of forecasters, and YOU, to determine the outcome of future events. We call that “the wisdom of the crowd”. Wisdom of the Crowd is produced by the Bertelsmann Foundation, Are We Europe, and Awe Studio. Sound design is done by Stefano Montali and the podcast artwork is by Tamara Tasić. This series is hosted by Rylie Munn.",
+      "image": {
+        "url": "https://images.ctfassets.net/9vgcz0fppkl3/6EPlmo9b2X5wrgAsLZXhka/2bba95abd0eef7d8580488f8b5576c66/wisdom_of_the_crowd_mock.png?w=800&fm=webp&q=80&fit=fill",
+        "title": "wisdom of the crowd mock"
+      },
+      "button": {
+        "url": "/podcasts/wisdom-of-the-crowd/",
+        "label": "Learn More"
+      }
+    },
+    {
+      "theme": "podcasts",
+      "type": "website",
+      "heading": "How to Fix Democracy",
+      "excerpt": "Host Andrew Keen interviews prominent thinkers, writers, politicians, technologists, and business leaders who enlighten and challenge us as we seek the answers to How to Fix Democracy.",
+      "image": {
+        "url": "https://images.ctfassets.net/9vgcz0fppkl3/4Weo6AzLa0sJUNLISFPzJM/6de27e24998e9bf0ab4fc5a718034578/how-to-fix-democracy.png?w=800&fm=webp&q=80&fit=fill",
+        "title": "How to fix democracy"
+      },
+      "button": {
+        "url": "/podcasts/how-to-fix-democracy/",
+        "label": "Learn More"
+      }
+    },
+    {
+      "theme": "podcasts",
+      "type": "website",
+      "heading": "Bridging the Atlantic",
+      "excerpt": "Bridging the Atlantic is a 6-part miniseries, created with Are We Europe, that will take stock of transatlantic relations today and examine it beyond the usual touchstones. After a tumultuous four years with the Trump administration, many following the transatlantic relationship are eager to understand how the transatlantic relationship can bounce back and become more resilient in the future. But a reset is perhaps not the right goal. ",
+      "image": {
+        "url": "https://images.ctfassets.net/9vgcz0fppkl3/1Wlx8T14zlvdLPlLyzoKUQ/ce5e6403a967525779b9473d0f3de013/browser.png?w=800&fm=webp&q=80&fit=fill",
+        "title": "Bridging the Atlantic no logos or writing"
+      },
+      "button": {
+        "url": "/podcasts/bridging-the-atlantic/",
+        "label": "Learn More"
+      }
+    }
+  ],
+  "updates_list": [],
+  "slug": "podcasts",
+  "navigation_order": 6,
+  "visible": true,
+  "hero": {
+    "webp": "/images/hero/homepage.webp",
+    "fallback": "/images/hero/homepage.jpg",
+    "width": 1600,
+    "height": 1067
+  }
+}
