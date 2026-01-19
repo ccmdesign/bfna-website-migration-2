@@ -3,7 +3,7 @@
     <div class="simple-filters__wrapper">
       <template v-for="filter in filters" :key="filter.value">
         <input
-          :id="`filter-${filter.value}`"
+          :id="`filter-${contentType || 'default'}-${filter.value}`"
           v-model="checkedFilters"
           type="checkbox"
           :value="filter.value"
@@ -13,7 +13,7 @@
         <label
           :data-filter-workstream="filter.value"
           :class="['simple-filters__item', `filter--${filter.value}`]"
-          :for="`filter-${filter.value}`"
+          :for="`filter-${contentType || 'default'}-${filter.value}`"
           >{{ filter.label }}</label
         >
       </template>
@@ -55,10 +55,10 @@ const selectedMobileFilter = ref<string>('')
 
 
   
-  const handleCheckboxChange = (filterValue: string) => {
-    
+const handleCheckboxChange = (filterValue: string) => {
+  const checkboxId = `filter-${props.contentType || 'default'}-${filterValue}`
   const allCheckboxes = document.querySelectorAll(
-    `[id^=filter-${filterValue}]`
+    `[id="${checkboxId}"]`
   ) as NodeListOf<HTMLInputElement>
 
   if (checkedFilters.value.includes(filterValue)) {
@@ -125,12 +125,11 @@ onMounted(() => {
     checkedFilters.value = activeFiltersArray
 
     activeFiltersArray.forEach((item) => {
-      const checkboxes = document.querySelectorAll(
-        `[id^=filter-${item}]`
-      ) as NodeListOf<HTMLInputElement>
-      checkboxes.forEach((checkbox) => {
+      const checkboxId = `filter-${props.contentType}-${item}`
+      const checkbox = document.getElementById(checkboxId) as HTMLInputElement | null
+      if (checkbox) {
         checkbox.checked = true
-      })
+      }
 
       const selects = document.querySelectorAll(
         '.simple-filters__mobile select'
@@ -146,12 +145,11 @@ onMounted(() => {
 
     const activeFiltersArray = [...cardFilters.activeFilters.value]
     activeFiltersArray.forEach((item) => {
-      const checkboxes = document.querySelectorAll(
-        `[id^=filter-${item}]`
-      ) as NodeListOf<HTMLInputElement>
-      checkboxes.forEach((checkbox) => {
+      const checkboxId = `filter-default-${item}`
+      const checkbox = document.getElementById(checkboxId) as HTMLInputElement | null
+      if (checkbox) {
         checkbox.checked = true
-      })
+      }
 
       const selects = document.querySelectorAll(
         '.simple-filters__mobile select'
