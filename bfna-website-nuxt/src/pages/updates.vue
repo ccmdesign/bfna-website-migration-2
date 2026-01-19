@@ -66,6 +66,7 @@ import { usePublications } from '~/composables/data/usePublications'
 import { useVideos } from '~/composables/data/useVideos'
 import { useInfographics } from '~/composables/data/useInfographics'
 import { usePodcasts } from '~/composables/data/usePodcasts'
+import { useTabs } from '~/composables/legacy/useTabs'
 import LegacyMoleculesHero from '~/components/legacy/molecules/Hero.vue'
 import UpdatesPageTab from '~/components/templates/UpdatesPageTab.vue'
 
@@ -77,6 +78,7 @@ const videosData = useVideos()
 const publicationsData = usePublications()
 const infographicsData = useInfographics()
 const podcastsData = usePodcasts()
+const tabs = useTabs()
 
 const publicationsItems = computed(() => {
   return publicationsData.value || []
@@ -96,6 +98,10 @@ const podcastsItems = computed(() => {
 
 useHead({
   title: 'Updates | Bertelsmann Foundation',
+})
+
+onMounted(() => {
+  tabs.initializeTabs()
 })
 </script>
 

@@ -74,6 +74,7 @@
 </template>
 
 <script setup lang="ts">
+import { useTabs } from '~/composables/legacy/useTabs'
 import LegacyMoleculesCard from '~/components/legacy/molecules/Card.vue'
 
 const props = defineProps<{
@@ -82,6 +83,8 @@ const props = defineProps<{
   infographics?: any
   podcasts?: any
 }>()
+
+const tabs = useTabs()
 
 const publicationsCards = computed(() => {
   return props.publications || []
@@ -97,6 +100,10 @@ const infographicsCards = computed(() => {
 
 const podcastsCards = computed(() => {
   return props.podcasts || []
+})
+
+onMounted(() => {
+  tabs.initializeTabs()
 })
 </script>
 

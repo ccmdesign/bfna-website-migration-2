@@ -1,24 +1,22 @@
 <template>
   <div class="simple-filters">
     <div class="simple-filters__wrapper">
-      <input
-        v-for="filter in filters"
-        :id="`filter-${filter.value}`"
-        :key="filter.value"
-        v-model="checkedFilters"
-        type="checkbox"
-        :value="filter.value"
-        :data-filter-value="filter.value"
-        @change="handleCheckboxChange(filter.value)"
-      />
-      <label
-        v-for="filter in filters"
-        :key="`label-${filter.value}`"
-        :data-filter-workstream="filter.value"
-        :class="['simple-filters__item', `filter--${filter.value}`]"
-        :for="`filter-${filter.value}`"
-        >{{ filter.label }}</label
-      >
+      <template v-for="filter in filters" :key="filter.value">
+        <input
+          :id="`filter-${filter.value}`"
+          v-model="checkedFilters"
+          type="checkbox"
+          :value="filter.value"
+          :data-filter-value="filter.value"
+          @change="handleCheckboxChange(filter.value)"
+        />
+        <label
+          :data-filter-workstream="filter.value"
+          :class="['simple-filters__item', `filter--${filter.value}`]"
+          :for="`filter-${filter.value}`"
+          >{{ filter.label }}</label
+        >
+      </template>
     </div>
 
     <form class="form">
@@ -58,7 +56,6 @@ const selectedMobileFilter = ref<string>('')
 
   
   const handleCheckboxChange = (filterValue: string) => {
-    console.log(555, filterValue)
     
   const allCheckboxes = document.querySelectorAll(
     `[id^=filter-${filterValue}]`

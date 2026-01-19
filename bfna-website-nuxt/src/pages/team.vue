@@ -41,6 +41,7 @@
 
 <script setup lang="ts">
 import { usePeople } from '~/composables/data/usePeople'
+import { useTabs } from '~/composables/legacy/useTabs'
 import LegacyMoleculesHero from '~/components/legacy/molecules/Hero.vue'
 import LegacyTemplatesPeopleSection from '~/components/legacy/templates/PeopleSection.vue'
 
@@ -49,6 +50,7 @@ definePageMeta({
 })
 
 const { data: peopleData } = usePeople()
+const tabs = useTabs()
 
 useHead({
   title: 'About Team | The Bertelsmann Foundation',
@@ -70,6 +72,10 @@ const heroData = computed(() => {
     heading: peopleData.value.heading,
     subheading: peopleData.value.subheading,
   }
+})
+
+onMounted(() => {
+  tabs.initializeTabs()
 })
 </script>
 
