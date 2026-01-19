@@ -83,7 +83,7 @@ const isSearchExpanded = ref(false)
 const searchQuery = ref('')
 
 const goBack = () => {
-  if (window.history.length > 1) {
+  if (process.client && window.history.length > 1) {
     router.back()
   } else {
     router.push('/')

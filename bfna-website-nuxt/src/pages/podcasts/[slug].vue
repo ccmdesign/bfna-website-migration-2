@@ -21,7 +21,7 @@
 </template>
 
 <script setup lang="ts">
-import { usePodcasts } from '~/composables/data/usePodcasts'
+// import { usePodcasts } from '~/composables/data/usePodcasts'
 import LegacyMoleculesBreadcrumb from '~/components/legacy/molecules/Breadcrumb.vue'
 
 definePageMeta({
@@ -29,7 +29,9 @@ definePageMeta({
 })
 
 const route = useRoute()
-const { data: podcastsData } = usePodcasts()
+// const { data: podcastsData } = usePodcasts()
+const podcastsData = ref(null)
+
 
 const podcast = computed(() => {
   if (!podcastsData.value?.items) return null

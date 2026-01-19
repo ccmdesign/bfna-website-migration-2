@@ -2,20 +2,20 @@
   <div class="tabs">
     <ul class="tabs__list">
       <li class="tabs__label">
-        <a class="tabs__item" href="#publications" data-content="publications"
+        <a class="tabs__item" href="#home-publications" data-content="publications"
           >publications</a
         >
       </li>
       <li class="tabs__label">
-        <a class="tabs__item" href="#videos" data-content="videos">videos</a>
+        <a class="tabs__item" href="#home-videos" data-content="videos">videos</a>
       </li>
       <li class="tabs__label">
-        <a class="tabs__item" href="#infographics" data-content="infographics"
+        <a class="tabs__item" href="#home-infographics" data-content="infographics"
           >infographics</a
         >
       </li>
       <li class="tabs__label">
-        <a class="tabs__item" href="#podcasts" data-content="podcasts"
+        <a class="tabs__item" href="#home-podcasts" data-content="podcasts"
           >podcasts</a
         >
       </li>
@@ -23,7 +23,7 @@
 
     <div class="tabs__bar"></div>
 
-    <section id="publications" class="tabs__panel">
+    <section id="home-publications" class="tabs__panel">
       <div class="wrapper">
         <div class="cards-section cards-section--updates">
           <LegacyMoleculesCard
@@ -35,7 +35,7 @@
       </div>
     </section>
 
-    <section id="videos" class="tabs__panel">
+    <section id="home-videos" class="tabs__panel">
       <div class="wrapper">
         <div class="cards-section cards-section--updates">
           <LegacyMoleculesCard
@@ -47,7 +47,7 @@
       </div>
     </section>
 
-    <section id="infographics" class="tabs__panel">
+    <section id="home-infographics" class="tabs__panel">
       <div class="wrapper">
         <div class="cards-section cards-section--updates">
           <LegacyMoleculesCard
@@ -59,7 +59,7 @@
       </div>
     </section>
 
-    <section id="podcasts" class="tabs__panel">
+    <section id="home-podcasts" class="tabs__panel">
       <div class="wrapper">
         <div class="cards-section cards-section--updates">
           <LegacyMoleculesCard
@@ -84,19 +84,19 @@ const props = defineProps<{
 }>()
 
 const publicationsCards = computed(() => {
-  return props.publications?.homePageUpdates || []
+  return props.publications || []
 })
 
 const videosCards = computed(() => {
-  return props.videos?.homePageUpdates || []
+  return props.videos || []
 })
 
 const infographicsCards = computed(() => {
-  return props.infographics?.homePageUpdates || []
+  return props.infographics || []
 })
 
 const podcastsCards = computed(() => {
-  return props.podcasts?.homePageUpdates || []
+  return props.podcasts || []
 })
 </script>
 

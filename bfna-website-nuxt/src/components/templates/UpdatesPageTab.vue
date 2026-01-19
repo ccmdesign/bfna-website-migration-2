@@ -48,8 +48,8 @@ const formatAsCard = (item: any) => {
     image: item.image,
     video: item.video,
     button: item.button,
-    date: item.by_line || item.default_published,
-    by_line: item.by_line,
+    date: item.byLine || item.date,
+    byLine: item.byLine,
   }
 }
 

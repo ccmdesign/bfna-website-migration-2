@@ -5,7 +5,8 @@
     "build": "npm run docs:generate && npm run generate:search-index && nuxt build",
     "dev": "concurrently -k -s first -n nuxt,docs \"npm:dev:nuxt\" \"npm run docs:watch\"",
     "dev:nuxt": "nuxt dev",
-    "generate": "npm run docs:generate && npm run generate:search-index && nuxt generate",
+    "directus:pull": "node ./contentImporter.js",
+    "generate": "node ./contentImporter.js && nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "typecheck": "nuxt typecheck",
@@ -20,8 +21,12 @@
     "validate:tokens:fix": "tsx scripts/validate-tokens.ts --fix",
     "check:links": "tsx scripts/check-links.ts",
     "generate:search-index": "tsx scripts/generate-search-index.ts",
+    "export:contentful-data": "tsx scripts/export-contentful-data.ts",
     "lint:css": "stylelint 'src/**/*.{css,vue,scss}'",
-    "lint:css:fix": "stylelint 'src/**/*.{css,vue,scss}' --fix"
+    "lint:css:fix": "stylelint 'src/**/*.{css,vue,scss}' --fix",
+    "import:directus": "tsx scripts/import-contentful-data.ts"
+    ,
+    "import:directus:collection": "tsx scripts/import-contentful-data.ts --collections $COLLECTION"
   },
   "dependencies": {
     "@directus/sdk": "^20.1.1",
@@ -35,6 +40,7 @@
     "@vueuse/nuxt": "^14.0.0",
     "axios": "^1.9.0",
     "better-sqlite3": "^12.2.0",
+    "contentful": "^11.9.0",
     "date-fns": "^4.1.0",
     "dotenv": "^16.5.0",
     "eslint": "^9.25.1",

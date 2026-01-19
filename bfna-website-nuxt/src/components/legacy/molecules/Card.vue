@@ -3,6 +3,7 @@
     ref="cardElement"
     :class="[
       'card',
+      'card--vertical',
       card.theme ? `card--${card.theme}` : '',
       card.image ? 'card--infographic' : '',
       card.video ? 'card--video' : '',
@@ -55,14 +56,12 @@
         {{ card.subheading }}
       </h3>
 
-      <p v-if="card.date" class="card__date">{{ card.date }}</p>
-
       <div v-if="card.excerpt" class="card__excerpt">
         {{ truncate(card.excerpt, 300) }}
       </div>
     </div>
-    <footer v-if="card.button || card.by_line" class="card__footer">
-      <small v-if="card.by_line" class="card__by-line">{{ card.by_line }}</small>
+    <footer v-if="card.button || card.byLine" class="card__footer">
+      <small v-if="card.byLine" class="card__by-line">{{ card.byLine }}</small>
       <div v-if="card.button" class="card__actions">
         <a :href="card.button.url" class="button button--primary">
           {{ card.button.label }}
@@ -76,6 +75,8 @@
 </template>
 
 <script setup lang="ts">
+import { computed, onMounted } from 'vue';
+
 const props = defineProps<{
   card: {
     theme?: string
@@ -96,7 +97,7 @@ const props = defineProps<{
       url: string
       label: string
     }
-    by_line?: string
+    byLine?: string
     isProduct?: boolean
   }
 }>()

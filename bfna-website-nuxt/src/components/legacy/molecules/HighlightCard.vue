@@ -14,7 +14,7 @@
         aria-hidden="true"
       >
         <NuxtImg
-          :src="newItem.image.url"
+          :src="newItem.image"
           :width="480"
           :height="320"
           loading="lazy"
@@ -64,9 +64,7 @@
 const props = defineProps<{
   newItem: {
     theme?: string
-    image?: {
-      url: string
-    }
+    image?: string
     heading?: string
     subheading?: string
     excerpt?: string

@@ -16,7 +16,7 @@ export function useUpdatesFilters() {
    * Resets to defaults if corrupted or unavailable
    */
   const initializeFilters = () => {
-    if (!process.client) {
+    if (!import.meta.client) {
       return
     }
 
@@ -90,7 +90,7 @@ export function useUpdatesFilters() {
    * Persist filters to sessionStorage
    */
   const persistFilters = () => {
-    if (!process.client) {
+    if (!import.meta.client) {
       return
     }
 
@@ -148,7 +148,7 @@ export function useUpdatesFilters() {
   }
 
   // Initialize filters on mount (only once)
-  if (process.client && !initialized) {
+  if (import.meta.client && !initialized) {
     initializeFilters()
     initialized = true
   }

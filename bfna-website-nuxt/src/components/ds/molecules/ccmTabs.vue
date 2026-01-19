@@ -223,9 +223,10 @@ const getSectionLabel = (section, index) => {
   return `Tab ${index + 1}`
 }
 
+let idCounter = 0
 const getSectionId = (section, index) => {
-  // Use existing id or generate one
-  return section.id || `ccm-tabs-panel-${Date.now()}-${index}`
+  // Use existing id or generate one with counter instead of Date.now()
+  return section.id || `ccm-tabs-panel-${++idCounter}-${index}`
 }
 
 const humanizeId = (id) => {
@@ -283,8 +284,8 @@ const initializeTabs = async () => {
 // Setup accessibility attributes
 const setupTabAttributes = () => {
   tabItems.value.forEach((tab, index) => {
-    const tabId = `ccm-tabs-${Date.now()}-${index}`
-    const panelId = `ccm-tabs-panel-${Date.now()}-${index}`
+    const tabId = `ccm-tabs-${++idCounter}-${index}`
+    const panelId = `ccm-tabs-panel-${++idCounter}-${index}`
 
     // Set tab attributes
     tab.setAttribute('role', 'tab')

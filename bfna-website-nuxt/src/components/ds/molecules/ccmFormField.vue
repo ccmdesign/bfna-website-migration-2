@@ -173,11 +173,13 @@ const props = defineProps({
   showValidationIcon: { type: Boolean, default: true }
 })
 
-// Generate stable IDs
+// Generate stable IDs using a module-level counter
+let idCounter = 0
+const instanceId = ++idCounter
 const computedId = computed(() => {
   if (props.id) return props.id
-  // Generate random ID as fallback
-  return `form-field-${Math.random().toString(36).substr(2, 9)}`
+  // Generate stable ID using instance counter
+  return `form-field-${instanceId}`
 })
 
 const helpTextId = computed(() => `${computedId.value}-help`)

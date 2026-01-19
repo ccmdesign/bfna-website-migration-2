@@ -55,7 +55,7 @@
       </div>
     </div>
 
-    <div v-for="column in columns" :key="column.name" class="main-nav__section">
+    <!-- <div v-for="column in columns" :key="column.name" class="main-nav__section">
       <h3 class="main-nav__link--heading">{{ column.name }}</h3>
       <ul class="main-nav__links">
         <li v-for="item in column.links" :key="item.name">
@@ -68,7 +68,7 @@
           </NuxtLink>
         </li>
       </ul>
-    </div>
+    </div> -->
 
     <div class="main-nav__section">
       <div class="bfna-subscribe">
@@ -91,9 +91,9 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import LegacyAtomsLogoWhite from '~/components/legacy/atoms/LogoWhite.vue'
-import { useWorkstreamNavigation } from '~/composables/data/useWorkstreamNavigation'
+// import { useWorkstreamNavigation } from '~/composables/data/useWorkstreamNavigation'
 
-const { items: workstreamNavItems } = useWorkstreamNavigation()
+// const { items: workstreamNavItems } = useWorkstreamNavigation()
 
 const socialLinks = [
   {
@@ -140,26 +140,26 @@ const updatesLinks = [
   { name: 'Contact', link: 'mailto:info@bfna.org' }
 ]
 
-const topicLinks = computed(() => {
-  const items = workstreamNavItems.value
-  if (!Array.isArray(items)) {
-    return []
-  }
-  return items.map(item => ({
-    name: item.name,
-    link: item.link,
-    cssClass: item.cssClass,
-  }))
-})
+// const topicLinks = computed(() => {
+//   const items = workstreamNavItems.value
+//   if (!Array.isArray(items)) {
+//     return []
+//   }
+//   return items.map(item => ({
+//     name: item.name,
+//     link: item.link,
+//     cssClass: item.cssClass,
+//   }))
+// })
 
-const columns = computed(() => [
-  {
-    name: 'Topics',
-    links: topicLinks.value
-  },
-  {
-    name: 'Updates',
-    links: updatesLinks
-  }
-])
+// const columns = computed(() => [
+//   {
+//     name: 'Topics',
+//     links: topicLinks.value
+//   },
+//   {
+//     name: 'Updates',
+//     links: updatesLinks
+//   }
+// ])
 </script>

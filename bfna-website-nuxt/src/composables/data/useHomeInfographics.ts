@@ -1,6 +1,7 @@
-export const useInfographics = () => {
-  const { data: infographics } = useAsyncData('updates-infographics', () => 
+export const useHomeInfographics = () => {
+  const { data: page } = useAsyncData('home-infographics', () => 
   queryCollection('infographics')
+    .limit(6)
     .order('date', 'DESC')
     .all(), 
       {
@@ -20,5 +21,8 @@ export const useInfographics = () => {
       }
     )
 
-  return infographics
+  return page
 }
+
+
+

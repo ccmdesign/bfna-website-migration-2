@@ -4,7 +4,7 @@ import { defineContentConfig, defineCollection } from '@nuxt/content'
 import { z } from 'zod'
 
 const rootDir = dirname(fileURLToPath(import.meta.url))
-const contentDir = resolve(rootDir, 'src/content')
+const contentDir = resolve(rootDir, 'content')
 
 export default defineContentConfig({
   collections: {
@@ -122,35 +122,249 @@ export default defineContentConfig({
       },
       schema: z.object({
         heading: z.string(),
-        description: z.string(),
-        theme: z.string(),
-        slug: z.string().regex(/^[a-z0-9_-]+$/i), // URL-safe slug validation
+        excerpt: z.string(),
+        image: z.string().optional(),
+        slug: z.string().regex(/^[a-z0-9_-]+$/i), // URL-safe slug validation,
+        combinedSlug: z.string().regex(/^[a-z0-9_-]+$/i), // URL-safe slug validation,
         button: z
           .object({
-            url: z.string(),
-            label: z.string()
+            url: z.string().optional(),
+            label: z.string().optional()
           })
-          .optional(),
-        image: z
-          .object({
-            url: z.string(),
-            title: z.string().optional()
-          })
-          .optional(),
-        hero: z
-          .object({
-            webp: z.string().optional(),
-            fallback: z.string().optional(),
-            width: z.number().int().positive(),
-            height: z.number().int().positive(),
-            theme: z.string().optional()
-          })
-          .optional(),
-        products_list: z.array(z.any()).optional(),
-        updates_list: z.array(z.any()).optional(),
-        navigation_order: z.number().int().optional(),
-        visible: z.boolean().optional()
+          .optional()
       })
-    })
+    }),
+    highlights: defineCollection({
+      type: 'data',
+      source: {
+        include: 'highlights/*.json',
+        cwd: contentDir
+      },
+      schema: z.object({
+        heading: z.string(),
+        excerpt: z.string(),
+        image: z.string().optional(),
+        slug: z.string().regex(/^[a-z0-9_-]+$/i), // URL-safe slug validation,
+        url: z.string().optional(),
+        buttonLabel: z.string().optional()
+      })
+    }),
+    publications: defineCollection({
+      type: 'data',
+      source: {
+        include: 'publications/*.json',
+        cwd: contentDir
+      },
+      schema: z.object({
+        byLine: z.string().optional(),
+        theme: z.string().optional(),
+        heading: z.string(),
+        subheading: z.string().optional(),
+        excerpt: z.string(),
+        content: z.string().optional(),
+        publishDate: z.string().optional(),
+        date: z.string().optional(),
+        image: z.string().optional(),
+        slug: z.string().regex(/^[a-z0-9_-]+$/i), // URL-safe slug validation,
+        url: z.string().optional(),
+        buttonLabel: z.string().optional(),
+        workstream: z.object({
+          heading: z.string(),
+          slug: z.string().regex(/^[a-z0-9_-]+$/i), // URL-safe slug validation,
+          excerpt: z.string(),
+          image: z.string().optional()
+        }).optional(),
+        downloadMedia: z.string().optional(),
+        internalAuthors: z.array(
+          z.object({
+            name: z.string(),
+            jobTitle: z.string().optional(),
+            image: z.string().optional(),
+            email: z.string().optional(),
+            bio: z.string().optional(),
+            linkedin: z.string().optional(),
+            twitter: z.string().optional()
+          })
+        ).optional(),
+        externalAuthors: z.array(z.any()).optional(),
+        externalCollaborators: z.array(z.string()).optional(),
+        originalPublication: z.string().optional(),
+        originalPublicationName: z.string().optional(),
+        originalPublicationUrl: z.string().optional(),
+        originalPublicationDate: z.string().optional()
+
+      })
+    }),
+    videos: defineCollection({
+      type: 'data',
+      source: {
+        include: 'videos/*.json',
+        cwd: contentDir
+      },
+      schema: z.object({
+        theme: z.string().optional(),
+        heading: z.string(),
+        excerpt: z.string(),
+        content: z.string().optional(),
+        subheading: z.string().optional(),
+        slug: z.string().regex(/^[a-z0-9_-]+$/i), // URL-safe slug validation,
+        videoUrl: z.string().optional(),
+        button: z
+          .object({
+            url: z.string().optional(),
+            label: z.string().optional()
+          })
+          .optional(),
+        byLine: z.string().optional(),
+        publishDate: z.string().optional(),
+        date: z.string().optional(),
+        workstream: z.object({
+          heading: z.string(),
+          slug: z.string().regex(/^[a-z0-9_-]+$/i), // URL-safe slug validation,
+          excerpt: z.string(),
+          image: z.string().optional()
+        }).optional(),
+        internalAuthors: z.array(
+          z.object({
+            name: z.string(),
+            jobTitle: z.string().optional(),
+            image: z.string().optional(),
+            email: z.string().optional(),
+            bio: z.string().optional(),
+            linkedin: z.string().optional(),
+            twitter: z.string().optional()
+          })
+        ).optional(),
+        externalAuthors: z.array(z.any()).optional(),
+        externalCollaborators: z.array(z.string()).optional(),
+        author: z.string().optional(),
+        video: z.object({
+          thumbnail: z.string().optional()
+        }).optional()
+
+      })
+    }),
+    infographics: defineCollection({
+      type: 'data',
+      source: {
+        include: 'infographics/*.json',
+        cwd: contentDir
+      },
+      schema: z.object({
+        theme: z.string().optional(),
+        heading: z.string(),
+        excerpt: z.string(),
+        content: z.string().optional(),
+        subheading: z.string().optional(),
+        slug: z.string().regex(/^[a-z0-9_-]+$/i), // URL-safe slug validation,
+        button: z
+          .object({
+            url: z.string().optional(),
+            label: z.string().optional()
+          })
+          .optional(),
+        byLine: z.string().optional(),
+        publishDate: z.string().optional(),
+        date: z.string().optional(),
+        workstream: z.object({
+          heading: z.string(),
+          slug: z.string().regex(/^[a-z0-9_-]+$/i), // URL-safe slug validation,
+          excerpt: z.string(),
+          image: z.string().optional()
+        }).optional(),
+        internalAuthors: z.array(
+          z.object({
+            name: z.string(),
+            jobTitle: z.string().optional(),
+            image: z.string().optional(),
+            email: z.string().optional(),
+            bio: z.string().optional(),
+            linkedin: z.string().optional(),
+            twitter: z.string().optional()
+          })
+        ).optional(),
+        externalAuthors: z.array(z.any()).optional(),
+        externalCollaborators: z.array(z.string()).optional(),
+        author: z.string().optional(),
+      })
+    }),
+    products: defineCollection({
+      type: 'data',
+      source: {
+        include: 'products/*.json',
+        cwd: contentDir
+      },
+      schema: z.object({
+        theme: z.string().optional(),
+        isPodcast: z.boolean().default(false),
+        isProduct: z.boolean().default(true),
+        heading: z.string(),
+        excerpt: z.string(),
+        content: z.string().optional(),
+        subheading: z.string().optional(),
+        coverImage: z.string().optional(),
+        image: z.object({
+          url: z.string().optional()
+        }).optional(),
+        slug: z.string().regex(/^[a-z0-9_-]+$/i), // URL-safe slug validation,
+        button: z
+          .object({
+            url: z.string().optional(),
+            label: z.string().optional()
+          })
+          .optional(),
+        byLine: z.string().optional(),
+        publishDate: z.string().optional(),
+        date: z.string().optional(),
+        workstream: z.object({
+          heading: z.string(),
+          slug: z.string().regex(/^[a-z0-9_-]+$/i), // URL-safe slug validation,
+          excerpt: z.string(),
+          image: z.string().optional()
+        }).optional(),
+        internalAuthors: z.array(
+          z.object({
+            name: z.string(),
+            jobTitle: z.string().optional(),
+            image: z.string().optional(),
+            email: z.string().optional(),
+            bio: z.string().optional(),
+            linkedin: z.string().optional(),
+            twitter: z.string().optional()
+          })
+        ).optional(),
+        externalAuthors: z.array(z.any()).optional(),
+        externalCollaborators: z.array(z.string()).optional(),
+        author: z.string().optional(),
+      })
+    }),
+    docs: defineCollection({
+      type: 'data',
+      source: {
+        include: 'docs/*.json',
+        cwd: contentDir
+      },
+      schema: z.object({
+        heading: z.string(),
+        order: z.number().optional(),
+        workstream: z.string().optional(),
+        theme: z.string().optional(),
+        subheading: z.string().optional(),
+        by: z.string().optional(),
+        description: z.string().optional(),
+        backgroundImage: z.string().optional(),
+        slug: z.string().regex(/^[a-z0-9_-]+$/i), // URL-safe slug validation,
+        button: z
+          .object({
+            url: z.string().optional(),
+            label: z.string().optional()
+          })
+          .optional(),
+        tags: z.array(z.string()).optional(),
+        videoInfo: z.object({}).optional(),
+        source: z.string().optional(),
+        objectType: z.string().optional()
+      })
+    }),
   }
 })

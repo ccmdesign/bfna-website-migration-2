@@ -1,40 +1,24 @@
-import { directus, fetchWithFallback, getCachedData, setCachedData } from '~/utils/directus'
-import type { Publication, PublicationUpdate, PublicationHomepageUpdate } from '~/types/directus'
-
-interface PublicationsData {
-  items: Publication[]
-  updates: PublicationUpdate[]
-  homePageUpdates: PublicationHomepageUpdate[]
-}
-
 export const usePublications = () => {
-  return useAsyncData('publications', async () => {
-    const cacheKey = 'directus:publications'
-    const cached = getCachedData<PublicationsData>(cacheKey)
-    if (cached) {
-      return cached
-    }
-    
-    const data = await fetchWithFallback<PublicationsData>(
-      async () => {
-        const [items, updates, homePageUpdates] = await Promise.all([
-          directus.items('publications').readByQuery({ limit: -1 }),
-          directus.items('publication_updates').readByQuery({ limit: -1 }),
-          directus.items('publication_homepage_updates').readByQuery({ limit: -1 }),
-        ])
-        
-        return {
-          items: items.data || [],
-          updates: updates.data || [],
-          homePageUpdates: homePageUpdates.data || [],
+  const { data: publications } = useAsyncData('updates-publications', () => 
+  queryCollection('publications')
+    .order('date', 'DESC')
+    .all(), 
+      {
+        transform: (data) => {
+          if (!data) return data
+          // Spread meta fields back to the top level
+          return data.map((publication) => {
+            if (publication.meta) {
+              return {
+                ...publication,
+                ...publication.meta,
+              }
+            }
+            return publication
+          })
         }
-      },
-      '~/content/data/publications.json',
-      'publications'
+      }
     )
-    
-    setCachedData(cacheKey, data)
-    return data
-  })
-}
 
+  return publications
+}

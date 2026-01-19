@@ -55,7 +55,11 @@ const updatesFilters = props.contentType ? useUpdatesFilters() : null
 const checkedFilters = ref<string[]>([])
 const selectedMobileFilter = ref<string>('')
 
-const handleCheckboxChange = (filterValue: string) => {
+
+  
+  const handleCheckboxChange = (filterValue: string) => {
+    console.log(555, filterValue)
+    
   const allCheckboxes = document.querySelectorAll(
     `[id^=filter-${filterValue}]`
   ) as NodeListOf<HTMLInputElement>

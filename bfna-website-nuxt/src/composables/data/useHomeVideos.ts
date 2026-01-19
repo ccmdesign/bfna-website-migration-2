@@ -1,6 +1,7 @@
-export const useVideos = () => {
-  const { data: videos } = useAsyncData('updates-videos', () => 
+export const useHomeVideos = () => {
+  const { data: page } = useAsyncData('home-videos', () => 
   queryCollection('videos')
+    .limit(6)
     .order('date', 'DESC')
     .all(), 
       {
@@ -20,5 +21,8 @@ export const useVideos = () => {
       }
     )
 
-  return videos
+  return page
 }
+
+
+

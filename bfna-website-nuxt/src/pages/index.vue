@@ -7,13 +7,13 @@
     />
 
     <div>
-      <div v-if="newsData && newsData.length > 0" class="highlight-section">
+      <div v-if="highlightsData && highlightsData.length > 0" class="highlight-section">
         <h2>Highlights</h2>
         <div class="highlight-wrapper">
           <div class="wrapper">
             <div class="cards-section cards-section--updates">
               <LegacyMoleculesHighlightCard
-                v-for="(newItem, index) in newsData"
+                v-for="(newItem, index) in highlightsData"
                 :key="index"
                 :new-item="newItem"
               />
@@ -42,7 +42,7 @@
         :workstream="workstreamsData['digital-world']"
       />
     </div>
-
+    
     <div>
       <h2 class="updates-title">Updates</h2>
       <div class="updates-wrapper">
@@ -60,7 +60,6 @@
         </div>
       </div>
     </div>
-
     <div>
       <div v-if="docsData && docsData.length > 0">
         <h2 class="updates-title">BFNA Docs Highlights</h2>
@@ -105,12 +104,13 @@
 </template>
 
 <script setup lang="ts">
-import { useNews } from '~/composables/data/useNews'
-import { usePublications } from '~/composables/data/usePublications'
-import { useVideos } from '~/composables/data/useVideos'
-import { useInfographics } from '~/composables/data/useInfographics'
-import { usePodcasts } from '~/composables/data/usePodcasts'
+import { useHighlights } from '~/composables/data/useHighlights'
 import { useWorkstreams } from '~/composables/data/useWorkstreams'
+import { useHomePublications } from '~/composables/data/useHomePublications'
+import { useHomeVideos } from '~/composables/data/useHomeVideos'
+import { useHomeInfographics } from '~/composables/data/useHomeInfographics'
+import { useHomePodcasts } from '~/composables/data/useHomePodcasts'
+import { useHomeDocs } from '~/composables/data/useHomeDocs'
 import LegacyMoleculesHero from '~/components/legacy/molecules/Hero.vue'
 import LegacyMoleculesHighlightCard from '~/components/legacy/molecules/HighlightCard.vue'
 import LegacyMoleculesSplitSection from '~/components/legacy/molecules/SplitSection.vue'
@@ -121,12 +121,13 @@ definePageMeta({
   layout: 'legacy-base',
 })
 
-const { data: newsData } = useNews()
-const { data: publicationsData } = usePublications()
-const { data: videosData } = useVideos()
-const { data: infographicsData } = useInfographics()
-const { data: podcastsData } = usePodcasts()
+const highlightsData = await useHighlights()
 const { data: workstreamsData } = useWorkstreams()
+const publicationsData = useHomePublications()
+const videosData = useHomeVideos()
+const infographicsData = useHomeInfographics()
+const podcastsData = useHomePodcasts()
+const docsData = useHomeDocs()
 
 // Homepage data structure - needs to be constructed from available data
 const homepageData = computed(() => {
@@ -154,9 +155,4 @@ useHead({
   ],
 })
 
-// Docs data - placeholder for now, needs to be extracted from data
-const docsData = computed(() => {
-  // TODO: Extract docs data from publications or separate source
-  return []
-})
 </script>

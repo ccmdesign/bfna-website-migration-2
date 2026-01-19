@@ -1,8 +1,9 @@
-export const usePodcasts = () => {
-  const { data: podcasts } = useAsyncData('updates-podcasts', () => 
+export const useHomePodcasts = () => {
+  const { data: page } = useAsyncData('home-podcasts', () => 
   queryCollection('products')
     .where('isPodcast', '=', true)
     .order('date', 'DESC')
+    .limit(6)
     .all(), 
       {
         transform: (data) => {
@@ -21,7 +22,7 @@ export const usePodcasts = () => {
       }
     )
 
-  return podcasts
+  return page
 }
 
 

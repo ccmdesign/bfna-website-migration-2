@@ -73,25 +73,25 @@ definePageMeta({
   layout: 'legacy-base',
 })
 
-const { data: publicationsData } = usePublications()
-const { data: videosData } = useVideos()
-const { data: infographicsData } = useInfographics()
-const { data: podcastsData } = usePodcasts()
+const videosData = useVideos()
+const publicationsData = usePublications()
+const infographicsData = useInfographics()
+const podcastsData = usePodcasts()
 
 const publicationsItems = computed(() => {
-  return publicationsData.value?.items || []
+  return publicationsData.value || []
 })
 
 const videosItems = computed(() => {
-  return videosData.value?.items || []
+  return videosData.value || []
 })
 
 const infographicsItems = computed(() => {
-  return infographicsData.value?.items || []
+  return infographicsData.value || []
 })
 
 const podcastsItems = computed(() => {
-  return podcastsData.value?.items || []
+  return podcastsData.value || []
 })
 
 useHead({

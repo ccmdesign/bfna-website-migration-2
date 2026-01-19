@@ -27,7 +27,11 @@ import LegacyOrganismsMainNav from '~/components/legacy/organisms/MainNav.vue'
 
 const router = useRouter()
 const searchQuery = ref('')
-const currentYear = new Date().getFullYear()
+const currentYear = ref(2026)
+
+onMounted(() => {
+  currentYear.value = new Date().getFullYear()
+})
 
 const handleSearch = () => {
   const trimmedQuery = searchQuery.value.trim()

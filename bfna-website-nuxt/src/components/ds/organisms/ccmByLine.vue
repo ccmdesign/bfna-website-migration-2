@@ -1,11 +1,16 @@
 <template>
     <div class="by-line | cluster">
-      <span>© {{ new Date().getFullYear() }} CCM Design</span>
+      <span>© {{ currentYear }} CCM Design</span>
       <a href="#" class="margin-left:auto">by ccm.design</a>
     </div>
 </template>
 
 <script setup lang="ts">
+const currentYear = ref(2026)
+
+onMounted(() => {
+  currentYear.value = new Date().getFullYear()
+})
 /**
  * Footer byline component displaying copyright and attribution information.
  *
