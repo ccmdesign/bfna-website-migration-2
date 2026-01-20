@@ -13,6 +13,7 @@ const objectContructor = async (dir, fs) => {
 
     await items.data.forEach((item) => {
       let i = item;
+      i.personId = item.id;
       i.slug = common.slugify(item.name);
       i.name = item.name;
       i.JobTitle = item.job_title;

@@ -35,7 +35,7 @@
       <div class="frame__menu">
         <button class="frame-button frame__menu-trigger" @click="toggleMenu">menu</button>
       </div>
-      <NuxtLink to="/" class="frame__logo is-hidden" aria-label="logo">
+      <NuxtLink to="/" class="frame__logo" aria-label="logo">
         <LegacyAtomsLogo />
       </NuxtLink>
       <nav class="frame__top-nav">
@@ -83,7 +83,7 @@ const isSearchExpanded = ref(false)
 const searchQuery = ref('')
 
 const goBack = () => {
-  if (process.client && window.history.length > 1) {
+  if (import.meta.client && window.history.length > 1) {
     router.back()
   } else {
     router.push('/')
@@ -102,7 +102,7 @@ const handleSearch = () => {
   const trimmedQuery = searchQuery.value.trim()
   if (trimmedQuery) {
     // Store search term in localStorage with key bfna-search before navigation
-    if (process.client) {
+    if (import.meta.client) {
       localStorage.setItem('bfna-search', trimmedQuery)
     }
     router.push('/search')

@@ -8,6 +8,8 @@ const objectContructor = async (dir, fs) => {
     // use this list to add fields from junction tables
     const junctionFields = [
       'workstream.*',
+      'team.people_id.*',
+      'board_of_directors.people_id.*'
     ]
 
     const items = await common.getDirectusData("workstreams", junctionFields);
@@ -22,6 +24,28 @@ const objectContructor = async (dir, fs) => {
         url: item.slug,
         label: item.button_label || 'Learn More'
       };
+
+      // team members
+      if (item.team && item.team.length > 0) {
+        i.team = item.team.map((member) => {
+          return {
+            id: member.people_id.id,
+          };
+        });
+      } else {
+        i.team = [];
+      }
+
+      // board of directors members
+      if (item.board_of_directors && item.board_of_directors.length > 0) {
+        i.boardOfDirectors = item.board_of_directors.map((member) => {
+          return {
+            id: member.people_id.id,
+          };
+        });
+      } else {
+        i.boardOfDirectors = [];
+      }
 
       fs.writeFile(
         dir + "/" + i.slug + ".json",

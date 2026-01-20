@@ -29,14 +29,26 @@ export function useTabs() {
 
     // Update tab bar position and width to match active tab
     const updateTabBar = (activeTab: HTMLElement) => {
-      const tabLabel = activeTab.closest('.tabs__label') as HTMLElement
-      if (!tabLabel) return
+      if (!activeTab) return
 
       const tabsList = tabsContainer.querySelector('.tabs__list') as HTMLElement
       if (!tabsList) return
 
-      const offsetLeft = tabLabel.offsetLeft
-      const width = tabLabel.offsetWidth
+      // Get computed styles to extract padding
+      const computedStyle = window.getComputedStyle(activeTab)
+      const paddingLeft = parseFloat(computedStyle.paddingLeft) || 0
+      const paddingRight = parseFloat(computedStyle.paddingRight) || 0
+
+      // Get the bounding rectangles to calculate position relative to the tabs list
+      const tabsListRect = tabsList.getBoundingClientRect()
+      const activeTabRect = activeTab.getBoundingClientRect()
+
+      // Calculate position starting from the tab item position plus its padding
+      // This ensures the bar starts exactly where the text starts
+      const offsetLeft = (activeTabRect.left - tabsListRect.left) + paddingLeft + tabsList.scrollLeft
+      
+      // Width should be the tab width minus both paddings (just the text area)
+      const width = activeTabRect.width - paddingLeft - paddingRight
 
       tabBar.style.width = `${width}px`
       tabBar.style.left = `${offsetLeft}px`
@@ -92,9 +104,28 @@ export function useTabs() {
       item.addEventListener('click', handleTabClick)
     })
 
-    // Initialize on mount
+    // Initialize on mount with proper timing
     const activeTab = getActiveTabFromHash()
+    
+    // Initial render without transition
+    tabBar.style.transition = 'none'
     setActiveTab(activeTab)
+    
+    // Use requestAnimationFrame to ensure DOM is painted, then recalculate
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        // Re-enable transitions after initial positioning
+        tabBar.style.transition = 'left 0.3s ease, width 0.3s ease'
+        updateTabBar(activeTab)
+        
+        // Additional recalculation after fonts load
+        if (document.fonts && document.fonts.ready) {
+          document.fonts.ready.then(() => {
+            updateTabBar(activeTab)
+          })
+        }
+      })
+    })
 
     // Handle browser back/forward
     const handleHashChange = () => {
