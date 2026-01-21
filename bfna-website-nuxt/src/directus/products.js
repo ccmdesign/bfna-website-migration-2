@@ -16,6 +16,7 @@ const objectContructor = async (dir, fs) => {
 
     await items.data.forEach((item) => {
       let i = item;
+      i.productId = item.id;
       i.slug = common.slugify(item.heading);
       // published date
       i.publishDate = item.publish_date;
@@ -25,10 +26,6 @@ const objectContructor = async (dir, fs) => {
         url: item.cover_image ? common.getImage(item.cover_image.id) : null,
       };
       i.infographic = item.infographic ? common.getImage(item.infographic.id) : null;
-      i.button =  {
-        url: item.slug,
-        label: item.button_label || 'Learn More'
-      };
       i.buttonLabel = item.button_label || 'Learn More';
       i.videoUrl = item.video_url;
       i.websiteUrl = item.website_url;
@@ -52,6 +49,11 @@ const objectContructor = async (dir, fs) => {
         image: item.workstream.image ? common.getImage(item.workstream.image) : null,
       }: null;
       
+      i.button =  {
+        url: `${i.workstream.slug}/${i.slug}`,
+        label: item.button_label || 'Learn More'
+      };
+
       // Theme
       i.theme = i.workstream ? i.workstream.slug : 'default';
 

@@ -9,7 +9,9 @@ const objectContructor = async (dir, fs) => {
     const junctionFields = [
       'workstream.*',
       'team.people_id.*',
-      'board_of_directors.people_id.*'
+      'board_of_directors.people_id.*',
+      'products.product_id.*',
+      'super_products.super_product_id.*',
     ]
 
     const items = await common.getDirectusData("workstreams", junctionFields);
@@ -17,6 +19,7 @@ const objectContructor = async (dir, fs) => {
     await items.data.forEach((item) => {
       let i = item;
       i.slug = common.slugify(item.heading);
+      i.theme = i.slug || 'default';
       i.combinedSlug = `workstream-${common.slugify(item.heading)}`;
       i.excerpt = item.excerpt;
       i.image = item.image ? common.getImage(item.image.id) : null;
@@ -46,6 +49,23 @@ const objectContructor = async (dir, fs) => {
       } else {
         i.boardOfDirectors = [];
       }
+
+      // products
+      if (item.products && item.products.length > 0) {
+        i.products = item.products.map((p) =>p.products_id);
+      } else {
+        i.products = [];
+      }
+
+      // super products
+      if (item.super_products && item.super_products.length > 0) {
+        i.superProducts = item.super_products.map((sp) =>sp.super_products_id);
+      } else {
+        i.superProducts = [];
+      }
+
+      delete i.board_of_directors;
+      delete i.super_products;
 
       fs.writeFile(
         dir + "/" + i.slug + ".json",

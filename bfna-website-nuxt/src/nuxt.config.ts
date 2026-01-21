@@ -106,10 +106,4 @@ export default defineNuxtConfig({
       pathPrefix: false
     }
   ],
-  routeRules: {
-    '/democracy': { redirect: '/workstreams/democracy' },
-    '/politics-society': { redirect: '/workstreams/politics-society' },
-    '/future-leadership': { redirect: '/workstreams/future-leadership' },
-    '/digital-world': { redirect: '/workstreams/digital-world' },
-  },
 })

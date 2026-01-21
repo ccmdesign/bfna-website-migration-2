@@ -21,7 +21,6 @@
     <div class="product-card__content">
       <header class="product-card__header">
         <h2 class="product-card__heading">{{ product.heading }}</h2>
-        <h3 class="product-card__subheading">{{ product.subheading }}</h3>
       </header>
       <div class="product-card__body">
         <p>{{ product.excerpt }}</p>
@@ -39,7 +38,7 @@
 </template>
 
 <script setup lang="ts">
-defineProps<{
+const props = defineProps<{
   product: {
     theme?: string
     type?: string
@@ -55,5 +54,7 @@ defineProps<{
     }
   }
 }>()
+
+console.log(45, props.product)
 </script>
 

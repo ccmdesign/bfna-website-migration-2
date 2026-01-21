@@ -17,9 +17,19 @@ const objectContructor = async (dir, fs) => {
 
     await items.data.forEach((item) => {
       let i = item;
+      i.superProductId = item.id;
       i.slug = common.slugify(item.heading);
       i.coverImage = item.cover_image ? common.getImage(item.cover_image.id) : null;
+      i.image = {
+        url: i.coverImage ? i.coverImage : null
+      }
       i.report = item.report ? common.getImage(item.report.id) : null;
+      i.videoUrl = item.video_url || null;
+      i.websiteUrl = item.website_url || null;
+      i.productSectionHeading = item.product_section_heading || null;
+      i.productSectionDescription = item.product_section_description || null;
+      i.buttonLabel = item.button_label || null;
+      i.excerpt = item.excerpt || common.getExcerptFromContent(item.description);
       
       // Workstream data
       i.workstream = item.workstream ? {
@@ -29,14 +39,23 @@ const objectContructor = async (dir, fs) => {
         image: item.workstream.image ? common.getImage(item.workstream.image.id) : null,
       }: null;
 
+      // Theme
+      i.theme = i.workstream ? i.workstream.slug : 'default';
+
+      i.button =  {
+        url: `${i.workstream.slug}/${i.slug}`,
+        label: item.button_label || 'Learn More'
+      };
+
       // Related Products
-      i.products = item.products ? item.products.map(prod => {
-        return {
-          productId: prod.products_id.id
-        }
-      }) : [];
+      i.products = item.products ? item.products.map(prod => prod.products_id.id) : [];
 
       delete i.cover_image;
+      delete i.website_url;
+      delete i.video_url;
+      delete i.product_section_heading;
+      delete i.product_section_description;
+      delete i.button_label;
 
       fs.writeFile(
         dir + "/" + i.slug + ".json",
