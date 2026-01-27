@@ -52,14 +52,14 @@ const objectContructor = async (dir, fs) => {
 
       // products
       if (item.products && item.products.length > 0) {
-        i.products = item.products.map((p) =>p.products_id);
+        i.products = item.products.map((p) => p);
       } else {
         i.products = [];
       }
 
       // super products
       if (item.super_products && item.super_products.length > 0) {
-        i.superProducts = item.super_products.map((sp) =>sp.super_products_id);
+        i.superProducts = item.super_products.map((sp) => sp);
       } else {
         i.superProducts = [];
       }

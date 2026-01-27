@@ -49,7 +49,7 @@
       </h2>
 
       <h2 class="card__heading">
-        <a :href="card.button?.url">{{ card.heading }}</a>
+        <a @click.prevent="navigateToContentSlug(card)">{{ card.heading }}</a>
       </h2>
 
       <h3 v-if="card.subheading" class="card__subheading">
@@ -63,7 +63,7 @@
     <footer v-if="card.button || card.byLine" class="card__footer">
       <small v-if="card.byLine" class="card__by-line">{{ card.byLine }}</small>
       <div v-if="card.button" class="card__actions">
-        <a :href="card.button.url" class="button button--primary">
+        <a @click.prevent="navigateToContentSlug(card)" class="button button--primary">
           {{ card.button.label }}
           <span v-if="card.heading" class="sr-only">
             about {{ card.heading }}</span
@@ -101,6 +101,15 @@ const props = defineProps<{
     isProduct?: boolean
   }
 }>()
+
+const router = useRouter();
+const navigateToContentSlug = (content: any) => {
+  router.push({
+    name: `content-slug`,
+    path: content.button?.url,
+    params: { slug: content.button.url }
+  });
+}
 
 const truncate = (text: string, length: number) => {
   if (!text || text.length <= length) return text

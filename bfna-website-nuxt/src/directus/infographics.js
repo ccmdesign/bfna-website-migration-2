@@ -45,6 +45,8 @@ const objectContructor = async (dir, fs) => {
 
       // Theme
       i.theme = i.workstream ? i.workstream.slug : 'default';
+
+      i.button =  common.getButtons(item);
  
       // Internal Authors
       i.internalAuthors = item.internal_authors ? item.internal_authors.map(item => {

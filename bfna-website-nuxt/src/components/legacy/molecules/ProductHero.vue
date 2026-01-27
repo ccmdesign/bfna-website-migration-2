@@ -8,13 +8,13 @@
   >
     <div class="product-hero__wrapper">
       <div class="product-hero__content stack-l">
-        <LegacyMoleculesBreadcrumb
+        <!-- <LegacyMoleculesBreadcrumb
           v-if="product.breadcrumbs"
           :breadcrumbs="product.breadcrumbs"
-        />
+        /> -->
 
-        <h1 v-if="product.title" class="product-hero__heading">
-          {{ product.title }}
+        <h1 v-if="product.heading" class="product-hero__heading">
+          {{ product.heading }}
         </h1>
 
         <h2 v-if="product.subheading" class="product-hero__subheading">
@@ -26,21 +26,27 @@
           class="product-hero__description"
           v-html="product.description"
         ></div>
+        
+        <div
+          v-if="product.embedCode"
+          class="product-hero__description"
+          v-html="product.embedCode"
+        ></div>
 
-        <template v-if="product.buttons">
-          <template v-for="(button, index) in product.buttons" :key="index">
+        <template v-if="product.button">
+          <template v-if="product.button.type === 'report'">
             <a
-              v-if="button.type === 'report' || button.type === 'website'"
-              :href="button.url"
+              :href="product.report"
               class="button button--primary"
               target="_blank"
-              >{{ product.customButtonLabel || button.label }}</a
+              >Open full report</a
             >
+          </template>
+          <template v-else-if="product.button.type === 'video'">
             <a
-              v-if="button.type === 'video'"
+              v-if="product.button.type === 'video'"
               class="button button--primary modal__trigger"
-              :data-id="button.title"
-              >{{ button.label }}</a
+              >{{ product.button.label }}</a
             >
           </template>
         </template>
@@ -73,12 +79,11 @@ defineProps<{
     image?: {
       url: string
     }
-    buttons?: Array<{
+    button?: {
       type: string
-      url?: string
       label: string
-      title?: string
-    }>
+      url?: string
+    }[]
     customButtonLabel?: string
     breadcrumbs?: {
       currentPage: string

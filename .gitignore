@@ -34,3 +34,11 @@ _archive/
 .claude/
 .codex/
 .gemini/
+
+
+scripts/*
+sql-backups/
+specs/
+contentful-data/*
+spec-kit
+bfna-website-nuxt/scripts/

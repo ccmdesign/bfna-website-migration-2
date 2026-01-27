@@ -65,7 +65,7 @@
 import { usePublications } from '~/composables/data/usePublications'
 import { useVideos } from '~/composables/data/useVideos'
 import { useInfographics } from '~/composables/data/useInfographics'
-import { usePodcasts } from '~/composables/data/usePodcasts'
+import { useUpdatesPodcasts } from '~/composables/data/usePodcasts'
 import { useTabs } from '~/composables/legacy/useTabs'
 import LegacyMoleculesHero from '~/components/legacy/molecules/Hero.vue'
 import UpdatesPageTab from '~/components/templates/UpdatesPageTab.vue'
@@ -77,7 +77,7 @@ definePageMeta({
 const videosData = useVideos()
 const publicationsData = usePublications()
 const infographicsData = useInfographics()
-const podcastsData = usePodcasts()
+const podcastsData = useUpdatesPodcasts()
 const tabs = useTabs()
 
 const publicationsItems = computed(() => {

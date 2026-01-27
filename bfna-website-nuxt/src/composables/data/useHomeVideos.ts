@@ -23,6 +23,3 @@ export const useHomeVideos = () => {
 
   return page
 }
-
-
-

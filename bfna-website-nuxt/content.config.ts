@@ -121,9 +121,14 @@ export default defineContentConfig({
         cwd: contentDir
       },
       schema: z.object({
+        theme: z.string().optional(),
         heading: z.string(),
         excerpt: z.string(),
         image: z.string().optional(),
+        team: z.array(z.any()).optional(),
+        boardOfDirectors: z.array(z.any()).optional(),
+        products: z.array(z.any()).optional(),
+        superProducts: z.array(z.any()).optional(),
         slug: z.string().regex(/^[a-z0-9_-]+$/i), // URL-safe slug validation,
         combinedSlug: z.string().regex(/^[a-z0-9_-]+$/i), // URL-safe slug validation,
         button: z
@@ -141,6 +146,8 @@ export default defineContentConfig({
         cwd: contentDir
       },
       schema: z.object({
+        highlightId: z.number().optional(),
+        theme: z.string().optional(),
         heading: z.string(),
         excerpt: z.string(),
         image: z.string().optional(),
@@ -156,6 +163,7 @@ export default defineContentConfig({
         cwd: contentDir
       },
       schema: z.object({
+        publicationId: z.number().optional(),
         byLine: z.string().optional(),
         theme: z.string().optional(),
         heading: z.string(),
@@ -202,6 +210,7 @@ export default defineContentConfig({
         cwd: contentDir
       },
       schema: z.object({
+        videoId: z.number().optional(),
         theme: z.string().optional(),
         heading: z.string(),
         excerpt: z.string(),
@@ -251,6 +260,7 @@ export default defineContentConfig({
         cwd: contentDir
       },
       schema: z.object({
+        infographicId: z.number().optional(),
         theme: z.string().optional(),
         heading: z.string(),
         excerpt: z.string(),
@@ -345,6 +355,7 @@ export default defineContentConfig({
         cwd: contentDir
       },
       schema: z.object({
+        docId: z.number().optional(),
         heading: z.string(),
         order: z.number().optional(),
         workstream: z.string().optional(),
@@ -364,6 +375,107 @@ export default defineContentConfig({
         videoInfo: z.object({}).optional(),
         source: z.string().optional(),
         objectType: z.string().optional()
+      })
+    }),
+    people: defineCollection({
+      type: 'data',
+      source: {
+        include: 'people/*.json',
+        cwd: contentDir
+      },
+      schema: z.object({
+        personId: z.number().optional(),
+        name: z.string(),
+        jobTitle: z.string(),
+        image: z.string().optional(),
+        email: z.string().optional(),
+        bio: z.string().optional(),
+        linkedin: z.string().optional(),
+        twitter: z.string().optional(),
+        slug: z.string().regex(/^[a-z0-9_-]+$/i), // URL-safe slug validation,
+      })
+    }),
+    super_products: defineCollection({
+      type: 'data',
+      source: {
+        include: 'super_products/*.json',
+        cwd: contentDir
+      },
+      schema: z.object({
+        superProductId: z.number().optional(),
+        isSuperProduct: z.boolean().default(true),
+        heading: z.string(),
+        subheading: z.string().optional(),
+        description: z.string().optional(),
+        excerpt: z.string(),
+        videoUrl: z.string().optional(),
+        websiteUrl: z.string().optional(),
+        productSectionHeading: z.string().optional(),
+        productSectionDescription: z.string().optional(),
+        buttonLabel: z.string().optional(),
+        button: z
+          .object({
+            url: z.string().optional(),
+            label: z.string().optional()
+          })
+          .optional(),
+        order: z.number().optional(),
+        workstream: z.object({
+          heading: z.string(),
+          slug: z.string().regex(/^[a-z0-9_-]+$/i), // URL-safe slug validation,
+        }),
+        theme: z.string().optional(),
+        subheading: z.string().optional(),
+        by: z.string().optional(),
+        description: z.string().optional(),
+        coverImage: z.string().optional(),
+        image: z.object({
+          url: z.string().optional()
+        }).optional(),
+        report: z.string().optional(),
+        slug: z.string().regex(/^[a-z0-9_-]+$/i), // URL-safe slug validation,
+        products: z.array(z.any()).optional()
+      })
+    }),
+    products: defineCollection({
+      type: 'data',
+      source: {
+        include: 'products/*.json',
+        cwd: contentDir
+      },
+      schema: z.object({
+        productId: z.number().optional(),
+        heading: z.string(),
+        publishDate: z.string().optional(),
+        date: z.string().optional(),
+        subheading: z.string().optional(),
+        description: z.string().optional(),
+        excerpt: z.string(),
+        people: z.array(z.any()).optional(),
+        videoUrl: z.string().optional(),
+        websiteUrl: z.string().optional(),
+        infographic: z.string().optional(),
+        personSectionHeading: z.string().optional(),
+        personSectionDescription: z.string().optional(),
+        productSectionHeading: z.string().optional(),
+        productSectionDescription: z.string().optional(),
+        buttonLabel: z.string().optional(),
+        order: z.number().optional(),
+        type: z.string().optional(),
+        workstream: z.object({
+          heading: z.string(),
+          slug: z.string().regex(/^[a-z0-9_-]+$/i), // URL-safe slug validation,
+        }),
+        theme: z.string().optional(),
+        subheading: z.string().optional(),
+        byLine: z.string().optional(),
+        coverImage: z.string().optional(),
+        image: z.object({
+          url: z.string().optional()
+        }).optional(),
+        report: z.string().optional(),
+        slug: z.string().regex(/^[a-z0-9_-]+$/i), // URL-safe slug validation,
+        embedCode: z.string().optional(),
       })
     }),
   }

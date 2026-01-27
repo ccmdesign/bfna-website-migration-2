@@ -1,55 +1,80 @@
 <template>
-  <article class="article">
-    <div class="wrapper">
-      <LegacyMoleculesBreadcrumb
-        v-if="podcast?.breadcrumbs"
-        :breadcrumbs="podcast.breadcrumbs"
-      />
-
-      <header>
-        <h1 v-if="podcast?.heading">{{ podcast.heading }}</h1>
-        <h2 v-if="podcast?.subheading">{{ podcast.subheading }}</h2>
-      </header>
-
-      <div
-        v-if="podcast?.excerpt"
-        class="article__content"
-        v-html="podcast.excerpt"
-      ></div>
+  <!-- Product Page -->
+   <section
+      v-if="productData"
+      :class="[
+        'product-page',
+        productData?.theme ? `product-page--${productData.theme}` : '',
+      ]">
+      <LegacyMoleculesProductHero v-if="productData" :product="productData" />
+    <div>
+      <hgroup class="wrapper cards-section--future-leadership" style="margin-bottom: 4rem;">
+        <h2 class="text-align:center">{{ productData.productSectionHeading }}</h2>
+        <h4 class="text-align:center"></h4>
+      </hgroup>
+      <div class="wrapper">
+        <div class="product-list stack-l">
+          <div
+            v-for="(product, index) in productData.products"
+            :key="index"
+          >
+            <ProductCardThin :product="product" />
+          </div>
+        </div>
+      </div>
     </div>
-  </article>
+  </section>
 </template>
 
 <script setup lang="ts">
-// import { usePodcasts } from '~/composables/data/usePodcasts'
-import LegacyMoleculesBreadcrumb from '~/components/legacy/molecules/Breadcrumb.vue'
+import { useSuperProduct } from '~/composables/data/useSuperProduct'
+import { usePodcast } from '~/composables/data/usePodcast'
+import LegacyMoleculesProductHero from '~/components/legacy/molecules/ProductHero.vue'
 
 definePageMeta({
   layout: 'legacy-base',
+  name: 'podcasts-slug',
 })
 
 const route = useRoute()
-// const { data: podcastsData } = usePodcasts()
-const podcastsData = ref(null)
+const spData = useSuperProduct()
+const podcastData = usePodcast()
 
-
-const podcast = computed(() => {
-  if (!podcastsData.value?.items) return null
-  const slug = route.params.slug as string
-  return podcastsData.value.items.find(
-    (p: any) => p.button?.url?.replace(/^\//, '').replace(/\/$/, '') === slug
-  )
+const productData = computed(() => {
+  if(!spData.value){
+    return podcastData.value
+    
+  }
+  return spData.value
 })
+
+// If no content found after data loads, return 404
+if (!productData.value) {
+  throw createError({
+    statusCode: 404,
+    statusMessage: 'Page not found'
+  })
+}
 
 useHead({
   title: computed(() => {
-    if (!podcast.value) return 'Podcast | Bertelsmann Foundation'
-    return `${podcast.value.heading} | Bertelsmann Foundation`
+    if (productData.value) {
+      return `${productData.value.heading} | ${productData.value.workstream} | Bertelsmann Foundation`
+    }
+    return 'Content | Bertelsmann Foundation'
   }),
   meta: [
     {
+      property: 'og:image',
+      content: computed(() => 
+        productData.value?.image?.url || '/images/bfna-og.jpg'
+      ),
+    },
+    {
       name: 'description',
-      content: computed(() => podcast.value?.excerpt || ''),
+      content: computed(() => 
+        productData.value?.excerpt || ''
+      ),
     },
   ],
 })

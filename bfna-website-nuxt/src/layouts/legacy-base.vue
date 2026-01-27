@@ -124,7 +124,7 @@ useHead({
     { rel: 'preload', href: 'https://fonts.googleapis.com/icon?family=Material+Icons&display=swap', as: 'style', crossorigin: '', onload: "this.rel='stylesheet'" },
     { rel: 'preload', href: 'https://use.typekit.net/af/43851c/00000000000000007735ba73/31/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n3&v=3', as: 'font', type: 'font/woff2', crossorigin: '' },
     { rel: 'preload', href: 'https://use.typekit.net/af/b78836/00000000000000007735ba66/31/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n4&v=3', as: 'font', type: 'font/woff2', crossorigin: '' },
-    { rel: 'preload', href: 'https://use.typekit.net/af/f82cc1/00000000000000007735ba3f/31/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n7&v=3', as: 'font', type: 'font/woff2', crossorigin: '' },
+    // Note: Bold font (700) not preloaded - loaded on-demand via @font-face to avoid unused preload warning
     ...(heroBg.value ? [
       { rel: 'preload', as: 'image', href: heroBg.value.webp, type: 'image/webp', imagesizes: '100vw', fetchpriority: 'high' },
       { rel: 'preload', as: 'image', href: heroBg.value.fallback, type: 'image/jpeg', imagesizes: '100vw', fetchpriority: 'high' }

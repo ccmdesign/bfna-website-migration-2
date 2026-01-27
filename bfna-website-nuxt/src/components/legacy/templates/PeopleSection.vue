@@ -25,7 +25,7 @@
             />
           </figure>
           <h3>{{ person.name }}</h3>
-          <h4>{{ person.job || person.job_title }}</h4>
+          <h4>{{ person.job || person.jobTitle }}</h4>
         </div>
       </div>
     </div>
@@ -34,12 +34,7 @@
 
 <script setup lang="ts">
 defineProps<{
-  people: Array<{
-    name?: string
-    job?: string
-    job_title?: string
-    image?: string
-  }>
+  people: Array<any>
 }>()
 </script>
 

@@ -96,57 +96,80 @@ const getWorkstreamUpdates = async (key: string) => {
   }
 }
 
-
-
-const getWorkstreamSuperProducts = async (superProductList: number[]) => {
+const getWorkstreamSuperProducts = async (superProductList: Array<{id: number, super_products_id: number, sort: number}>) => {
   if (!superProductList || superProductList.length === 0) return []
-  // Fetch all people and filter by IDs in memory
-  // This is efficient for small datasets and avoids potential query builder issues
-  const allProducts = await queryCollection('super_products').order('superProductId', 'DESC').all()
+  
+  // Fetch all super products
+  const allProducts = await queryCollection('super_products').all()
 
   if (!allProducts) return []
 
-  // Filter to only people in the superProductList
-  const filteredPeople = allProducts.filter((sp) => {
-    return superProductList.includes(sp.superProductId)
+  // Extract IDs from the superProductList objects
+  const superProductIds = superProductList.map(item => item.super_products_id)
+
+  // Filter to only super products in the superProductList
+  const filteredProducts = allProducts.filter((sp) => {
+    return superProductIds.includes(sp.superProductId)
   })
 
-  // Spread meta fields back to the top level
-  return filteredPeople.map((sp) => {
+  // Create a map of super_products_id to sort value for ordering
+  const sortMap = new Map(
+    superProductList.map(item => [item.super_products_id, item.sort])
+  )
+
+  // Spread meta fields back to the top level and add sort value
+  const productsWithMeta = filteredProducts.map((sp) => {
+    const sortValue = sortMap.get(sp.superProductId) || 999
     if (sp.meta) {
       return {
         ...sp,
         ...sp.meta,
+        _sort: sortValue
       }
     }
-    return sp
+    return { ...sp, _sort: sortValue }
   })
+
+  // Sort by the sort field from the relation
+  return productsWithMeta.sort((a, b) => a._sort - b._sort)
 }
 
-const getWorkstreamProducts = async (productList: number[]) => {
+const getWorkstreamProducts = async (productList: Array<{id: number, products_id: number, sort: number}>) => {
   if (!productList || productList.length === 0) return []
 
-  // Fetch all products and filter by IDs in memory
-  // This is efficient for small datasets and avoids potential query builder issues
+  // Fetch all products
   const allProducts = await queryCollection('products').all()
 
   if (!allProducts) return []
 
+  // Extract IDs from the productList objects
+  const productIds = productList.map(item => item.products_id)
+
   // Filter to only products in the productList
   const filteredProducts = allProducts.filter((product) =>
-    productList.includes(product.productId)
+    productIds.includes(product.productId)
   )
 
-  // Spread meta fields back to the top level
-  return filteredProducts.map((product) => {
+  // Create a map of products_id to sort value for ordering
+  const sortMap = new Map(
+    productList.map(item => [item.products_id, item.sort])
+  )
+
+  // Spread meta fields back to the top level and add sort value
+  const productsWithMeta = filteredProducts.map((product) => {
+    const sortValue = sortMap.get(product.productId) || 999
     if (product.meta) {
       return {
         ...product,
         ...product.meta,
+        _sort: sortValue
       }
     }
-    return product
+    return { ...product, _sort: sortValue }
   })
+
+  // Sort by the sort field from the relation
+  return productsWithMeta.sort((a, b) => a._sort - b._sort)
 }
 
 /**
@@ -155,7 +178,10 @@ const getWorkstreamProducts = async (productList: number[]) => {
  * @returns Reactive workstreams data object, loading state, and error state
  */
 export const useWorkstreams = (key?: string) => {
-    return useAsyncData('workstreams', async () => {
+    // Use a unique key based on the workstream to avoid caching issues
+    const cacheKey = key ? `workstreams-${key}` : 'workstreams-all'
+    
+    return useAsyncData(cacheKey, async () => {
     const workstreams = await queryCollection('workstreams').all()
 
       const workstreamsObject: Record<string, any> = {}

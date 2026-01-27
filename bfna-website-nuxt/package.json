@@ -24,8 +24,7 @@
     "export:contentful-data": "tsx scripts/export-contentful-data.ts",
     "lint:css": "stylelint 'src/**/*.{css,vue,scss}'",
     "lint:css:fix": "stylelint 'src/**/*.{css,vue,scss}' --fix",
-    "import:directus": "tsx scripts/import-contentful-data.ts"
-    ,
+    "import:directus": "tsx scripts/import-contentful-data.ts",
     "import:directus:collection": "tsx scripts/import-contentful-data.ts --collections $COLLECTION"
   },
   "dependencies": {
@@ -44,9 +43,11 @@
     "date-fns": "^4.1.0",
     "dotenv": "^16.5.0",
     "eslint": "^9.25.1",
+    "jsdom": "^27.4.0",
     "nuxt": "^4.2.0",
     "pinia": "^3.0.3",
     "rimraf": "^6.0.1",
+    "showdown": "^2.1.0",
     "vue": "^3.5.13",
     "vue-carousel": "^0.18.0",
     "vue-docgen-api": "^4.79.2",

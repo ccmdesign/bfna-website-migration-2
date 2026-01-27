@@ -83,7 +83,7 @@ const props = defineProps<{
 
 const heroImages: Record<
   string,
-  { webp: string; fallback: string; width: number; height: number }
+  { webp: string | null; fallback: string; width: number; height: number }
 > = {
   default: {
     webp: '/images/hero/homepage.webp',
@@ -94,6 +94,12 @@ const heroImages: Record<
   democracy: {
     webp: '/images/hero/democracy@2x.webp',
     fallback: '/images/hero/democracy@2x.jpg',
+    width: 1600,
+    height: 1600,
+  },
+  podcasts: {
+    webp: null,
+    fallback: '/images/hero/podcast.jpg',
     width: 1600,
     height: 1600,
   },

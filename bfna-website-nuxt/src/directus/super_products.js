@@ -18,6 +18,7 @@ const objectContructor = async (dir, fs) => {
     await items.data.forEach((item) => {
       let i = item;
       i.superProductId = item.id;
+      i.isSuperProduct = true;
       i.slug = common.slugify(item.heading);
       i.coverImage = item.cover_image ? common.getImage(item.cover_image.id) : null;
       i.image = {

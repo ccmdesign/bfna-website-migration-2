@@ -1,8 +1,8 @@
 export const useHomePodcasts = () => {
-  const { data: page } = useAsyncData('home-podcasts', () => 
-  queryCollection('products')
-    .where('isPodcast', '=', true)
-    .order('date', 'DESC')
+  const { data: page } = useAsyncData("home-podcasts", () => 
+  queryCollection("products")
+    .where("theme", "=", "podcasts")
+    .order("date", "DESC")
     .limit(6)
     .all(), 
       {

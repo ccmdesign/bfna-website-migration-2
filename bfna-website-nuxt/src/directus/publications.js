@@ -25,11 +25,8 @@ const objectContructor = async (dir, fs) => {
       i.originalPublication = item.original_publication;
       i.publishDate = item.publish_date;
       i.date = item.publish_date;
-      i.button =  {
-        url: item.slug,
-        label: item.button_label || 'Learn More'
-      };
       i.excerpt = item.excerpt ? item.excerpt : common.getExcerptFromContent(item.content || '', 300);
+      i.content = common.convertToHTML(item.content || '');
       
       // Workstream data
       i.workstream = item.workstream ? {
@@ -38,8 +35,11 @@ const objectContructor = async (dir, fs) => {
         excerpt: item.workstream.excerpt,
         image: item.workstream.image ? common.getImage(item.workstream.image) : null,
       }: null;
+      
       i.theme = i.workstream ? i.workstream.slug : 'default';
- 
+      
+      i.button =  common.getButtons(item);
+
       // Internal Authors
       i.internalAuthors = item.internal_authors ? item.internal_authors.map(item => {
         const author = item.people_id;

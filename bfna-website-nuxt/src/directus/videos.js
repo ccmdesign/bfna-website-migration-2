@@ -19,7 +19,7 @@ const objectContructor = async (dir, fs) => {
       i.slug = common.slugify(item.heading);
 
       // Video URL
-      i.videoUrl = item.video_url;
+      i.videoUrl = common.videoURL(item.video_url);
 
       // published date
       i.publishDate = item.publish_date;

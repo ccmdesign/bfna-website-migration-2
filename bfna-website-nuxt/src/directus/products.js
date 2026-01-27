@@ -7,7 +7,7 @@ const objectContructor = async (dir, fs) => {
   try {
     // use this list to add fields from junction tables
     const junctionFields = [
-      'internal_authors.people_id.*',
+      'people.people_id.*',
       'external_collaborators.external_collaborators_id.*',
       'workstream.*',
     ]
@@ -25,10 +25,13 @@ const objectContructor = async (dir, fs) => {
       i.image = {
         url: item.cover_image ? common.getImage(item.cover_image.id) : null,
       };
+      i.report = item.report ? common.getImage(item.report.id) : null;
       i.infographic = item.infographic ? common.getImage(item.infographic.id) : null;
       i.buttonLabel = item.button_label || 'Learn More';
       i.videoUrl = item.video_url;
       i.websiteUrl = item.website_url;
+
+      i.description = common.convertToHTML(item.description || '');
 
       // Additional fields to remove
       i.personSectionHeading = item.person_section_heading;
@@ -49,10 +52,7 @@ const objectContructor = async (dir, fs) => {
         image: item.workstream.image ? common.getImage(item.workstream.image) : null,
       }: null;
       
-      i.button =  {
-        url: `${i.workstream.slug}/${i.slug}`,
-        label: item.button_label || 'Learn More'
-      };
+      i.button = common.getButtons(item);
 
       // Theme
       i.theme = i.workstream ? i.workstream.slug : 'default';
@@ -61,7 +61,7 @@ const objectContructor = async (dir, fs) => {
       i.isPodcast = i.workstream && i.workstream.slug === 'podcasts' ? true : false;
  
       // Internal Authors
-      i.internalAuthors = item.internal_authors ? item.internal_authors.map(item => {
+      i.internalAuthors = item.people ? item.people.map(item => {
         const author = item.people_id;
         return {
           name: author.name,

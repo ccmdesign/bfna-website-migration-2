@@ -1,40 +1,50 @@
 <template>
   <div>
+    <LegacyMoleculesHero
+      v-if="podcastsWorkstream"
+      :hero="{
+        heading: podcastsWorkstream.heading,
+        description: podcastsWorkstream.excerpt,
+      }"
+      :theme="podcastsWorkstream.theme"
+    />
     <div class="wrapper">
-      <div class="cards-section cards-section--updates">
-        <LegacyMoleculesCard
-          v-for="(podcast, index) in podcasts"
+      <div class="product-list">
+        <div
+          v-for="(product, index) in podcasts || []"
           :key="index"
-          :card="formatPodcastAsCard(podcast)"
-        />
+          class="product-card-wrapper"
+        >
+          <LegacyMoleculesProductCardWebsite
+            v-if="product.type === 'website'"
+            :product="product"
+          />
+          <LegacyMoleculesProductCard
+            v-else
+            :product="product"
+          />
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { usePodcasts } from '~/composables/data/usePodcasts'
-import LegacyMoleculesCard from '~/components/legacy/molecules/Card.vue'
+import { useWorkstreams } from '~/composables/data/useWorkstreams'
+import LegacyMoleculesHero from '~/components/legacy/molecules/Hero.vue'
+import LegacyMoleculesProductCard from '~/components/legacy/molecules/ProductCard.vue'
+import LegacyMoleculesProductCardWebsite from '~/components/legacy/molecules/ProductCardWebsite.vue'
 
 definePageMeta({
   layout: 'legacy-base',
 })
 
-const { data: podcastsData } = usePodcasts()
+const { data: workstreamData } = useWorkstreams('podcasts')
+const podcastsWorkstream = workstreamData.value?.podcasts
 
 const podcasts = computed(() => {
-  return podcastsData.value?.items || []
+  return workstreamData.value?.podcasts.superProductsList || []
 })
-
-const formatPodcastAsCard = (podcast: any) => {
-  return {
-    theme: podcast.theme,
-    heading: podcast.heading,
-    subheading: podcast.subheading,
-    excerpt: podcast.excerpt,
-    button: podcast.button,
-  }
-}
 
 useHead({
   title: 'Podcasts | Bertelsmann Foundation',

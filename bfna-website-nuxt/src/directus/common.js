@@ -2,6 +2,9 @@ import dotenv from 'dotenv';
 import { createDirectus, rest, readItems } from '@directus/sdk';
 import { createClient } from 'contentful'
 
+import showdown from 'showdown';
+import { JSDOM } from 'jsdom';
+
 dotenv.config();
 
 const CONTENT_STATUS = process.env.DEV ? JSON.parse(process.env.DEV) : ["published"]
@@ -182,17 +185,17 @@ export const getByLineForPublicationCard = (publish) => {
   return "";
 };
 
-export const getExcerptFromContent = (content, charLength = 300) => {
-  if (!content) return '';
+// export const getExcerptFromContent = (content, charLength = 300) => {
+//   if (!content) return '';
 
-  let excerpt = content.replace(/(<([^>]+)>)/gi, ""); // Remove HTML tags
-  if (excerpt.length > charLength) {
-    excerpt = excerpt.substring(0, charLength);
-    const lastSpace = excerpt.lastIndexOf(" ");
-    excerpt = excerpt.substring(0, lastSpace) + "...";
-  }
-  return excerpt;
-};
+//   let excerpt = content.replace(/(<([^>]+)>)/gi, ""); // Remove HTML tags
+//   if (excerpt.length > charLength) {
+//     excerpt = excerpt.substring(0, charLength);
+//     const lastSpace = excerpt.lastIndexOf(" ");
+//     excerpt = excerpt.substring(0, lastSpace) + "...";
+//   }
+//   return excerpt;
+// };
 
 
 const getYTVideoID = (url) => {
@@ -203,34 +206,11 @@ const getYTVideoID = (url) => {
   return id;
 };
 
-const getVideosId = (lsVideos) => {
-  const idsList = [];
+export const videoURL = (url) => {
+  if (!url) return null;
+  const id = getYTVideoID(url);
 
-  for (let beginIndex of range(0, lsVideos.length, 50)) {
-    let endIndex = beginIndex + MAX_VIDEOS_LIMIT;
-
-    if (endIndex > lsVideos.length) {
-      endIndex = lsVideos.length;
-    }
-
-    const list = lsVideos.slice(beginIndex, endIndex);
-    const ids = list.reduce((ids, item, index) => {
-      const id = getYTVideoID(item.video.url);
-  
-      if (id) {
-        if (index === 0) {
-          return id;
-        } else {
-          return (ids += "," + id);
-        }
-      }
-      return ids
-    }, "");
-
-    idsList.push(ids);
-  }
-
-  return idsList;
+  return `https://www.youtube.com/embed/${id}`;
 };
 
 export const getVideoThumbnail = async (videoUrl) => {
@@ -272,6 +252,97 @@ export const getVideoThumbnail = async (videoUrl) => {
   }
 
   return thumbsValue;
+};
+
+export const getButtons = (fields) => {
+  const getVideoButton = () => {
+    if (fields.video_url) {
+
+      return {
+        type: "video",
+        url: videoURL(fields.video_url),
+        title: fields.title,
+        label: fields.type == "video" ? "Open video" : "Watch Project Video",
+      };
+    }
+    return null;
+  };
+  const getReportButton = () => {
+    if (fields.report) {
+      return {
+        type: "report",
+        url: `${fields.workstream.slug}/${fields.slug}`,
+        label: "Read Report",
+      };
+    }
+    return null;
+  };
+
+
+  const __getWebsiteLabel = (field) => {
+    if(!fields.website_url) return 'Learn More'; // In case there's no website url, but is a product
+
+    if (field.button_label && field.button_label.trim() !== '') {
+      return field.button_label;
+    } else if (field.type == "website") {
+      return "Go to project website";
+    } else {
+      return "Open project website";
+    }
+  }
+
+  const getWebsiteButton = () => {
+    return {
+      type: "website",
+      url: fields.website_url ? fields.website_url : `${fields.workstream.slug}/${fields.slug}`,
+      label: __getWebsiteLabel(fields),
+    };
+  };
+
+  let btnResult = {};
+
+  if (fields.type == "website") {
+    btnResult = getWebsiteButton();
+  } else if (fields.type == "report") {
+    btnResult = getReportButton();
+  } else if (fields.type == "video") {
+    btnResult = getVideoButton();
+  } else {
+    return {
+      url: `${fields.workstream.slug}/${fields.slug}`,
+      label: "Learn More",
+    };
+  }
+
+  return btnResult
+};
+
+// const showdown = require("showdown");
+
+export const convertToHTML = (md) => {
+  const converter = new showdown.Converter();
+  const html = converter.makeHtml(md);
+  const dom = new JSDOM(html);
+
+  const figure = (item) =>
+    `<figure>${item.outerHTML}<figcaption>${item.getAttribute(
+      "alt"
+    )}</figcaption></figure>`;
+  const imgs = dom.window.document.querySelectorAll("img");
+
+  imgs.forEach((item, index) => {
+    getVideoThumbnail;
+    imgs[index].outerHTML = figure(item);
+  });
+
+  return dom.serialize();
+};
+
+export const getExcerptFromContent = (md) => {
+  const converter = new showdown.Converter();
+  const dom = new JSDOM(converter.makeHtml(md));
+
+  return dom.window.document.querySelector("p").textContent;
 };
 
 const LANGUAGES = {

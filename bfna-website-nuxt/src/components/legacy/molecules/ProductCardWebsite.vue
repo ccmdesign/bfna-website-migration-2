@@ -27,7 +27,12 @@
       </div>
 
       <footer class="product-card__footer">
-        <a
+        <a v-if="product.products?.length"
+          @click.prevent="navigateToSuperProductSlug(product)"
+          :class="['button', 'button--primary', product.theme ? `button--${product.theme}` : '']"
+          >{{ product.button?.label }}</a
+        >
+        <a v-else
           :href="product.button?.url"
           :class="['button', 'button--primary', product.theme ? `button--${product.theme}` : '']"
           >{{ product.button?.label }}</a
@@ -51,10 +56,29 @@ const props = defineProps<{
     button?: {
       url: string
       label: string
-    }
+    },
+    products?: Array<any>
   }
 }>()
 
-console.log(45, props.product)
-</script>
+console.log(props.product);
 
+const router = useRouter();
+const navigateToSuperProductSlug = (product: any) => {
+
+  if(product.isSuperProduct && product.theme === 'podcasts') {
+    router.push({
+      name: `podcasts-slug`,
+      path: product.isSuperProduct ? `${product.slug}` : product.slug,
+      params: { slug: product.isSuperProduct ? `${product.slug}` : product.slug }
+    });
+
+  } else {
+    router.push({
+      name: `content-slug`,
+      path: product.slug,
+      params: { slug: `${product.theme}/${product.slug}` }
+    });
+  }
+}
+</script>
