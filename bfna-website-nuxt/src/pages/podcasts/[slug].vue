@@ -48,14 +48,6 @@ const productData = computed(() => {
   return spData.value
 })
 
-// If no content found after data loads, return 404
-if (!productData.value) {
-  throw createError({
-    statusCode: 404,
-    statusMessage: 'Page not found'
-  })
-}
-
 useHead({
   title: computed(() => {
     if (productData.value) {

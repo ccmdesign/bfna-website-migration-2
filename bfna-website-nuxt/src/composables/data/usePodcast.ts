@@ -9,16 +9,13 @@ export const usePodcast = () => {
   const fetchPodcast = async () => {
     const currentSlug = getSlug()
     
-    console.log(1111, currentSlug)
     if (!currentSlug) return null
     
     
     const podcastData = await queryCollection('products')
       .where("slug", "=", currentSlug as string)
       .first()
-    
-    console.log(2222, podcastData)
-    
+        
     if (!podcastData) return null
     
     // Spread meta fields back to the top level

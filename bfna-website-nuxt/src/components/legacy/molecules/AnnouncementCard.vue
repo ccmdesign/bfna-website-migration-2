@@ -1,8 +1,6 @@
 <script setup>
 import { useAnnouncement } from '~/composables/data/useAnnouncements';
-
 const announcement = useAnnouncement();
-console.log(34, announcement);
 
 </script>
 <template>

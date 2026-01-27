@@ -39,38 +39,6 @@ export default defineContentConfig({
         status: z.string().optional()
       })
     }),
-    docs: defineCollection({
-      type: 'page',
-      source: {
-        include: 'docs/**/*.md',
-        // Component API docs are generated from src/components/ds/*.vue
-        exclude: ['docs/components/**/*.md'],
-        cwd: contentDir
-      },
-      schema: z.object({
-        published: z.boolean().default(true),
-        title: z.string().optional(),
-        description: z.string().optional(),
-        hero: z
-          .object({
-            brow: z.string().optional(),
-            title: z.string().optional(),
-            tagline: z.string().optional(),
-            backgroundColor: z.string().optional(),
-            size: z.string().optional(),
-            hideTopbar: z.boolean().optional()
-          })
-          .optional(),
-        order: z.number().optional(),
-        tags: z.array(z.string()).optional(),
-        status: z.enum(['To Do', 'Draft', 'MVP', 'Ready']).optional(),
-        priority: z.enum(['High', 'Normal', 'Low']).optional(),
-        category: z.string().optional(),
-        hasComponent: z.boolean().default(false),
-        hasDocs: z.boolean().default(false),
-        hasDemo: z.boolean().default(false)
-      })
-    }),
     componentDocs: defineCollection({
       type: 'page',
       source: {
@@ -324,57 +292,6 @@ export default defineContentConfig({
         breadcrumbs: z.array(z.any()).optional()
       })
     }),
-    products: defineCollection({
-      type: 'data',
-      source: {
-        include: 'products/*.json',
-        cwd: contentDir
-      },
-      schema: z.object({
-        theme: z.string().optional(),
-        isPodcast: z.boolean().default(false),
-        isProduct: z.boolean().default(true),
-        heading: z.string(),
-        excerpt: z.string(),
-        content: z.string().optional(),
-        subheading: z.string().optional(),
-        coverImage: z.string().optional(),
-        image: z.object({
-          url: z.string().optional()
-        }).optional(),
-        slug: z.string().regex(/^[a-z0-9_-]+$/i), // URL-safe slug validation,
-        button: z
-          .object({
-            url: z.string().optional(),
-            label: z.string().optional()
-          })
-          .optional(),
-        byLine: z.string().optional(),
-        publishDate: z.string().optional(),
-        date: z.string().optional(),
-        workstream: z.object({
-          heading: z.string(),
-          slug: z.string().regex(/^[a-z0-9_-]+$/i), // URL-safe slug validation,
-          excerpt: z.string(),
-          image: z.string().optional()
-        }).optional(),
-        internalAuthors: z.array(
-          z.object({
-            name: z.string(),
-            jobTitle: z.string().optional(),
-            image: z.string().optional(),
-            email: z.string().optional(),
-            bio: z.string().optional(),
-            linkedin: z.string().optional(),
-            twitter: z.string().optional()
-          })
-        ).optional(),
-        externalAuthors: z.array(z.any()).optional(),
-        externalCollaborators: z.array(z.string()).optional(),
-        author: z.string().optional(),
-        breadcrumbs: z.array(z.any()).optional()
-      })
-    }),
     docs: defineCollection({
       type: 'data',
       source: {
@@ -452,9 +369,7 @@ export default defineContentConfig({
           slug: z.string().regex(/^[a-z0-9_-]+$/i), // URL-safe slug validation,
         }),
         theme: z.string().optional(),
-        subheading: z.string().optional(),
         by: z.string().optional(),
-        description: z.string().optional(),
         coverImage: z.string().optional(),
         image: z.object({
           url: z.string().optional()
@@ -473,12 +388,51 @@ export default defineContentConfig({
       },
       schema: z.object({
         productId: z.number().optional(),
+        theme: z.string().optional(),
+        isPodcast: z.boolean().default(false),
+        isProduct: z.boolean().default(true),
         heading: z.string(),
-        publishDate: z.string().optional(),
-        date: z.string().optional(),
         subheading: z.string().optional(),
         description: z.string().optional(),
         excerpt: z.string(),
+        content: z.string().optional(),
+        publishDate: z.string().optional(),
+        date: z.string().optional(),
+        coverImage: z.string().optional(),
+        image: z.object({
+          url: z.string().optional()
+        }).optional(),
+        slug: z.string().regex(/^[a-z0-9_-]+$/i), // URL-safe slug validation
+        button: z
+          .object({
+            url: z.string().optional(),
+            label: z.string().optional()
+          })
+          .optional(),
+        buttonLabel: z.string().optional(),
+        byLine: z.string().optional(),
+        order: z.number().optional(),
+        type: z.string().optional(),
+        workstream: z.object({
+          heading: z.string(),
+          slug: z.string().regex(/^[a-z0-9_-]+$/i), // URL-safe slug validation
+          excerpt: z.string().optional(),
+          image: z.string().optional()
+        }).optional(),
+        internalAuthors: z.array(
+          z.object({
+            name: z.string(),
+            jobTitle: z.string().optional(),
+            image: z.string().optional(),
+            email: z.string().optional(),
+            bio: z.string().optional(),
+            linkedin: z.string().optional(),
+            twitter: z.string().optional()
+          })
+        ).optional(),
+        externalAuthors: z.array(z.any()).optional(),
+        externalCollaborators: z.array(z.string()).optional(),
+        author: z.string().optional(),
         people: z.array(z.any()).optional(),
         videoUrl: z.string().optional(),
         websiteUrl: z.string().optional(),
@@ -487,25 +441,10 @@ export default defineContentConfig({
         personSectionDescription: z.string().optional(),
         productSectionHeading: z.string().optional(),
         productSectionDescription: z.string().optional(),
-        buttonLabel: z.string().optional(),
-        order: z.number().optional(),
-        type: z.string().optional(),
-        workstream: z.object({
-          heading: z.string(),
-          slug: z.string().regex(/^[a-z0-9_-]+$/i), // URL-safe slug validation,
-        }),
-        theme: z.string().optional(),
-        subheading: z.string().optional(),
-        byLine: z.string().optional(),
-        coverImage: z.string().optional(),
-        image: z.object({
-          url: z.string().optional()
-        }).optional(),
         report: z.string().optional(),
-        slug: z.string().regex(/^[a-z0-9_-]+$/i), // URL-safe slug validation,
         embedCode: z.string().optional(),
         breadcrumbs: z.array(z.any()).optional()
       })
-    }),
+    })
   }
 })

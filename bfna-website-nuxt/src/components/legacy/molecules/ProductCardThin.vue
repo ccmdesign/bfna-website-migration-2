@@ -45,7 +45,5 @@ const props = defineProps<{
   }
 }>()
 
-console.log(34, props.product)
-
 </script>
 
