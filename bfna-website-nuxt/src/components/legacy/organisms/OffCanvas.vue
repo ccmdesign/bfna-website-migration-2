@@ -1,5 +1,5 @@
 <template>
-  <div v-if="modelValue" class="off-canvas" style="z-index: 5;">
+  <div class="off-canvas" :class="{ 'off-canvas--expanded': modelValue }" style="z-index: 5;">
     <div class="menu-nav | main-nav">
       <div class="main-nav__top-actions">
         <button class="off-canvas__close" @click="close">
