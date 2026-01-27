@@ -166,10 +166,9 @@ const heroImage = computed(() => {
 const isHomepage = computed(() => route.path === '/')
 const typewriterRef = ref<HTMLElement | null>(null)
 
-onMounted(() => {
-  if (isHomepage.value && typewriterRef.value) {
-    useTypeWriter(typewriterRef)
-  }
-})
+// Initialize typewriter - composable handles its own lifecycle
+if (import.meta.client) {
+  useTypeWriter(typewriterRef)
+}
 </script>
 

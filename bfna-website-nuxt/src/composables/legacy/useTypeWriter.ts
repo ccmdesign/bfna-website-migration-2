@@ -1,3 +1,6 @@
+import type { Ref } from 'vue'
+import { ref, computed, watch, readonly, onMounted, onUnmounted } from 'vue'
+
 export const useTypeWriter = (targetElement: Ref<HTMLElement | null>) => {
   const words = ['critical', 'constructive', 'creative']
   const wordIndex = ref(0)

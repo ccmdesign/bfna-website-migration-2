@@ -134,8 +134,8 @@ const homepageData = computed(() => {
   return {
     hero: {
       heading: 'Transatlantic Perspectives on Global Challenges',
-      subheading: 'We bring together experts, policymakers, and citizens to explore the most pressing issues facing the transatlantic community.',
-      subheadingend: '',
+      subheading: 'Engaging both sides of the Atlantic with ',
+      subheadingend: 'stories, resources, and ideas.',
     },
   }
 })
