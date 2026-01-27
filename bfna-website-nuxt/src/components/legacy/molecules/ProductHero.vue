@@ -8,10 +8,10 @@
   >
     <div class="product-hero__wrapper">
       <div class="product-hero__content stack-l">
-        <!-- <LegacyMoleculesBreadcrumb
+        <LegacyMoleculesBreadcrumb
           v-if="product.breadcrumbs"
           :breadcrumbs="product.breadcrumbs"
-        /> -->
+        />
 
         <h1 v-if="product.heading" class="product-hero__heading">
           {{ product.heading }}
@@ -68,6 +68,7 @@
 </template>
 
 <script setup lang="ts">
+import LegacyMoleculesBreadcrumb from '~/components/legacy/molecules/Breadcrumb.vue'
 defineProps<{
   product: {
     theme?: string

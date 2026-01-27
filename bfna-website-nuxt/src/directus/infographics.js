@@ -43,6 +43,9 @@ const objectContructor = async (dir, fs) => {
         image: item.workstream.image ? common.getImage(item.workstream.image) : null,
       }: null;
 
+      // Breadcrumbs
+      i.breadcrumbs = common.getBreadcrumbs({ workstream: i.workstream.slug || 'default', title: i.heading });
+
       // Theme
       i.theme = i.workstream ? i.workstream.slug : 'default';
 

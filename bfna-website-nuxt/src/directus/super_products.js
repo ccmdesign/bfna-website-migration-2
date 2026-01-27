@@ -48,6 +48,9 @@ const objectContructor = async (dir, fs) => {
         label: item.button_label || 'Learn More'
       };
 
+      // Breadcrumbs
+      i.breadcrumbs = common.getBreadcrumbs({ workstream: i.workstream.slug || 'default', title: i.heading });
+
       // Related Products
       i.products = item.products ? item.products.map(prod => prod.products_id.id) : [];
 

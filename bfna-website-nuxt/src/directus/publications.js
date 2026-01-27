@@ -40,6 +40,9 @@ const objectContructor = async (dir, fs) => {
       
       i.button =  common.getButtons(item);
 
+      // Breadcrumbs
+      i.breadcrumbs = common.getBreadcrumbs({ workstream: i.workstream.slug || 'default', title: i.heading });
+
       // Internal Authors
       i.internalAuthors = item.internal_authors ? item.internal_authors.map(item => {
         const author = item.people_id;

@@ -54,6 +54,9 @@ const objectContructor = async (dir, fs) => {
       
       i.button = common.getButtons(item);
 
+      // Breadcrumbs
+      i.breadcrumbs = common.getBreadcrumbs({ workstream: i.workstream.slug || 'default', title: i.heading });
+
       // Theme
       i.theme = i.workstream ? i.workstream.slug : 'default';
 

@@ -345,6 +345,42 @@ export const getExcerptFromContent = (md) => {
   return dom.window.document.querySelector("p").textContent;
 };
 
+
+const __getWorkspaceNameFromKey = (workspaceKey) => {
+  switch (workspaceKey) {
+    case "democracy":
+      return "Democracy";
+    case "future-of-work":
+      return "Future Leadership";
+    case "future-leadership":
+      return "Future Leadership";
+    case "digital-economy":
+      return "Digital World";
+    case "digital-world":
+      return "Digital World";
+    case "politics-society":
+      return "Politics & Society";
+    case "archives":
+      return "Archived Projects";
+    case "podcasts":
+      return "Podcasts";
+    default:
+      return "";
+  }
+};
+
+export const getBreadcrumbs = ({ workstream, title }) => {
+  const breadcrumbs = { currentPage: title, items: [] };
+
+  breadcrumbs.items.push({ link: "/", title: "Home" });
+  breadcrumbs.items.push({
+    link: `/${workstream}/`,
+    title: __getWorkspaceNameFromKey(workstream),
+  });
+
+  return breadcrumbs;
+};
+
 const LANGUAGES = {
   "es-ES": "es",
   "en-US": "en",

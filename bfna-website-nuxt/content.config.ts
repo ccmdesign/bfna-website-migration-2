@@ -199,7 +199,8 @@ export default defineContentConfig({
         originalPublication: z.string().optional(),
         originalPublicationName: z.string().optional(),
         originalPublicationUrl: z.string().optional(),
-        originalPublicationDate: z.string().optional()
+        originalPublicationDate: z.string().optional(),
+        breadcrumbs: z.array(z.any()).optional()
 
       })
     }),
@@ -249,7 +250,8 @@ export default defineContentConfig({
         author: z.string().optional(),
         video: z.object({
           thumbnail: z.string().optional()
-        }).optional()
+        }).optional(),
+        breadcrumbs: z.array(z.any()).optional()
 
       })
     }),
@@ -296,6 +298,7 @@ export default defineContentConfig({
         externalAuthors: z.array(z.any()).optional(),
         externalCollaborators: z.array(z.string()).optional(),
         author: z.string().optional(),
+        breadcrumbs: z.array(z.any()).optional()
       })
     }),
     products: defineCollection({
@@ -346,6 +349,7 @@ export default defineContentConfig({
         externalAuthors: z.array(z.any()).optional(),
         externalCollaborators: z.array(z.string()).optional(),
         author: z.string().optional(),
+        breadcrumbs: z.array(z.any()).optional()
       })
     }),
     docs: defineCollection({
@@ -434,7 +438,8 @@ export default defineContentConfig({
         }).optional(),
         report: z.string().optional(),
         slug: z.string().regex(/^[a-z0-9_-]+$/i), // URL-safe slug validation,
-        products: z.array(z.any()).optional()
+        products: z.array(z.any()).optional(),
+        breadcrumbs: z.array(z.any()).optional()
       })
     }),
     products: defineCollection({
@@ -476,6 +481,7 @@ export default defineContentConfig({
         report: z.string().optional(),
         slug: z.string().regex(/^[a-z0-9_-]+$/i), // URL-safe slug validation,
         embedCode: z.string().optional(),
+        breadcrumbs: z.array(z.any()).optional()
       })
     }),
   }
