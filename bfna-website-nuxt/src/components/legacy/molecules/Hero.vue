@@ -14,7 +14,7 @@
       />
     </picture>
 
-    <AnnouncementCard v-if="route.path === '/'"/>
+    <AnnouncementCard :announcement="announcement" v-if="route.path === '/'"/>
 
     <div class="wrapper stack-l hero__content">
       <div>
@@ -80,6 +80,13 @@ const props = defineProps<{
     fallback?: string
     width: number
     height: number
+  },
+  announcement?: {
+    message: string
+    url: string
+    workstream: {
+      slug: string
+    }
   }
 }>()
 

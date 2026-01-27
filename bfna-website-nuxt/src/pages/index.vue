@@ -4,6 +4,7 @@
       v-if="homepageData?.hero"
       :hero="homepageData.hero"
       theme="default"
+      :announcement="announcement"
     />
 
     <div>
@@ -116,11 +117,13 @@ import LegacyMoleculesHighlightCard from '~/components/legacy/molecules/Highligh
 import LegacyMoleculesSplitSection from '~/components/legacy/molecules/SplitSection.vue'
 import LegacyTemplatesHomepageUpdates from '~/components/legacy/templates/HomepageUpdates.vue'
 import LegacyMoleculesDocCard from '~/components/legacy/molecules/DocCard.vue'
+import { useAnnouncement } from '~/composables/data/useAnnouncements';
 
 definePageMeta({
   layout: 'legacy-base',
 })
 
+const announcement = useAnnouncement();
 const highlightsData = await useHighlights()
 const { data: workstreamsData } = useWorkstreams()
 const publicationsData = useHomePublications()

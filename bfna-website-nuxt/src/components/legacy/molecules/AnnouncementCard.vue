@@ -1,6 +1,10 @@
 <script setup>
-import { useAnnouncement } from '~/composables/data/useAnnouncements';
-const announcement = useAnnouncement();
+defineProps({
+  announcement: {
+    type: Object,
+    required: true
+  }
+})
 
 </script>
 <template>
