@@ -41,10 +41,10 @@
           </p>
         </hgroup>
  
-        <div v-if="publication?.content"
-          class="prose__body"
-          v-html="publication.content"
-        ></div>
+        <div v-if="publication?.content" class="prose__body">
+          <p v-if="publication.excerpt" class="prose__intro">{{ publication.excerpt }}</p>
+          <div class="prose__content" v-html="publication.content"></div>
+        </div>
       </section>
 
     </div>

@@ -123,4 +123,45 @@
 }*/
 
 
+/* Fix: Regular paragraphs inside prose__content should not be highlighted */
+/* Only the excerpt (prose__intro) and blockquotes should have special styling */
+.prose__body .prose__content p {
+  font-size: 1rem;
+  line-height: 1.7;
+  font-weight: 400;
+  color: inherit;
+  margin: 1rem 0;
+}
 
+@media screen and (min-width: 40em) {
+  .prose__body .prose__content p {
+    font-size: 1.1rem;
+  }
+}
+
+@media screen and (min-width: 64em) {
+  .prose__body .prose__content p {
+    font-size: 1.15rem;
+    letter-spacing: normal;
+    margin: 1.5rem 0;
+  }
+}
+
+/* Blockquotes inside prose__content retain their special styling */
+.prose__body .prose__content blockquote p {
+  font-size: 1.2rem;
+  color: inherit;
+}
+
+@media screen and (min-width: 40em) {
+  .prose__body .prose__content blockquote p {
+    font-size: 1.5rem;
+  }
+}
+
+@media screen and (min-width: 64em) {
+  .prose__body .prose__content blockquote p {
+    font-size: 2rem;
+    line-height: 1.45;
+  }
+}
