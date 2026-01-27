@@ -14,6 +14,8 @@
       />
     </picture>
 
+    <AnnouncementCard v-if="route.path === '/'"/>
+
     <div class="wrapper stack-l hero__content">
       <div>
         <a class="hero__logo" href="/">

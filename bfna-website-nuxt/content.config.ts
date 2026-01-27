@@ -156,6 +156,29 @@ export default defineContentConfig({
         buttonLabel: z.string().optional()
       })
     }),
+    announcements: defineCollection({
+      type: 'data',
+      source: {
+        include: 'announcements/*.json',
+        cwd: contentDir
+      },
+      schema: z.object({
+        theme: z.string().optional(),
+        slug: z.string().regex(/^[a-z0-9_-]+$/i), // URL-safe slug validation,
+        url: z.string().optional(),
+        message: z.string(),
+        heading: z.string(),
+        excerpt: z.string().optional(),
+        workstream: z
+          .object({
+            heading: z.string(),
+            slug: z.string().regex(/^[a-z0-9_-]+$/i), // URL-safe slug validation,
+            excerpt: z.string(),
+            image: z.string().optional()
+          })
+          .optional()
+      })
+    }),
     publications: defineCollection({
       type: 'data',
       source: {
