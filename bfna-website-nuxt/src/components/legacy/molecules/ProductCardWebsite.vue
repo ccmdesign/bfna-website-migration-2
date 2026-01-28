@@ -61,8 +61,6 @@ const props = defineProps<{
   }
 }>()
 
-console.log(props.product);
-
 const router = useRouter();
 const navigateToSuperProductSlug = (product: any) => {
 

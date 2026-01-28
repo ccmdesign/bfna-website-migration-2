@@ -31,21 +31,19 @@ export function useTabs() {
     const updateTabBar = (activeTab: HTMLElement) => {
       if (!activeTab) return
 
-      const tabsList = tabsContainer.querySelector('.tabs__list') as HTMLElement
-      if (!tabsList) return
-
       // Get computed styles to extract padding
       const computedStyle = window.getComputedStyle(activeTab)
       const paddingLeft = parseFloat(computedStyle.paddingLeft) || 0
       const paddingRight = parseFloat(computedStyle.paddingRight) || 0
 
-      // Get the bounding rectangles to calculate position relative to the tabs list
-      const tabsListRect = tabsList.getBoundingClientRect()
+      // Get the bounding rectangles to calculate position relative to the tabs container
+      // The tabs__bar is positioned absolute within .tabs, so use .tabs as reference
+      const tabsContainerRect = (tabsContainer as HTMLElement).getBoundingClientRect()
       const activeTabRect = activeTab.getBoundingClientRect()
 
       // Calculate position starting from the tab item position plus its padding
       // This ensures the bar starts exactly where the text starts
-      const offsetLeft = (activeTabRect.left - tabsListRect.left) + paddingLeft + tabsList.scrollLeft
+      const offsetLeft = (activeTabRect.left - tabsContainerRect.left) + paddingLeft
       
       // Width should be the tab width minus both paddings (just the text area)
       const width = activeTabRect.width - paddingLeft - paddingRight
