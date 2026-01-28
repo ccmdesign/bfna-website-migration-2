@@ -21,6 +21,9 @@ const objectContructor = async (dir, fs) => {
       // Video URL
       i.videoUrl = common.videoURL(item.video_url);
 
+      // Content
+      i.content = common.convertToHTML(item.content || '');
+
       // published date
       i.publishDate = item.publish_date;
       i.date = item.publish_date;

@@ -76,12 +76,10 @@
             ></iframe>
           </figure>
         </div>
-  
-        <div
-          v-if="video?.content"
-          class="prose__body"
-          v-html="video.content"
-        ></div>
+        <div v-if="video?.content" class="prose__body">
+          <p v-if="video.excerpt" class="prose__intro">{{ video.excerpt }}</p>
+          <div class="prose__content" v-html="video.content"></div>
+        </div>
       </section>
     </div>
   </article>
