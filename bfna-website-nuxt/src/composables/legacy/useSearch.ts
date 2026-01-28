@@ -35,9 +35,9 @@ const getSearchData = async (term: string): Promise<SearchResult[]> => {
       throw new Error(`Search API error: ${res.status}`)
     }
     const results = await res.json()
- 
+
     return results
-    
+
   } catch (error) {
     // Log error in dev mode
     if (process.dev) {

@@ -4,6 +4,8 @@ interface SearchIndexItem {
   subheading?: string
   excerpt?: string
   theme?: string
+  slug?: string
+  type?: string
 }
 
 export default defineEventHandler(async (event) => {
@@ -33,7 +35,17 @@ export default defineEventHandler(async (event) => {
       const results: SearchIndexItem[] = await response.json()
 
       // Transform to result format matching legacy API
-      return results
+      return results.map((content) => {
+        const resultcontent = {
+          url: `/${content.item.theme}/${content.item.slug}`,
+          heading: content.item.heading,
+          subheading: content.item.subheading || null,
+          excerpt: content.item.excerpt || null,
+          theme: content.item.theme || null,
+          type: content.item.type || null,
+        }
+        return { item: resultcontent }
+      })
 
     } catch (error) {
       console.error('Error fetching search results:', error)
