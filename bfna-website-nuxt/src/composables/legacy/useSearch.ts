@@ -29,10 +29,15 @@ const getSearchData = async (term: string): Promise<SearchResult[]> => {
   
   try {
     const res = await fetch(`/api/search?term=${encodeURIComponent(trimmedTerm)}`)
+
+    
     if (!res.ok) {
       throw new Error(`Search API error: ${res.status}`)
     }
-    return res.json()
+    const results = await res.json()
+ 
+    return results
+    
   } catch (error) {
     // Log error in dev mode
     if (process.dev) {

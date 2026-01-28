@@ -6,8 +6,8 @@
   >
     <div class="search-form-container">
       <form class="search-form" autocomplete="off" @submit.prevent>
-        <input
-          v-model="search.query"
+        <input @change="doSearch"
+          v-model="search.query.value"
           type="text"
           class="search-input"
           placeholder="Search"
@@ -20,9 +20,9 @@
     </div>
 
     <div class="wrapper">
-      <div class="search-cards--list cards-section cards-section--updates">
+      <div v-if="search.results.value.length" class="search-cards--list cards-section cards-section--updates">
         <div
-          v-for="(result, index) in search.results"
+          v-for="(result, index) in search.results.value"
           :key="index"
           class="search-card-container"
           style="display: contents"
@@ -72,6 +72,11 @@ definePageMeta({
 })
 
 const search = useSearch()
+
+const doSearch = async () => {
+  await search.performSearch(search.query.value)
+}
+
 
 onMounted(() => {
   search.initializeFromStorage()
