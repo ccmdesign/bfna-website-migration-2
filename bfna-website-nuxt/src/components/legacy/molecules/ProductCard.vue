@@ -16,7 +16,7 @@
       </div>
       <footer class="product-card__footer">
         <a
-          :href="product.button?.url"
+          :href="`/${product.button?.url}`"
           :class="['button', 'button--primary', product.theme ? `button--${product.theme}` : '']"
           >{{ product.button?.label }}</a
         >

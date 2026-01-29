@@ -317,8 +317,6 @@ export const getButtons = (fields) => {
   return btnResult
 };
 
-// const showdown = require("showdown");
-
 export const convertToHTML = (md) => {
   const converter = new showdown.Converter();
   const html = converter.makeHtml(md);
