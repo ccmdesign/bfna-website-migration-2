@@ -13,13 +13,8 @@
         <h4 class="text-align:center"></h4>
       </hgroup>
       <div class="wrapper">
-        <div class="product-list stack-l">
-          <div
-            v-for="(product, index) in productData.products"
-            :key="index"
-          >
-            <ProductCardThin :product="product" />
-          </div>
+        <div class="product-list wrapper stack-l">
+        <ProductCardThin :product="product" v-for="(product, index) in productData.products" :key="index"/>
         </div>
       </div>
     </div>
