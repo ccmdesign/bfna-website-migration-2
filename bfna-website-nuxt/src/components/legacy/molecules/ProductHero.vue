@@ -21,11 +21,7 @@
           {{ product.subheading }}
         </h2>
 
-        <div
-          v-if="product.description"
-          class="product-hero__description"
-          v-html="product.description"
-        ></div>
+        <div v-if="product.description" class="product-hero__description" v-html="product.description"></div>
         
         <div
           v-if="product.embedCode"

@@ -39,9 +39,8 @@
           ><br v-if="isHomepage" />{{ hero.subheadingend }}
         </h2>
 
-        <p v-if="hero.description" class="hero__description">
-          {{ hero.description }}
-        </p>
+        <span v-if="hero.description" class="hero__description" v-html="hero.description">
+        </span>
       </hgroup>
 
       <footer>

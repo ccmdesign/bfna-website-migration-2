@@ -318,8 +318,34 @@ export const getButtons = (fields) => {
 };
 
 export const convertToHTML = (md) => {
-  const converter = new showdown.Converter();
-  const html = converter.makeHtml(md);
+  if (!md) return '';
+  
+  // Normalize line breaks and ensure proper paragraph separation
+  let normalizedMd = md
+    .replace(/\r\n/g, '\n')
+    .replace(/\r/g, '\n');
+  
+  const converter = new showdown.Converter({
+    simplifiedAutoLink: true,
+    excludeTrailingPunctuationFromURLs: true,
+    literalMidWordUnderscores: true,
+    strikethrough: true,
+    tables: true,
+    tasklists: true,
+    openLinksInNewWindow: true,
+    emoji: true,
+    parseImgDimensions: true,
+    headerLevelStart: 1,
+    ghCompatibleHeaderId: true,
+    backslashEscapesHTMLTags: true,
+  });
+  
+  let html = converter.makeHtml(normalizedMd);
+  
+  // Fallback: Convert any remaining markdown links that weren't converted
+  // Matches [text](url) pattern
+  html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+  
   const dom = new JSDOM(html);
 
   const figure = (item) =>
@@ -329,11 +355,11 @@ export const convertToHTML = (md) => {
   const imgs = dom.window.document.querySelectorAll("img");
 
   imgs.forEach((item, index) => {
-    getVideoThumbnail;
     imgs[index].outerHTML = figure(item);
   });
 
-  return dom.serialize();
+  // Return only the body innerHTML, not the full HTML document
+  return dom.window.document.body.innerHTML;
 };
 
 export const getExcerptFromContent = (md) => {

@@ -31,6 +31,7 @@ const objectContructor = async (dir, fs) => {
       i.productSectionDescription = item.product_section_description || null;
       i.buttonLabel = item.button_label || null;
       i.excerpt = item.excerpt || common.getExcerptFromContent(item.description);
+      i.description = common.convertToHTML(item.description || '');
       
       // Workstream data
       i.workstream = item.workstream ? {
