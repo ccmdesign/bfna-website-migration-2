@@ -6,25 +6,35 @@ const getProducts = async (productList: Array<{id: number, products_id: number, 
 
   if (!allProducts) return []
 
-  // Filter to only products in the productList
-  const filteredProducts = allProducts.filter((product) =>
-    productList.includes(product.productId)
-  )
+    // Extract IDs from the productList objects
+  const superProductIds = productList.map(item => item.products_id)
 
+  // Filter to only super products in the productList
+  const filteredProducts = allProducts.filter((product) => {
+    return superProductIds.includes(product.productId)
+  })
+
+  // Create a map of super_products_id to sort value for ordering
+  const sortMap = new Map(
+    productList.map(item => [item.products_id, item.sort])
+  )
 
   // Spread meta fields back to the top level and add sort value
   const productsWithMeta = filteredProducts.map((product) => {
+    const sortValue = sortMap.get(product.productId) || 999
     if (product.meta) {
       return {
         ...product,
         ...product.meta,
+        _sort: sortValue
       }
     }
-    return { ...product }
+    return { ...product, _sort: sortValue }
   })
 
   // Sort by the sort field from the relation
-  return productsWithMeta.sort((a, b) => b.productId - a.productId)
+  return productsWithMeta.sort((a, b) => a._sort - b._sort)
+
 }
 
 export const useSuperProduct = () => {

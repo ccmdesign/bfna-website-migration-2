@@ -10,7 +10,7 @@ const objectContructor = async (dir, fs) => {
       'cover_image.*',
       'workstream.*',
       'report.*',
-      'products.products_id.*',
+      'products.*',
     ]
 
     const items = await common.getDirectusData("super_products", junctionFields);
@@ -53,7 +53,7 @@ const objectContructor = async (dir, fs) => {
       i.breadcrumbs = common.getBreadcrumbs({ workstream: i.workstream.slug || 'default', title: i.heading });
 
       // Related Products
-      i.products = item.products ? item.products.map(prod => prod.products_id.id) : [];
+      i.products = item.products ? item.products.map(prod => prod) : [];
 
       delete i.cover_image;
       delete i.website_url;
