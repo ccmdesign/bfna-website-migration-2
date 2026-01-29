@@ -1,11 +1,13 @@
 interface SearchIndexItem {
-  url: string
-  heading: string
-  subheading?: string
-  excerpt?: string
-  theme?: string
-  slug?: string
-  type?: string
+  item: {
+    url: string
+    heading: string
+    subheading?: string
+    excerpt?: string
+    theme?: string
+    slug?: string
+    type?: string
+  }
 }
 
 export default defineEventHandler(async (event) => {

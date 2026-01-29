@@ -63,11 +63,11 @@ useHead({
 const aboutData = computed(() => {
   return {
     hero: {
-      heading: 'About Us',
-      subheading: 'The Bertelsmann Foundation (North America), Inc., established in 2008, was created to promote and strengthen the transatlantic relationship.',
+      heading: 'The Bertelsmann Foundation',
+      subheading: 'The Bertelsmann Foundation is an independent, nonpartisan, and nonprofit think tank in Washington, DC dedicated to a strong and lasting transatlantic relationship.',
     },
     video: {
-      url: '', // TODO: Add video URL from data
+      url: 'https://www.youtube.com/embed/epWnyP3KO1Y', // TODO: Add video URL from data
     },
   }
 })
