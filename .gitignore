@@ -44,3 +44,5 @@ spec-kit
 bfna-website-nuxt/scripts/
 bfna-website-nuxt/contentful-data/
 .github/
+
+bfna-website-legacy/
