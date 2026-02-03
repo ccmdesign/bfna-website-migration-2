@@ -1,27 +1,25 @@
-// import { directus, fetchWithFallback, getCachedData, setCachedData } from '~/utils/directus'
-// import type { Product } from '~/types/directus'
+export const useProducts = () => {
+  const { data: products } = useAsyncData('products', () => 
+    queryCollection('products')
+      .order('date', 'DESC')
+      .all(), 
+    {
+      transform: (data) => {
+        if (!data) return data
+        // Spread meta fields back to the top level
+        return data.map((product) => {
+          if (product.meta) {
+            return {
+              ...product,
+              ...product.meta,
+            }
+          }
+          return product
+        })
+      }
+    }
+  )
 
-// export const useProducts = () => {
-//   return useAsyncData('products', async () => {
-//     const cacheKey = 'directus:products'
-//     const cached = getCachedData<Product[]>(cacheKey)
-//     if (cached) {
-//       return cached
-//     }
-    
-//     const data = await fetchWithFallback<Product[]>(
-//       async () => {
-//         const response = await directus.items('products').readByQuery({
-//           limit: -1,
-//         })
-//         return response.data || []
-//       },
-//       '~/content/data/products.json',
-//       'products'
-//     )
-    
-//     setCachedData(cacheKey, data)
-//     return data
-//   })
-// }
+  return products
+}
 

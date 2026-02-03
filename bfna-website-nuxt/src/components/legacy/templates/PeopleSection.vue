@@ -61,13 +61,13 @@
             </div>
             <div v-if="person.email || person.twitter || person.linkedin" class="person-modal__links">
               <a v-if="person.email" :href="`mailto:${person.email}`" class="profile__icon email">
-                <img src="/_nuxt/public/images/icon/email.svg" alt="Email" />
+                <img src="/images/icon/email.svg" alt="Email" />
               </a>
               <a v-if="person.twitter" :href="person.twitter" target="_blank" class="profile__icon twitter">
-                <img src="/_nuxt/public/images/icon/twitter.svg" alt="Twitter" />
+                <img src="/images/icon/twitter.svg" alt="Twitter" />
               </a>
               <a v-if="person.linkedin" :href="person.linkedin" target="_blank" class="profile__icon linkedin">
-                <img src="/_nuxt/public/images/icon/linkedin.svg" alt="LinkedIn" />
+                <img src="/images/icon/linkedin.svg" alt="LinkedIn" />
               </a>
             </div>
           </aside>

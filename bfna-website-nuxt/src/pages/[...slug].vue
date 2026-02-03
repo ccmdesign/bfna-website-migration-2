@@ -13,10 +13,11 @@
         <h4 class="text-align:center"></h4>
       </hgroup>
       <div class="wrapper">
-        <div class="product-list stack-l">
-          <div v-for="(pc, index) in product.products" :key="index">
+        <div class="product-list wrapper stack-l">
+          <ProductCardThin v-for="(pc, index) in product.products" :key="index" :product="pc" />
+          <!-- <div v-for="(pc, index) in product.products" :key="index">
             <ProductCardThin v-if="product.isSuperProduct" :product="pc" />
-          </div>
+          </div> -->
           <section
             v-if="product?.people" class="secondary-section">
             <LegacyTemplatesPeopleSection :people="product.people" />

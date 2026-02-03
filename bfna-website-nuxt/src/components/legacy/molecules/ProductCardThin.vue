@@ -23,7 +23,10 @@
       <div class="product-card__body">
         <p>{{ product.excerpt }}</p>
       </div>
-      <footer class="product-card__footer">
+      <footer v-if="transponderButton" class="product-card__footer">
+        <a :href="transponderButton.url" class="button button--primary button--future-leadership">{{ transponderButton.label }}</a>
+      </footer>
+      <footer v-else class="product-card__footer">
         <a v-if="product.isPodcast":href="`${product.slug}`" class="button button--primary button--future-leadership">Learn More</a>
         <a v-else :href="product.button?.url" class="button button--primary button--future-leadership">Learn More</a>
       </footer>
@@ -77,6 +80,17 @@ onUpdated(() => {
     adjustImageSize()
   })
 })
+
+const transponderButton = computed(() => {
+  if (props.product.slug?.includes('transponder')) {
+    return {
+      label: 'Open full report',
+      url: `${props?.product?.report}`
+    }
+  }
+  return null
+})
+
 </script>
 
 <style scoped>

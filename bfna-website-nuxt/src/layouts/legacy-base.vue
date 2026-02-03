@@ -130,12 +130,12 @@ useHead({
       { rel: 'preload', as: 'image', href: heroBg.value.fallback, type: 'image/jpeg', imagesizes: '100vw', fetchpriority: 'high' }
     ] : []),
     // Legacy CSS - Loaded for Phase 3 visual parity
-    { rel: 'preload', href: '/_nuxt/public/css-legacy/global.css', as: 'style' },
-    { rel: 'stylesheet', href: '/_nuxt/public/css-legacy/global.css' },
-    { rel: 'preload', href: '/_nuxt/public/css-legacy/fixes.css', as: 'style' },
-    { rel: 'stylesheet', href: '/_nuxt/public/css-legacy/fixes.css' },
-    { rel: 'preload', href: '/_nuxt/public/css-legacy/v2updates.css', as: 'style' },
-    { rel: 'stylesheet', href: '/_nuxt/public/css-legacy/v2updates.css' },
+    { rel: 'preload', href: '/global.css', as: 'style' },
+    { rel: 'stylesheet', href: '/global.css' },
+    { rel: 'preload', href: '/fixes.css', as: 'style' },
+    { rel: 'stylesheet', href: '/fixes.css' },
+    { rel: 'preload', href: '/v2updates.css', as: 'style' },
+    { rel: 'stylesheet', href: '/v2updates.css' },
     // Favicon
     // { rel: 'apple-touch-icon', sizes: '120x120', href: '/favicon/apple-touch-icon.png' },
     // { rel: 'icon', type: 'image/png', sizes: '32x32', href: '/favicon/favicon-32x32.png' },
