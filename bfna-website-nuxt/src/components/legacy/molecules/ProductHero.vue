@@ -49,6 +49,7 @@
       </div>
       <div v-if="product.image?.url" class="product-hero__image">
         <NuxtImg
+          v-if="!isExternalImage(product.image.url)"
           :src="product.image.url"
           :width="1024"
           :height="768"
@@ -58,6 +59,14 @@
           format="webp"
           sizes="(min-width: 64em) 480px, (min-width: 40em) 60vw, 90vw"
         />
+        <img
+          v-else
+          :src="product.image.url"
+          loading="lazy"
+          decoding="async"
+          :alt="`${product.heading} | ${product.subheading}`"
+          sizes="(min-width: 64em) 480px, (min-width: 40em) 60vw, 90vw"
+        />
       </div>
     </div>
   </div>
@@ -65,6 +74,10 @@
 
 <script setup lang="ts">
 import LegacyMoleculesBreadcrumb from '~/components/legacy/molecules/Breadcrumb.vue'
+import { useExternalImage } from '~/composables/useExternalImage'
+
+const { isExternalImage } = useExternalImage()
+
 defineProps<{
   product: {
     theme?: string

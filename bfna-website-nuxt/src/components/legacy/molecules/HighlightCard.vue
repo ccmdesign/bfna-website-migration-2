@@ -14,6 +14,7 @@
         aria-hidden="true"
       >
         <NuxtImg
+          v-if="!isExternalImage(newItem.image)"
           :src="newItem.image"
           :width="480"
           :height="320"
@@ -21,6 +22,14 @@
           decoding="async"
           alt="Highlight card image"
           format="webp"
+          sizes="(min-width: 64em) 320px, (min-width: 40em) 45vw, 90vw"
+        />
+        <img
+          v-else
+          :src="newItem.image"
+          loading="lazy"
+          decoding="async"
+          alt="Highlight card image"
           sizes="(min-width: 64em) 320px, (min-width: 40em) 45vw, 90vw"
         />
       </figure>
@@ -61,6 +70,10 @@
 </template>
 
 <script setup lang="ts">
+import { useExternalImage } from '~/composables/useExternalImage'
+
+const { isExternalImage } = useExternalImage()
+
 const props = defineProps<{
   newItem: {
     theme?: string

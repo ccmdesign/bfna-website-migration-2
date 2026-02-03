@@ -20,6 +20,7 @@
         aria-hidden="true"
       >
         <NuxtImg
+          v-if="!isExternalImage(card.image.url)"
           :src="card.image.url"
           :width="card.image.width || 900"
           :height="card.image.height"
@@ -29,10 +30,19 @@
           format="webp"
           sizes="(min-width: 75em) 360px, (min-width: 48em) 50vw, 90vw"
         />
+        <img
+          v-else
+          :src="card.image.url"
+          loading="lazy"
+          decoding="async"
+          alt="Card image"
+          sizes="(min-width: 75em) 360px, (min-width: 48em) 50vw, 90vw"
+        />
       </figure>
 
       <figure v-if="card.video" class="card__video" aria-hidden="true">
         <NuxtImg
+          v-if="!isExternalImage(card.video.thumbnail)"
           :src="card.video.thumbnail"
           :width="900"
           :height="600"
@@ -40,6 +50,14 @@
           decoding="async"
           alt="Card video thumbnail"
           format="webp"
+          sizes="(min-width: 64em) 320px, (min-width: 48em) 50vw, 90vw"
+        />
+        <img
+          v-else
+          :src="card.video.thumbnail"
+          loading="lazy"
+          decoding="async"
+          alt="Card video thumbnail"
           sizes="(min-width: 64em) 320px, (min-width: 48em) 50vw, 90vw"
         />
       </figure>
@@ -76,6 +94,7 @@
 
 <script setup lang="ts">
 import { computed, onMounted } from 'vue';
+import { useExternalImage } from '~/composables/useExternalImage'
 
 const props = defineProps<{
   card: {
@@ -102,6 +121,7 @@ const props = defineProps<{
   }
 }>()
 
+const { isExternalImage } = useExternalImage()
 const router = useRouter();
 const navigateToContentSlug = (content: any) => {
   router.push({

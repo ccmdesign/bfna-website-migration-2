@@ -24,6 +24,7 @@
     </div>
     <div v-if="product.image?.url" class="product-card__image">
       <NuxtImg
+        v-if="!isExternalImage(product.image.url)"
         :src="product.image.url"
         :width="800"
         :height="600"
@@ -33,12 +34,22 @@
         format="webp"
         sizes="(min-width: 64em) 360px, (min-width: 48em) 40vw, 90vw"
       />
+      <img
+        v-else
+        :src="product.image.url"
+        loading="lazy"
+        decoding="async"
+        :alt="`${product.heading} | ${product.subheading}`"
+        sizes="(min-width: 64em) 360px, (min-width: 48em) 40vw, 90vw"
+      />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-defineProps<{
+import { useExternalImage } from '~/composables/useExternalImage'
+
+const props = defineProps<{
   product: {
     theme?: string
     type?: string
@@ -54,5 +65,7 @@ defineProps<{
     }
   }
 }>()
+
+const { isExternalImage } = useExternalImage()
 </script>
 

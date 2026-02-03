@@ -14,7 +14,7 @@
         >
           <figure>
             <NuxtImg
-              v-if="person.image"
+              v-if="person.image && !isExternalImage(person.image)"
               :src="person.image"
               :width="480"
               :height="480"
@@ -22,6 +22,14 @@
               decoding="async"
               :alt="person.name"
               format="webp"
+              sizes="(min-width: 64em) 240px, (min-width: 40em) 33vw, 80vw"
+            />
+            <img
+              v-else-if="person.image"
+              :src="person.image"
+              loading="lazy"
+              decoding="async"
+              :alt="person.name"
               sizes="(min-width: 64em) 240px, (min-width: 40em) 33vw, 80vw"
             />
           </figure>
@@ -46,7 +54,7 @@
             <div class="person-item">
               <figure>
                 <NuxtImg
-                  v-if="person.image"
+                  v-if="person.image && !isExternalImage(person.image)"
                   :src="person.image"
                   :width="480"
                   :height="480"
@@ -54,6 +62,13 @@
                   decoding="async"
                   :alt="person.name"
                   format="webp"
+                />
+                <img
+                  v-else-if="person.image"
+                  :src="person.image"
+                  loading="lazy"
+                  decoding="async"
+                  :alt="person.name"
                 />
               </figure>
               <h3>{{ person.name }}</h3>
@@ -79,6 +94,10 @@
 </template>
 
 <script setup lang="ts">
+import { useExternalImage } from '~/composables/useExternalImage'
+
+const { isExternalImage } = useExternalImage()
+
 defineProps<{
   people: Array<any>
 }>()

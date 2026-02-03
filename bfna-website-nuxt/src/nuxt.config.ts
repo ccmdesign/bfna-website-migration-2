@@ -37,6 +37,24 @@ export default defineNuxtConfig({
     '@vueuse/nuxt',
     '@nuxt/image'
   ],
+  image: {
+    // Allow external domains for images
+    domains: ['bfna.simplyas.com'],
+    // Let Nuxt Image auto-detect the provider (Netlify will use its native service)
+    // For external images, components use regular img tags to bypass optimization
+    provider: process.env.NUXT_IMAGE_PROVIDER || undefined,
+    // Quality settings for optimized images
+    quality: 80,
+    // Screen breakpoints for responsive images
+    screens: {
+      xs: 320,
+      sm: 640,
+      md: 768,
+      lg: 1024,
+      xl: 1280,
+      xxl: 1536,
+    }
+  },
   runtimeConfig: {
     public: {
     }
