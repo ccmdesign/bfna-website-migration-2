@@ -79,7 +79,7 @@ const navigateToSuperProductSlug = (product: any) => {
   if (product.isSuperProduct && product.theme === 'podcasts') {
     // Navigate to podcasts page
     const slug = product.isSuperProduct ? product.slug : product.slug
-    const url = slug.startsWith('/') ? slug : `/${slug}`
+    const url = slug.startsWith('/') ? `podcasts/${slug}` : `/podcasts/${slug}`
     router.push(url)
   } else {
     // Navigate to content-slug page
