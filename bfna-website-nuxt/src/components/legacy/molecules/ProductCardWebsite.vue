@@ -74,21 +74,19 @@ const props = defineProps<{
 
 const { isExternalImage } = useExternalImage()
 const router = useRouter();
+
 const navigateToSuperProductSlug = (product: any) => {
-
-  if(product.isSuperProduct && product.theme === 'podcasts') {
-    router.push({
-      name: `podcasts-slug`,
-      path: product.isSuperProduct ? `${product.slug}` : product.slug,
-      params: { slug: product.isSuperProduct ? `${product.slug}` : product.slug }
-    });
-
+  if (product.isSuperProduct && product.theme === 'podcasts') {
+    // Navigate to podcasts page
+    const slug = product.isSuperProduct ? product.slug : product.slug
+    const url = slug.startsWith('/') ? slug : `/${slug}`
+    router.push(url)
   } else {
-    router.push({
-      name: `content-slug`,
-      path: product.slug,
-      params: { slug: `${product.theme}/${product.slug}` }
-    });
+    // Navigate to content-slug page
+    const slug = product.slug
+    const theme = product.theme || ''
+    const url = theme ? `/${theme}/${slug}` : (slug.startsWith('/') ? slug : `/${slug}`)
+    router.push(url)
   }
 }
 </script>

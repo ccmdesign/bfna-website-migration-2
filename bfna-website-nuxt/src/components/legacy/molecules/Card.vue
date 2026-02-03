@@ -123,12 +123,17 @@ const props = defineProps<{
 
 const { isExternalImage } = useExternalImage()
 const router = useRouter();
+
 const navigateToContentSlug = (content: any) => {
-  router.push({
-    name: `content-slug`,
-    path: content.button?.url,
-    params: { slug: content.button.url }
-  });
+  const url = content.button?.url
+  if (!url) return
+  
+  // Remove leading slash if present and normalize the URL
+  const normalizedUrl = url.startsWith('/') ? url : `/${url}`
+  
+  // For catch-all routes, just push the path directly
+  // Nuxt will automatically parse it into slug params
+  router.push(normalizedUrl)
 }
 
 const truncate = (text: string, length: number) => {
