@@ -44,8 +44,12 @@ export default defineNuxtConfig({
     // For external images, components use regular img tags to bypass optimization
     provider: process.env.NUXT_IMAGE_PROVIDER || undefined,
     // Quality settings for optimized images
-    quality: 80,
-    // Screen breakpoints for responsive images
+    // Raised 80 -> 90 for BF-51 parity (matches live Eleventy q=80 -> q=90)
+    quality: 90,
+    // Screen breakpoints for responsive images.
+    // Ceiling extended toward the live BF-51 ladder (~2400w hero/website,
+    // ~1920w smaller card) so retina/desktop product boxes are not forced
+    // to upscale a too-small source. See PR body Q2 re: provider resize.
     screens: {
       xs: 320,
       sm: 640,
@@ -53,6 +57,8 @@ export default defineNuxtConfig({
       lg: 1024,
       xl: 1280,
       xxl: 1536,
+      '3xl': 1920,
+      '4xl': 2400,
     }
   },
   runtimeConfig: {

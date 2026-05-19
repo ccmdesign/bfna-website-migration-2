@@ -10,13 +10,13 @@
       <NuxtImg
         v-if="!isExternalImage(product.image.url)"
         :src="product.image.url"
-        :width="800"
-        :height="600"
+        :width="1280"
+        :height="960"
         loading="lazy"
         decoding="async"
         :alt="`${product.heading} | ${product.subheading}`"
-        format="webp"
-        sizes="(min-width: 64em) 400px, (min-width: 48em) 45vw, 90vw"
+        :format="isPng(product.image.url) ? undefined : 'webp'"
+        sizes="(min-width: 64em) 1000px, (min-width: 48em) 60vw, 90vw"
       />
       <img
         v-else
@@ -24,7 +24,7 @@
         loading="lazy"
         decoding="async"
         :alt="`${product.heading} | ${product.subheading}`"
-        sizes="(min-width: 64em) 400px, (min-width: 48em) 45vw, 90vw"
+        sizes="(min-width: 64em) 1000px, (min-width: 48em) 60vw, 90vw"
       />
     </div>
     <div class="product-card__content">
@@ -72,7 +72,7 @@ const props = defineProps<{
   }
 }>()
 
-const { isExternalImage } = useExternalImage()
+const { isExternalImage, isPng } = useExternalImage()
 const router = useRouter();
 
 const navigateToSuperProductSlug = (product: any) => {

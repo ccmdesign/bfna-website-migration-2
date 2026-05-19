@@ -10,7 +10,7 @@
     <img 
       ref="imageRef"
       :src="product.image?.url" 
-      sizes="(min-width: 64em) 320px, (min-width: 40em) 45vw, 90vw" 
+      sizes="(min-width: 64em) 360px, (min-width: 40em) 45vw, 90vw"
       loading="lazy" 
       decoding="async" 
       :alt="product.heading"
