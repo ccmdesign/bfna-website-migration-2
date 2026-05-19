@@ -56,8 +56,8 @@
           loading="lazy"
           decoding="async"
           :alt="`${product.heading} | ${product.subheading}`"
-          format="webp"
-          sizes="(min-width: 64em) 480px, (min-width: 40em) 60vw, 90vw"
+          :format="isPng(product.image.url) ? undefined : 'webp'"
+          sizes="(min-width: 80em) 600px, (min-width: 50em) 45vw, 90vw"
         />
         <img
           v-else
@@ -65,7 +65,7 @@
           loading="lazy"
           decoding="async"
           :alt="`${product.heading} | ${product.subheading}`"
-          sizes="(min-width: 64em) 480px, (min-width: 40em) 60vw, 90vw"
+          sizes="(min-width: 80em) 600px, (min-width: 50em) 45vw, 90vw"
         />
       </div>
     </div>
@@ -76,7 +76,7 @@
 import LegacyMoleculesBreadcrumb from '~/components/legacy/molecules/Breadcrumb.vue'
 import { useExternalImage } from '~/composables/useExternalImage'
 
-const { isExternalImage } = useExternalImage()
+const { isExternalImage, isPng } = useExternalImage()
 
 defineProps<{
   product: {

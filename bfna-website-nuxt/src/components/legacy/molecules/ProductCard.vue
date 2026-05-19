@@ -31,8 +31,8 @@
         loading="lazy"
         decoding="async"
         :alt="`${product.heading} | ${product.subheading}`"
-        format="webp"
-        sizes="(min-width: 64em) 360px, (min-width: 48em) 40vw, 90vw"
+        :format="isPng(product.image.url) ? undefined : 'webp'"
+        sizes="(min-width: 64em) 560px, (min-width: 48em) 45vw, 90vw"
       />
       <img
         v-else
@@ -40,7 +40,7 @@
         loading="lazy"
         decoding="async"
         :alt="`${product.heading} | ${product.subheading}`"
-        sizes="(min-width: 64em) 360px, (min-width: 48em) 40vw, 90vw"
+        sizes="(min-width: 64em) 560px, (min-width: 48em) 45vw, 90vw"
       />
     </div>
   </div>
@@ -66,6 +66,6 @@ const props = defineProps<{
   }
 }>()
 
-const { isExternalImage } = useExternalImage()
+const { isExternalImage, isPng } = useExternalImage()
 </script>
 
