@@ -6,8 +6,58 @@ autofix_class: advisory
 owner: human
 source: ce:review autofix — PR #1 (bfna-website-migration-2), run 20260519-073405-3ec2ee2a
 requires_verification: true
-status: open
+status: deferred-to-browser-tests
+resolved_by: todo-resolve (static reasoning pass, 2026-05-19)
 ---
+
+## Resolution (todo-resolve static pass, 2026-05-19)
+
+**Static-verifiable claims: CONFIRMED. Production-build / runtime steps: DEFERRED to
+browser tests (Step 5) — they genuinely require `npm run build` + a running browser
+with the deployed `@nuxt/image` provider and cannot be settled by static reasoning.**
+
+Verified against the read-only live Eleventy reference
+(`ccmdesign/bfna-website`, working tree clean at HEAD `e58f9ea`+`e791506` =
+the two BF-50 fix commits) and the worktree source:
+
+- `src/directus/common.js:62-63` `getImage()` = `${process.env.BASE_URL}/assets/{imageId}`
+  — param-less, extension-less. CONFIRMED verbatim.
+- `src/composables/useExternalImage.ts` `isExternalImage()` returns external for any
+  host that is not localhost / 127.0.0.1 / `bfna-site-v2.netlify.app` — so the
+  Directus host `bfna.simplyas.com` is treated **external**. CONFIRMED.
+- All four product components (`ProductHero.vue`, `ProductCard.vue`,
+  `ProductCardWebsite.vue`, `ProductCardThin.vue`) render product images via the
+  external plain-`<img>` fallback branch (`v-else` of `!isExternalImage(...)`),
+  with no `srcset`. CONFIRMED. Therefore `@nuxt/image` does **not** process product
+  images on the current code path — the U4/U5 changes are a correct, inert-today
+  parity port, exactly as this todo states. Not dead/wrong code.
+- U5 config is in place: `src/nuxt.config.ts` `quality: 90`, `screens` extended with
+  `'3xl': 1920, '4xl': 2400` (live ~2400w ceiling), `domains: ['bfna.simplyas.com']`,
+  `provider: process.env.NUXT_IMAGE_PROVIDER || undefined`. CONFIRMED.
+- U4 component changes in place: matching corrected `sizes` on both the `<NuxtImg>`
+  and the external `<img>` fallback in all four components; PNG passthrough via
+  `:format="isPng(url) ? undefined : 'webp'"` (+ new `isPng()` helper, tolerant of
+  Directus query/fragment). CONFIRMED. `ProductCardThin.vue` `adjustImageSize()` JS +
+  scoped CSS left intact (D6 publication/"Nate 3D book" scope guard). CONFIRMED.
+- BF-50 crop/centering CSS half is **fully effective**: `global.css` is byte-identical
+  to the proven live file (74984 B, 0-byte diff) — see BF-60-002. CONFIRMED.
+
+**Deferred to browser tests (Step 5) — NOT guessed, genuinely build/runtime-bound:**
+Action items 1–4 below all require a production-like build (Netlify Image CDN
+provider) and devtools inspection of rendered `srcset`/`currentSrc` at 1440px retina.
+Static analysis can only establish the *expected* outcome (the external Directus
+domain is not resized by the default provider, so the blur persists for product
+images until the deferred Directus-aware provider / native-transform-param work
+lands — plan "Deferred to Follow-Up Work", Q2/Q4/Q5). It cannot *empirically confirm*
+the rendered srcset without running the build/browser. This is owned by the
+downstream browser-test step and the deferred Directus-provider follow-up; do NOT
+block PR #1.
+
+Note (environment, out of scope): the `useExternalImage` vitest spec could not be
+executed in this worktree — `@vue/test-utils` (optional peer of `@nuxt/test-utils`)
+is not installed in the worktree `node_modules`. Pre-existing env/install gap,
+unrelated to either todo; the logic is fully verified by direct code inspection
+above. Flagged for the build/CI step, not fixed here (out of scope).
 
 # Verify BF-51 blur fix in production / resolve deferred Directus-provider rework
 
