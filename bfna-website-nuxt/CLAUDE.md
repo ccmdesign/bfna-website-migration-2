@@ -2,6 +2,9 @@
 
 Guidance for Claude Code when collaborating on this repository.
 
+## Scope: 2026 Content Restructure
+The BFNA content restructure (per Irene's Jul 29, 2026 email + `BFNA website_text.docx`) is implemented **only in this new Directus/Nuxt version — it is the reason this migration exists**. Never apply it to the old Contentful site. The restructure: 4 programs → 3 (Digital Economy dropped; "Politics & Society" renamed "Transatlantic Relations & Global Challenges"); Transatlantic Barometer, RANGE, and Transatlantic Periscope become projects under that renamed program; new About Us and project descriptions. Conversely, day-to-day content updates for the current live site (e.g. podcast episodes) go to the old Contentful stack / HTFD repo, not here.
+
 ## Project Snapshot
 - **Framework**: Nuxt 3.16 (Vue 3.5, SSR enabled)
 - **Source Root**: All application code lives in `src/`
