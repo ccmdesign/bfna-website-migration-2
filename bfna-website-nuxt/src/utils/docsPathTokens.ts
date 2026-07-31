@@ -4,7 +4,7 @@ const TOKEN_MAP = {
     public: '/docs/demos'
   },
   '${PATH_COMPONENT_DOCS_OUTPUT}': {
-    import: '~/public/component-docs',
+    import: '~~/public/component-docs',
     public: '/component-docs'
   },
   '${PATH_DS_COMPONENTS}': {
@@ -36,7 +36,7 @@ function ensureLeadingSlash(value: string): string {
 }
 
 function ensureImportPrefix(value: string): string {
-  if (value.startsWith('~/') || value.startsWith('./') || value.startsWith('../') || value.startsWith('/')) {
+  if (value.startsWith('~~/') || value.startsWith('~/') || value.startsWith('./') || value.startsWith('../') || value.startsWith('/')) {
     return value
   }
   return `~/${value.replace(/^\/+/, '')}`

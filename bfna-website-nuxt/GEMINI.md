@@ -9,7 +9,7 @@ Guidance for Gemini when collaborating on this Nuxt 3 boilerplate repository.
 - **Framework**: Nuxt 3.16 (Vue 3.5, SSR enabled)
 - **Source Root**: All application code lives in `src/`
 - **Content System**: `@nuxt/content` driving Markdown collections under `src/content/`
-- **Styling**: CUBE CSS methodology with layered CSS served from `src/public/css/styles.css`
+- **Styling**: CUBE CSS methodology with layered CSS served from `public/css/styles.css`
 - **Testing**: Vitest via `@nuxt/test-utils`
 
 ## Essential Commands
@@ -78,7 +78,7 @@ _process/           # Planning, specs, and project management
 - Token system:
   - Primitive tokens: Base values (colors, spacing, fonts)
   - Semantic tokens: Context-specific aliases referencing primitives
-  - Organized in `src/public/css/tokens/` directory
+  - Organized in `public/css/tokens/` directory
 - Use `npm run validate:tokens` to check token consistency
 
 ## Implementation Guidelines

@@ -32,7 +32,7 @@ class TokenValidator {
   private fix: boolean
 
   constructor(fix: boolean = false) {
-    this.cssDir = path.join(process.cwd(), 'src', 'public', 'css')
+    this.cssDir = path.join(process.cwd(), 'public', 'css')
     this.fix = fix
   }
 

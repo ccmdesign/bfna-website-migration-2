@@ -106,7 +106,7 @@ const toComponentSlug = (name) => {
 // Fetch components index with static-first + API fallback
 const loadStaticComponentIndex = async () => {
   try {
-    const module = await import('~/public/component-docs/index.json')
+    const module = await import('~~/public/component-docs/index.json')
     const items = module.default || module
     if (Array.isArray(items)) {
       return items.filter((i) => i && i.name)

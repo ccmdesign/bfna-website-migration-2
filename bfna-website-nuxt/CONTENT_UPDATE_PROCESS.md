@@ -123,7 +123,7 @@ echo "✅ Content update complete!"
 - Clear build cache: `rm -rf .output .nuxt node_modules/.cache`
 
 ### Missing Static Assets
-- Verify assets exist in `src/public/`
+- Verify assets exist in `public/`
 - Check that assets are referenced correctly in components
 - Ensure build output includes assets in `.output/public/`
 

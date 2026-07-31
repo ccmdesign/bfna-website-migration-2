@@ -12,12 +12,12 @@ repo/
 │   ├── content/           # Markdown/JSON for @nuxt/content
 │   ├── layouts/           # Frame-level layouts
 │   ├── pages/             # File-based routes (orchestration only)
-│   ├── public/            # Static assets and layered CSS
 │   ├── server/            # Nitro API routes
 │   ├── tests/             # Vitest specs mirroring source paths
 │   ├── utils/             # Shared TypeScript helpers
 │   ├── nuxt.config.ts     # Nuxt configuration exporting srcDir/rootDir
 │   └── content.config.ts  # @nuxt/content collections
+├── public/                # Static assets and layered CSS (served at /)
 ├── package.json
 ├── package-lock.json
 ├── .nuxt/ .output/ dist/  # Generated artefacts (ignored)
@@ -48,7 +48,7 @@ Maintain parity between prompts and guidelines: update governance docs when proc
 
 ## Content & Styling
 - Content entries live in `src/content/` and are defined through `content.config.ts` collections.
-- Layered CSS originates from `src/public/css/styles.css`, with individual files wrapping declarations in `@layer` to preserve cascade order.
-- Static assets are served from `src/public/`; Vercel/Netlify builds keep `.output/` at the repository root.
+- Layered CSS originates from `public/css/styles.css`, with individual files wrapping declarations in `@layer` to preserve cascade order.
+- Static assets are served from `public/`; Vercel/Netlify builds keep `.output/` at the repository root.
 
 For rollback steps, follow Section 7 of the quickstart guide.

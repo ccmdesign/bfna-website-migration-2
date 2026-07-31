@@ -8,7 +8,7 @@ import { getDesignSystemComponentEntries } from '../src/utils/designSystemRegist
 
 async function run() {
   const root = process.cwd()
-  const outDir = resolve(root, 'src/public/component-docs')
+  const outDir = resolve(root, 'public/component-docs')
   const docsDir = resolve(root, 'src/content/docs/components')
   const legacyComponentsDir = resolve(root, '_process/docs-deprecated/components')
   const promptPath = resolve(root, 'src/content/docs/prompts/component-docs.prompt.md')

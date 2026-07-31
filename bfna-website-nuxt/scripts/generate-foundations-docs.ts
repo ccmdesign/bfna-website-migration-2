@@ -33,8 +33,8 @@ async function run() {
   await mkdir(guidelinesDir, { recursive: true })
 
   const prompt = await loadPromptMetadata(promptPath)
-  const tokens = await collectTokens(resolve(root, 'src/public/css/tokens'))
-  const layers = await collectLayers(resolve(root, 'src/public/css'))
+  const tokens = await collectTokens(resolve(root, 'public/css/tokens'))
+  const layers = await collectLayers(resolve(root, 'public/css'))
 
   await writeFile(tokensOutputPath, JSON.stringify(tokens, null, 2), 'utf8')
   await writeFile(layersOutputPath, JSON.stringify(layers, null, 2), 'utf8')
@@ -226,7 +226,7 @@ function buildTokensDoc(options: {
   return [
     head,
     '## Scope',
-    '- Token data extracted from `src/public/css/tokens/*`.',
+    '- Token data extracted from `public/css/tokens/*`.',
     '',
     '## Principles',
     '- TODO: Align with semantic token guidelines.',

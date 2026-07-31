@@ -78,11 +78,11 @@ export default defineNuxtConfig({
   },
   css: [
     // New Nuxt CSS - COMMENTED OUT for Phase 3 to use legacy CSS only
-    // '~/public/css/styles.css',
+    // '~~/public/css/styles.css',
     // Legacy CSS loaded via layout instead of here to ensure proper loading order
-    // '~/public/css-legacy/global.css',
-    // '~/public/css-legacy/fixes.css',
-    // '~/public/css-legacy/v2updates.css'
+    // '~~/public/css-legacy/global.css',
+    // '~~/public/css-legacy/fixes.css',
+    // '~~/public/css-legacy/v2updates.css'
   ],
   postcss: {
     plugins: {

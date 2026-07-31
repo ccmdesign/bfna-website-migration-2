@@ -9,7 +9,7 @@ The BFNA content restructure (per Irene's Jul 29, 2026 email + `BFNA website_tex
 - **Framework**: Nuxt 3.16 (Vue 3.5, SSR enabled)
 - **Source Root**: All application code lives in `src/`
 - **Content System**: `@nuxt/content` driving Markdown collections under `src/content/`
-- **Styling**: CUBE CSS methodology with layered CSS served from `src/public/css/styles.css`
+- **Styling**: CUBE CSS methodology with layered CSS served from `public/css/styles.css`
 - **Testing**: Vitest via `@nuxt/test-utils`
 
 ## Essential Commands
@@ -37,7 +37,7 @@ npx eslint src --ext .ts,.vue    # lint application code
 - `src/content/`: Markdown sources with two collections:
   - `blog/`: Blog posts
   - `docs/`: Documentation (including component specs)
-- `src/public/`: Static assets + layered CSS directory structure
+- `public/`: Static assets + layered CSS directory structure
 - `src/server/`: Nitro API routes (e.g., `api/contact.post.ts`)
 - `src/tests/`: Vitest specs organized by feature (`config/`, `tokens/`)
 - `_process/`: Planning, specs, and project management
@@ -58,7 +58,7 @@ npx eslint src --ext .ts,.vue    # lint application code
 - Token system:
   - Primitive tokens: Base values (colors, spacing, fonts)
   - Semantic tokens: Context-specific aliases referencing primitives
-  - Organized in `src/public/css/tokens/` directory
+  - Organized in `public/css/tokens/` directory
 - Use `npm run validate:tokens` to check token consistency
 
 ## Content Workflow
@@ -89,7 +89,7 @@ When implementing features, follow the **composition-first** approach:
 **Quick Reference:**
 - **DS components**: All available components are in [`src/components/ds/`](src/components/ds/) - each prefixed with `ccm`
 - **Component demos**: Interactive demos at [`src/pages/docs/`](src/pages/docs/)
-- **Component docs**: Auto-generated JSON in [`src/public/component-docs/`](src/public/component-docs/) served via `/docs/<component>`
+- **Component docs**: Auto-generated JSON in [`public/component-docs/`](public/component-docs/) served via `/docs/<component>`
 - **Utility classes**: Spacing (`.padding-block\:m`), colors (`.color\:primary`), typography (`.font-size\:1`)
 - **Design tokens**: 800+ tokens for colors, spacing, typography (use semantic tokens first: `--color-primary`, `--space-m`)
 - **Composables**: `useContentStream()`, `useContentItem()`, `useSlugify()`
