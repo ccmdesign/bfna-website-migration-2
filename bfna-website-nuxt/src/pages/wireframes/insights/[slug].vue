@@ -1,70 +1,52 @@
 <template>
   <div v-if="insight" class="stack" data-gap="xl">
     <!-- GGS: standardized structure — same things in the same places, on every insight -->
-    <section class="wf-slot" data-label="Insight header">
-      <div class="center | stack" data-gap="s" style="padding-block: var(--space-l);">
-        <nav aria-label="Breadcrumb">
-          <NuxtLink to="/wireframes">Home</NuxtLink> /
-          <NuxtLink to="/wireframes/insights">Insights</NuxtLink>
-        </nav>
-        <div class="cluster" data-gap="xs">
-          <span class="wf-chip">{{ formatLabel(insight.format) }}</span>
-          <span v-if="insight.program" class="wf-chip">{{ insight.program }}</span>
-          <span v-for="ps in insight.projects" :key="ps" class="wf-chip">{{ programName(ps) }}</span>
-          <span v-if="insight.archived" class="wf-chip">Archive</span>
-        </div>
-        <h1>{{ insight.heading }}</h1>
-        <p v-if="insight.subheading"><strong>{{ insight.subheading }}</strong></p>
-        <p class="cluster" data-gap="s">
-          <span v-if="insight.authors?.length">By {{ insight.authors.join(', ') }}</span>
-          <span v-else>By [author]</span>
-          <time>{{ monthYear(insight.publish_date) }}</time>
-        </p>
+    <wf-section label="Insight header" gap="s" padded>
+      <nav aria-label="Breadcrumb">
+        <NuxtLink to="/wireframes">Home</NuxtLink> /
+        <NuxtLink to="/wireframes/insights">Insights</NuxtLink>
+      </nav>
+      <div class="cluster" data-gap="xs">
+        <span class="wf-chip">{{ formatLabel(insight.format) }}</span>
+        <span v-if="insight.program" class="wf-chip">{{ insight.program }}</span>
+        <span v-for="ps in insight.projects" :key="ps" class="wf-chip">{{ programName(ps) }}</span>
+        <span v-if="insight.archived" class="wf-chip">Archive</span>
       </div>
-    </section>
+      <h1>{{ insight.heading }}</h1>
+      <p v-if="insight.subheading"><strong>{{ insight.subheading }}</strong></p>
+      <p class="cluster" data-gap="s">
+        <span v-if="insight.authors?.length">By {{ insight.authors.join(', ') }}</span>
+        <span v-else>By [author]</span>
+        <time>{{ monthYear(insight.publish_date) }}</time>
+      </p>
+    </wf-section>
 
     <!-- Archive banner (GGS: archived stays live + indexed, but labeled) -->
-    <section v-if="insight.archived" class="wf-slot" data-label="Archive banner">
-      <div class="center">
-        <p class="wf-note">{{ bannerText }} <a href="#">See recent work on {{ insight.program }}</a></p>
-      </div>
-    </section>
+    <wf-section v-if="insight.archived" label="Archive banner" layout="plain">
+      <p class="wf-note">{{ bannerText }} <a href="#">See recent work on {{ insight.program }}</a></p>
+    </wf-section>
 
     <!-- Body -->
-    <section class="wf-slot" data-label="Body">
-      <div class="center | stack" data-gap="m" data-measure="narrow">
-        <p><em>{{ plain(insight.excerpt) }}</em></p>
-        <img v-if="insight.image" :src="insight.image" :alt="insight.heading ?? ''" style="aspect-ratio: 16/9; width: 100%; object-fit: cover;">
-        <div v-else class="wf-media" style="--wf-ratio: 16/9;" />
-        <!-- Real body from the consolidated dataset when present -->
-        <p v-for="para in bodyParas" :key="para.slice(0, 24)">{{ para }}</p>
-        <p v-if="insight.download"><a :href="'#'" class="wf-button">Download the report (PDF)</a></p>
-      </div>
-    </section>
+    <wf-section label="Body" measure="narrow">
+      <p><em>{{ plain(insight.excerpt) }}</em></p>
+      <wf-media :src="insight.image" :alt="insight.heading ?? ''" ratio="16/9" />
+      <!-- Real body from the consolidated dataset when present -->
+      <p v-for="para in bodyParas" :key="para.slice(0, 24)">{{ para }}</p>
+      <p v-if="insight.download"><a :href="'#'" class="wf-button">Download the report (PDF)</a></p>
+    </wf-section>
 
     <!-- GGS: machine-readable relationships + onward journey -->
-    <section class="wf-slot" data-label="Related insights">
-      <div class="center | stack" data-gap="m">
-        <h2>More on {{ insight.program }}</h2>
-        <div class="grid" data-min-width="m" data-gap="m">
-          <article v-for="i in related" :key="i.slug" class="wf-card">
-            <div class="cluster" data-gap="xs">
-              <span class="wf-chip">{{ formatLabel(i.format) }}</span>
-            </div>
-            <h3><NuxtLink :to="`/wireframes/insights/${i.slug}`">{{ i.heading }}</NuxtLink></h3>
-            <time>{{ monthYear(i.publish_date) }}</time>
-          </article>
-        </div>
+    <wf-section label="Related insights" :heading="`More on ${insight.program}`">
+      <div class="grid" data-min-width="m" data-gap="m">
+        <wf-card-insight v-for="i in related" :key="i.slug" :insight="i" />
       </div>
-    </section>
+    </wf-section>
 
     <!-- Conversion slot -->
-    <section class="wf-slot" data-label="Subscribe CTA">
-      <div class="center | cluster" data-gap="s">
-        <span>Subscribe to receive our updates &amp; newsletters</span>
-        <NuxtLink to="/wireframes/#subscribe" class="wf-button" data-variant="primary">Subscribe</NuxtLink>
-      </div>
-    </section>
+    <wf-section label="Subscribe CTA" layout="cluster" gap="s">
+      <span>Subscribe to receive our updates &amp; newsletters</span>
+      <NuxtLink to="/wireframes/#subscribe" class="wf-button" data-variant="primary">Subscribe</NuxtLink>
+    </wf-section>
   </div>
 
   <div v-else class="center | stack" style="padding-block: var(--space-xl);">

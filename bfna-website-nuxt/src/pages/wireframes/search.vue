@@ -1,27 +1,23 @@
 <template>
   <div class="stack" data-gap="xl">
-    <section class="wf-slot" data-label="Search">
-      <div class="center | stack" data-gap="s" style="padding-block: var(--space-l);">
-        <h1>Search</h1>
-        <div class="cluster" data-gap="s">
-          <input v-model="q" type="search" placeholder="Search insights, projects, people…" aria-label="Search" style="min-width: 20rem;">
-        </div>
+    <wf-section label="Search" gap="s" padded>
+      <h1>Search</h1>
+      <div class="cluster" data-gap="s">
+        <input v-model="q" type="search" placeholder="Search insights, projects, people…" aria-label="Search" style="min-width: 20rem;">
       </div>
-    </section>
+    </wf-section>
 
-    <section v-if="q.length > 1" class="wf-slot" data-label="Results">
-      <div class="center | stack" data-gap="m">
-        <p><strong>{{ results.length }}</strong> results for “{{ q }}”</p>
-        <div class="stack" data-gap="s">
-          <article v-for="r in results.slice(0, 20)" :key="r.slug" class="cluster" data-gap="xs">
-            <span class="wf-chip">{{ r.chip }}</span>
-            <span v-if="r.archived" class="wf-chip">Archive</span>
-            <NuxtLink :to="r.to">{{ r.heading }}</NuxtLink>
-            <time v-if="r.date">{{ r.date }}</time>
-          </article>
-        </div>
+    <wf-section v-if="q.length > 1" label="Results">
+      <p><strong>{{ results.length }}</strong> results for “{{ q }}”</p>
+      <div class="stack" data-gap="s">
+        <article v-for="r in results.slice(0, 20)" :key="r.slug" class="cluster" data-gap="xs">
+          <span class="wf-chip">{{ r.chip }}</span>
+          <span v-if="r.archived" class="wf-chip">Archive</span>
+          <NuxtLink :to="r.to">{{ r.heading }}</NuxtLink>
+          <time v-if="r.date">{{ r.date }}</time>
+        </article>
       </div>
-    </section>
+    </wf-section>
   </div>
 </template>
 
