@@ -1,0 +1,299 @@
+/*
+ * WIREFRAME LAYER — Front 2 (UX/IA) only.
+ *
+ * NOT imported by styles.css. Loaded exclusively by the wireframe layout
+ * (layouts/wireframe.vue) so it can never leak into production pages.
+ * Everything is scoped under `.wireframe` (the layout root element).
+ *
+ * Rides on the existing stack: reset, tokens (--space-*, --step-*),
+ * and the composition utilities (center, stack, cluster, grid, switcher).
+ * This file only adds the lo-fi skin + annotation primitives.
+ */
+
+@layer overrides {
+
+  /* ---- Lo-fi base ------------------------------------------------ */
+
+  /* Wireframes are light-only: keep the canvas white even in dark mode,
+     so overscroll and areas outside .wireframe never render black. */
+  html:has(.wireframe),
+  body:has(.wireframe) {
+    background: #fff;
+    color-scheme: light;
+  }
+
+  .wireframe {
+    /* ponytail: one line greys ALL color — tokens, components, images —
+       instead of remapping ~800 color vars. Side effect: filtered ancestor
+       becomes the containing block for position:fixed children; acceptable
+       in wireframes. */
+    filter: grayscale(1);
+
+    /* Neutral type signals "structure, not design" */
+    font-family: system-ui, sans-serif;
+    background-color: white;
+    color: #222;
+  }
+
+  /* ---- Region / slot marking ------------------------------------- */
+
+  /* Dashed region boundary. Add data-label="Hero" for a corner tag. */
+  /* Page-root stacks: sections sit flush, no gap */
+  .wireframe main > .stack > * + * {
+    margin-block-start: 0;
+  }
+
+  .wireframe .wf-slot {
+    position: relative;
+    border: 1px solid #ddd;
+    min-height: var(--space-xl);
+    padding-block: var(--space-3xl, 6rem);
+  }
+
+  /* Flush siblings share one border line */
+  .wireframe .wf-slot + .wf-slot {
+    border-block-start: none;
+  }
+
+  .wireframe .wf-slot[data-label] {
+    padding-block-start: var(--space-l, 2.5rem);
+  }
+
+  /* Compact bar (announcement etc.): hugs its content. After the
+     [data-label] rule so it wins at equal specificity. */
+  .wireframe .wf-slot[data-compact] {
+    min-height: 0;
+    padding-block: var(--space-2xs, 0.5rem);
+  }
+
+  .wireframe .wf-slot[data-label]::before {
+    content: attr(data-label);
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 0.15em 0.5em;
+    background: #eee;
+    color: #555;
+    font-size: 0.7rem;
+    font-family: monospace;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    z-index: 1;
+  }
+
+  /* Homepage hero: taller for prominence (Claudio, Jul 31) */
+  .wireframe .wf-hero {
+    min-height: 60svh;
+    display: grid;
+    align-content: center;
+  }
+
+  /* ---- Media placeholders ---------------------------------------- */
+
+  /* Crosshatched box standing in for any image/video/embed.
+     Override ratio inline: style="--wf-ratio: 1/1" */
+  .wireframe .wf-media {
+    --wf-ratio: 16 / 9;
+    aspect-ratio: var(--wf-ratio);
+    width: 100%;
+    border: 1px solid #ccc;
+    background:
+      linear-gradient(to top right, transparent calc(50% - 1px), #ccc, transparent calc(50% + 1px)),
+      linear-gradient(to bottom right, transparent calc(50% - 1px), #ccc, transparent calc(50% + 1px)),
+      #f4f4f4;
+  }
+
+  /* ---- Annotations ------------------------------------------------ */
+
+  /* Margin note for reviewers — IA rationale, content source, etc. */
+  .wireframe .wf-note {
+    padding: var(--space-2xs, 0.5rem) var(--space-xs, 0.75rem);
+    border-left: 4px solid #888;
+    background: #f4f4f4;
+    color: #444;
+    font-size: 0.8rem;
+    font-family: monospace;
+  }
+
+  /* Open-question flag: <span data-pending="Q4">Program page</span>
+     renders a chip so unresolved decisions are visible in review. */
+  .wireframe [data-pending]::after {
+    content: "PENDING " attr(data-pending);
+    display: inline-block;
+    margin-inline-start: 0.5em;
+    padding: 0.1em 0.5em;
+    border: 1px solid #222;
+    background: #fff;
+    color: #222;
+    font-size: 0.65rem;
+    font-family: monospace;
+    font-weight: bold;
+    vertical-align: middle;
+  }
+
+  /* External-link signaling (a Front 2 requirement — microsites, podcast
+     platforms). Mark with data-external on the anchor. */
+  .wireframe a[data-external]::after {
+    content: " ↗";
+    font-size: 0.8em;
+  }
+
+  /* ---- Navigation (wfNav) ----------------------------------------- */
+
+  .wireframe .wf-skip-link {
+    position: absolute;
+    left: -999px;
+  }
+
+  .wireframe .wf-skip-link:focus {
+    left: 0;
+    padding: 0.5em 1em;
+    background: #222;
+    color: #fff;
+    z-index: 20;
+  }
+
+  .wireframe .wf-header {
+    position: sticky;
+    top: 0;
+    background: #fff;
+    border-bottom: 2px solid #222;
+    z-index: 10;
+    padding-block: var(--space-2xs, 0.5rem);
+  }
+
+  .wireframe .wf-nav__logo {
+    font-size: 1.25rem;
+    text-decoration: none;
+    color: inherit;
+    margin-inline-end: auto;
+  }
+
+  .wireframe .wf-nav__group {
+    position: relative;
+  }
+
+  .wireframe .wf-nav__group summary {
+    cursor: pointer;
+    list-style: none;
+    padding: 0.25em 0.5em;
+  }
+
+  .wireframe .wf-nav__group summary::after {
+    content: " ▾";
+    font-size: 0.7em;
+  }
+
+  .wireframe .wf-nav__group[open] summary {
+    background: #eee;
+  }
+
+  .wireframe .wf-nav__group ul {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    min-width: 18rem;
+    margin: 0;
+    padding: var(--space-2xs, 0.5rem);
+    list-style: none;
+    background: #fff;
+    border: 1px solid #999;
+    display: grid;
+    gap: 0.5em;
+    z-index: 10;
+  }
+
+  .wireframe .wf-nav a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .wireframe .wf-nav a:hover,
+  .wireframe .wf-nav__group ul a:hover {
+    text-decoration: underline;
+  }
+
+  /* Mobile: nav wraps, dropdown panels flow in document instead of floating */
+  @media (max-width: 768px) {
+    .wireframe .wf-nav__group ul {
+      position: static;
+      min-width: 0;
+      border: none;
+      border-inline-start: 2px solid #ccc;
+    }
+  }
+
+  /* ---- Footer (wfFooter) ------------------------------------------ */
+
+  .wireframe .wf-footer {
+    margin-block-start: var(--space-xl, 3rem);
+    border-top: 2px solid #222;
+    padding-block: var(--space-l, 2rem);
+  }
+
+  .wireframe .wf-footer ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .wireframe .wf-footer a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .wireframe .wf-footer a:hover {
+    text-decoration: underline;
+  }
+
+  /* ---- Generic lo-fi elements ------------------------------------- */
+
+  .wireframe .wf-button {
+    display: inline-block;
+    padding: 0.4em 1.2em;
+    border: 2px solid #222;
+    background: #fff;
+    color: #222;
+    text-decoration: none;
+    font: inherit;
+    cursor: pointer;
+  }
+
+  .wireframe .wf-button[data-variant="primary"] {
+    background: #222;
+    color: #fff;
+  }
+
+  .wireframe .wf-card {
+    border: 1px solid #999;
+    padding: var(--space-s, 1rem);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2xs, 0.5rem);
+  }
+
+  .wireframe .wf-card > :last-child {
+    margin-block-start: auto;
+  }
+
+  .wireframe .wf-chip {
+    display: inline-block;
+    width: fit-content;
+    padding: 0.1em 0.6em;
+    border: 1px solid #666;
+    border-radius: 999px;
+    font-size: 0.7rem;
+    font-family: monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .wireframe input[type="email"],
+  .wireframe input[type="search"],
+  .wireframe input[type="text"],
+  .wireframe textarea {
+    padding: 0.4em 0.8em;
+    border: 1px solid #666;
+    font: inherit;
+  }
+}

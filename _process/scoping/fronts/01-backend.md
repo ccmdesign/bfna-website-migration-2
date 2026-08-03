@@ -4,7 +4,7 @@ Read `00-shared-context.md` first. **Phase: discuss + specify. No Directus write
 
 ## Scope
 
-- New Directus collections per `../schema-draft.md`: `focus_areas` (3), `programs` (~14, `kind` enum, M2O focus_area, `external_url` for microsites), `insights` (~400, `format` enum article|report|video|infographic, M2M focus_areas/programs, `publish_date`, `evergreen` flag). Tiers computed, not stored.
+- New Directus collections per `../schema-draft.md`: `programs` (3), `projects` (~14, `kind` enum, M2O program, `external_url` for microsites), `insights` (~400, `format` enum article|report|video|infographic, M2M programs/projects, `publish_date`, `evergreen` flag). Tiers computed, not stored.
 - Retire `workstreams` (single M2O FK today, no tags) — later, after new taxonomy is live.
 - Contentful→Directus consolidation per `../contentful-consolidation-plan.md`: item-level diff, newest-wins reconcile, re-upload assets off ctfassets.net, fold 9 orphan `news` entries into `highlights`, rerunnable sync until cutover, freeze + final sync + retire contentful dep.
 - Importer: `contentImporter.js` + root `content.config.ts` must serve the new collections to Nuxt.
@@ -17,7 +17,7 @@ Read `00-shared-context.md` first. **Phase: discuss + specify. No Directus write
 
 ## Open questions blocking this front (from `../questions-for-irene.md`)
 
-- Q1/Q2: final taxonomy labels ("Focus Areas/Programs" vs Irene's "programs/projects") → field + collection naming.
+- ~~Q1/Q2: taxonomy labels~~ **Resolved (Irene, Jul 31)**: `programs` (3 top-level) containing `projects` — collection/field naming follows.
 - Q3: Digital World content (~40+ items) — re-tag or straight to archive → migration mapping.
 - Q8–10: archive policy sign-off, who flags `evergreen`, archive page shape → schema flags + queries.
 - Q11: cutover/freeze coordination (Sam?) → sync schedule.

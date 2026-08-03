@@ -1,0 +1,51 @@
+{
+ "generated": "2026-07-31",
+ "archive_cutoff": "2023-07-31",
+ "copy_sources": {
+  "irene-docx-2026-07-29": "BFNA website_text.docx — Irene Braam, Jul 29 2026 (About, 3 program intros, 13 project descriptions; HTFD buttons: Apple Podcasts / Spotify / podcast site + featured episodes strip)"
+ },
+ "note": "New-taxonomy programs (3, per Irene Jul 29; label pending Q1 — Irene's docx says 'Projects' for these). Intros from Irene's docx. legacy_map shows all 8 old workstreams: 4 map/retire to areas, 4 were fake categories (become views).",
+ "count": 3,
+ "items": [
+  {
+   "slug": "democracy",
+   "heading": "Democracy",
+   "intro": "Democracies around the world are facing profound challenges, from declining trust in institutions and political polarization to technological disruption and changing social and economic conditions. These pressures are reshaping democratic systems and raising important questions about how democracies can adapt and remain resilient.\n\nThe Bertelsmann Foundation examines the forces shaping democracy and explores how societies, institutions, and communities can respond to these challenges. Through research, data-driven analysis, documentary storytelling, and dialogue, our work identifies emerging trends, highlights innovative approaches, and contributes to a deeper understanding of how democracies can evolve and thrive.",
+   "copy_source": "irene-docx-2026-07-29",
+   "image": "https://bfna.simplyas.com/assets/0e555b6a-a774-421b-a308-b1e80c772ed1",
+   "legacy_workstreams": [
+    "Democracy"
+   ]
+  },
+  {
+   "slug": "transatlantic-relations-global-challenges",
+   "heading": "Transatlantic Relations & Global Challenges",
+   "intro": "The transatlantic community is undergoing profound change. Geopolitical competition, economic shifts, technological disruption, and evolving political landscapes are reshaping the global environment and redefining cooperation between the United States and Europe.\n\nThe Bertelsmann Foundation examines the forces shaping transatlantic relations and explores how partners on both sides of the Atlantic can address shared global challenges. Through research, polling, forecasting, interactive tools, and multimedia storytelling, we provide insights into emerging trends, foster informed dialogue, and explore pathways for cooperation in a rapidly changing world.",
+   "copy_source": "irene-docx-2026-07-29",
+   "image": "https://bfna.simplyas.com/assets/4db7c8fc-a958-40fe-ac8f-fa534723eef2",
+   "legacy_workstreams": [
+    "Politics & Society"
+   ]
+  },
+  {
+   "slug": "future-leadership",
+   "heading": "Future Leadership",
+   "intro": "Strong transatlantic leadership has never been more important. As the United States and Europe confront growing geopolitical uncertainty, effective leadership depends on trust, collaboration, and a shared understanding of common interests.\n\nThe Bertelsmann Foundation's Future Leadership program brings together current and emerging leaders to strengthen transatlantic cooperation. Through original research, public opinion polling, the Bertelsmann Foundation Fellowship (BFF), and informal convenings of diplomats, policymakers, and future leaders, we foster trusted relationships, encourage informed dialogue, and help shape solutions to the defining challenges of our time.",
+   "copy_source": "irene-docx-2026-07-29",
+   "image": "https://bfna.simplyas.com/assets/f67f7db8-dd82-4a49-a34a-9d066521d80f",
+   "legacy_workstreams": [
+    "Future Leadership"
+   ]
+  }
+ ],
+ "legacy_map": {
+  "Democracy": "democracy",
+  "Future Leadership": "future-leadership",
+  "Politics & Society": "transatlantic-relations-global-challenges",
+  "Digital World": "RETIRED (content re-tag pending Q3)",
+  "Archives": "view: /archive",
+  "Podcasts": "view: format/program filters",
+  "Publications": "view: /insights",
+  "Team": "view: /about#team"
+ }
+}

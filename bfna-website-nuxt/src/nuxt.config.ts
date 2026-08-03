@@ -128,6 +128,11 @@ export default defineNuxtConfig({
     {
       path: resolve(currentDir, 'components/legacy'),
       pathPrefix: false
+    },
+    {
+      // Front 2 wireframes only — components used exclusively under /wireframes
+      path: resolve(currentDir, 'components/wireframe'),
+      pathPrefix: false
     }
   ],
 })

@@ -29,7 +29,7 @@ Tier is **computed** from `publish_date` at query time — no stored tier field,
 
 | | Tier 1 (recent/featured) | Tier 2 (supporting) | Tier 3 (archive, 3y+) |
 |---|---|---|---|
-| Focus-area hubs & homepage | ✅ featured | listed/paginated | ❌ |
+| Program hubs & homepage | ✅ featured | listed/paginated | ❌ |
 | Insights listing | ✅ | ✅ | ❌ by default; "include archive" filter reveals |
 | Archive index page | — | — | ✅ browsable, grouped by year |
 | Site search | ✅ | ✅ | ✅ (labeled "Archive") |

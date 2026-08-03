@@ -4,10 +4,10 @@
 
 **Framing**: Data/Content = greenfield per GGS recommendations. UX = greenfield per GGS. UI/Branding = brownfield — evolve under existing BFNA branding, NO rebrand.
 
-**Taxonomy (current best answer, pending Irene)**: Irene's Jul 29 2026 email supersedes GGS: **3** focus areas (not 4). Politics & Society → "Transatlantic Relations & Global Challenges"; Digital Economy/World dropped; Barometer/RANGE/Periscope become projects/programs under the renamed area. GGS ontology: Focus Areas (topics) / Programs (initiatives) / Insights (outputs), tagged, with visibility tiers (recent featured → 3+ years auto-archive; **archive ≠ delete**, stays indexed for AI SEO).
+**Taxonomy (current best answer, pending Irene)**: Irene's Jul 29 2026 email supersedes GGS: **3** programs (not 4). Politics & Society → "Transatlantic Relations & Global Challenges"; Digital Economy/World dropped; Barometer/RANGE/Periscope become projects/projects under the renamed area. GGS ontology: Programs (topics) / Projects (initiatives) / Insights (outputs), tagged, with visibility tiers (recent featured → 3+ years auto-archive; **archive ≠ delete**, stays indexed for AI SEO).
 
 **Scoping docs** (all in `_process/scoping/`):
-- `schema-draft.md` — proposed Directus collections: `focus_areas`, `programs`, `insights`
+- `schema-draft.md` — proposed Directus collections: `programs`, `projects`, `insights`
 - `contentful-consolidation-plan.md` — Contentful→Directus sync/cutover (drift exists both ways)
 - `archive-content-plan.md` — tier behavior; 296 of ~400 items (74%) are 3+ years old
 - `questions-for-irene.md` — 15 questions + 8 GGS contradictions/gaps (call week of Aug 3 2026)
