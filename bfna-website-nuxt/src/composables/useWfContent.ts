@@ -45,6 +45,16 @@ export interface WfProject {
   external_only?: boolean | null   // BF-149: lives off-site — surfaced as a product band, not a grid card
   microsite_cta?: string | null  // dataset copy for the external-CTA section
   participation?: { title: string, ctas: string[] } | null  // dataset draft copy (GGS participation path)
+  // BF-147: podcast folded INTO a project (e.g. "Indo-Pacific in Focus" under IPN).
+  // No CMS row exists for the podcast; episode copy lives in Irene's May 11 docx and
+  // is NOT extracted yet — episodes here are OBVIOUS placeholders. Data-driven so any
+  // project carrying a `podcast` renders the Episodes band with no template edit.
+  podcast?: {
+    title: string
+    host: string | null
+    source_note: string | null
+    episodes: { title: string, description: string | null }[]
+  } | null
   pending?: string            // open-question chip (Q6/Q7)
 }
 
