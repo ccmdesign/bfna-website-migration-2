@@ -27,7 +27,7 @@
       "format": null,
       "kind": "data-visualization-project",
       "program": "Democracy",
-      "archived": null,
+      "archived": false,
       "evergreen": false,
       "copy_source": "irene-docx-2026-07-29",
       "legacy": {
@@ -515,7 +515,7 @@
       "publish_date": "2022-04-04",
       "format": null,
       "program": "Transatlantic Relations & Global Challenges",
-      "archived": true,
+      "archived": false,
       "evergreen": false,
       "legacy": {
         "type": "products",
@@ -551,7 +551,7 @@
       "publish_date": "2022-06-27",
       "format": null,
       "program": "Transatlantic Relations & Global Challenges",
-      "archived": true,
+      "archived": false,
       "evergreen": false,
       "legacy": {
         "type": "products",
@@ -587,7 +587,7 @@
       "publish_date": "2022-06-28",
       "format": null,
       "program": "Transatlantic Relations & Global Challenges",
-      "archived": true,
+      "archived": false,
       "evergreen": false,
       "legacy": {
         "type": "products",
@@ -843,7 +843,7 @@
       "external_url": null,
       "publish_date": null,
       "format": null,
-      "program": "RE-TAG (was fake category: Podcasts)",
+      "program": "Transatlantic Relations & Global Challenges",
       "archived": null,
       "evergreen": false,
       "legacy": {
@@ -854,7 +854,8 @@
         "id": 8
       },
       "parent_project": null,
-      "kind": null,
+      "kind": "podcast",
+      "exclude_from_grid": true,
       "participation": {
         "title": "Follow this project",
         "ctas": [
@@ -1018,7 +1019,8 @@
         "id": 13
       },
       "parent_project": null,
-      "kind": null,
+      "kind": "podcast",
+      "external_only": true,
       "participation": {
         "title": "Follow this project",
         "ctas": [
@@ -1040,7 +1042,7 @@
       "external_url": "https://wisdom-of-the-crowd.simplecast.com/",
       "publish_date": null,
       "format": null,
-      "program": "RE-TAG (was fake category: Podcasts)",
+      "program": "Transatlantic Relations & Global Challenges",
       "archived": null,
       "evergreen": false,
       "legacy": {
@@ -1064,7 +1066,8 @@
         }
       ],
       "parent_project": null,
-      "kind": null,
+      "kind": "podcast",
+      "exclude_from_grid": true,
       "microsite_cta": "The complete experience lives on the Wisdom of the Crowd microsite.",
       "participation": {
         "title": "Use the platform",
@@ -1089,7 +1092,7 @@
       "format": null,
       "kind": "research-initiative",
       "program": "Transatlantic Relations & Global Challenges",
-      "archived": null,
+      "archived": false,
       "evergreen": false,
       "copy_source": "irene-docx-2026-07-29",
       "legacy": {
@@ -1122,7 +1125,7 @@
       "format": null,
       "kind": "research-initiative",
       "program": "Transatlantic Relations & Global Challenges",
-      "archived": null,
+      "archived": false,
       "evergreen": false,
       "copy_source": "irene-docx-2026-07-29",
       "legacy": {
@@ -1155,7 +1158,7 @@
       "format": null,
       "kind": "research-initiative",
       "program": "Transatlantic Relations & Global Challenges",
-      "archived": null,
+      "archived": false,
       "evergreen": false,
       "copy_source": "irene-docx-2026-07-29",
       "legacy": {
