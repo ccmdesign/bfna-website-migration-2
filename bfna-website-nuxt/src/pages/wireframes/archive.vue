@@ -1,29 +1,32 @@
 <template>
-  <div class="stack" data-gap="xl">
-    <wf-section label="Archive index" gap="s" padded>
-      <nav aria-label="Breadcrumb"><NuxtLink to="/wireframes">Home</NuxtLink> / <NuxtLink to="/wireframes/insights">Insights</NuxtLink></nav>
-      <h1>{{ indexPage?.heading ?? 'Archive' }}</h1>
-      <p v-if="indexPage?.description" data-measure="normal">{{ indexPage.description }}</p>
-      <p data-measure="narrow">{{ archived.length }} pieces of past work, {{ years[years.length - 1]?.year }}–{{ years[0]?.year }}.</p>
-    </wf-section>
+  <NuxtLayout name="wireframe">
+    <template #hero>
+      <wf-page-header
+        label="Archive index"
+        :crumbs="[{ label: 'Home', to: '/wireframes' }, { label: 'Insights', to: '/wireframes/insights' }]"
+        :heading="indexPage?.heading ?? 'Archive'" :tagline="indexPage?.description"
+      >
+        <p data-measure="narrow">{{ archived.length }} pieces of past work, {{ years[years.length - 1]?.year }}–{{ years[0]?.year }}.</p>
+      </wf-page-header>
+    </template>
 
     <wf-section label="By year">
       <details v-for="y in years" :key="y.year" :open="y === years[0]">
         <summary><strong>{{ y.year }}</strong> ({{ y.items.length }})</summary>
         <ul class="stack" data-gap="xs" style="padding-block: var(--space-s); list-style: none;">
           <li v-for="i in y.items" :key="i.slug" class="cluster" data-gap="xs">
-            <span class="wf-chip">{{ formatLabel(i.format) }}</span>
+            <wf-chip>{{ formatLabel(i.format) }}</wf-chip>
             <NuxtLink :to="`/wireframes/insights/${i.slug}`">{{ i.heading }}</NuxtLink>
             <time>{{ monthYear(i.publish_date) }}</time>
           </li>
         </ul>
       </details>
     </wf-section>
-  </div>
+  </NuxtLayout>
 </template>
 
 <script setup lang="ts">
-definePageMeta({ layout: 'wireframe' })
+definePageMeta({ layout: false })
 
 const { archived, pageBySlug, formatLabel, monthYear } = useWfContent()
 const indexPage = pageBySlug('archive')

@@ -74,6 +74,8 @@ One collection for all outputs; format is a facet, matching GGS's "Insights" nav
 
 Format-specific fields are nullable on the one collection. <!-- ponytail: split per-format collections only if the null-field count grows past ~5 -->
 
+**Required-field enforcement (GGS requirement; wireframe finding Aug 3, feedback #wf-seed-038):** `heading`, `excerpt`, and `publish_date` are required, and every insight must carry at least one author (`internal_authors` or `external_collaborators`) — enforced as Directus field validation, not editorial convention. Legacy data has items with empty authors (the wireframe byline renders "[author]"), missing summaries, and undated rows; the migration script must flag these for backfill rather than import them silently. The `excerpt` doubles as the AI/SEO description, so "clear descriptive summary on every page" (GGS) only holds if the CMS refuses to publish without it.
+
 ### Reused as-is
 `people`, `external_collaborators`, `highlights` (homepage curation), `global_settings`. `htfd_episodes`/`docs_*` stay put — HTFD and Documentaries appear on the main site as `projects` rows pointing at their own data/microsites.
 

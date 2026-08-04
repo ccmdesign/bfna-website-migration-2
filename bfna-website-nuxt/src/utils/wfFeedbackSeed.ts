@@ -57,7 +57,7 @@ export const WF_FEEDBACK_SEED = [
 
   // Fellowship (representative on-site project page)
   rec({ path: '/wireframes/projects/the-bertelsmann-foundation-fellowship', label: 'Project overview', message: 'Overview is the real CMS excerpt from content.json (981 chars) — components must tolerate real-length copy, not lorem.' }),
-  rec({ path: '/wireframes/projects/the-bertelsmann-foundation-fellowship', label: 'Participation path', message: 'GGS requirement: every project page states a participation path with a specific CTA — no "Learn More". Eligibility + timeline copy from Irene/program team.' }),
+  rec({ path: '/wireframes/projects/the-bertelsmann-foundation-fellowship', label: 'Participation path', message: 'Participation title + CTA draft copy now lives in the dataset: `participation` field added (Aug 3) to all 18 top-level projects.json rows (Fellowship: "Become a Fellow" / Apply / Nominate; external platforms: "Use the platform"; others: "Follow this project"). Drafts are CCM placeholders — eligibility/timeline copy still needed from Irene/program team. Backend export should adopt the field.', status: 'review' }),
   rec({ path: '/wireframes/projects/the-bertelsmann-foundation-fellowship', label: 'Outcomes / alumni', message: 'Real class pages from content.json — the ~21 legacy "Class of 20XX"/Participants pages are absorbed here as cohort sections (pending Irene), not separate site pages.' }),
   rec({ path: '/wireframes/projects/the-bertelsmann-foundation-fellowship', label: 'Related insights', message: 'Now REAL M2M: insights carry `projects` slugs in the consolidated dataset — the old heading-match hack is gone. Cohort chips come from parent_project children (18 real pages).' }),
 
@@ -102,4 +102,6 @@ export const WF_FEEDBACK_SEED = [
 
   // Moved off the search page (was an on-page wf-note; Claudio, Jul 31)
   rec({ path: '/wireframes/search', label: 'Search', message: 'Live title/summary search over all 451 content.json records — stands in for the real search (Front 4), which covers all content types and is tier-aware.' })
-]
+  // All 39 seeds reviewed & resolved by Claudio (Aug 4) — ship as done. In-source
+  // statuses above are kept as the historical record; new seeds must set their own.
+].map(a => ({ ...a, status: 'done' as const }))

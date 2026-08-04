@@ -12,6 +12,10 @@ build/
 .nuxt/
 .nitro/
 .cache/
+.netlify/
+
+# Editor
+.obsidian/
 
 # Logs
 *.log

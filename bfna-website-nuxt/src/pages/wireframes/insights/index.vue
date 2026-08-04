@@ -1,20 +1,21 @@
 <template>
-  <div class="stack" data-gap="xl">
-    <wf-section label="Insights feed" gap="s" padded>
-      <nav aria-label="Breadcrumb"><NuxtLink to="/wireframes">Home</NuxtLink></nav>
-      <h1>{{ feedPage?.heading ?? 'Insights' }}</h1>
-      <p v-if="feedPage?.description" data-measure="normal">{{ feedPage.description }}</p>
-    </wf-section>
+  <NuxtLayout name="wireframe">
+    <template #hero>
+      <wf-page-header
+        label="Insights feed" :crumbs="[{ label: 'Home', to: '/wireframes' }]"
+        :heading="feedPage?.heading ?? 'Insights'" :tagline="feedPage?.description"
+      />
+    </template>
 
     <!-- Filters: real, driven by query params -->
     <wf-section label="Filters" gap="s">
       <div class="cluster" data-gap="xs">
         <span>Format:</span>
-        <NuxtLink v-for="f in FORMATS" :key="f.key" :to="linkWith({ format: f.key })" class="wf-chip" :style="query.format === f.key ? 'background:#222;color:#fff' : ''">{{ f.label }}</NuxtLink>
+        <wf-chip v-for="f in FORMATS" :key="f.key" :to="linkWith({ format: f.key })" :active="query.format === f.key">{{ f.label }}</wf-chip>
       </div>
       <div class="cluster" data-gap="xs">
         <span>Focus area:</span>
-        <NuxtLink v-for="a in programs()" :key="a.slug" :to="linkWith({ area: a.slug })" class="wf-chip" :style="query.area === a.slug ? 'background:#222;color:#fff' : ''">{{ a.name }}</NuxtLink>
+        <wf-chip v-for="a in programs()" :key="a.slug" :to="linkWith({ area: a.slug })" :active="query.area === a.slug">{{ a.name }}</wf-chip>
       </div>
       <div class="cluster" data-gap="xs">
         <NuxtLink :to="linkWith({ archive: query.archive ? undefined : '1' })" class="wf-button">{{ query.archive ? 'Hide' : 'Include' }} archived ({{ archived.length }})</NuxtLink>
@@ -25,18 +26,16 @@
     <!-- Results -->
     <wf-section label="Results">
       <p><strong>{{ filtered.length }}</strong> items<span v-if="query.archive"> (including archive)</span></p>
-      <div class="grid" data-min-width="m" data-gap="m">
-        <wf-card-insight v-for="i in filtered.slice(0, visible)" :key="i.slug" :insight="i" />
-      </div>
+      <wf-grid-insights :insights="filtered.slice(0, visible)" />
       <p v-if="filtered.length > visible">
         <button class="wf-button" @click="visible += 24">Load more ({{ filtered.length - visible }} remaining)</button>
       </p>
     </wf-section>
-  </div>
+  </NuxtLayout>
 </template>
 
 <script setup lang="ts">
-definePageMeta({ layout: 'wireframe' })
+definePageMeta({ layout: false })
 
 const route = useRoute()
 const { active, archived, programs, programBySlug, pageBySlug } = useWfContent()

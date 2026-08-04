@@ -1,4 +1,6 @@
-<!-- Featured/highlight card: media 16/9 + Featured chip + title + excerpt + View link. -->
+<!-- Featured/highlight card: media 16/9 + Featured chip + linked title + excerpt.
+     Heading carries the link (stretched) — the old href="#" "View" link had no
+     accessible name worth announcing. -->
 <script setup lang="ts">
 import type { WfInsight } from '~/composables/useWfContent'
 
@@ -9,14 +11,13 @@ const { plain } = useWfContent()
 
 <template>
   <wf-card>
-    <template #media>
-      <wf-media :src="item.image" :alt="item.heading ?? ''" ratio="16/9" />
-    </template>
+    <h3><NuxtLink :to="`/wireframes/insights/${item.slug}`">{{ item.heading }}</NuxtLink></h3>
+    <p v-if="plain(item.excerpt)">{{ plain(item.excerpt) }}</p>
     <template #chips>
       <span class="wf-chip">Featured</span>
     </template>
-    <h3>{{ item.heading }}</h3>
-    <p v-if="plain(item.excerpt)">{{ plain(item.excerpt) }}</p>
-    <a href="#" :data-external="item.external_url ? true : undefined">View</a>
+    <template #media>
+      <wf-media :src="item.image" alt="" ratio="16/9" />
+    </template>
   </wf-card>
 </template>

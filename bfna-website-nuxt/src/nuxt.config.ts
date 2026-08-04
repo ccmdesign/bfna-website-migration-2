@@ -104,6 +104,13 @@ export default defineNuxtConfig({
 
   ],
   ssr: true,
+  nitro: {
+    prerender: {
+      // Wireframes aren't linked from the main site — seed them so the crawler finds them
+      routes: ['/wireframes'],
+      failOnError: false
+    }
+  },
   experimental: {
     clientFallback: true
   },

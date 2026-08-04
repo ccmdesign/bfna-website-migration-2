@@ -1,23 +1,24 @@
 <template>
-  <div class="stack" data-gap="xl">
-    <!-- GGS about template: mission, institutional context, connection to programs -->
-    <wf-section label="Mission" gap="s" padded>
-      <nav aria-label="Breadcrumb"><NuxtLink to="/wireframes">Home</NuxtLink></nav>
-      <!-- Consolidated dataset (pages.json ← Irene Jul 29 docx) -->
-      <h1>{{ about?.heading ?? 'About Us' }}</h1>
-      <p v-for="para in paragraphs(about?.description)" :key="para.slice(0, 20)" data-measure="normal">{{ para }}</p>
-    </wf-section>
+  <NuxtLayout name="wireframe">
+    <template #hero>
+      <!-- GGS about template: mission, institutional context, connection to programs.
+           Copy = consolidated dataset (pages.json ← Irene Jul 29 docx) -->
+      <wf-page-header
+        label="Mission" :crumbs="[{ label: 'Home', to: '/wireframes' }]"
+        :heading="about?.heading ?? 'About Us'" :tagline="paragraphs(about?.description)"
+      />
+    </template>
 
     <wf-section id="board" label="Board of Directors" heading="Board of Directors">
-      <div class="grid" data-gap="m" style="grid-template-columns: repeat(3, 1fr);">
+      <ul class="grid" data-gap="m" style="grid-template-columns: repeat(3, 1fr);">
         <wf-card-person v-for="p in boardMembers()" :key="p.slug" :person="p" />
-      </div>
+      </ul>
     </wf-section>
 
     <wf-section id="team" label="Team" heading="Team">
-      <div class="grid" data-gap="m" style="grid-template-columns: repeat(3, 1fr);">
+      <ul class="grid" data-gap="m" style="grid-template-columns: repeat(3, 1fr);">
         <wf-card-person v-for="p in teamMembers()" :key="p.slug" :person="p" />
-      </div>
+      </ul>
     </wf-section>
 
     <!-- Live-site /bertelsmann-stiftung copy + repo hero image -->
@@ -30,27 +31,12 @@
       </div>
     </wf-section>
 
-    <wf-section id="contact" label="Contact" layout="switcher" gap="l">
-      <form class="stack" data-gap="s" @submit.prevent>
-        <h2>Contact</h2>
-        <p><a href="mailto:info@bfna.org">info@bfna.org</a></p>
-        <label class="stack" data-gap="2xs">Name<input type="text"></label>
-        <label class="stack" data-gap="2xs">Email<input type="email"></label>
-        <label class="stack" data-gap="2xs">Message<textarea rows="4" /></label>
-        <div><button type="submit" class="wf-button" data-variant="primary">Send message</button></div>
-      </form>
-      <form class="stack" data-gap="s" @submit.prevent>
-        <h2>Subscribe to receive our updates &amp; newsletters</h2>
-        <p>Enter your email and customize your preferences.</p>
-        <label class="stack" data-gap="2xs">Email<input type="email" placeholder="you@example.org"></label>
-        <div><button type="submit" class="wf-button" data-variant="primary">Subscribe</button></div>
-      </form>
-    </wf-section>
-  </div>
+    <wf-contact-section id="contact" />
+  </NuxtLayout>
 </template>
 
 <script setup lang="ts">
-definePageMeta({ layout: 'wireframe' })
+definePageMeta({ layout: false })
 
 const { aboutPage, stiftungPage, boardMembers, teamMembers, paragraphs } = useWfContent()
 const about = aboutPage()

@@ -36,7 +36,14 @@
         "workstream": null,
         "id": null
       },
-      "parent_project": null
+      "parent_project": null,
+      "participation": {
+        "title": "Follow this project",
+        "ctas": [
+          "Subscribe for updates",
+          "Read the latest"
+        ]
+      }
     },
     {
       "slug": "how-to-fix-democracy",
@@ -65,7 +72,14 @@
       "kind": "podcast-series",
       "copy_source": "irene-docx-2026-07-29",
       "parent_project": null,
-      "microsite_cta": "The complete experience lives on the How to Fix Democracy microsite."
+      "microsite_cta": "The complete experience lives on the How to Fix Democracy microsite.",
+      "participation": {
+        "title": "Use the platform",
+        "ctas": [
+          "Open How to Fix Democracy",
+          "Subscribe for updates"
+        ]
+      }
     },
     {
       "slug": "100-questions",
@@ -92,7 +106,14 @@
       },
       "parent_project": null,
       "kind": null,
-      "microsite_cta": "The complete experience lives on the 100 Questions  microsite."
+      "microsite_cta": "The complete experience lives on the 100 Questions  microsite.",
+      "participation": {
+        "title": "Use the platform",
+        "ctas": [
+          "Open 100 Questions ",
+          "Subscribe for updates"
+        ]
+      }
     },
     {
       "slug": "class-of-2020",
@@ -471,7 +492,14 @@
           }
         }
       ],
-      "parent_project": null
+      "parent_project": null,
+      "participation": {
+        "title": "Follow this project",
+        "ctas": [
+          "Subscribe for updates",
+          "Read the latest"
+        ]
+      }
     },
     {
       "slug": "transatlantic-periscope",
@@ -500,7 +528,14 @@
       "kind": "interactive-multimedia-platform",
       "copy_source": "irene-docx-2026-07-29",
       "parent_project": null,
-      "microsite_cta": "The complete experience lives on the Transatlantic Periscope microsite."
+      "microsite_cta": "The complete experience lives on the Transatlantic Periscope microsite.",
+      "participation": {
+        "title": "Use the platform",
+        "ctas": [
+          "Open Transatlantic Periscope",
+          "Subscribe for updates"
+        ]
+      }
     },
     {
       "slug": "range",
@@ -529,7 +564,14 @@
       "kind": "geopolitical-forecasting-platform",
       "copy_source": "irene-docx-2026-07-29",
       "parent_project": null,
-      "microsite_cta": "The complete experience lives on the RANGE microsite."
+      "microsite_cta": "The complete experience lives on the RANGE microsite.",
+      "participation": {
+        "title": "Use the platform",
+        "ctas": [
+          "Open RANGE",
+          "Subscribe for updates"
+        ]
+      }
     },
     {
       "slug": "transatlantic-barometer",
@@ -558,7 +600,14 @@
       "kind": "data-analysis-platform",
       "copy_source": "irene-docx-2026-07-29",
       "parent_project": null,
-      "microsite_cta": "The complete experience lives on the Transatlantic Barometer microsite."
+      "microsite_cta": "The complete experience lives on the Transatlantic Barometer microsite.",
+      "participation": {
+        "title": "Use the platform",
+        "ctas": [
+          "Open Transatlantic Barometer",
+          "Subscribe for updates"
+        ]
+      }
     },
     {
       "slug": "class-of-2022",
@@ -805,7 +854,14 @@
         "id": 8
       },
       "parent_project": null,
-      "kind": null
+      "kind": null,
+      "participation": {
+        "title": "Follow this project",
+        "ctas": [
+          "Subscribe for updates",
+          "Read the latest"
+        ]
+      }
     },
     {
       "slug": "city-solutions-series",
@@ -833,7 +889,14 @@
       "description": "The City Solutions Series explores how local governments and communities are developing innovative approaches to strengthen democratic governance and rebuild public trust. Through research and documentary storytelling, the project highlights practical solutions to common democratic challenges and shares lessons from transatlantic communities including Minneapolis (Minnesota), Lexington (Kentucky), Oklahoma City (Oklahoma), Barcelona (Spain), Athens (Greece) and Vienna (Austria).",
       "kind": "research-documentary-project",
       "copy_source": "irene-docx-2026-07-29",
-      "parent_project": null
+      "parent_project": null,
+      "participation": {
+        "title": "Follow this project",
+        "ctas": [
+          "Subscribe for updates",
+          "Read the latest"
+        ]
+      }
     },
     {
       "slug": "leadership-in-action",
@@ -874,7 +937,14 @@
           }
         }
       ],
-      "parent_project": null
+      "parent_project": null,
+      "participation": {
+        "title": "Follow this project",
+        "ctas": [
+          "Subscribe for updates",
+          "Read the latest"
+        ]
+      }
     },
     {
       "slug": "the-bertelsmann-foundation-fellowship",
@@ -915,7 +985,14 @@
           }
         }
       ],
-      "parent_project": null
+      "parent_project": null,
+      "participation": {
+        "title": "Become a Fellow",
+        "ctas": [
+          "Apply for the next cohort",
+          "Nominate a candidate"
+        ]
+      }
     },
     {
       "slug": "transponder-magazine",
@@ -941,7 +1018,14 @@
         "id": 13
       },
       "parent_project": null,
-      "kind": null
+      "kind": null,
+      "participation": {
+        "title": "Follow this project",
+        "ctas": [
+          "Subscribe for updates",
+          "Read the latest"
+        ]
+      }
     },
     {
       "slug": "wisdom-of-the-crowd",
@@ -981,7 +1065,14 @@
       ],
       "parent_project": null,
       "kind": null,
-      "microsite_cta": "The complete experience lives on the Wisdom of the Crowd microsite."
+      "microsite_cta": "The complete experience lives on the Wisdom of the Crowd microsite.",
+      "participation": {
+        "title": "Use the platform",
+        "ctas": [
+          "Open Wisdom of the Crowd",
+          "Subscribe for updates"
+        ]
+      }
     },
     {
       "slug": "astropolitics",
@@ -1007,7 +1098,14 @@
         "workstream": null,
         "id": null
       },
-      "parent_project": null
+      "parent_project": null,
+      "participation": {
+        "title": "Follow this project",
+        "ctas": [
+          "Subscribe for updates",
+          "Read the latest"
+        ]
+      }
     },
     {
       "slug": "indo-pacific-nexus",
@@ -1033,7 +1131,14 @@
         "workstream": null,
         "id": null
       },
-      "parent_project": null
+      "parent_project": null,
+      "participation": {
+        "title": "Follow this project",
+        "ctas": [
+          "Subscribe for updates",
+          "Read the latest"
+        ]
+      }
     },
     {
       "slug": "critical-minerals",
@@ -1059,7 +1164,14 @@
         "workstream": null,
         "id": null
       },
-      "parent_project": null
+      "parent_project": null,
+      "participation": {
+        "title": "Follow this project",
+        "ctas": [
+          "Subscribe for updates",
+          "Read the latest"
+        ]
+      }
     },
     {
       "slug": "election-analysis",
@@ -1085,7 +1197,14 @@
         "workstream": null,
         "id": null
       },
-      "parent_project": null
+      "parent_project": null,
+      "participation": {
+        "title": "Follow this project",
+        "ctas": [
+          "Subscribe for updates",
+          "Read the latest"
+        ]
+      }
     },
     {
       "slug": "bfna-documentaries",
@@ -1108,7 +1227,14 @@
       "kind": null,
       "copy_source": "ccm-draft-2026-08-03, sourced from bfnadocs.org About page (pending Irene review — Q7)",
       "parent_project": null,
-      "microsite_cta": "The complete experience lives on the BFNA Documentaries microsite."
+      "microsite_cta": "The complete experience lives on the BFNA Documentaries microsite.",
+      "participation": {
+        "title": "Use the platform",
+        "ctas": [
+          "Open BFNA Documentaries",
+          "Subscribe for updates"
+        ]
+      }
     }
   ]
 }

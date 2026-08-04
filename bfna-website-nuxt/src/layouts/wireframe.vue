@@ -1,9 +1,21 @@
+<!-- Base layout shell: top-bar → hero slot → body (default slot) → subscribe →
+     footer. Pages fill #hero (wfHero / wfPageHeader) and the body; the subscribe
+     band is global, so pages never render their own. Use via
+     <NuxtLayout name="wireframe"> + definePageMeta({ layout: false }). -->
 <template>
   <div class="wireframe">
     <a href="#wf-main" class="wf-skip-link">Skip to content</a>
     <wf-nav />
-    <main id="wf-main">
+    <main id="wf-main" class="stack" data-gap="xl">
+      <slot name="hero" />
       <slot />
+      <!-- Global conversion band (copy = current site, pending Irene rewrite) -->
+      <wf-cta-section
+        id="subscribe" label="Subscribe CTA" form
+        heading="Subscribe to receive our updates & newsletters"
+        message="Enter your email and customize your preferences."
+        :ctas="[{ label: 'Subscribe' }]"
+      />
     </main>
     <wf-footer />
   </div>

@@ -41,6 +41,7 @@ export interface WfProject {
   image: string | null
   parent_project: string | null
   microsite_cta?: string | null  // dataset copy for the external-CTA section
+  participation?: { title: string, ctas: string[] } | null  // dataset draft copy (GGS participation path)
   pending?: string            // open-question chip (Q6/Q7)
 }
 
@@ -49,6 +50,15 @@ export interface WfProgram {
   name: string
   intro: string | null        // \n\n-separated paragraphs
   image: string | null
+}
+
+// Menu item shared by the top bar dropdowns and the footer columns
+export interface WfMenuItem {
+  label: string
+  to?: string
+  href?: string
+  external?: boolean
+  strong?: boolean
 }
 
 export interface WfPerson {
@@ -87,6 +97,33 @@ const topProjects = projectsAll.filter(p => !p.parent_project)
 // Homepage + nav curation (IA decision, not data): flagship projects
 const FEATURED_SLUGS = ['transatlantic-barometer', 'transatlantic-periscope', 'how-to-fix-democracy', 'the-bertelsmann-foundation-fellowship']
 const NAV_SLUGS = ['transatlantic-barometer', 'transatlantic-periscope', 'range', 'how-to-fix-democracy', 'bfna-documentaries', 'the-bertelsmann-foundation-fellowship', 'transponder-magazine']
+
+// Single source for site menus — top bar and footer render the SAME structure.
+// "Projects" per Irene's wording (Q1); dropdown = flagships only, links go to
+// on-site project pages (Q4 resolved) — external ↗ lives on the page CTA.
+const MENUS: { label: string, items: WfMenuItem[] }[] = [
+  { label: 'About', items: [
+    { label: 'Mission', to: '/wireframes/about' },
+    { label: 'Board of Directors', to: '/wireframes/about#board' },
+    { label: 'Team', to: '/wireframes/about#team' },
+    { label: 'Bertelsmann Stiftung', href: '#', external: true },
+    { label: 'Contact', to: '/wireframes/about#contact' }
+  ] },
+  { label: 'Programs', items: PROGRAMS.map(a => ({ label: a.name, to: `/wireframes/${a.slug}` })) },
+  { label: 'Projects', items: [
+    ...NAV_SLUGS.map(s => projectsAll.find(p => p.slug === s)!).filter(Boolean)
+      .map(p => ({ label: p.heading, to: `/wireframes/projects/${p.slug}` })),
+    { label: 'All Projects →', to: '/wireframes/projects', strong: true }
+  ] },
+  { label: 'Insights', items: [
+    { label: 'All Insights', to: '/wireframes/insights' },
+    { label: 'Articles', to: '/wireframes/insights?format=article' },
+    { label: 'Reports', to: '/wireframes/insights?format=report' },
+    { label: 'Videos', to: '/wireframes/insights?format=video' },
+    { label: 'Infographics', to: '/wireframes/insights?format=infographic' },
+    { label: 'Archive', to: '/wireframes/archive', strong: true }
+  ] }
+]
 
 const people = (peopleData as { people: WfPerson[] }).people
 const wfPages = (pagesData as { items: { slug: string, heading: string, description: string | null }[] }).items
@@ -143,6 +180,7 @@ export function useWfContent() {
     // Real M2M: insights carry `projects` slugs in the consolidated data
     insightsForProject: (slug: string) => active.filter(i => i.projects?.includes(slug)),
     navProjects: () => NAV_SLUGS.map(s => projectsAll.find(p => p.slug === s)!).filter(Boolean),
+    menus: () => MENUS,
     featuredProjects: () => FEATURED_SLUGS.map(s => projectsAll.find(p => p.slug === s)!).filter(Boolean),
     // people / page copy / announcement
     people: () => people,

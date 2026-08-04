@@ -264,7 +264,21 @@
     color: #fff;
   }
 
+  /* ---- Cards (inclusive-components.design/cards/) ------------------
+     Card = <li> inside a <ul> group. Heading (with link) first in SOURCE;
+     media/chips follow in the DOM and are pulled up visually with `order`.
+     The heading link stretches over the card via ::after, so the whole card
+     is clickable while the accessible name stays the heading text. */
+
+  .wireframe ul.grid,
+  .wireframe ul.switcher {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
   .wireframe .wf-card {
+    position: relative;
     border: 1px solid #999;
     padding: var(--space-s, 1rem);
     display: flex;
@@ -272,8 +286,32 @@
     gap: var(--space-2xs, 0.5rem);
   }
 
-  .wireframe .wf-card > :last-child {
+  .wireframe .wf-card__media { order: -2; }
+  .wireframe .wf-card__chips { order: -1; }
+
+  /* Dates sit at the card's bottom edge so rows align */
+  .wireframe .wf-card > time {
     margin-block-start: auto;
+  }
+
+  /* Stretched link: the whole card becomes the heading link's hit area.
+     ponytail: ::after trick blocks text selection inside cards — swap for the
+     redundant-click JS (with selection check) if reviewers need to copy text. */
+  .wireframe .wf-card h3 a::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+  }
+
+  .wireframe .wf-card:has(h3 a):hover {
+    border-color: #222;
+    box-shadow: 0 0 0 1px #222;
+  }
+
+  /* Any other interactive element in a card stays clickable above the overlay */
+  .wireframe .wf-card a:not(h3 a) {
+    position: relative;
+    z-index: 1;
   }
 
   .wireframe .wf-chip {
