@@ -100,8 +100,10 @@ export const WF_FEEDBACK_SEED = [
   rec({ path: '/wireframes/about', label: 'Bertelsmann Stiftung', message: 'Renders the `stiftung` row added to pages.json (Aug 3) — Irene’s replacement text from Megan’s Jul 30 email, incl. the new Executive Board (Dr. Brigitte Mohn, Prof. Dr. Andreas Pinkwart, Wilhelm-Friedrich Uhr). Photo kept, old "image film" link removed per Irene. Backend export should adopt this row.', status: 'done' }),
   rec({ path: '/wireframes/insights/from-idea-to-impact', label: 'Insight header', message: 'Byline shows "[author]" because the author is empty in legacy data for this item — the CMS must enforce author as a required field (applies to titles/summaries too, per GGS).' }),
 
-  // Moved off the search page (was an on-page wf-note; Claudio, Jul 31)
-  rec({ path: '/wireframes/search', label: 'Search', message: 'Live title/summary search over all 451 content.json records — stands in for the real search (Front 4), which covers all content types and is tier-aware.' })
+  // Search reframed to the SEMANTIC pattern (BF-148, Aug 4 call — Irene liked How To
+  // Fix Democracy's semantic search). Single NL box, results ranked by a simulated
+  // relevance score, program + format facets only (granular country/topic tagging dropped).
+  rec({ path: '/wireframes/search', label: 'Search', message: 'Semantic search PATTERN: one natural-language box, results ranked by relevance (not substring) over the live dataset (insights, projects, people), archived results labelled inline. Ranking is SIMULATED — a real embedding/vector search is Front 4. Facets are program + format only; granular country/topic tags are intentionally dropped (semantic ranking replaces them, Aug 4 call).' })
   // All 39 seeds reviewed & resolved by Claudio (Aug 4) — ship as done. In-source
   // statuses above are kept as the historical record; new seeds must set their own.
 ].map(a => ({ ...a, status: 'done' as const }))
