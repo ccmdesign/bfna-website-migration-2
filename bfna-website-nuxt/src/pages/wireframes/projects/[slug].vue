@@ -45,6 +45,30 @@
         :ctas="participation.ctas.map(label => ({ label }))"
       />
 
+      <!-- BF-147: podcast folded INTO the project (e.g. "Indo-Pacific in Focus" under
+           IPN). Data-driven via the row's `podcast` field, so any project carrying one
+           gets this band with no template edit. Episodes are OBVIOUS placeholders —
+           real titles/descriptions live in Irene's May 11 docx, not yet extracted. -->
+      <wf-section
+        v-if="project.podcast"
+        label="Episodes" :heading="project.podcast.title"
+      >
+        <div class="stack" data-gap="s">
+          <p v-if="project.podcast.host" data-measure="narrow">
+            A podcast hosted by {{ project.podcast.host }}.
+          </p>
+          <div v-if="project.podcast.source_note" class="cluster" data-gap="xs">
+            <span class="wf-chip">Placeholder — {{ project.podcast.source_note }}</span>
+          </div>
+          <ul class="stack" data-gap="xs" style="list-style: none; padding: 0;">
+            <li v-for="(ep, i) in project.podcast.episodes" :key="i" class="stack" data-gap="3xs">
+              <strong>{{ ep.title }}</strong>
+              <p v-if="ep.description" data-measure="narrow">{{ ep.description }}</p>
+            </li>
+          </ul>
+        </div>
+      </wf-section>
+
       <!-- Cohort/year pages nested under this project (parent_project, real data) -->
       <wf-section v-if="cohorts.length" label="Outcomes / alumni" heading="The Fellows">
         <p data-measure="narrow">{{ cohorts.length }} cohort pages nested under this project.</p>
