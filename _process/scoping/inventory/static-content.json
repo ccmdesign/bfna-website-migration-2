@@ -1,0 +1,1190 @@
+{
+ "generated": "2026-07-31",
+ "source": "bfna-website-nuxt/src (hardcoded, non-CMS copy)",
+ "entries": [
+  {
+   "scope": "/",
+   "file": "src/pages/index.vue",
+   "section": "hero",
+   "type": "heading",
+   "text": "Transatlantic Perspectives on Global Challenges",
+   "href": null
+  },
+  {
+   "scope": "/",
+   "file": "src/pages/index.vue",
+   "section": "hero",
+   "type": "paragraph",
+   "text": "Engaging both sides of the Atlantic with ",
+   "href": null,
+   "note": "subheading; typewriter word is injected after this string, then subheadingend follows"
+  },
+  {
+   "scope": "/",
+   "file": "src/pages/index.vue",
+   "section": "hero",
+   "type": "paragraph",
+   "text": "stories, resources, and ideas.",
+   "href": null,
+   "note": "subheadingend, rendered after the animated typewriter word"
+  },
+  {
+   "scope": "/",
+   "file": "src/composables/legacy/useTypeWriter.ts",
+   "section": "hero",
+   "type": "misc",
+   "text": "critical / constructive / creative",
+   "href": null,
+   "note": "rotating typewriter words hardcoded in composable: ['critical', 'constructive', 'creative']"
+  },
+  {
+   "scope": "/",
+   "file": "src/pages/index.vue",
+   "section": "highlights",
+   "type": "heading",
+   "text": "Highlights",
+   "href": null
+  },
+  {
+   "scope": "/",
+   "file": "src/pages/index.vue",
+   "section": "thematic-areas",
+   "type": "heading",
+   "text": "Thematic Areas",
+   "href": null
+  },
+  {
+   "scope": "/",
+   "file": "src/pages/index.vue",
+   "section": "updates",
+   "type": "heading",
+   "text": "Updates",
+   "href": null
+  },
+  {
+   "scope": "/",
+   "file": "src/pages/index.vue",
+   "section": "updates",
+   "type": "cta_label",
+   "text": "More Updates",
+   "href": "/updates"
+  },
+  {
+   "scope": "/",
+   "file": "src/pages/index.vue",
+   "section": "docs-highlights",
+   "type": "heading",
+   "text": "BFNA Docs Highlights",
+   "href": null
+  },
+  {
+   "scope": "/",
+   "file": "src/pages/index.vue",
+   "section": "docs-highlights",
+   "type": "cta_label",
+   "text": "More Docs",
+   "href": "https://bfnadocs.org/"
+  },
+  {
+   "scope": "/",
+   "file": "src/pages/index.vue",
+   "section": "cookie-banner",
+   "type": "paragraph",
+   "text": "We use cookies to ensure you get the best experience on our website.",
+   "href": null
+  },
+  {
+   "scope": "/",
+   "file": "src/pages/index.vue",
+   "section": "cookie-banner",
+   "type": "link",
+   "text": "More information",
+   "href": "/privacy-policy"
+  },
+  {
+   "scope": "/",
+   "file": "src/pages/index.vue",
+   "section": "meta",
+   "type": "meta_title",
+   "text": "Bertelsmann Foundation | Transatlantic Perspectives on Global Challenges",
+   "href": null
+  },
+  {
+   "scope": "/",
+   "file": "src/pages/index.vue",
+   "section": "meta",
+   "type": "meta_description",
+   "text": "Engaging both sides of the Atlantic with ",
+   "href": null,
+   "note": "description meta reuses hero.subheading verbatim (trailing space, sentence incomplete)"
+  },
+  {
+   "scope": "/about",
+   "file": "data/pages.json#about",
+   "section": "body",
+   "type": "heading",
+   "text": "About Us",
+   "href": null,
+   "copy_source": "irene-docx-2026-07-29"
+  },
+  {
+   "scope": "/about",
+   "file": "data/pages.json#about",
+   "section": "body",
+   "type": "paragraph",
+   "text": "The Bertelsmann Foundation North America is an independent, nonpartisan think tank dedicated to strengthening the transatlantic partnership and advancing dialogue on the global challenges shaping our future. Through research, policy dialogue, leadership programs, and multimedia storytelling, we foster cooperation between the United States and Europe while examining the broader geopolitical shifts transforming the international order.",
+   "href": null,
+   "copy_source": "irene-docx-2026-07-29"
+  },
+  {
+   "scope": "/about",
+   "file": "data/pages.json#about",
+   "section": "body",
+   "type": "paragraph",
+   "text": "We believe that the future of the transatlantic relationship depends not only on policymakers in Washington and Brussels, but also on engagement with citizens, educators, journalists, business leaders, academics, and civil society. We bring transatlantic and global issues to diverse audiences across North America and Europe through public discussions, educational initiatives, documentary screenings, and other platforms that encourage informed exchange.",
+   "href": null,
+   "copy_source": "irene-docx-2026-07-29"
+  },
+  {
+   "scope": "/about",
+   "file": "data/pages.json#about",
+   "section": "body",
+   "type": "paragraph",
+   "text": "Our work connects people, ideas, and institutions across the Atlantic and beyond. We produce original research and analysis on issues shaping international cooperation, including democracy, economic competitiveness, technology, security, and geopolitical change. We convene policymakers, experts, and other stakeholders to address shared challenges and examine how developments beyond the transatlantic space, including in the Indo-Pacific, affect the United States, Europe, and the global order.",
+   "href": null,
+   "copy_source": "irene-docx-2026-07-29"
+  },
+  {
+   "scope": "/about",
+   "file": "data/pages.json#about",
+   "section": "body",
+   "type": "paragraph",
+   "text": "At Bertelsmann Foundation North America, we believe that a strong transatlantic partnership remains essential to advancing democracy, economic prosperity, innovation, and security. By fostering dialogue and building lasting connections, we help develop ideas and partnerships to address the challenges shaping the future of the United States, Europe, and the wider world.",
+   "href": null,
+   "copy_source": "irene-docx-2026-07-29"
+  },
+  {
+   "scope": "/about",
+   "file": "src/pages/about.vue",
+   "section": "video",
+   "type": "misc",
+   "text": "https://www.youtube.com/embed/epWnyP3KO1Y",
+   "href": "https://www.youtube.com/embed/epWnyP3KO1Y",
+   "note": "hardcoded about-page video embed URL (TODO comment says it should come from data)"
+  },
+  {
+   "scope": "/about",
+   "file": "src/pages/about.vue",
+   "section": "intro",
+   "type": "cta_label",
+   "text": "About the Bertelsmann Stiftung",
+   "href": "/bertelsmann-stiftung/"
+  },
+  {
+   "scope": "/about",
+   "file": "src/pages/about.vue",
+   "section": "meta",
+   "type": "meta_title",
+   "text": "About Us | Bertelsmann Foundation",
+   "href": null
+  },
+  {
+   "scope": "/team",
+   "file": "src/pages/team.vue",
+   "section": "tabs",
+   "type": "nav_label",
+   "text": "team",
+   "href": "#team"
+  },
+  {
+   "scope": "/team",
+   "file": "src/pages/team.vue",
+   "section": "tabs",
+   "type": "nav_label",
+   "text": "board of directors",
+   "href": "#board_of_directors"
+  },
+  {
+   "scope": "/team",
+   "file": "src/pages/team.vue",
+   "section": "meta",
+   "type": "meta_title",
+   "text": "About Team | The Bertelsmann Foundation",
+   "href": null
+  },
+  {
+   "scope": "/democracy",
+   "file": "src/pages/democracy/index.vue",
+   "section": "updates",
+   "type": "heading",
+   "text": "Updates",
+   "href": null
+  },
+  {
+   "scope": "/democracy",
+   "file": "src/pages/democracy/index.vue",
+   "section": "updates",
+   "type": "cta_label",
+   "text": "More Content",
+   "href": "/updates"
+  },
+  {
+   "scope": "/democracy",
+   "file": "src/pages/democracy/index.vue",
+   "section": "meta",
+   "type": "meta_title",
+   "text": "Democracy | Bertelsmann Foundation",
+   "href": null,
+   "note": "fallback only; when CMS data loads, title is `${heading} | Bertelsmann Foundation`"
+  },
+  {
+   "scope": "/politics-society",
+   "file": "src/pages/politics-society/index.vue",
+   "section": "updates",
+   "type": "heading",
+   "text": "Updates",
+   "href": null
+  },
+  {
+   "scope": "/politics-society",
+   "file": "src/pages/politics-society/index.vue",
+   "section": "updates",
+   "type": "cta_label",
+   "text": "More Content",
+   "href": "/updates"
+  },
+  {
+   "scope": "/politics-society",
+   "file": "src/pages/politics-society/index.vue",
+   "section": "meta",
+   "type": "meta_title",
+   "text": "Politics & Society | Bertelsmann Foundation",
+   "href": null,
+   "note": "fallback only; when CMS data loads, title is `${heading} | Bertelsmann Foundation`"
+  },
+  {
+   "scope": "/future-leadership",
+   "file": "src/pages/future-leadership/index.vue",
+   "section": "updates",
+   "type": "heading",
+   "text": "Updates",
+   "href": null
+  },
+  {
+   "scope": "/future-leadership",
+   "file": "src/pages/future-leadership/index.vue",
+   "section": "updates",
+   "type": "cta_label",
+   "text": "More Content",
+   "href": "/updates"
+  },
+  {
+   "scope": "/future-leadership",
+   "file": "src/pages/future-leadership/index.vue",
+   "section": "meta",
+   "type": "meta_title",
+   "text": "Future Leadership | Bertelsmann Foundation",
+   "href": null,
+   "note": "fallback only; when CMS data loads, title is `${heading} | Bertelsmann Foundation`"
+  },
+  {
+   "scope": "/digital-world",
+   "file": "src/pages/digital-world/index.vue",
+   "section": "updates",
+   "type": "heading",
+   "text": "Updates",
+   "href": null
+  },
+  {
+   "scope": "/digital-world",
+   "file": "src/pages/digital-world/index.vue",
+   "section": "updates",
+   "type": "cta_label",
+   "text": "More Content",
+   "href": "/updates"
+  },
+  {
+   "scope": "/digital-world",
+   "file": "src/pages/digital-world/index.vue",
+   "section": "meta",
+   "type": "meta_title",
+   "text": "Politics & Society | Bertelsmann Foundation",
+   "href": null,
+   "note": "BUG: fallback title copied from politics-society page; should presumably read 'Digital World | Bertelsmann Foundation'"
+  },
+  {
+   "scope": "/podcasts",
+   "file": "src/pages/podcasts/index.vue",
+   "section": "meta",
+   "type": "meta_title",
+   "text": "Podcasts | Bertelsmann Foundation",
+   "href": null
+  },
+  {
+   "scope": "/podcasts/[slug]",
+   "file": "src/pages/podcasts/[slug].vue",
+   "section": "meta",
+   "type": "meta_title",
+   "text": "Content | Bertelsmann Foundation",
+   "href": null,
+   "note": "fallback only; normally `${heading} | ${workstream} | Bertelsmann Foundation` from CMS"
+  },
+  {
+   "scope": "/updates",
+   "file": "src/pages/updates.vue",
+   "section": "hero",
+   "type": "heading",
+   "text": "Updates",
+   "href": null
+  },
+  {
+   "scope": "/updates",
+   "file": "src/pages/updates.vue",
+   "section": "hero",
+   "type": "paragraph",
+   "text": "Here you'll find all our work in one place, from short articles to long reports, infographics, expert interviews, animated videos, and full-length documentaries.",
+   "href": null
+  },
+  {
+   "scope": "/updates",
+   "file": "src/pages/updates.vue",
+   "section": "tabs",
+   "type": "nav_label",
+   "text": "publications",
+   "href": "#publications"
+  },
+  {
+   "scope": "/updates",
+   "file": "src/pages/updates.vue",
+   "section": "tabs",
+   "type": "nav_label",
+   "text": "videos",
+   "href": "#videos"
+  },
+  {
+   "scope": "/updates",
+   "file": "src/pages/updates.vue",
+   "section": "tabs",
+   "type": "nav_label",
+   "text": "infographics",
+   "href": "#infographics"
+  },
+  {
+   "scope": "/updates",
+   "file": "src/pages/updates.vue",
+   "section": "tabs",
+   "type": "nav_label",
+   "text": "podcasts",
+   "href": "#podcasts"
+  },
+  {
+   "scope": "/updates",
+   "file": "src/pages/updates.vue",
+   "section": "meta",
+   "type": "meta_title",
+   "text": "Updates | Bertelsmann Foundation",
+   "href": null
+  },
+  {
+   "scope": "/archives",
+   "file": "src/pages/archives/index.vue",
+   "section": "meta",
+   "type": "meta_title",
+   "text": "Archives | Bertelsmann Foundation",
+   "href": null
+  },
+  {
+   "scope": "/search",
+   "file": "src/pages/search.vue",
+   "section": "search-form",
+   "type": "misc",
+   "text": "Search",
+   "href": null,
+   "note": "input placeholder"
+  },
+  {
+   "scope": "/search",
+   "file": "src/pages/search.vue",
+   "section": "results",
+   "type": "heading",
+   "text": "Results",
+   "href": null,
+   "note": "rendered as `{{ resultCount }} Results`"
+  },
+  {
+   "scope": "/search",
+   "file": "src/pages/search.vue",
+   "section": "results",
+   "type": "cta_label",
+   "text": "Learn More",
+   "href": null,
+   "note": "per-result button; followed by sr-only text 'about {result.heading}'"
+  },
+  {
+   "scope": "/search",
+   "file": "src/pages/search.vue",
+   "section": "meta",
+   "type": "meta_title",
+   "text": "Search | Bertelsmann Foundation",
+   "href": null
+  },
+  {
+   "scope": "/[...slug]",
+   "file": "src/pages/[...slug].vue",
+   "section": "infographic",
+   "type": "cta_label",
+   "text": "Download Original",
+   "href": null,
+   "note": "href is CMS-provided infographic file URL"
+  },
+  {
+   "scope": "/[...slug]",
+   "file": "src/pages/[...slug].vue",
+   "section": "meta",
+   "type": "meta_title",
+   "text": "Content | Bertelsmann Foundation",
+   "href": null,
+   "note": "fallback only; normally built from CMS heading"
+  },
+  {
+   "scope": "/blog",
+   "file": "src/pages/blog/index.vue",
+   "section": "hero",
+   "type": "misc",
+   "text": "Blog / Insights / Insights on Design, Data, and Social Impact",
+   "href": null,
+   "note": "BORDERLINE: definePageMeta hero (brow: 'Blog', title: 'Insights', tagline: 'Insights on Design, Data, and Social Impact'); /blog appears to be CCM design-system scaffolding, not BFNA production content"
+  },
+  {
+   "scope": "/blog",
+   "file": "src/pages/blog/index.vue",
+   "section": "intro",
+   "type": "heading",
+   "text": "Insights on Design, Data, and Social Impact",
+   "href": null,
+   "note": "BORDERLINE: CCM placeholder copy, not BFNA voice"
+  },
+  {
+   "scope": "/blog",
+   "file": "src/pages/blog/index.vue",
+   "section": "intro",
+   "type": "paragraph",
+   "text": "Welcome to our thinking space. Here, we share our expertise on the craft of designing for policy and research, creating effective knowledge products, and the nuances of ethical technology. Our goal is to provide value upfront, sharing what we've learned from our work with leading global organizations.",
+   "href": null,
+   "note": "BORDERLINE: CCM placeholder copy"
+  },
+  {
+   "scope": "/blog",
+   "file": "src/pages/blog/index.vue",
+   "section": "filter",
+   "type": "misc",
+   "text": "Filter by Topic:",
+   "href": null,
+   "note": "label"
+  },
+  {
+   "scope": "/blog",
+   "file": "src/pages/blog/index.vue",
+   "section": "filter",
+   "type": "misc",
+   "text": "All Topics | Designing for Policy & Research | The Craft of Knowledge Products | Ethical Technology & Social Impact",
+   "href": null,
+   "note": "select options, BORDERLINE CCM placeholder taxonomy"
+  },
+  {
+   "scope": "/blog",
+   "file": "src/pages/blog/index.vue",
+   "section": "cta",
+   "type": "heading",
+   "text": "Subscribe to Our Insights",
+   "href": null,
+   "note": "BORDERLINE: CCM placeholder copy"
+  },
+  {
+   "scope": "/blog",
+   "file": "src/pages/blog/index.vue",
+   "section": "cta",
+   "type": "paragraph",
+   "text": "Get the latest analysis and design thinking from our team, delivered straight to your inbox. We share practical advice for organizations looking to increase their impact.",
+   "href": null,
+   "note": "BORDERLINE: CCM placeholder copy"
+  },
+  {
+   "scope": "/blog",
+   "file": "src/pages/blog/index.vue",
+   "section": "cta",
+   "type": "misc",
+   "text": "Email / Subscribe",
+   "href": null,
+   "note": "email input placeholder 'Email' and submit label 'Subscribe'"
+  },
+  {
+   "scope": "/blog/[...slug]",
+   "file": "src/pages/blog/[...slug].vue",
+   "section": "404",
+   "type": "heading",
+   "text": "Post not found",
+   "href": null
+  },
+  {
+   "scope": "/blog/[...slug]",
+   "file": "src/pages/blog/[...slug].vue",
+   "section": "404",
+   "type": "link",
+   "text": "← Back to Blog",
+   "href": "/blog"
+  },
+  {
+   "scope": "error page",
+   "file": "src/error.vue",
+   "section": "404",
+   "type": "heading",
+   "text": "404",
+   "href": null,
+   "note": "shown when statusCode === 404; otherwise 'Error'"
+  },
+  {
+   "scope": "error page",
+   "file": "src/error.vue",
+   "section": "404",
+   "type": "heading",
+   "text": "Error",
+   "href": null,
+   "note": "non-404 variant"
+  },
+  {
+   "scope": "error page",
+   "file": "src/error.vue",
+   "section": "404",
+   "type": "paragraph",
+   "text": "Page not found",
+   "href": null,
+   "note": "404 variant"
+  },
+  {
+   "scope": "error page",
+   "file": "src/error.vue",
+   "section": "404",
+   "type": "paragraph",
+   "text": "An error occurred",
+   "href": null,
+   "note": "non-404 variant"
+  },
+  {
+   "scope": "error page",
+   "file": "src/error.vue",
+   "section": "404",
+   "type": "cta_label",
+   "text": "Go to Homepage",
+   "href": "/"
+  },
+  {
+   "scope": "error page",
+   "file": "src/error.vue",
+   "section": "meta",
+   "type": "meta_title",
+   "text": "404 - Page Not Found",
+   "href": null,
+   "note": "404 variant; non-404 title is 'Error'"
+  },
+  {
+   "scope": "Frame (legacy top/side chrome)",
+   "file": "src/components/legacy/organisms/Frame.vue",
+   "section": "nav",
+   "type": "nav_label",
+   "text": "Updates",
+   "href": "/updates"
+  },
+  {
+   "scope": "Frame (legacy top/side chrome)",
+   "file": "src/components/legacy/organisms/Frame.vue",
+   "section": "nav",
+   "type": "nav_label",
+   "text": "About Us",
+   "href": "/about"
+  },
+  {
+   "scope": "Frame (legacy top/side chrome)",
+   "file": "src/components/legacy/organisms/Frame.vue",
+   "section": "nav",
+   "type": "nav_label",
+   "text": "Transponder",
+   "href": "/politics-society/transponder-magazine/"
+  },
+  {
+   "scope": "Frame (legacy top/side chrome)",
+   "file": "src/components/legacy/organisms/Frame.vue",
+   "section": "nav",
+   "type": "nav_label",
+   "text": "Democracy",
+   "href": "/democracy"
+  },
+  {
+   "scope": "Frame (legacy top/side chrome)",
+   "file": "src/components/legacy/organisms/Frame.vue",
+   "section": "nav",
+   "type": "nav_label",
+   "text": "Politics & Society",
+   "href": "/politics-society"
+  },
+  {
+   "scope": "Frame (legacy top/side chrome)",
+   "file": "src/components/legacy/organisms/Frame.vue",
+   "section": "nav",
+   "type": "nav_label",
+   "text": "Future Leadership",
+   "href": "/future-leadership"
+  },
+  {
+   "scope": "Frame (legacy top/side chrome)",
+   "file": "src/components/legacy/organisms/Frame.vue",
+   "section": "nav",
+   "type": "nav_label",
+   "text": "Digital World",
+   "href": "/digital-world"
+  },
+  {
+   "scope": "Frame (legacy top/side chrome)",
+   "file": "src/components/legacy/organisms/Frame.vue",
+   "section": "social",
+   "type": "social",
+   "text": "Facebook",
+   "href": "https://www.facebook.com/BertelsmannFoundation/"
+  },
+  {
+   "scope": "Frame (legacy top/side chrome)",
+   "file": "src/components/legacy/organisms/Frame.vue",
+   "section": "social",
+   "type": "social",
+   "text": "Twitter",
+   "href": "https://twitter.com/BertelsmannFdn"
+  },
+  {
+   "scope": "Frame (legacy top/side chrome)",
+   "file": "src/components/legacy/organisms/Frame.vue",
+   "section": "social",
+   "type": "social",
+   "text": "YouTube",
+   "href": "https://www.youtube.com/channel/UCZZdgI5F7KjUCW0fCKUOAAg"
+  },
+  {
+   "scope": "Frame (legacy top/side chrome)",
+   "file": "src/components/legacy/organisms/Frame.vue",
+   "section": "social",
+   "type": "social",
+   "text": "Instagram",
+   "href": "https://www.instagram.com/bertelsmannfoundation/"
+  },
+  {
+   "scope": "Frame (legacy top/side chrome)",
+   "file": "src/components/legacy/organisms/Frame.vue",
+   "section": "social",
+   "type": "social",
+   "text": "Vimeo",
+   "href": "https://vimeo.com/bfna"
+  },
+  {
+   "scope": "Frame (legacy top/side chrome)",
+   "file": "src/components/legacy/organisms/Frame.vue",
+   "section": "social",
+   "type": "social",
+   "text": "LinkedIn",
+   "href": "https://www.linkedin.com/company/bertelsmann-foundation-north-america-inc."
+  },
+  {
+   "scope": "Frame (legacy top/side chrome)",
+   "file": "src/components/legacy/organisms/Frame.vue",
+   "section": "search",
+   "type": "misc",
+   "text": "Search...",
+   "href": null,
+   "note": "search input placeholder"
+  },
+  {
+   "scope": "Frame (legacy top/side chrome)",
+   "file": "src/components/legacy/organisms/Frame.vue",
+   "section": "search",
+   "type": "cta_label",
+   "text": "Search",
+   "href": null,
+   "note": "submit input value"
+  },
+  {
+   "scope": "Footer (legacy)",
+   "file": "src/components/legacy/organisms/Footer.vue",
+   "section": "footer",
+   "type": "misc",
+   "text": "Search",
+   "href": null,
+   "note": "footer search input placeholder"
+  },
+  {
+   "scope": "Footer (legacy)",
+   "file": "src/components/legacy/organisms/Footer.vue",
+   "section": "footer",
+   "type": "cta_label",
+   "text": "Search",
+   "href": null,
+   "note": "footer search button"
+  },
+  {
+   "scope": "Footer (legacy)",
+   "file": "src/components/legacy/organisms/Footer.vue",
+   "section": "footer",
+   "type": "copyright",
+   "text": "© {currentYear} Copyright Bertelsmann Foundation.",
+   "href": null,
+   "note": "year is new Date().getFullYear(), initialized to 2026"
+  },
+  {
+   "scope": "Footer (legacy)",
+   "file": "src/components/legacy/organisms/Footer.vue",
+   "section": "footer",
+   "type": "link",
+   "text": "by ccm.design",
+   "href": "https://ccmdesign.ca"
+  },
+  {
+   "scope": "MainNav (footer nav)",
+   "file": "src/components/legacy/organisms/MainNav.vue",
+   "section": "footer-nav",
+   "type": "nav_label",
+   "text": "About",
+   "href": "/about"
+  },
+  {
+   "scope": "MainNav (footer nav)",
+   "file": "src/components/legacy/organisms/MainNav.vue",
+   "section": "footer-nav",
+   "type": "nav_label",
+   "text": "Board of Directors",
+   "href": "/team#board_of_directors"
+  },
+  {
+   "scope": "MainNav (footer nav)",
+   "file": "src/components/legacy/organisms/MainNav.vue",
+   "section": "footer-nav",
+   "type": "nav_label",
+   "text": "Team",
+   "href": "/team"
+  },
+  {
+   "scope": "MainNav (footer nav)",
+   "file": "src/components/legacy/organisms/MainNav.vue",
+   "section": "footer-nav",
+   "type": "nav_label",
+   "text": "Bertelsmann Stiftung",
+   "href": "/bertelsmann-stiftung"
+  },
+  {
+   "scope": "MainNav (footer nav)",
+   "file": "src/components/legacy/organisms/MainNav.vue",
+   "section": "footer-nav",
+   "type": "nav_label",
+   "text": "Transatlantic Periscope",
+   "href": "https://transatlanticperiscope.org/"
+  },
+  {
+   "scope": "MainNav (footer nav)",
+   "file": "src/components/legacy/organisms/MainNav.vue",
+   "section": "footer-nav",
+   "type": "nav_label",
+   "text": "RANGE Forecasting",
+   "href": "https://www.rangeforecasting.org/"
+  },
+  {
+   "scope": "MainNav (footer nav)",
+   "file": "src/components/legacy/organisms/MainNav.vue",
+   "section": "footer-nav",
+   "type": "nav_label",
+   "text": "Transatlantic Barometer",
+   "href": "https://www.transatlanticbarometer.org/"
+  },
+  {
+   "scope": "MainNav (footer nav)",
+   "file": "src/components/legacy/organisms/MainNav.vue",
+   "section": "footer-nav",
+   "type": "nav_label",
+   "text": "BFNA Documentaries",
+   "href": "https://bfnadocs.org/"
+  },
+  {
+   "scope": "MainNav (footer nav)",
+   "file": "src/components/legacy/organisms/MainNav.vue",
+   "section": "footer-nav",
+   "type": "nav_label",
+   "text": "Transponder Magazine",
+   "href": "/politics-society/transponder-magazine/"
+  },
+  {
+   "scope": "MainNav (footer nav)",
+   "file": "src/components/legacy/organisms/MainNav.vue",
+   "section": "footer-nav",
+   "type": "nav_label",
+   "text": "Podcasts",
+   "href": "/podcasts/"
+  },
+  {
+   "scope": "MainNav (footer nav)",
+   "file": "src/components/legacy/organisms/MainNav.vue",
+   "section": "footer-nav",
+   "type": "link",
+   "text": "Privacy Policy",
+   "href": "/files/Privacy-Policy.pdf"
+  },
+  {
+   "scope": "MainNav (footer nav)",
+   "file": "src/components/legacy/organisms/MainNav.vue",
+   "section": "social",
+   "type": "social",
+   "text": "Facebook",
+   "href": "https://www.facebook.com/BertelsmannFoundation/"
+  },
+  {
+   "scope": "MainNav (footer nav)",
+   "file": "src/components/legacy/organisms/MainNav.vue",
+   "section": "social",
+   "type": "social",
+   "text": "Twitter",
+   "href": "https://twitter.com/BertelsmannFdn"
+  },
+  {
+   "scope": "MainNav (footer nav)",
+   "file": "src/components/legacy/organisms/MainNav.vue",
+   "section": "social",
+   "type": "social",
+   "text": "YouTube",
+   "href": "https://www.youtube.com/channel/UCZZdgI5F7KjUCW0fCKUOAAg"
+  },
+  {
+   "scope": "MainNav (footer nav)",
+   "file": "src/components/legacy/organisms/MainNav.vue",
+   "section": "social",
+   "type": "social",
+   "text": "Instagram",
+   "href": "https://www.instagram.com/bertelsmannfoundation/"
+  },
+  {
+   "scope": "MainNav (footer nav)",
+   "file": "src/components/legacy/organisms/MainNav.vue",
+   "section": "newsletter",
+   "type": "heading",
+   "text": "Subscribe to receive our updates & newsletters",
+   "href": null
+  },
+  {
+   "scope": "MainNav (footer nav)",
+   "file": "src/components/legacy/organisms/MainNav.vue",
+   "section": "newsletter",
+   "type": "cta_label",
+   "text": "Subscribe",
+   "href": "https://bfna.us20.list-manage.com/subscribe?u=53fc7e266c23506906a0a602f&id=4447bf4515"
+  },
+  {
+   "scope": "MainNav (footer nav)",
+   "file": "src/components/legacy/organisms/MainNav.vue",
+   "section": "newsletter",
+   "type": "paragraph",
+   "text": "Enter your email and customize your preferences.",
+   "href": null
+  },
+  {
+   "scope": "MainNav (footer nav)",
+   "file": "src/components/legacy/organisms/MainNav.vue",
+   "section": "footer-nav",
+   "type": "misc",
+   "text": "Publications (/updates) | Infographics (/updates#infographics) | Videos (/updates#videos) | Archives (/archives/) | Contact (mailto:info@bfna.org)",
+   "href": "mailto:info@bfna.org",
+   "note": "BORDERLINE: updatesLinks const is defined but the column rendering it is commented out; preserves the only mailto contact address info@bfna.org"
+  },
+  {
+   "scope": "OffCanvas (mobile menu)",
+   "file": "src/components/legacy/organisms/OffCanvas.vue",
+   "section": "search",
+   "type": "misc",
+   "text": "Search",
+   "href": null,
+   "note": "menu search input placeholder"
+  },
+  {
+   "scope": "OffCanvas (mobile menu)",
+   "file": "src/components/legacy/organisms/OffCanvas.vue",
+   "section": "search",
+   "type": "cta_label",
+   "text": "Search",
+   "href": null,
+   "note": "menu search button"
+  },
+  {
+   "scope": "Header (legacy, unused)",
+   "file": "src/components/legacy/organisms/Header.vue",
+   "section": "newsletter",
+   "type": "heading",
+   "text": "Subscribe to receive our updates & newsletters",
+   "href": null,
+   "note": "BORDERLINE: component appears unused (no imports found); nav/social come from props, only the subscribe block is hardcoded"
+  },
+  {
+   "scope": "Header (legacy, unused)",
+   "file": "src/components/legacy/organisms/Header.vue",
+   "section": "newsletter",
+   "type": "cta_label",
+   "text": "Subscribe",
+   "href": "https://bfna.us20.list-manage.com/subscribe?u=53fc7e266c23506906a0a602f&id=4447bf4515",
+   "note": "BORDERLINE: unused component"
+  },
+  {
+   "scope": "Header (legacy, unused)",
+   "file": "src/components/legacy/organisms/Header.vue",
+   "section": "newsletter",
+   "type": "paragraph",
+   "text": "Enter your email and customize your preferences.",
+   "href": null,
+   "note": "BORDERLINE: unused component"
+  },
+  {
+   "scope": "PlatformNav (hero platforms menu)",
+   "file": "src/components/legacy/molecules/PlatformNav.vue",
+   "section": "hero-nav",
+   "type": "heading",
+   "text": "Our Platforms",
+   "href": null
+  },
+  {
+   "scope": "PlatformNav (hero platforms menu)",
+   "file": "src/components/legacy/molecules/PlatformNav.vue",
+   "section": "hero-nav",
+   "type": "nav_label",
+   "text": "Transatlantic Periscope",
+   "href": "https://transatlanticperiscope.org/"
+  },
+  {
+   "scope": "PlatformNav (hero platforms menu)",
+   "file": "src/components/legacy/molecules/PlatformNav.vue",
+   "section": "hero-nav",
+   "type": "nav_label",
+   "text": "RANGE Forecasting",
+   "href": "https://www.rangeforecasting.org/"
+  },
+  {
+   "scope": "PlatformNav (hero platforms menu)",
+   "file": "src/components/legacy/molecules/PlatformNav.vue",
+   "section": "hero-nav",
+   "type": "nav_label",
+   "text": "Transatlantic Barometer",
+   "href": "https://www.transatlanticbarometer.org/"
+  },
+  {
+   "scope": "PlatformNav (hero platforms menu)",
+   "file": "src/components/legacy/molecules/PlatformNav.vue",
+   "section": "hero-nav",
+   "type": "nav_label",
+   "text": "BFNA Documentaries",
+   "href": "https://bfnadocs.org/"
+  },
+  {
+   "scope": "Hero (legacy)",
+   "file": "src/components/legacy/molecules/Hero.vue",
+   "section": "hero",
+   "type": "misc",
+   "text": "Bertelsmann Foundation home",
+   "href": "/",
+   "note": "sr-only label on the hero logo link (screen-reader-facing)"
+  },
+  {
+   "scope": "UpdatesPageTab",
+   "file": "src/components/templates/UpdatesPageTab.vue",
+   "section": "filters",
+   "type": "misc",
+   "text": "Democracy | Politics & Society | Future Leadership | Digital World",
+   "href": null,
+   "note": "workstream filter labels used on /updates tabs (values: democracy, politics-society, future-leadership, digital-world)"
+  },
+  {
+   "scope": "HomepageUpdates",
+   "file": "src/components/legacy/templates/HomepageUpdates.vue",
+   "section": "tabs",
+   "type": "nav_label",
+   "text": "publications",
+   "href": "#home-publications"
+  },
+  {
+   "scope": "HomepageUpdates",
+   "file": "src/components/legacy/templates/HomepageUpdates.vue",
+   "section": "tabs",
+   "type": "nav_label",
+   "text": "videos",
+   "href": "#home-videos"
+  },
+  {
+   "scope": "HomepageUpdates",
+   "file": "src/components/legacy/templates/HomepageUpdates.vue",
+   "section": "tabs",
+   "type": "nav_label",
+   "text": "infographics",
+   "href": "#home-infographics"
+  },
+  {
+   "scope": "HomepageUpdates",
+   "file": "src/components/legacy/templates/HomepageUpdates.vue",
+   "section": "tabs",
+   "type": "nav_label",
+   "text": "podcasts",
+   "href": "#home-podcasts"
+  },
+  {
+   "scope": "ProductHero",
+   "file": "src/components/legacy/molecules/ProductHero.vue",
+   "section": "product-hero",
+   "type": "cta_label",
+   "text": "Open full report",
+   "href": null,
+   "note": "shown when product.button.type === 'report'; href is CMS report URL"
+  },
+  {
+   "scope": "ProductCardThin",
+   "file": "src/components/legacy/molecules/ProductCardThin.vue",
+   "section": "card",
+   "type": "cta_label",
+   "text": "Learn More",
+   "href": null,
+   "note": "both podcast and non-podcast variants; href from CMS"
+  },
+  {
+   "scope": "Card (legacy)",
+   "file": "src/components/legacy/molecules/Card.vue",
+   "section": "card",
+   "type": "misc",
+   "text": "about {card.heading}",
+   "href": null,
+   "note": "BORDERLINE: sr-only suffix appended to CMS-provided button label; literal word 'about' is hardcoded (same pattern in HighlightCard.vue, DocCard.vue, search.vue)"
+  },
+  {
+   "scope": "DocCard",
+   "file": "src/components/legacy/molecules/DocCard.vue",
+   "section": "card",
+   "type": "misc",
+   "text": "By {card.by}",
+   "href": null,
+   "note": "BORDERLINE: literal 'By ' prefix before CMS author name"
+  },
+  {
+   "scope": "ctaSignup (content component)",
+   "file": "src/components/content/ctaSignup.vue",
+   "section": "newsletter",
+   "type": "heading",
+   "text": "Signup for our newsletter",
+   "href": null,
+   "note": "BORDERLINE: markdown-content component from CCM design-system scaffolding; copy matches /blog placeholder voice"
+  },
+  {
+   "scope": "ctaSignup (content component)",
+   "file": "src/components/content/ctaSignup.vue",
+   "section": "newsletter",
+   "type": "paragraph",
+   "text": "Get the latest analysis and design thinking from our team, delivered straight to your inbox. We share practical advice for organizations looking to increase their impact.",
+   "href": null,
+   "note": "BORDERLINE: CCM placeholder copy"
+  },
+  {
+   "scope": "ctaSignup (content component)",
+   "file": "src/components/content/ctaSignup.vue",
+   "section": "newsletter",
+   "type": "misc",
+   "text": "Email / Subscribe",
+   "href": null,
+   "note": "email input placeholder 'Email' and submit label 'Subscribe'"
+  },
+  {
+   "scope": "ccmTopbar (ds component)",
+   "file": "src/components/ds/molecules/ccmTopbar.vue",
+   "section": "nav",
+   "type": "misc",
+   "text": "site name",
+   "href": "/",
+   "note": "BORDERLINE: default logo-slot placeholder text, design-system scaffolding"
+  },
+  {
+   "scope": "ccmTopbar (ds component)",
+   "file": "src/components/ds/molecules/ccmTopbar.vue",
+   "section": "nav",
+   "type": "nav_label",
+   "text": "Home",
+   "href": "/",
+   "note": "BORDERLINE: ds scaffolding nav, not the production BFNA nav"
+  },
+  {
+   "scope": "ccmTopbar (ds component)",
+   "file": "src/components/ds/molecules/ccmTopbar.vue",
+   "section": "nav",
+   "type": "nav_label",
+   "text": "Insights",
+   "href": "/blog",
+   "note": "BORDERLINE: ds scaffolding nav"
+  },
+  {
+   "scope": "ccmTopbar (ds component)",
+   "file": "src/components/ds/molecules/ccmTopbar.vue",
+   "section": "nav",
+   "type": "nav_label",
+   "text": "Docs",
+   "href": "/docs",
+   "note": "BORDERLINE: ds scaffolding nav"
+  },
+  {
+   "scope": "ccmTopbar (ds component)",
+   "file": "src/components/ds/molecules/ccmTopbar.vue",
+   "section": "nav",
+   "type": "nav_label",
+   "text": "Test",
+   "href": "/test",
+   "note": "BORDERLINE: ds scaffolding nav pointing at excluded test page"
+  },
+  {
+   "scope": "ccmFooter (ds component)",
+   "file": "src/components/ds/organisms/ccmFooter.vue",
+   "section": "footer",
+   "type": "heading",
+   "text": "Footer",
+   "href": null,
+   "note": "BORDERLINE: placeholder h1 in ds footer, scaffolding"
+  },
+  {
+   "scope": "ccmByLine (ds component)",
+   "file": "src/components/ds/organisms/ccmByLine.vue",
+   "section": "footer",
+   "type": "copyright",
+   "text": "© {currentYear} CCM Design",
+   "href": null,
+   "note": "BORDERLINE: ds scaffolding, CCM (not BFNA) copyright"
+  },
+  {
+   "scope": "ccmByLine (ds component)",
+   "file": "src/components/ds/organisms/ccmByLine.vue",
+   "section": "footer",
+   "type": "link",
+   "text": "by ccm.design",
+   "href": "#",
+   "note": "BORDERLINE: ds scaffolding, href is '#'"
+  },
+  {
+   "scope": "legacy-base layout",
+   "file": "src/layouts/legacy-base.vue",
+   "section": "meta",
+   "type": "meta_title",
+   "text": "BFNA",
+   "href": null,
+   "note": "default page/og title when no title prop is passed; og:site_name and og:title reuse it; og:image:alt / twitter:image:alt are 'Page image for {title}'"
+  },
+  {
+   "scope": "article-layout layout",
+   "file": "src/layouts/article-layout.vue",
+   "section": "hero",
+   "type": "cta_label",
+   "text": "Back to Blog",
+   "href": "/blog",
+   "note": "BORDERLINE: blog article layout, CCM scaffolding"
+  }
+ ],
+ "note": "Hardcoded (non-CMS) copy from bfna-website-nuxt/src. /about copy REPLACED with Irene's BFNA website_text.docx (Jul 29 2026); old hardcoded about text dropped (recoverable from src/pages/about.vue). programs intros were CMS-driven, Irene's replacements live in data/pages.json. PENDING: Megan's messages with additional copy — not found in accessible mail/files; supply to apply."
+}

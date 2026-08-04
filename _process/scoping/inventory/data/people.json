@@ -1,0 +1,284 @@
+{
+ "generated": "2026-07-31",
+ "note": "Union of Directus people (15, rich: bio/title/socials — wins conflicts) and Contentful person (17, name+image only). external_collaborators not included.",
+ "counts": {
+  "total": 17,
+  "directus": 15,
+  "contentful": 17,
+  "contentful_only": 2
+ },
+ "people": [
+  {
+   "slug": "anthony-t-silberfeld",
+   "name": "Anthony T. Silberfeld",
+   "job_title": "Director, Transatlantic Relations",
+   "bio": "Tony Silberfeld joined the Bertelsmann Foundation as the Director of Transatlantic Relations in April 2014, overseeing a project portfolio aimed at strengthening the Euro-Atlantic alliance through traditional and innovative means. His research focuses on democratic innovations in cities, and geopolitical competition in space. He currently oversees two online platforms, RANGE and the Transatlantic Periscope, that provide geopolitical forecasting capacity and in-depth analyses of America’s bilateral relationships with its European partners, respectively. Tony has produced long-form publications, policy briefs, graphic books, education guides, digital animations and feature-length documentary films, constantly exploring cutting-edge avenues to connect the Foundation’s work to policymakers and the public.\n\nTony arrived at the Foundation after seven years with the United Kingdom’s Foreign and Commonwealth Office, where he was head of political and public affairs at the British Embassy’s Northern Ireland Bureau in Washington, DC. He also served as the Northern Ireland government spokesman in the Americas, and advised government ministers on political developments in the United States, Canada and Brazil. Prior to his tenure with the British government, Tony held posts as a foreign policy advisor in the U.S. Senate and the House of Representatives.\n\nTony has a master’s degree from the University of Denver’s Josef Korbel School of International Studies and a bachelor’s degree from Tulane University.",
+   "email": "anthony.silberfeld@bfna.org",
+   "linkedin": null,
+   "twitter": "https://bsky.app/profile/tonysilberfeld.bsky.social",
+   "image": "https://bfna.simplyas.com/assets/aa2ece83-6003-4fe6-84a4-e4eb8aaeaa65",
+   "status": "published",
+   "source": "both",
+   "legacy": {
+    "directus_id": 1,
+    "contentful_id": "79TlHrTCF8bmvOY05rJh16"
+   }
+  },
+  {
+   "slug": "brandon-bohrn",
+   "name": "Brandon Bohrn",
+   "job_title": "Project Manager, USA/Transatlantic Relations, Europe Program, Bertelsmann Stiftung",
+   "bio": null,
+   "email": "brandon.bohrn@bertelsmann-stiftung.de",
+   "linkedin": "https://de.linkedin.com/in/brandon-bohrn-16643b82?challengeId=AQF6rgb3-4vHrgAAAXKFuTpYznS3jq8bfydMtsqNPuwpTpnb2B8K_A7svRXnCC5GvLjFkwhS4TbFoPmfwfiGwJfo_j9PgjKrCw&submissionId=db2e9f7d-f5b8-1516-d069-ea1cdf3a9f74",
+   "twitter": null,
+   "image": "https://bfna.simplyas.com/assets/8f95d89b-3adf-46dc-a0cc-9f90b8dfb8c1",
+   "status": "published",
+   "source": "both",
+   "legacy": {
+    "directus_id": 2,
+    "contentful_id": "5zKkCH6sLktnfMoBem9ELl"
+   }
+  },
+  {
+   "slug": "chloe-ladd",
+   "name": "Chloe Ladd",
+   "job_title": "Senior Manager, Transatlantic Relations",
+   "bio": "Chloe Ladd joined the Bertelsmann Foundation in June of 2021. She is the Senior Manager of Transatlantic Relations. Her research at BFNA primarily focuses on France and the implications of current French policy in the United States and Germany. She is also in charge of the Bertelsmann Foundation Fellowship, a program bringing together policy makers on both sides of the Atlantic.\n\nA graduate of Georgetown University’s Master of German and European Studies in the School of Foreign Service, her focus was on France and its role in transatlantic security. She received her undergraduate degree in Spanish and International Relations at the University of Virginia.\n\nOriginally from France, she speaks fluent French and, having spent time in Valencia, Spain during her undergraduate experience, she also speaks Spanish.",
+   "email": null,
+   "linkedin": "https://www.linkedin.com/in/chloe-alexandra-laird-/",
+   "twitter": null,
+   "image": "https://bfna.simplyas.com/assets/920e0b09-611e-4736-b561-c6e2570ad109",
+   "status": "published",
+   "source": "both",
+   "legacy": {
+    "directus_id": 3,
+    "contentful_id": "Vg1vnuTlu9lmSnAs8bQmR"
+   }
+  },
+  {
+   "slug": "courtney-flynn-martino",
+   "name": "Courtney Flynn Martino",
+   "job_title": "Assistant Director, Transatlantic Relations",
+   "bio": "Courtney Flynn Martino joined the Bertelsmann Foundation in 2022. As the Assistant Director of Transatlantic Relations, Courtney manages the Transatlantic Barometer, an interactive platform that provides snapshot overviews of 31 transatlantic actors’ policy positions supplemented with interviews, infographics, and videos. She also conducts research on U.S.-German relations, with a focus on eastern Germany. Courtney comes to Bertelsmann after five years with the Friedrich Naumann Foundation, where she managed an economics-focused exchange platform for international experts.\n\nCourtney graduated with an M.A. in German and European Studies from Georgetown University’s School of Foreign Service, with a Certificate in Diplomatic Studies. Her graduate research focused on the impact of U.S. public diplomacy strategies in countering violent extremism. She has a double B.A. in German and Classical Studies from Wake Forest University. Courtney was a 2014 Fulbright grant recipient to Germany. Courtney speaks German and has studied Spanish, Latin, and Russian. She is originally from Staten Island, NY.",
+   "email": "courtney.flynn.martino@bfna.org",
+   "linkedin": "https://www.linkedin.com/in/courtney-flynn-martino-6b681880/",
+   "twitter": "https://bsky.app/profile/cflynnmartino.bsky.social",
+   "image": "https://bfna.simplyas.com/assets/e5068d8b-7d8e-4e01-832d-93386c6f43e1",
+   "status": "published",
+   "source": "both",
+   "legacy": {
+    "directus_id": 4,
+    "contentful_id": "3gTA0l76AKlH1GOQt8PMbF"
+   }
+  },
+  {
+   "slug": "faith-g-gray",
+   "name": "Faith G. Gray",
+   "job_title": "Director of Administration",
+   "bio": "Faith joined the Bertelsmann Foundation when it was established in February 2008. She is responsible for the financial, administrative and human resource operations of the organization.\n\nFaith previously managed the administrative and travel units of the International Committee of the Red Cross in Washington, DC. Prior to that position, she worked for several years in administration at the University of California at Los Angeles (UCLA). She held managerial and administrative positions within the dean’s office of the UCLA Graduate School of Education and Information Studies, and at the UCLA Center for Healthier Children, Families and Communities within the UCLA Schools of Medicine and Public Health.\n\nFaith has a bachelor’s degree in sociology with a concentration in race, ethnicity and stratification from UCLA.",
+   "email": "faith.gray@bfna.org",
+   "linkedin": null,
+   "twitter": null,
+   "image": "https://bfna.simplyas.com/assets/2b2f6813-5934-4439-b05e-ed373ed42e46",
+   "status": "published",
+   "source": "both",
+   "legacy": {
+    "directus_id": 5,
+    "contentful_id": "27DjG0l2QvEsuPxOhnAJe6"
+   }
+  },
+  {
+   "slug": "heaven-sullivan",
+   "name": "Heaven Sullivan",
+   "job_title": null,
+   "bio": null,
+   "email": null,
+   "linkedin": null,
+   "twitter": null,
+   "image": "https://bfna.simplyas.com/assets/d0f5f1b6-e2b5-4f10-ad02-ab087af00bdc",
+   "status": "published",
+   "source": "both",
+   "legacy": {
+    "directus_id": 6,
+    "contentful_id": "15DW5PUatI3Imp31LcVLaP"
+   }
+  },
+  {
+   "slug": "irene-braam",
+   "name": "Irene Braam",
+   "job_title": "Executive Director",
+   "bio": "Irene Braam joined the Bertelsmann Foundation as executive director in April 2016. She is also the first vice president and board director of the Bertelsmann Foundation Board of Directors.\n\nIrene is an experienced lawyer and media expert, and worked for over ten years with the Bertelsmann company. She began as director of government relations of the Brussels Liaison Office in 2005 and became senior vice president of government relations in September 2011.\n\nIrene developed, among other things, a European platform for global discussion about the digital transformation of the media world. The series was held in Brussels, Berlin, Madrid and London. Not only did she represent and position Bertelsmann’s interests in the EU, she also promoted Bertelsmann in other cultural and social events in Brussels, such as UFA Film nights, previews of Fremantle Media’s productions, exhibitions and public panel discussions.\n\nAfter studying law at Maastricht University, the Dutch native began her professional career in 1998 in the music industry. Irene was head of international, legal and business affairs at Naïve Records in Paris, in charge of business development for Midbar Tech Ltd. in Tel Aviv, and served as both director of public policy and government affairs, and director of legal and business affairs at the Universal Music Group in London and Brussels.\n\nIrene is a native speaker of Dutch, and also speaks English, German, French and some Spanish.",
+   "email": "irene.braam@bfna.org",
+   "linkedin": "https://www.linkedin.com/in/irene-braam-a5892519/",
+   "twitter": "https://bsky.app/profile/irenebraam.bsky.social",
+   "image": "https://bfna.simplyas.com/assets/43aa6da1-3642-4b16-84a2-6a3ef4bf14c9",
+   "status": "published",
+   "source": "both",
+   "legacy": {
+    "directus_id": 7,
+    "contentful_id": "O8ELy84NEZ6PYpq0WODE7"
+   }
+  },
+  {
+   "slug": "iulia-sava",
+   "name": "Iulia Sava",
+   "job_title": null,
+   "bio": null,
+   "email": null,
+   "linkedin": null,
+   "twitter": null,
+   "image": "https://images.ctfassets.net/9vgcz0fppkl3/1VVeyPnTgbJxynbgzZUIrv/487afb7046e7316ea848c60021b57c26/BlueLogoBertelsmannFoundation-05.jpg",
+   "status": null,
+   "source": "contentful-only",
+   "legacy": {
+    "directus_id": null,
+    "contentful_id": "5WrDFg4AlGNrHL1NR7uD20"
+   }
+  },
+  {
+   "slug": "liz-mohn",
+   "name": "Liz Mohn",
+   "job_title": "President of the Board of Directors",
+   "bio": "Liz Mohn represents the fifth generation of Bertelsmann’s founding families. She is a member of the Steering Committee of Bertelsmann Verwaltungsgesellschaft mbH and has been a member of the Bertelsmann Supervisory Board since 2002. In 1986, she joined the Bertelsmann Stiftung’s Advisory Board, today’s Board of Trustees. In 2005, she became the vice-chairwoman of the foundation’s Executive Board and its Board of Trustees. Within the Executive Board, she was responsible for the programs Germany and Asia, Living Values, Business in Society, Discovering Music, and Leadership and Corporate Culture.\n\nSince June 2021 she has been the Bertelsmann Stiftung’s worldwide representative and an honorary member of the Board of Trustees. She is president of the Board of Trustees of the Spain-based Fundación Bertelsmann, and is a member of the Board of Directors of the Bertelsmann Foundation North America.\n\nIssues that Liz Mohn has long addressed will be consolidated in the Bertelsmann Stiftung’s new Liz Mohn Center. The center will provide continuity for internationally established dialogue venues, such as the Trilogue Salzburg and the German-Spanish Forum, while developing them further. It will also pursue forward-looking initiatives on leadership and corporate culture and bring together the cultural projects initiated by Mohn.\n\nIn 2001, Mohn began organizing international cultural dialogues: first Egypt, then in Japan, later in China and India, but also in Europe and the US. Prior to that, the International Bertelsmann Forum with then German Chancellor Helmut Kohl was one of the foundation’s flagship events. Together with former Austrian Chancellor Wolfgang Schüssel, she organizes the Trilogue Salzburg, which was launched two decades ago. Since 2017, she has also been organizing the Forum Bellevue on the Future of Democracy, together with German President Frank-Walter Steinmeier – a series of events with leading international figures from the political, economic, cultural and academic arenas. In addition, she is co-president of the German-Spanish Forum, which takes place in the host country during visits by the Spanish king and the German president.\n\nFounded by Mohn in 1987 following conversations with acclaimed conductor Herbert von Karajan, the NEUE STIMMEN International Singing Competition is now known around the world for promoting young opera talent. Some 40 up-and-coming opera singers took part in the first competition. Today, with up to 1,400 participants from 80 countries, it is considered the best and most successful competition worldwide.\n\nMohn is also active on behalf of the Bertelsmann Relief Fund, the Medical Information Service, philanthropic events and information events for pensioners, administrative assistants and the spouses of executive managers. As president of the German Stroke Foundation, which she established, she promotes education, research, prevention and the development of a national and international network.\n\nShe has expanded her engagement in the area of culture through the Liz Mohn Culture and Music Foundation, which she established in November 2005. Through the foundation, she wants to do justice to the importance of music and culture for individuals and for society as a whole.",
+   "email": null,
+   "linkedin": null,
+   "twitter": null,
+   "image": "https://bfna.simplyas.com/assets/71723ccc-c497-4bd3-8500-301a6476ccc1",
+   "status": "published",
+   "source": "both",
+   "legacy": {
+    "directus_id": 8,
+    "contentful_id": "5vZjNobdBOOKdb8VbQuIVg"
+   }
+  },
+  {
+   "slug": "ma-a-ocvirk",
+   "name": "Maša Ocvirk",
+   "job_title": null,
+   "bio": null,
+   "email": null,
+   "linkedin": null,
+   "twitter": null,
+   "image": "https://images.ctfassets.net/9vgcz0fppkl3/1YsQysNwMJWQmVaiv2FnCK/fd6792995a185044d7b2f500eb4d1543/9568b4e5-ae0a-4c4f-93f8-0dc059b1d23d.jpg",
+   "status": null,
+   "source": "contentful-only",
+   "legacy": {
+    "directus_id": null,
+    "contentful_id": "5oi3fYV8KpBm1tAADLXzkz"
+   }
+  },
+  {
+   "slug": "margaret-belford",
+   "name": "Margaret Belford",
+   "job_title": "Project Coordinator, U.S.-EU Relations",
+   "bio": "Margaret Belford joined the Bertelsmann Foundation in 2025. As a project coordinator, she manages Bertelsmann’s subnational diplomacy partnerships, bringing delegations to U.S. communities outside the “Beltway Bubble.” Margaret also oversees the Summer Enrichment Series, a professional development program that offers students and recent graduates the opportunity to participate in expert roundtables on key policy topics. She is a proud Kansan.\n\nPrior to joining BFNA, Belford interned with the European Parliament, the U.S. Mission to the African Union, and the World Affairs Council of Dallas/Fort Worth, among others. She holds a B.A. in International Political Economy from the University of Texas at Dallas, where she focused on peacebuilding and the functions of multilateral and supranational institutions. Margaret is a U.N. Millennium Fellow, a U.S. Foreign Service Internship Program alum, and a volunteer speech and debate judge.",
+   "email": "margaret.belford@bfna.org",
+   "linkedin": "https://www.linkedin.com/in/margaretbelford/",
+   "twitter": null,
+   "image": "https://bfna.simplyas.com/assets/0ff8dec1-71f4-4dcc-acfa-6125a07d4d3e",
+   "status": "published",
+   "source": "both",
+   "legacy": {
+    "directus_id": 9,
+    "contentful_id": "3HmfNELTI2locAfFoigUZ5"
+   }
+  },
+  {
+   "slug": "marshall-reid",
+   "name": "Marshall Reid",
+   "job_title": "Senior Manager, US-EU-Asia Dynamics",
+   "bio": "Marshall Reid joined the Bertelsmann Foundation in 2024 as Senior Manager of US-EU-Asia Dynamics. At BFNA, Marshall works on RANGE, Bertelsmann’s transatlantic forecasting platform. He also conducts research on linkages between the United States, Europe and the Indo-Pacific. Prior to joining BFNA, he worked with the Global Taiwan Institute, where he managed a variety of programs related to Taiwan and its place in the world. He has also held positions at the German Marshall Fund of the United States, and is a Pacific Forum Young Leader.\n\nMarshall received an M.A. in International Affairs from George Washington University’s Elliott School of International Affairs, where he focused on U.S. foreign policy in the Indo-Pacific. He graduated with a B.A. in International Relations and History from Rhodes College. He is proficient in Mandarin Chinese.",
+   "email": "Marshall.Reid@bfna.org",
+   "linkedin": "https://www.linkedin.com/in/marshall-reid-43a237127/",
+   "twitter": null,
+   "image": "https://bfna.simplyas.com/assets/297315cc-8e5d-409d-8608-84ffa7ad8666",
+   "status": "published",
+   "source": "both",
+   "legacy": {
+    "directus_id": 10,
+    "contentful_id": "ArU2x43Zj2XCliHEqJxLa"
+   }
+  },
+  {
+   "slug": "megan-long",
+   "name": "Megan Long",
+   "job_title": "Project Coordinator & Events Manager",
+   "bio": "Megan joined the Bertelsmann Foundation in December 2015 and is responsible for project coordination, events management, and logistics. She previously worked in academic administration at The Catholic University of America (CUA) in Washington, DC. Megan managed the graduate academic affairs for several departments within the CUA School of Arts and Sciences, and before that, worked in an administrative capacity for the CUA Department of Politics.\n\nMegan has a bachelor’s degree in global studies with a concentration in European integration and a double minor in international business and history from Loyola University Maryland. During her time at Loyola, she spent one year studying abroad at the Katholieke Universiteit Leuven in Belgium. In that time, she participated in diverse cultural exchange programs, studied the Dutch language and culture, and traveled extensively.",
+   "email": "megan.long@bfna.org",
+   "linkedin": "https://www.linkedin.com/in/megan-long-93b91216",
+   "twitter": null,
+   "image": "https://bfna.simplyas.com/assets/904fa574-44a1-46cf-928a-8efdc06183b2",
+   "status": "published",
+   "source": "both",
+   "legacy": {
+    "directus_id": 11,
+    "contentful_id": "50BGh1B1QL8ZqCxW4FfaP9"
+   }
+  },
+  {
+   "slug": "samuel-george",
+   "name": "Samuel George",
+   "job_title": "Director, BFNA Documentaries",
+   "bio": "Samuel George is the Bertelsmann Foundation’s Director of BFNA Documentaries. Since joining Bertelsmann Foundation in 2012, his work has focused on economics, politics, the digital revolution, and daily life with a specific emphasis on where these issues intersect. \n  \nHis multimedia approach features documentary film, animated video, and written analysis. Samuel’s documentaries bring viewers up close and personal to people and communities facing the challenges and opportunities of the 21st century, offering candid perspectives that allow viewers to draw their own conclusions. Samuel’s written work has also sought to highlight global crossroads. His publications investigate the global impact of the digital revolution, arguing that a successful digital transition requires an inclusive conversation. This work builds upon previous research that contextualized trends in emerging markets, while underscoring the importance of international economics to the transatlantic community. \n\nSamuel is from Philadelphia, Pennsylvania and holds a PhD from Johns Hopkins University School of Advanced International Studies (SAIS) in Washington.",
+   "email": "samuel.george@bfna.org",
+   "linkedin": null,
+   "twitter": null,
+   "image": "https://bfna.simplyas.com/assets/75876aba-051f-463a-b3d7-557565ce6ec5",
+   "status": "published",
+   "source": "both",
+   "legacy": {
+    "directus_id": 12,
+    "contentful_id": "4RH9Iuka2NthYSCBW2ssun"
+   }
+  },
+  {
+   "slug": "stephen-f-szabo",
+   "name": "Stephen F. Szabo",
+   "job_title": "Member of the Board of Directors",
+   "bio": "Dr. Stephen F. Szabo is a senior fellow at the American Institute for Contemporary Studies, Johns Hopkins University and a professorial lecturer at SAIS Johns Hopkins University\n\nPreviously, Szabo was the executive director of the Transatlantic Academy, based at the Washington office of the German Marshall Fund of the United States (GMF). He also served as academic and interim dean as well as professor of European studies at the Paul H. Nitze School of Advanced International Studies, Johns Hopkins University. Prior to that he served as professor of national security affairs at the National Defense University and chairman of West European studies at the Foreign Service Institute, U.S. Department of State. He has written on German foreign and security policies, generational politics in Europe, and transatlantic security and political relations. His publications include The Changing Politics of German Security; The Diplomacy of German Unification; Parting Ways: The Crisis in the German-American Relationship; and Germany, Russia and the Rise of Geo-Economics.",
+   "email": null,
+   "linkedin": null,
+   "twitter": null,
+   "image": "https://bfna.simplyas.com/assets/17352e16-2fa7-4adb-a9c3-4dc530957022",
+   "status": "published",
+   "source": "both",
+   "legacy": {
+    "directus_id": 13,
+    "contentful_id": "23qJt05MpgL7LeE4UdJSbb"
+   }
+  },
+  {
+   "slug": "wilhelm-friedrich-uhr",
+   "name": "Wilhelm-Friedrich Uhr",
+   "job_title": "Executive Board and Chief Operating Officer",
+   "bio": "Wilhelm-Friedrich Uhr has been with the Guetersloh, Germany-based Bertelsmann Stiftung since 2003. He initially joined the Bertelsmann Stiftung as Senior Vice President for Human Resources and Organization, and was appointed Senior Vice President for Corporate Operations in 2013. As of August 1, 2025, he serves as a member of the Executive Board and Chief Operating Officer.\n\nPrior to joining the Stiftung, Mr. Uhr was executive director of it-akademie ostwestfalen (IT Academy of East Westphalia), an institution that was a Bertelsmann Stiftung project.\n\nMr. Uhr was a World Bank senior human-resources officer responsible for southeastern Asia based in Washington, DC from 1997 to 2000. He joined the bank from Siemens, where he served as director of human resources and organizational development for the electromechanical components division.\n\nBetween 1989 and 1994, Mr. Uhr worked for Nixdorf, where he held various positions, among them the personal assistant to the board member in charge of human resources and the director of the software engineering department.",
+   "email": null,
+   "linkedin": null,
+   "twitter": null,
+   "image": "https://bfna.simplyas.com/assets/2921f19a-d1a3-4c50-91ca-d92420df5235",
+   "status": "published",
+   "source": "both",
+   "legacy": {
+    "directus_id": 14,
+    "contentful_id": "598b1gZeth8pnxI7RvQ3pM"
+   }
+  },
+  {
+   "slug": "zachary-stoor",
+   "name": "Zachary Stoor",
+   "job_title": "Project Coordinator, Transatlantic Relations",
+   "bio": "Zac joined the Bertelsmann Foundation in February 2025 as a Project Coordinator of Transatlantic Relations. Zac supports the Transatlantic Barometer and Transatlantic Periscope platforms and conducts research on democracy in the transatlantic space. Prior to joining the Bertelsmann Foundation, Zac has worked for the National Democratic Institute, U.S. Helsinki Commission, and the U.S. Department of State, primarily focusing on democracy and human rights issues in Europe.\n \nZac holds an M.A. in European Studies and a Certificate in Russian and Eurasian Studies from Georgetown University's School of Foreign Service. His graduate research focused on democratic backsliding in Central and Eastern Europe and its effects on EU enlargement. Zac also holds a B.A. in Political Science from Stanford University. He is proficient in French, Spanish, Portuguese, Italian, and German.",
+   "email": "zachary.stoor@bfna.org",
+   "linkedin": "https://www.linkedin.com/in/zachary-stoor",
+   "twitter": null,
+   "image": "https://bfna.simplyas.com/assets/d57dae7c-ae82-41a4-a41f-dcc3d9ee319a",
+   "status": "published",
+   "source": "both",
+   "legacy": {
+    "directus_id": 15,
+    "contentful_id": "3vPUJaQQq5nS8XsQs8tRcu"
+   }
+  }
+ ]
+}

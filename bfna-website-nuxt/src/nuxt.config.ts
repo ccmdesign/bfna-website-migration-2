@@ -104,6 +104,13 @@ export default defineNuxtConfig({
 
   ],
   ssr: true,
+  nitro: {
+    prerender: {
+      // Wireframes aren't linked from the main site — seed them so the crawler finds them
+      routes: ['/wireframes'],
+      failOnError: false
+    }
+  },
   experimental: {
     clientFallback: true
   },
@@ -127,6 +134,11 @@ export default defineNuxtConfig({
     },
     {
       path: resolve(currentDir, 'components/legacy'),
+      pathPrefix: false
+    },
+    {
+      // Front 2 wireframes only — components used exclusively under /wireframes
+      path: resolve(currentDir, 'components/wireframe'),
       pathPrefix: false
     }
   ],
