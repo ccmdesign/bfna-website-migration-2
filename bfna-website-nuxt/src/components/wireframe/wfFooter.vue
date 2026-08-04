@@ -14,8 +14,12 @@
 
       <div class="grid" data-gap="l" style="grid-template-columns: repeat(4, 1fr);">
         <nav v-for="m in menus()" :key="m.label" class="stack" data-gap="xs" :aria-label="`Footer — ${m.label}`">
-          <p><strong>{{ m.label }}</strong></p>
-          <ul class="stack" data-gap="2xs">
+          <p>
+            <a v-if="m.href" :href="m.href" :data-external="m.external || undefined"><strong>{{ m.label }}</strong></a>
+            <NuxtLink v-else-if="m.to" :to="m.to"><strong>{{ m.label }}</strong></NuxtLink>
+            <strong v-else>{{ m.label }}</strong>
+          </p>
+          <ul v-if="m.items" class="stack" data-gap="2xs">
             <li v-for="i in m.items" :key="i.label"><wf-menu-link :item="i" /></li>
           </ul>
         </nav>

@@ -179,6 +179,12 @@
     padding: 0.25em 0.5em;
   }
 
+  /* Pruned-nav plain buttons (Podcasts, Documentaries) — align with dropdown
+     summaries; the ↗ affordance comes from a[data-external]. */
+  .wireframe .wf-nav__link {
+    padding: 0.25em 0.5em;
+  }
+
   .wireframe .wf-nav__group summary::after {
     content: " ▾";
     font-size: 0.7em;
