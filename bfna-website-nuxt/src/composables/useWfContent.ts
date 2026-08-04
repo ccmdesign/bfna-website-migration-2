@@ -40,6 +40,9 @@ export interface WfProject {
   external_url: string | null
   image: string | null
   parent_project: string | null
+  archived?: boolean | null        // active-tier flag (BF-149)
+  exclude_from_grid?: boolean | null  // BF-149: keep off the program project grid (e.g. podcasts)
+  external_only?: boolean | null   // BF-149: lives off-site — surfaced as a product band, not a grid card
   microsite_cta?: string | null  // dataset copy for the external-CTA section
   participation?: { title: string, ctas: string[] } | null  // dataset draft copy (GGS participation path)
   pending?: string            // open-question chip (Q6/Q7)
@@ -104,6 +107,15 @@ const projectsAll: WfProject[] = [
 ]
 const topProjects = projectsAll.filter(p => !p.parent_project)
 
+// A project earns a card in a PROGRAM PAGE grid only when it's an active, on-site
+// project (BF-145 / Aug 4 call). Excluded: archived tiers, rows flagged out of the
+// grid (BF-149 `exclude_from_grid` — e.g. the Bridging/Wisdom podcasts), external-only
+// products (Transponder, shown as its own band), and any leftover `kind: podcast` row.
+// The all-projects index keeps using the unfiltered `projectsByProgram`, so this only
+// prunes the program-page grid — reusable across every program page ([area].vue).
+const inProjectGrid = (p: WfProject) =>
+  !p.archived && !p.exclude_from_grid && !p.external_only && p.kind !== 'podcast'
+
 // Homepage + nav curation (IA decision, not data): flagship projects
 const FEATURED_SLUGS = ['transatlantic-barometer', 'transatlantic-periscope', 'how-to-fix-democracy', 'the-bertelsmann-foundation-fellowship']
 // bfna-documentaries removed (BF-142): Documentaries is now a dedicated external
@@ -164,6 +176,7 @@ const KIND_LABELS: Record<string, string> = {
   'interactive-multimedia-platform': 'Interactive Multimedia Platform',
   'geopolitical-forecasting-platform': 'Geopolitical Forecasting Platform',
   'podcast-series': 'Podcast Series',
+  'podcast': 'Podcast',
   'fellowship': 'Fellowship Program'
 }
 
@@ -185,6 +198,15 @@ export function useWfContent() {
     programBySlug: (slug: string) => PROGRAMS.find(a => a.slug === slug),
     projects: () => topProjects,
     projectsByProgram: (program: string) => topProjects.filter(p => p.program === program),
+    // Program-page grid = active, on-site projects only (see `inProjectGrid`).
+    // TR&GC resolves to the Aug 4 six; podcasts + external products drop out.
+    gridProjectsByProgram: (program: string) =>
+      topProjects.filter(p => p.program === program && inProjectGrid(p)),
+    // External-only "products" within a program (e.g. The Transponder): rendered as
+    // their own band on the program page, not as grid cards. Data-driven via
+    // `external_only`, so any program can carry a product with no page edits.
+    productsByProgram: (program: string) =>
+      topProjects.filter(p => p.program === program && p.external_only),
     // Projects whose program is a RE-TAG placeholder (Q3) — shown as their
     // own group on the all-projects index so the open work stays visible
     projectsPendingRetag: () => topProjects.filter(p => (p.program ?? '').startsWith('RE-TAG')),
