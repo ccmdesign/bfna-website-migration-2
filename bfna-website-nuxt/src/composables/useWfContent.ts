@@ -61,6 +61,16 @@ export interface WfMenuItem {
   strong?: boolean
 }
 
+// A top-level menu: either a dropdown (has `items`) or a plain external/internal
+// link (has `href`/`to`, no `items`) — the pruned-nav "plain button" case.
+export interface WfMenu {
+  label: string
+  items?: WfMenuItem[]
+  to?: string
+  href?: string
+  external?: boolean
+}
+
 export interface WfPerson {
   slug: string
   name: string
@@ -96,12 +106,14 @@ const topProjects = projectsAll.filter(p => !p.parent_project)
 
 // Homepage + nav curation (IA decision, not data): flagship projects
 const FEATURED_SLUGS = ['transatlantic-barometer', 'transatlantic-periscope', 'how-to-fix-democracy', 'the-bertelsmann-foundation-fellowship']
-const NAV_SLUGS = ['transatlantic-barometer', 'transatlantic-periscope', 'range', 'how-to-fix-democracy', 'bfna-documentaries', 'the-bertelsmann-foundation-fellowship', 'transponder-magazine']
+// bfna-documentaries removed (BF-142): Documentaries is now a dedicated external
+// nav button (bfnadocs.org) with NO on-site landing page.
+const NAV_SLUGS = ['transatlantic-barometer', 'transatlantic-periscope', 'range', 'how-to-fix-democracy', 'the-bertelsmann-foundation-fellowship', 'transponder-magazine']
 
 // Single source for site menus — top bar and footer render the SAME structure.
 // "Projects" per Irene's wording (Q1); dropdown = flagships only, links go to
 // on-site project pages (Q4 resolved) — external ↗ lives on the page CTA.
-const MENUS: { label: string, items: WfMenuItem[] }[] = [
+const MENUS: WfMenu[] = [
   { label: 'About', items: [
     { label: 'Mission', to: '/wireframes/about' },
     { label: 'Board of Directors', to: '/wireframes/about#board' },
@@ -122,7 +134,11 @@ const MENUS: { label: string, items: WfMenuItem[] }[] = [
     { label: 'Videos', to: '/wireframes/insights?format=video' },
     { label: 'Infographics', to: '/wireframes/insights?format=infographic' },
     { label: 'Archive', to: '/wireframes/archive', strong: true }
-  ] }
+  ] },
+  // Pruned-nav plain buttons (BF-142): external links, no dropdowns, no landing pages.
+  // NOTE: podcast-platform URL is a PLACEHOLDER — Irene to supply the real one.
+  { label: 'Podcasts', href: '#podcast-platform-url', external: true },
+  { label: 'Documentaries', href: 'https://bfnadocs.org', external: true }
 ]
 
 const people = (peopleData as { people: WfPerson[] }).people

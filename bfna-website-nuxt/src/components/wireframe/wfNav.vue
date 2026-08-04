@@ -7,7 +7,17 @@
         <strong>BFNA</strong>
       </NuxtLink>
 
-      <wf-nav-dropdown v-for="m in menus()" :key="m.label" :label="m.label" :items="m.items" />
+      <template v-for="m in menus()" :key="m.label">
+        <!-- Plain button (no dropdown): external/internal top-level link -->
+        <a
+          v-if="m.href"
+          :href="m.href"
+          class="wf-nav__link"
+          :data-external="m.external || undefined"
+        >{{ m.label }}</a>
+        <NuxtLink v-else-if="m.to" :to="m.to" class="wf-nav__link">{{ m.label }}</NuxtLink>
+        <wf-nav-dropdown v-else :label="m.label" :items="m.items ?? []" />
+      </template>
 
       <NuxtLink to="/wireframes/search" class="wf-nav__search">Search</NuxtLink>
       <!-- Every page carries the layout's subscribe band, so this anchors locally -->
