@@ -12,11 +12,38 @@
     </template>
 
     <template v-if="area">
-      <!-- GGS hub template zone 2: related projects -->
+      <!-- GGS hub template zone 2: related projects (active, on-site projects only —
+           podcasts + external products are pruned out via gridProjectsByProgram) -->
       <wf-section id="projects" label="Projects in this area" heading="Projects">
         <ul class="grid" data-gap="m" style="grid-template-columns: repeat(2, 1fr);">
           <wf-card-project v-for="p in projects" :key="p.slug" :project="p" />
         </ul>
+      </wf-section>
+
+      <!-- Distinct PRODUCT band(s): external-only offerings within the program
+           (e.g. The Transponder), rendered separately from the project grid.
+           Data-driven via `external_only`; only appears when a program has one. -->
+      <wf-section
+        v-for="prod in products" :key="prod.slug"
+        :label="`Product — ${prod.heading}`" :heading="prod.heading"
+      >
+        <div class="switcher" data-gap="m">
+          <div class="stack" data-gap="s">
+            <p v-if="prod.excerpt || prod.description" data-measure="normal">
+              {{ productBlurb(prod) }}
+            </p>
+            <div class="cluster" data-gap="s">
+              <a
+                v-if="prod.external_url"
+                :href="prod.external_url" class="wf-button" data-variant="primary" data-external="true"
+              >Visit {{ prod.heading }} ↗</a>
+              <!-- external_url pending (Q6): no fabricated link — status note per the
+                   wireframe "Copy pending Qx" convention. -->
+              <span v-else class="wf-chip">External link pending {{ prod.pending ?? 'Q6' }}</span>
+            </div>
+          </div>
+          <wf-media v-if="prod.image" :src="prod.image" alt="" ratio="3/2" />
+        </div>
       </wf-section>
 
       <!-- GGS hub template zone 3: recent insights (active tier only) -->
@@ -46,13 +73,21 @@
 definePageMeta({ layout: false })
 
 const route = useRoute()
-const { programBySlug, programs, projectsByProgram, activeByProgram, archivedCountByProgram, projectBySlug, paragraphs } = useWfContent()
+const { programBySlug, programs, gridProjectsByProgram, productsByProgram, activeByProgram, archivedCountByProgram, projectBySlug, paragraphs, plain } = useWfContent()
 
 const area = programBySlug(route.params.area as string)
-const projects = area ? projectsByProgram(area.name) : []
+const projects = area ? gridProjectsByProgram(area.name) : []
+const products = area ? productsByProgram(area.name) : []
 const insights = area ? activeByProgram(area.name) : []
 const archivedCount = area ? archivedCountByProgram(area.name) : 0
 const otherAreas = area ? programs().filter(a => a.slug !== area.slug) : []
 
 const programName = (slug: string) => projectBySlug(slug)?.heading ?? slug
+
+// Product blurb: real dataset copy, trimmed to the lead sentence so trailing
+// markdown links in the raw excerpt don't leak into the wireframe.
+const productBlurb = (p: { excerpt: string | null, description: string | null }) => {
+  const t = plain(p.excerpt ?? p.description)
+  return t.length > 220 ? t.slice(0, 220).trimEnd() + '…' : t
+}
 </script>
