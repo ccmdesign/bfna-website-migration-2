@@ -59,7 +59,7 @@
       "publish_date": "2020-05-30",
       "format": null,
       "program": "Democracy",
-      "archived": true,
+      "archived": false,
       "evergreen": false,
       "legacy": {
         "type": "products",
