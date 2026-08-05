@@ -36,7 +36,11 @@
       v-for="prod in products" :key="prod.slug"
       :label="`Product — ${prod.heading}`" :heading="prod.heading"
     >
-      <div class="switcher" data-gap="m">
+      <!-- Side-by-side: image left, content right. The image is wrapped in a plain
+           div so the switcher treats it as a normal flex child — a bare <img> with
+           width:100% forces its own row and collapses the layout to stacked. -->
+      <div class="switcher" data-gap="l">
+        <div v-if="prod.image"><wf-media :src="prod.image" alt="" ratio="3/2" /></div>
         <div class="stack" data-gap="s">
           <p v-if="prod.excerpt || prod.description" data-measure="normal">
             {{ productBlurb(prod) }}
@@ -51,7 +55,6 @@
             <span v-else class="wf-chip">External link pending {{ prod.pending ?? 'Q6' }}</span>
           </div>
         </div>
-        <wf-media v-if="prod.image" :src="prod.image" alt="" ratio="3/2" />
       </div>
     </wf-section>
 
