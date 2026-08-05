@@ -288,6 +288,16 @@
     margin: 0;
   }
 
+
+  /* Stacked grids read as one grid: the seam between a 2-col and a 3-col block
+     equals the card gap (data-gap="m" → --space-m), so the rhythm doesn't jump
+     when the column count changes (homepage Insights: featured 2-col + latest
+     3-col). The margin:0 reset above otherwise kills the stack's spacing here.
+     ponytail: assumes grids use data-gap="m" (all of ours do). */
+  .wireframe ul.grid + ul.grid {
+    margin-block-start: var(--space-m, 1.875rem);
+  }
+
   .wireframe .wf-card {
     position: relative;
     border: 1px solid #999;
@@ -345,4 +355,13 @@
     border: 1px solid #666;
     font: inherit;
   }
+}
+
+/* Unlayered on purpose: typography.css sets an UNLAYERED `li { margin-bottom: 0.5em }`,
+   and unlayered styles beat anything inside @layer overrides. This reset must live
+   outside the layer to win. Zeroing it makes `gap` the single source of card spacing,
+   so row gaps equal column gaps in every grid/switcher regardless of column count. */
+.wireframe ul.grid > li,
+.wireframe ul.switcher > li {
+  margin-block: 0;
 }
