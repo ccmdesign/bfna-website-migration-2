@@ -365,3 +365,10 @@
 .wireframe ul.switcher > li {
   margin-block: 0;
 }
+
+/* Footer menu columns: items sit at line-height spacing, matching the (zero)
+   gap between each column heading and its first item (Claudio, Aug 5). Beats
+   both the layered .stack > * + * margin and typography.css's unlayered li margin. */
+.wireframe .wf-footer ul.stack > li {
+  margin-block: 0;
+}
