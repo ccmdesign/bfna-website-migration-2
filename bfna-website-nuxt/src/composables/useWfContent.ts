@@ -217,6 +217,9 @@ export function useWfContent() {
     // `external_only`, so any program can carry a product with no page edits.
     productsByProgram: (program: string) =>
       topProjects.filter(p => p.program === program && p.external_only),
+    // All external-only products across programs — surfaced as a band on the
+    // homepage (between Projects and Insights). Just The Transponder today.
+    allProducts: () => topProjects.filter(p => p.external_only),
     // Projects whose program is a RE-TAG placeholder (Q3) — shown as their
     // own group on the all-projects index so the open work stays visible
     projectsPendingRetag: () => topProjects.filter(p => (p.program ?? '').startsWith('RE-TAG')),
