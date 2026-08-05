@@ -37,7 +37,7 @@ const seedScript = `;(function(){try{
   if(!Array.isArray(cur))cur=[];
   var byId={};cur.forEach(function(a){byId[a.id]=a});
   var keep=cur.filter(function(a){return String(a.id).indexOf('wf-seed')!==0});
-  var fresh=seed.map(function(s){return byId[s.id]?Object.assign({},s,{status:byId[s.id].status}):s});
+  var fresh=seed.map(function(s){return byId[s.id]&&s.status!=='done'?Object.assign({},s,{status:byId[s.id].status}):s});
   localStorage.setItem(k,JSON.stringify(keep.concat(fresh)));
 }catch(e){}})()`
 

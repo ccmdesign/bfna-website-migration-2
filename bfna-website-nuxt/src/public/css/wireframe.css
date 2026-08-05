@@ -81,6 +81,11 @@
     z-index: 1;
   }
 
+  /* Section headers breathe: space between the heading and its content */
+  .wireframe .wf-slot :is(h1, h2) {
+    margin-block-end: var(--space-m, 1.5rem);
+  }
+
   /* Homepage hero: taller for prominence (Claudio, Jul 31) */
   .wireframe .wf-hero {
     min-height: 60svh;
