@@ -129,8 +129,9 @@ const inProjectGrid = (p: WfProject) =>
 // Homepage + nav curation (IA decision, not data): flagship projects
 const FEATURED_SLUGS = ['transatlantic-barometer', 'transatlantic-periscope', 'how-to-fix-democracy', 'the-bertelsmann-foundation-fellowship']
 // bfna-documentaries removed (BF-142): Documentaries is now a dedicated external
-// nav button (bfnadocs.org) with NO on-site landing page.
-const NAV_SLUGS = ['transatlantic-barometer', 'transatlantic-periscope', 'range', 'how-to-fix-democracy', 'the-bertelsmann-foundation-fellowship', 'transponder-magazine']
+// nav button (bfnadocs.org) with NO on-site landing page. transponder-magazine
+// removed: it's now an external_only product (homepage band), not a project page.
+const NAV_SLUGS = ['transatlantic-barometer', 'transatlantic-periscope', 'range', 'how-to-fix-democracy', 'the-bertelsmann-foundation-fellowship']
 
 // Single source for site menus — top bar and footer render the SAME structure.
 // "Projects" per Irene's wording (Q1); dropdown = flagships only, links go to
@@ -145,7 +146,9 @@ const MENUS: WfMenu[] = [
   ] },
   { label: 'Programs', items: PROGRAMS.map(a => ({ label: a.name, to: `/wireframes/${a.slug}` })) },
   { label: 'Projects', items: [
-    ...NAV_SLUGS.map(s => projectsAll.find(p => p.slug === s)!).filter(Boolean)
+    // Only on-site, active projects link here — external_only products, podcasts,
+    // and archived rows are pruned so the menu tracks the data (Aug 4 mapping).
+    ...NAV_SLUGS.map(s => projectsAll.find(p => p.slug === s)!).filter(Boolean).filter(inProjectGrid)
       .map(p => ({ label: p.heading, to: `/wireframes/projects/${p.slug}` })),
     { label: 'All Projects →', to: '/wireframes/projects', strong: true }
   ] },
