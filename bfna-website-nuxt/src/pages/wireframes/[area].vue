@@ -15,9 +15,7 @@
       <!-- GGS hub template zone 2: related projects (active, on-site projects only —
            podcasts + external products are pruned out via gridProjectsByProgram) -->
       <wf-section id="projects" label="Projects in this area" heading="Projects">
-        <ul class="grid" data-gap="m" style="grid-template-columns: repeat(2, 1fr);">
-          <wf-card-project v-for="p in projects" :key="p.slug" :project="p" />
-        </ul>
+        <wf-grid-projects :projects="projects" />
       </wf-section>
 
       <!-- The Transponder product band moved to the homepage (between Projects

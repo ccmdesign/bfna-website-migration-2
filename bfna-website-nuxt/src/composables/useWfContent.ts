@@ -225,7 +225,9 @@ export function useWfContent() {
     allProducts: () => topProjects.filter(p => p.external_only),
     // Projects whose program is a RE-TAG placeholder (Q3) — shown as their
     // own group on the all-projects index so the open work stays visible
-    projectsPendingRetag: () => topProjects.filter(p => (p.program ?? '').startsWith('RE-TAG')),
+    // Archived rows are excluded — they live in the archive, not the active index
+    // (100 Questions is archived, so this list is empty today; Claudio, Aug 5).
+    projectsPendingRetag: () => topProjects.filter(p => (p.program ?? '').startsWith('RE-TAG') && !p.archived),
     projectBySlug: (slug: string) => projectsAll.find(p => p.slug === slug),
     // Cohort/year pages nested via parent_project (Directus M2O self-relation)
     projectChildren: (slug: string) =>
