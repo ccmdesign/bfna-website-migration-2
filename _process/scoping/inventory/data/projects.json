@@ -59,7 +59,7 @@
       "publish_date": "2020-05-30",
       "format": null,
       "program": "Democracy",
-      "archived": true,
+      "archived": false,
       "evergreen": false,
       "legacy": {
         "type": "products",
@@ -467,7 +467,7 @@
       "publish_date": "2022-03-31",
       "format": null,
       "program": "Future Leadership",
-      "archived": true,
+      "archived": false,
       "evergreen": false,
       "legacy": {
         "type": "products",
@@ -1140,6 +1140,25 @@
         "ctas": [
           "Subscribe for updates",
           "Read the latest"
+        ]
+      },
+      "podcast": {
+        "title": "Indo-Pacific in Focus",
+        "host": "Marshall Reid",
+        "source_note": "Episode titles & descriptions pending extraction from Irene's May 11 docx.",
+        "episodes": [
+          {
+            "title": "[Episode 1 — title pending, from Irene's May 11 docx]",
+            "description": "[Description pending extraction from Irene's May 11 docx]"
+          },
+          {
+            "title": "[Episode 2 — title pending, from Irene's May 11 docx]",
+            "description": "[Description pending extraction from Irene's May 11 docx]"
+          },
+          {
+            "title": "[Episode 3 — title pending, from Irene's May 11 docx]",
+            "description": "[Description pending extraction from Irene's May 11 docx]"
+          }
         ]
       }
     },
