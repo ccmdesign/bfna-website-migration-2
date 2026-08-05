@@ -10,7 +10,9 @@
     <wf-section v-for="a in programs()" :key="a.slug" :label="a.name">
       <h2><NuxtLink :to="`/wireframes/${a.slug}`">{{ a.name }}</NuxtLink></h2>
       <ul class="grid" data-min-width="s" data-gap="m">
-        <wf-card-project v-for="p in projectsByProgram(a.name)" :key="p.slug" :project="p" :excerpt-length="120" />
+        <!-- Same filter as the program pages (Aug 4 mapping): active on-site
+             projects only — podcasts, external products, archived rows drop out. -->
+        <wf-card-project v-for="p in gridProjectsByProgram(a.name)" :key="p.slug" :project="p" :excerpt-length="120" />
       </ul>
     </wf-section>
 
@@ -26,7 +28,7 @@
 <script setup lang="ts">
 definePageMeta({ layout: false })
 
-const { programs, projectsByProgram, projectsPendingRetag, pageBySlug } = useWfContent()
+const { programs, gridProjectsByProgram, projectsPendingRetag, pageBySlug } = useWfContent()
 const indexPage = pageBySlug('projects')
 
 const retag = projectsPendingRetag()
