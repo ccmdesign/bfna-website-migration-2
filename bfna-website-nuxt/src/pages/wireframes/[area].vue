@@ -7,7 +7,8 @@
         :crumbs="[{ label: 'Home', to: '/wireframes' }, { label: 'Programs' }]"
         :heading="area.name" :tagline="paragraphs(area.intro)"
       >
-        <div><NuxtLink to="#projects" class="wf-button" data-variant="primary">See how to get involved</NuxtLink></div>
+        <!-- Button copy per Irene (Aug 5): "Explore our work" -->
+        <div><NuxtLink to="#projects" class="wf-button" data-variant="primary">Explore our work</NuxtLink></div>
       </wf-page-header>
     </template>
 
@@ -52,7 +53,11 @@ const { programBySlug, programs, gridProjectsByProgram, activeByProgram, archive
 
 const area = programBySlug(route.params.area as string)
 const projects = area ? gridProjectsByProgram(area.name) : []
-const insights = area ? activeByProgram(area.name) : []
+// Democracy hub: insights limited to 2026 releases (Irene, Aug 5 widget feedback —
+// scoped to this hub only; other programs keep the full active tier)
+const insights = area
+  ? activeByProgram(area.name).filter(i => area.slug !== 'democracy' || (i.publish_date ?? '').startsWith('2026'))
+  : []
 const archivedCount = area ? archivedCountByProgram(area.name) : 0
 const otherAreas = area ? programs().filter(a => a.slug !== area.slug) : []
 
