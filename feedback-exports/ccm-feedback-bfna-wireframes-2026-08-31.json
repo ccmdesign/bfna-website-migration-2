@@ -1,0 +1,4936 @@
+{
+  "projectName": "bfna-wireframes",
+  "exportedAt": "2026-08-31T14:47:02.562Z",
+  "count": 68,
+  "annotations": [
+    {
+      "id": "d105cab4-3b3d-47cf-be24-eeb1751ca8af",
+      "projectName": "bfna-wireframes",
+      "message": "not sure whether we should keep Insights on this subpage? is it possible to remove it just for the Future Leadership program page?",
+      "authorName": "Irene",
+      "url": "https://wireframes--bfna-site-v2.netlify.app/wireframes/future-leadership",
+      "path": "/wireframes/future-leadership",
+      "viewport": "1272x668",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 Edg/151.0.0.0",
+      "createdAt": "2026-08-05T20:00:34.612Z",
+      "cssSelector": "",
+      "xpath": "",
+      "textSnippet": "",
+      "elementTag": "",
+      "textPrefix": "",
+      "textSuffix": "",
+      "fingerprint": "",
+      "neighborText": "",
+      "xPct": 0,
+      "yPct": 0,
+      "wPct": 0,
+      "hPct": 0,
+      "status": "todo",
+      "kind": "pin",
+      "sequenceNumber": 107,
+      "pinX": 242,
+      "pinY": 1409,
+      "capturedElements": [
+        {
+          "tag": "h2",
+          "attributes": {},
+          "rect": {
+            "x": 86,
+            "y": 296.96875,
+            "w": 1100,
+            "h": 28.5
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "class": "center | stack",
+            "data-gap": "m"
+          },
+          "rect": {
+            "x": 66,
+            "y": 296.96875,
+            "w": 1140,
+            "h": 1051.6875
+          }
+        },
+        {
+          "tag": "section",
+          "attributes": {
+            "class": "wf-slot",
+            "data-label": "Recent insights"
+          },
+          "rect": {
+            "x": 0,
+            "y": 256.96875,
+            "w": 1272,
+            "h": 1212.354248046875
+          }
+        },
+        {
+          "tag": "main",
+          "attributes": {
+            "id": "wf-main",
+            "class": "stack",
+            "data-gap": "xl"
+          },
+          "rect": {
+            "x": 0,
+            "y": -1041.2083740234375,
+            "w": 1272,
+            "h": 3120.28125
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "class": "wireframe"
+          },
+          "rect": {
+            "x": 0,
+            "y": -1100,
+            "w": 1272,
+            "h": 3815.072998046875
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "id": "__nuxt"
+          },
+          "rect": {
+            "x": 0,
+            "y": -1100,
+            "w": 1272,
+            "h": 3815.072998046875
+          }
+        }
+      ]
+    },
+    {
+      "id": "d0df633f-a24d-4a11-9cdf-f43bf08f1677",
+      "projectName": "bfna-wireframes",
+      "message": "change the order: The Bertelsmann Foundation Fellowship; Summer Enrichment Series; Leadership in Action. we will add a 4th project in early 2027",
+      "authorName": "Irene",
+      "url": "https://wireframes--bfna-site-v2.netlify.app/wireframes/future-leadership",
+      "path": "/wireframes/future-leadership",
+      "viewport": "1272x668",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 Edg/151.0.0.0",
+      "createdAt": "2026-08-05T19:58:47.527Z",
+      "cssSelector": "",
+      "xpath": "",
+      "textSnippet": "",
+      "elementTag": "",
+      "textPrefix": "",
+      "textSuffix": "",
+      "fingerprint": "",
+      "neighborText": "",
+      "xPct": 0,
+      "yPct": 0,
+      "wPct": 0,
+      "hPct": 0,
+      "status": "todo",
+      "kind": "area",
+      "sequenceNumber": 106,
+      "areaX": 260,
+      "areaY": 720,
+      "areaW": 473,
+      "areaH": 320,
+      "capturedElements": [
+        {
+          "tag": "div",
+          "attributes": {
+            "id": "__nuxt"
+          },
+          "rect": {
+            "x": 0,
+            "y": -400,
+            "w": 1272,
+            "h": 3815.072998046875
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "class": "wireframe"
+          },
+          "rect": {
+            "x": 0,
+            "y": -400,
+            "w": 1272,
+            "h": 3815.072998046875
+          }
+        },
+        {
+          "tag": "ul",
+          "attributes": {},
+          "rect": {
+            "x": 551,
+            "y": 44.395835876464844,
+            "w": 288,
+            "h": 300.3333435058594
+          }
+        },
+        {
+          "tag": "li",
+          "attributes": {},
+          "rect": {
+            "x": 571.6666870117188,
+            "y": 300.0625,
+            "w": 258.66668701171875,
+            "h": 27
+          }
+        },
+        {
+          "tag": "a",
+          "attributes": {
+            "href": "/wireframes/projects",
+            "class": ""
+          },
+          "rect": {
+            "x": 571.6666870117188,
+            "y": 301.3958435058594,
+            "w": 108.4375,
+            "h": 24
+          }
+        },
+        {
+          "tag": "strong",
+          "attributes": {},
+          "rect": {
+            "x": 571.6666870117188,
+            "y": 301.3958435058594,
+            "w": 108.4375,
+            "h": 24
+          }
+        },
+        {
+          "tag": "main",
+          "attributes": {
+            "id": "wf-main",
+            "class": "stack",
+            "data-gap": "xl"
+          },
+          "rect": {
+            "x": 0,
+            "y": -341.2083435058594,
+            "w": 1272,
+            "h": 3120.28125
+          }
+        },
+        {
+          "tag": "section",
+          "attributes": {
+            "class": "wf-slot",
+            "data-label": "Projects in this area",
+            "id": "projects"
+          },
+          "rect": {
+            "x": 0,
+            "y": 297.96875,
+            "w": 1272,
+            "h": 639
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "class": "center | stack",
+            "data-gap": "m"
+          },
+          "rect": {
+            "x": 66,
+            "y": 337.96875,
+            "w": 1140,
+            "h": 478.3333435058594
+          }
+        },
+        {
+          "tag": "h2",
+          "attributes": {},
+          "rect": {
+            "x": 86,
+            "y": 337.96875,
+            "w": 1100,
+            "h": 28.5
+          }
+        },
+        {
+          "tag": "ul",
+          "attributes": {
+            "class": "grid",
+            "data-gap": "m",
+            "style": "grid-template-columns: repeat(2, 1fr);"
+          },
+          "rect": {
+            "x": 86,
+            "y": 396.46875,
+            "w": 1100,
+            "h": 419.8333435058594
+          }
+        },
+        {
+          "tag": "li",
+          "attributes": {
+            "class": "wf-card"
+          },
+          "rect": {
+            "x": 86,
+            "y": 396.46875,
+            "w": 535,
+            "h": 180.73959350585938
+          }
+        },
+        {
+          "tag": "h3",
+          "attributes": {},
+          "rect": {
+            "x": 106.66667175292969,
+            "y": 417.13543701171875,
+            "w": 493.66668701171875,
+            "h": 32.40625
+          }
+        },
+        {
+          "tag": "a",
+          "attributes": {
+            "href": "/wireframes/projects/summer-enrichment-series",
+            "class": ""
+          },
+          "rect": {
+            "x": 106.66667175292969,
+            "y": 421.13543701171875,
+            "w": 264.0833435058594,
+            "h": 24
+          }
+        },
+        {
+          "tag": "p",
+          "attributes": {},
+          "rect": {
+            "x": 106.66667175292969,
+            "y": 475.54168701171875,
+            "w": 493.66668701171875,
+            "h": 81
+          }
+        },
+        {
+          "tag": "li",
+          "attributes": {
+            "class": "wf-card"
+          },
+          "rect": {
+            "x": 651,
+            "y": 396.46875,
+            "w": 535,
+            "h": 180.73959350585938
+          }
+        },
+        {
+          "tag": "h3",
+          "attributes": {},
+          "rect": {
+            "x": 671.6666870117188,
+            "y": 417.13543701171875,
+            "w": 493.66668701171875,
+            "h": 32.40625
+          }
+        },
+        {
+          "tag": "a",
+          "attributes": {
+            "href": "/wireframes/projects/leadership-in-action",
+            "class": ""
+          },
+          "rect": {
+            "x": 671.6666870117188,
+            "y": 421.13543701171875,
+            "w": 194.5416717529297,
+            "h": 24
+          }
+        },
+        {
+          "tag": "p",
+          "attributes": {},
+          "rect": {
+            "x": 671.6666870117188,
+            "y": 475.54168701171875,
+            "w": 493.66668701171875,
+            "h": 81
+          }
+        },
+        {
+          "tag": "li",
+          "attributes": {
+            "class": "wf-card"
+          },
+          "rect": {
+            "x": 86,
+            "y": 607.2083740234375,
+            "w": 535,
+            "h": 209.09375
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "class": "wf-card__chips | cluster",
+            "data-gap": "xs"
+          },
+          "rect": {
+            "x": 106.66667175292969,
+            "y": 627.875,
+            "w": 493.66668701171875,
+            "h": 20.354167938232422
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "data-ccm-area-overlay": "true",
+            "style": "position: fixed; inset: 0px; z-index: 2147483646; background: rgba(15, 23, 42, 0.04); cursor: crosshair;"
+          },
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 1272,
+            "h": 668
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "style": "position: fixed; z-index: 2147483647; border: 2px dashed rgb(0, 102, 255); background: rgba(0, 102, 255, 0.1); pointer-events: none; left: 260px; top: 320px; width: 473px; height: 320px;"
+          },
+          "rect": {
+            "x": 260,
+            "y": 320,
+            "w": 473,
+            "h": 320
+          }
+        }
+      ]
+    },
+    {
+      "id": "1ba4100e-b98e-4cd5-92b9-17571578b6c4",
+      "projectName": "bfna-wireframes",
+      "message": "we decided to keep this as a program as we might also publish articles, and surveys in the near future",
+      "authorName": "Irene",
+      "url": "https://wireframes--bfna-site-v2.netlify.app/wireframes/future-leadership",
+      "path": "/wireframes/future-leadership",
+      "viewport": "1272x668",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 Edg/151.0.0.0",
+      "createdAt": "2026-08-05T19:57:35.463Z",
+      "cssSelector": "",
+      "xpath": "",
+      "textSnippet": "",
+      "elementTag": "",
+      "textPrefix": "",
+      "textSuffix": "",
+      "fingerprint": "",
+      "neighborText": "",
+      "xPct": 0,
+      "yPct": 0,
+      "wPct": 0,
+      "hPct": 0,
+      "status": "todo",
+      "kind": "pin",
+      "sequenceNumber": 105,
+      "pinX": 508,
+      "pinY": 208,
+      "capturedElements": [
+        {
+          "tag": "h1",
+          "attributes": {},
+          "rect": {
+            "x": 86,
+            "y": 183.45834350585938,
+            "w": 1100,
+            "h": 41.052085876464844
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "class": "center | stack",
+            "data-gap": "s",
+            "style": "padding-block: var(--space-l);"
+          },
+          "rect": {
+            "x": 66,
+            "y": 99.45833587646484,
+            "w": 1140,
+            "h": 457.84375
+          }
+        },
+        {
+          "tag": "section",
+          "attributes": {
+            "class": "wf-slot",
+            "data-label": "Hub intro"
+          },
+          "rect": {
+            "x": 0,
+            "y": 58.79166793823242,
+            "w": 1272,
+            "h": 619.1771240234375
+          }
+        },
+        {
+          "tag": "main",
+          "attributes": {
+            "id": "wf-main",
+            "class": "stack",
+            "data-gap": "xl"
+          },
+          "rect": {
+            "x": 0,
+            "y": 58.79166793823242,
+            "w": 1272,
+            "h": 3120.28125
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "class": "wireframe"
+          },
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 1272,
+            "h": 3815.072998046875
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "id": "__nuxt"
+          },
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 1272,
+            "h": 3815.072998046875
+          }
+        }
+      ]
+    },
+    {
+      "id": "c8ee3a06-dc75-4ef4-8f4b-d48647fcc792",
+      "projectName": "bfna-wireframes",
+      "message": "this is also an external microsite",
+      "authorName": "Irene",
+      "url": "https://wireframes--bfna-site-v2.netlify.app/wireframes/transatlantic-relations-global-challenges",
+      "path": "/wireframes/transatlantic-relations-global-challenges",
+      "viewport": "1272x668",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 Edg/151.0.0.0",
+      "createdAt": "2026-08-05T19:56:23.892Z",
+      "cssSelector": "",
+      "xpath": "",
+      "textSnippet": "",
+      "elementTag": "",
+      "textPrefix": "",
+      "textSuffix": "",
+      "fingerprint": "",
+      "neighborText": "",
+      "xPct": 0,
+      "yPct": 0,
+      "wPct": 0,
+      "hPct": 0,
+      "status": "todo",
+      "kind": "pin",
+      "sequenceNumber": 104,
+      "pinX": 342,
+      "pinY": 1282,
+      "capturedElements": [
+        {
+          "tag": "a",
+          "attributes": {
+            "href": "/wireframes/projects/indo-pacific-nexus",
+            "class": ""
+          },
+          "rect": {
+            "x": 106.66667175292969,
+            "y": 500.6770935058594,
+            "w": 180.08334350585938,
+            "h": 24
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "class": "wf-card__chips | cluster",
+            "data-gap": "xs"
+          },
+          "rect": {
+            "x": 106.66667175292969,
+            "y": 468.32293701171875,
+            "w": 493.66668701171875,
+            "h": 20.354167938232422
+          }
+        },
+        {
+          "tag": "li",
+          "attributes": {
+            "class": "wf-card"
+          },
+          "rect": {
+            "x": 86,
+            "y": 447.65625,
+            "w": 535,
+            "h": 241.5
+          }
+        },
+        {
+          "tag": "ul",
+          "attributes": {
+            "class": "grid",
+            "data-gap": "m",
+            "style": "grid-template-columns:repeat(2, 1fr);"
+          },
+          "rect": {
+            "x": 86,
+            "y": -30.53125,
+            "w": 1100,
+            "h": 719.6875
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "class": "center | stack",
+            "data-gap": "m",
+            "style": ""
+          },
+          "rect": {
+            "x": 66,
+            "y": -89.03125,
+            "w": 1140,
+            "h": 778.1875
+          }
+        },
+        {
+          "tag": "section",
+          "attributes": {
+            "class": "wf-slot",
+            "data-label": "Projects in this area",
+            "id": "projects"
+          },
+          "rect": {
+            "x": 0,
+            "y": -129.03125,
+            "w": 1272,
+            "h": 938.8541870117188
+          }
+        },
+        {
+          "tag": "main",
+          "attributes": {
+            "id": "wf-main",
+            "class": "stack",
+            "data-gap": "xl"
+          },
+          "rect": {
+            "x": 0,
+            "y": -741.2083740234375,
+            "w": 1272,
+            "h": 3398.83349609375
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "class": "wireframe"
+          },
+          "rect": {
+            "x": 0,
+            "y": -800,
+            "w": 1272,
+            "h": 4093.625
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "id": "__nuxt"
+          },
+          "rect": {
+            "x": 0,
+            "y": -800,
+            "w": 1272,
+            "h": 4093.625
+          }
+        }
+      ]
+    },
+    {
+      "id": "f7a79816-4306-4a16-b001-4fdb51f70fa9",
+      "projectName": "bfna-wireframes",
+      "message": "this is also an external microsite",
+      "authorName": "Irene",
+      "url": "https://wireframes--bfna-site-v2.netlify.app/wireframes/transatlantic-relations-global-challenges",
+      "path": "/wireframes/transatlantic-relations-global-challenges",
+      "viewport": "1272x668",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 Edg/151.0.0.0",
+      "createdAt": "2026-08-05T19:56:06.578Z",
+      "cssSelector": "",
+      "xpath": "",
+      "textSnippet": "",
+      "elementTag": "",
+      "textPrefix": "",
+      "textSuffix": "",
+      "fingerprint": "",
+      "neighborText": "",
+      "xPct": 0,
+      "yPct": 0,
+      "wPct": 0,
+      "hPct": 0,
+      "status": "todo",
+      "kind": "pin",
+      "sequenceNumber": 103,
+      "pinX": 865,
+      "pinY": 1036,
+      "capturedElements": [
+        {
+          "tag": "a",
+          "attributes": {
+            "href": "/wireframes/projects/astropolitics",
+            "class": ""
+          },
+          "rect": {
+            "x": 671.6666870117188,
+            "y": 461.5833435058594,
+            "w": 116.4375,
+            "h": 24
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "class": "wf-card__chips | cluster",
+            "data-gap": "xs"
+          },
+          "rect": {
+            "x": 671.6666870117188,
+            "y": 429.22918701171875,
+            "w": 493.66668701171875,
+            "h": 20.354167938232422
+          }
+        },
+        {
+          "tag": "li",
+          "attributes": {
+            "class": "wf-card"
+          },
+          "rect": {
+            "x": 651,
+            "y": 408.5625,
+            "w": 535,
+            "h": 209.09375
+          }
+        },
+        {
+          "tag": "ul",
+          "attributes": {
+            "class": "grid",
+            "data-gap": "m",
+            "style": "grid-template-columns:repeat(2, 1fr);"
+          },
+          "rect": {
+            "x": 86,
+            "y": 169.46875,
+            "w": 1100,
+            "h": 719.6875
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "class": "center | stack",
+            "data-gap": "m",
+            "style": ""
+          },
+          "rect": {
+            "x": 66,
+            "y": 110.96875,
+            "w": 1140,
+            "h": 778.1875
+          }
+        },
+        {
+          "tag": "section",
+          "attributes": {
+            "class": "wf-slot",
+            "data-label": "Projects in this area",
+            "id": "projects"
+          },
+          "rect": {
+            "x": 0,
+            "y": 70.96875,
+            "w": 1272,
+            "h": 938.8541870117188
+          }
+        },
+        {
+          "tag": "main",
+          "attributes": {
+            "id": "wf-main",
+            "class": "stack",
+            "data-gap": "xl"
+          },
+          "rect": {
+            "x": 0,
+            "y": -541.2083740234375,
+            "w": 1272,
+            "h": 3398.83349609375
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "class": "wireframe"
+          },
+          "rect": {
+            "x": 0,
+            "y": -600,
+            "w": 1272,
+            "h": 4093.625
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "id": "__nuxt"
+          },
+          "rect": {
+            "x": 0,
+            "y": -600,
+            "w": 1272,
+            "h": 4093.625
+          }
+        }
+      ]
+    },
+    {
+      "id": "04f2dcd8-0a73-4f8c-ac3e-fd2329404ab9",
+      "projectName": "bfna-wireframes",
+      "message": "change language button to Explore our work",
+      "authorName": "Irene",
+      "url": "https://wireframes--bfna-site-v2.netlify.app/wireframes/transatlantic-relations-global-challenges",
+      "path": "/wireframes/transatlantic-relations-global-challenges",
+      "viewport": "1272x668",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 Edg/151.0.0.0",
+      "createdAt": "2026-08-05T19:54:01.412Z",
+      "cssSelector": "",
+      "xpath": "",
+      "textSnippet": "",
+      "elementTag": "",
+      "textPrefix": "",
+      "textSuffix": "",
+      "fingerprint": "",
+      "neighborText": "",
+      "xPct": 0,
+      "yPct": 0,
+      "wPct": 0,
+      "hPct": 0,
+      "status": "todo",
+      "kind": "pin",
+      "sequenceNumber": 63,
+      "pinX": 311,
+      "pinY": 466,
+      "capturedElements": [
+        {
+          "tag": "div",
+          "attributes": {},
+          "rect": {
+            "x": 86,
+            "y": 449.51043701171875,
+            "w": 1100,
+            "h": 40.79166793823242
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "class": "center | stack",
+            "data-gap": "s",
+            "style": "padding-block: var(--space-l);"
+          },
+          "rect": {
+            "x": 66,
+            "y": 99.45833587646484,
+            "w": 1140,
+            "h": 430.84375
+          }
+        },
+        {
+          "tag": "section",
+          "attributes": {
+            "class": "wf-slot",
+            "data-label": "Hub intro"
+          },
+          "rect": {
+            "x": 0,
+            "y": 58.79166793823242,
+            "w": 1272,
+            "h": 592.1771240234375
+          }
+        },
+        {
+          "tag": "main",
+          "attributes": {
+            "id": "wf-main",
+            "class": "stack",
+            "data-gap": "xl"
+          },
+          "rect": {
+            "x": 0,
+            "y": 58.79166793823242,
+            "w": 1272,
+            "h": 3398.83349609375
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "class": "wireframe"
+          },
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 1272,
+            "h": 4093.625
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "id": "__nuxt"
+          },
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 1272,
+            "h": 4093.625
+          }
+        }
+      ]
+    },
+    {
+      "id": "f01bae88-8eff-4927-b2be-d8a9d6944a2f",
+      "projectName": "bfna-wireframes",
+      "message": "can we limit the content showing up under Insights here to content released in 2026?",
+      "authorName": "Irene",
+      "url": "https://wireframes--bfna-site-v2.netlify.app/wireframes/democracy",
+      "path": "/wireframes/democracy",
+      "viewport": "1272x668",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 Edg/151.0.0.0",
+      "createdAt": "2026-08-05T19:53:35.548Z",
+      "cssSelector": "",
+      "xpath": "",
+      "textSnippet": "",
+      "elementTag": "",
+      "textPrefix": "",
+      "textSuffix": "",
+      "fingerprint": "",
+      "neighborText": "",
+      "xPct": 0,
+      "yPct": 0,
+      "wPct": 0,
+      "hPct": 0,
+      "status": "todo",
+      "kind": "pin",
+      "sequenceNumber": 62,
+      "pinX": 198,
+      "pinY": 1435,
+      "capturedElements": [
+        {
+          "tag": "h2",
+          "attributes": {},
+          "rect": {
+            "x": 86,
+            "y": 125.32292175292969,
+            "w": 1100,
+            "h": 28.5
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "class": "center | stack",
+            "data-gap": "m"
+          },
+          "rect": {
+            "x": 66,
+            "y": 125.32292175292969,
+            "w": 1140,
+            "h": 1122.197998046875
+          }
+        },
+        {
+          "tag": "section",
+          "attributes": {
+            "class": "wf-slot",
+            "data-label": "Recent insights"
+          },
+          "rect": {
+            "x": 0,
+            "y": 85.32292175292969,
+            "w": 1272,
+            "h": 1282.8646240234375
+          }
+        },
+        {
+          "tag": "main",
+          "attributes": {
+            "id": "wf-main",
+            "class": "stack",
+            "data-gap": "xl"
+          },
+          "rect": {
+            "x": 0,
+            "y": -1241.2083740234375,
+            "w": 1272,
+            "h": 3219.14599609375
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "class": "wireframe"
+          },
+          "rect": {
+            "x": 0,
+            "y": -1300,
+            "w": 1272,
+            "h": 3913.9375
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "id": "__nuxt"
+          },
+          "rect": {
+            "x": 0,
+            "y": -1300,
+            "w": 1272,
+            "h": 3913.9375
+          }
+        }
+      ]
+    },
+    {
+      "id": "a1fdf3e0-d92c-4666-9b05-9c7b540bf100",
+      "projectName": "bfna-wireframes",
+      "message": "there a probably more democracy related articles, if they do not appear here is that due to a tagging issue?",
+      "authorName": "Irene",
+      "url": "https://wireframes--bfna-site-v2.netlify.app/wireframes/democracy",
+      "path": "/wireframes/democracy",
+      "viewport": "1272x668",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 Edg/151.0.0.0",
+      "createdAt": "2026-08-05T19:51:46.098Z",
+      "cssSelector": "",
+      "xpath": "",
+      "textSnippet": "",
+      "elementTag": "",
+      "textPrefix": "",
+      "textSuffix": "",
+      "fingerprint": "",
+      "neighborText": "",
+      "xPct": 0,
+      "yPct": 0,
+      "wPct": 0,
+      "hPct": 0,
+      "status": "todo",
+      "kind": "area",
+      "sequenceNumber": 61,
+      "areaX": 106,
+      "areaY": 1508,
+      "areaW": 911,
+      "areaH": 339,
+      "capturedElements": [
+        {
+          "tag": "div",
+          "attributes": {
+            "id": "__nuxt"
+          },
+          "rect": {
+            "x": 0,
+            "y": -1400,
+            "w": 1272,
+            "h": 3913.9375
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "class": "wireframe"
+          },
+          "rect": {
+            "x": 0,
+            "y": -1400,
+            "w": 1272,
+            "h": 3913.9375
+          }
+        },
+        {
+          "tag": "ul",
+          "attributes": {},
+          "rect": {
+            "x": 343.01043701171875,
+            "y": 44.395835876464844,
+            "w": 288,
+            "h": 229.33334350585938
+          }
+        },
+        {
+          "tag": "li",
+          "attributes": {},
+          "rect": {
+            "x": 363.6770935058594,
+            "y": 97.0625,
+            "w": 258.66668701171875,
+            "h": 27
+          }
+        },
+        {
+          "tag": "a",
+          "attributes": {
+            "href": "/wireframes/about#board",
+            "class": ""
+          },
+          "rect": {
+            "x": 363.6770935058594,
+            "y": 98.39583587646484,
+            "w": 135.9166717529297,
+            "h": 24
+          }
+        },
+        {
+          "tag": "li",
+          "attributes": {},
+          "rect": {
+            "x": 363.6770935058594,
+            "y": 141.0625,
+            "w": 258.66668701171875,
+            "h": 27
+          }
+        },
+        {
+          "tag": "a",
+          "attributes": {
+            "href": "/wireframes/about#team",
+            "class": ""
+          },
+          "rect": {
+            "x": 363.6770935058594,
+            "y": 142.39584350585938,
+            "w": 39.15625,
+            "h": 24
+          }
+        },
+        {
+          "tag": "li",
+          "attributes": {},
+          "rect": {
+            "x": 363.6770935058594,
+            "y": 185.0625,
+            "w": 258.66668701171875,
+            "h": 27
+          }
+        },
+        {
+          "tag": "a",
+          "attributes": {
+            "href": "#",
+            "data-external": ""
+          },
+          "rect": {
+            "x": 363.6770935058594,
+            "y": 186.39584350585938,
+            "w": 171.21875,
+            "h": 24
+          }
+        },
+        {
+          "tag": "li",
+          "attributes": {},
+          "rect": {
+            "x": 363.6770935058594,
+            "y": 229.0625,
+            "w": 258.66668701171875,
+            "h": 27
+          }
+        },
+        {
+          "tag": "a",
+          "attributes": {
+            "href": "/wireframes/about#contact",
+            "class": ""
+          },
+          "rect": {
+            "x": 363.6770935058594,
+            "y": 230.39584350585938,
+            "w": 58.489585876464844,
+            "h": 24
+          }
+        },
+        {
+          "tag": "ul",
+          "attributes": {},
+          "rect": {
+            "x": 435,
+            "y": 44.395835876464844,
+            "w": 288,
+            "h": 168.33334350585938
+          }
+        },
+        {
+          "tag": "li",
+          "attributes": {},
+          "rect": {
+            "x": 455.66668701171875,
+            "y": 97.0625,
+            "w": 258.66668701171875,
+            "h": 54
+          }
+        },
+        {
+          "tag": "a",
+          "attributes": {
+            "href": "/wireframes/transatlantic-relations-global-challenges",
+            "class": ""
+          },
+          "rect": {
+            "x": 455.66668701171875,
+            "y": 98.39583587646484,
+            "w": 235.0104217529297,
+            "h": 51
+          }
+        },
+        {
+          "tag": "li",
+          "attributes": {},
+          "rect": {
+            "x": 455.66668701171875,
+            "y": 168.0625,
+            "w": 258.66668701171875,
+            "h": 27
+          }
+        },
+        {
+          "tag": "a",
+          "attributes": {
+            "href": "/wireframes/future-leadership",
+            "class": ""
+          },
+          "rect": {
+            "x": 455.66668701171875,
+            "y": 169.39584350585938,
+            "w": 134.48959350585938,
+            "h": 24
+          }
+        },
+        {
+          "tag": "ul",
+          "attributes": {},
+          "rect": {
+            "x": 551,
+            "y": 44.395835876464844,
+            "w": 288,
+            "h": 300.3333435058594
+          }
+        },
+        {
+          "tag": "li",
+          "attributes": {},
+          "rect": {
+            "x": 571.6666870117188,
+            "y": 97.0625,
+            "w": 258.66668701171875,
+            "h": 27
+          }
+        },
+        {
+          "tag": "a",
+          "attributes": {
+            "href": "/wireframes/projects/transatlantic-periscope",
+            "class": ""
+          },
+          "rect": {
+            "x": 571.6666870117188,
+            "y": 98.39583587646484,
+            "w": 168.4479217529297,
+            "h": 24
+          }
+        },
+        {
+          "tag": "li",
+          "attributes": {},
+          "rect": {
+            "x": 571.6666870117188,
+            "y": 141.0625,
+            "w": 258.66668701171875,
+            "h": 27
+          }
+        },
+        {
+          "tag": "a",
+          "attributes": {
+            "href": "/wireframes/projects/range",
+            "class": ""
+          },
+          "rect": {
+            "x": 571.6666870117188,
+            "y": 142.39584350585938,
+            "w": 55.10416793823242,
+            "h": 24
+          }
+        },
+        {
+          "tag": "li",
+          "attributes": {},
+          "rect": {
+            "x": 571.6666870117188,
+            "y": 185.0625,
+            "w": 258.66668701171875,
+            "h": 27
+          }
+        },
+        {
+          "tag": "a",
+          "attributes": {
+            "href": "/wireframes/projects/how-to-fix-democracy",
+            "class": ""
+          },
+          "rect": {
+            "x": 571.6666870117188,
+            "y": 186.39584350585938,
+            "w": 169.4166717529297,
+            "h": 24
+          }
+        },
+        {
+          "tag": "li",
+          "attributes": {},
+          "rect": {
+            "x": 571.6666870117188,
+            "y": 229.0625,
+            "w": 258.66668701171875,
+            "h": 54
+          }
+        },
+        {
+          "tag": "a",
+          "attributes": {
+            "href": "/wireframes/projects/the-bertelsmann-foundation-fellowship",
+            "class": ""
+          },
+          "rect": {
+            "x": 571.6666870117188,
+            "y": 230.39584350585938,
+            "w": 216.9375,
+            "h": 51
+          }
+        }
+      ]
+    },
+    {
+      "id": "531c6a02-9418-4fe3-8d08-a888d107a5dc",
+      "projectName": "bfna-wireframes",
+      "message": "can we change the order:\nDisrupting Democracy; City Solutions Series; How to Fix Democracy; Election Analysis",
+      "authorName": "Irene",
+      "url": "https://wireframes--bfna-site-v2.netlify.app/wireframes/democracy",
+      "path": "/wireframes/democracy",
+      "viewport": "1272x668",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 Edg/151.0.0.0",
+      "createdAt": "2026-08-05T19:50:48.200Z",
+      "cssSelector": "",
+      "xpath": "",
+      "textSnippet": "",
+      "elementTag": "",
+      "textPrefix": "",
+      "textSuffix": "",
+      "fingerprint": "",
+      "neighborText": "",
+      "xPct": 0,
+      "yPct": 0,
+      "wPct": 0,
+      "hPct": 0,
+      "status": "todo",
+      "kind": "area",
+      "sequenceNumber": 60,
+      "areaX": 217,
+      "areaY": 803,
+      "areaW": 837,
+      "areaH": 457,
+      "capturedElements": [
+        {
+          "tag": "div",
+          "attributes": {
+            "id": "__nuxt"
+          },
+          "rect": {
+            "x": 0,
+            "y": -600,
+            "w": 1272,
+            "h": 3913.9375
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "class": "wireframe"
+          },
+          "rect": {
+            "x": 0,
+            "y": -600,
+            "w": 1272,
+            "h": 3913.9375
+          }
+        },
+        {
+          "tag": "ul",
+          "attributes": {},
+          "rect": {
+            "x": 343.01043701171875,
+            "y": 44.395835876464844,
+            "w": 288,
+            "h": 229.33334350585938
+          }
+        },
+        {
+          "tag": "li",
+          "attributes": {},
+          "rect": {
+            "x": 363.6770935058594,
+            "y": 185.0625,
+            "w": 258.66668701171875,
+            "h": 27
+          }
+        },
+        {
+          "tag": "a",
+          "attributes": {
+            "href": "#",
+            "data-external": ""
+          },
+          "rect": {
+            "x": 363.6770935058594,
+            "y": 186.39584350585938,
+            "w": 171.21875,
+            "h": 24
+          }
+        },
+        {
+          "tag": "li",
+          "attributes": {},
+          "rect": {
+            "x": 363.6770935058594,
+            "y": 229.0625,
+            "w": 258.66668701171875,
+            "h": 27
+          }
+        },
+        {
+          "tag": "a",
+          "attributes": {
+            "href": "/wireframes/about#contact",
+            "class": ""
+          },
+          "rect": {
+            "x": 363.6770935058594,
+            "y": 230.39584350585938,
+            "w": 58.489585876464844,
+            "h": 24
+          }
+        },
+        {
+          "tag": "ul",
+          "attributes": {},
+          "rect": {
+            "x": 435,
+            "y": 44.395835876464844,
+            "w": 288,
+            "h": 168.33334350585938
+          }
+        },
+        {
+          "tag": "ul",
+          "attributes": {},
+          "rect": {
+            "x": 551,
+            "y": 44.395835876464844,
+            "w": 288,
+            "h": 300.3333435058594
+          }
+        },
+        {
+          "tag": "li",
+          "attributes": {},
+          "rect": {
+            "x": 571.6666870117188,
+            "y": 185.0625,
+            "w": 258.66668701171875,
+            "h": 27
+          }
+        },
+        {
+          "tag": "a",
+          "attributes": {
+            "href": "/wireframes/projects/how-to-fix-democracy",
+            "class": ""
+          },
+          "rect": {
+            "x": 571.6666870117188,
+            "y": 186.39584350585938,
+            "w": 169.4166717529297,
+            "h": 24
+          }
+        },
+        {
+          "tag": "li",
+          "attributes": {},
+          "rect": {
+            "x": 571.6666870117188,
+            "y": 229.0625,
+            "w": 258.66668701171875,
+            "h": 54
+          }
+        },
+        {
+          "tag": "a",
+          "attributes": {
+            "href": "/wireframes/projects/the-bertelsmann-foundation-fellowship",
+            "class": ""
+          },
+          "rect": {
+            "x": 571.6666870117188,
+            "y": 230.39584350585938,
+            "w": 216.9375,
+            "h": 51
+          }
+        },
+        {
+          "tag": "li",
+          "attributes": {},
+          "rect": {
+            "x": 571.6666870117188,
+            "y": 300.0625,
+            "w": 258.66668701171875,
+            "h": 27
+          }
+        },
+        {
+          "tag": "a",
+          "attributes": {
+            "href": "/wireframes/projects",
+            "class": ""
+          },
+          "rect": {
+            "x": 571.6666870117188,
+            "y": 301.3958435058594,
+            "w": 108.4375,
+            "h": 24
+          }
+        },
+        {
+          "tag": "strong",
+          "attributes": {},
+          "rect": {
+            "x": 571.6666870117188,
+            "y": 301.3958435058594,
+            "w": 108.4375,
+            "h": 24
+          }
+        },
+        {
+          "tag": "ul",
+          "attributes": {},
+          "rect": {
+            "x": 655.15625,
+            "y": 44.395835876464844,
+            "w": 288,
+            "h": 273.3333435058594
+          }
+        },
+        {
+          "tag": "li",
+          "attributes": {},
+          "rect": {
+            "x": 675.8229370117188,
+            "y": 185.0625,
+            "w": 258.66668701171875,
+            "h": 27
+          }
+        },
+        {
+          "tag": "a",
+          "attributes": {
+            "href": "/wireframes/insights?format=video",
+            "class": ""
+          },
+          "rect": {
+            "x": 675.8229370117188,
+            "y": 186.39584350585938,
+            "w": 50.82291793823242,
+            "h": 24
+          }
+        },
+        {
+          "tag": "li",
+          "attributes": {},
+          "rect": {
+            "x": 675.8229370117188,
+            "y": 229.0625,
+            "w": 258.66668701171875,
+            "h": 27
+          }
+        },
+        {
+          "tag": "a",
+          "attributes": {
+            "href": "/wireframes/insights?format=infographic",
+            "class": ""
+          },
+          "rect": {
+            "x": 675.8229370117188,
+            "y": 230.39584350585938,
+            "w": 92.10417175292969,
+            "h": 24
+          }
+        },
+        {
+          "tag": "li",
+          "attributes": {},
+          "rect": {
+            "x": 675.8229370117188,
+            "y": 273.0625,
+            "w": 258.66668701171875,
+            "h": 27
+          }
+        },
+        {
+          "tag": "a",
+          "attributes": {
+            "href": "/wireframes/archive",
+            "class": ""
+          },
+          "rect": {
+            "x": 675.8229370117188,
+            "y": 274.3958435058594,
+            "w": 58.770835876464844,
+            "h": 24
+          }
+        },
+        {
+          "tag": "strong",
+          "attributes": {},
+          "rect": {
+            "x": 675.8229370117188,
+            "y": 274.3958435058594,
+            "w": 58.770835876464844,
+            "h": 24
+          }
+        },
+        {
+          "tag": "main",
+          "attributes": {
+            "id": "wf-main",
+            "class": "stack",
+            "data-gap": "xl"
+          },
+          "rect": {
+            "x": 0,
+            "y": -541.2083740234375,
+            "w": 1272,
+            "h": 3219.14599609375
+          }
+        }
+      ]
+    },
+    {
+      "id": "753a096c-5cda-4ce6-b844-71d3145c1835",
+      "projectName": "bfna-wireframes",
+      "message": "change button text to Explore our work",
+      "authorName": "Irene",
+      "url": "https://wireframes--bfna-site-v2.netlify.app/wireframes/democracy",
+      "path": "/wireframes/democracy",
+      "viewport": "1272x668",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 Edg/151.0.0.0",
+      "createdAt": "2026-08-05T19:45:27.973Z",
+      "cssSelector": "",
+      "xpath": "",
+      "textSnippet": "",
+      "elementTag": "",
+      "textPrefix": "",
+      "textSuffix": "",
+      "fingerprint": "",
+      "neighborText": "",
+      "xPct": 0,
+      "yPct": 0,
+      "wPct": 0,
+      "hPct": 0,
+      "status": "todo",
+      "kind": "pin",
+      "sequenceNumber": 59,
+      "pinX": 306,
+      "pinY": 498,
+      "capturedElements": [
+        {
+          "tag": "div",
+          "attributes": {},
+          "rect": {
+            "x": 86,
+            "y": 176.5104217529297,
+            "w": 1100,
+            "h": 40.79166793823242
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "class": "center | stack",
+            "data-gap": "s",
+            "style": "padding-block: var(--space-l);"
+          },
+          "rect": {
+            "x": 66,
+            "y": -200.5416717529297,
+            "w": 1140,
+            "h": 457.84375
+          }
+        },
+        {
+          "tag": "section",
+          "attributes": {
+            "class": "wf-slot",
+            "data-label": "Hub intro"
+          },
+          "rect": {
+            "x": 0,
+            "y": -241.20834350585938,
+            "w": 1272,
+            "h": 619.1771240234375
+          }
+        },
+        {
+          "tag": "main",
+          "attributes": {
+            "id": "wf-main",
+            "class": "stack",
+            "data-gap": "xl"
+          },
+          "rect": {
+            "x": 0,
+            "y": -241.20834350585938,
+            "w": 1272,
+            "h": 3219.14599609375
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "class": "wireframe"
+          },
+          "rect": {
+            "x": 0,
+            "y": -300,
+            "w": 1272,
+            "h": 3913.9375
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "id": "__nuxt"
+          },
+          "rect": {
+            "x": 0,
+            "y": -300,
+            "w": 1272,
+            "h": 3913.9375
+          }
+        }
+      ]
+    },
+    {
+      "id": "af978f7a-df3c-4dd7-8f6f-9bcc3030413b",
+      "projectName": "bfna-wireframes",
+      "message": "delete newsletters",
+      "authorName": "Irene",
+      "url": "https://wireframes--bfna-site-v2.netlify.app/wireframes/about",
+      "path": "/wireframes/about",
+      "viewport": "1272x668",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 Edg/151.0.0.0",
+      "createdAt": "2026-08-05T19:43:59.926Z",
+      "cssSelector": "",
+      "xpath": "",
+      "textSnippet": "",
+      "elementTag": "",
+      "textPrefix": "",
+      "textSuffix": "",
+      "fingerprint": "",
+      "neighborText": "",
+      "xPct": 0,
+      "yPct": 0,
+      "wPct": 0,
+      "hPct": 0,
+      "status": "todo",
+      "kind": "pin",
+      "sequenceNumber": 58,
+      "pinX": 630,
+      "pinY": 5590,
+      "capturedElements": [
+        {
+          "tag": "h2",
+          "attributes": {},
+          "rect": {
+            "x": 86,
+            "y": 273.2395935058594,
+            "w": 1100,
+            "h": 28.5
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "class": "center | stack",
+            "data-gap": "s"
+          },
+          "rect": {
+            "x": 66,
+            "y": 273.2395935058594,
+            "w": 1140,
+            "h": 224.4166717529297
+          }
+        },
+        {
+          "tag": "section",
+          "attributes": {
+            "class": "wf-slot",
+            "data-label": "Subscribe CTA",
+            "id": "subscribe"
+          },
+          "rect": {
+            "x": 0,
+            "y": 233.23959350585938,
+            "w": 1272,
+            "h": 385.0833435058594
+          }
+        },
+        {
+          "tag": "main",
+          "attributes": {
+            "id": "wf-main",
+            "class": "stack",
+            "data-gap": "xl"
+          },
+          "rect": {
+            "x": 0,
+            "y": -5241.20849609375,
+            "w": 1272,
+            "h": 5859.53125
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "class": "wireframe"
+          },
+          "rect": {
+            "x": 0,
+            "y": -5300,
+            "w": 1272,
+            "h": 6554.3232421875
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "id": "__nuxt"
+          },
+          "rect": {
+            "x": 0,
+            "y": -5300,
+            "w": 1272,
+            "h": 6554.3232421875
+          }
+        }
+      ]
+    },
+    {
+      "id": "e7e6dcea-8c3f-43d3-8f84-acc8e02d8fa2",
+      "projectName": "bfna-wireframes",
+      "message": "can we align the top of the photo with the top of the text body",
+      "authorName": "Irene",
+      "url": "https://wireframes--bfna-site-v2.netlify.app/wireframes/about",
+      "path": "/wireframes/about",
+      "viewport": "1272x668",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 Edg/151.0.0.0",
+      "createdAt": "2026-08-05T19:43:39.342Z",
+      "cssSelector": "",
+      "xpath": "",
+      "textSnippet": "",
+      "elementTag": "",
+      "textPrefix": "",
+      "textSuffix": "",
+      "fingerprint": "",
+      "neighborText": "",
+      "xPct": 0,
+      "yPct": 0,
+      "wPct": 0,
+      "hPct": 0,
+      "status": "todo",
+      "kind": "pin",
+      "sequenceNumber": 57,
+      "pinX": 282,
+      "pinY": 4652,
+      "capturedElements": [
+        {
+          "tag": "div",
+          "attributes": {
+            "class": "center | switcher",
+            "data-gap": "l"
+          },
+          "rect": {
+            "x": 66,
+            "y": 106.94792175292969,
+            "w": 1140,
+            "h": 469.5
+          }
+        },
+        {
+          "tag": "section",
+          "attributes": {
+            "class": "wf-slot",
+            "data-label": "Bertelsmann Stiftung"
+          },
+          "rect": {
+            "x": 0,
+            "y": 66.94792175292969,
+            "w": 1272,
+            "h": 630.1666870117188
+          }
+        },
+        {
+          "tag": "main",
+          "attributes": {
+            "id": "wf-main",
+            "class": "stack",
+            "data-gap": "xl"
+          },
+          "rect": {
+            "x": 0,
+            "y": -4141.20849609375,
+            "w": 1272,
+            "h": 5859.53125
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "class": "wireframe"
+          },
+          "rect": {
+            "x": 0,
+            "y": -4200,
+            "w": 1272,
+            "h": 6554.3232421875
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "id": "__nuxt"
+          },
+          "rect": {
+            "x": 0,
+            "y": -4200,
+            "w": 1272,
+            "h": 6554.3232421875
+          }
+        }
+      ]
+    },
+    {
+      "id": "e778fd67-6f62-4fbb-afbb-a26ac511042a",
+      "projectName": "bfna-wireframes",
+      "message": "delete Iulia Sava",
+      "authorName": "Irene",
+      "url": "https://wireframes--bfna-site-v2.netlify.app/wireframes/about",
+      "path": "/wireframes/about",
+      "viewport": "1272x668",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 Edg/151.0.0.0",
+      "createdAt": "2026-08-05T19:42:49.720Z",
+      "cssSelector": "",
+      "xpath": "",
+      "textSnippet": "",
+      "elementTag": "",
+      "textPrefix": "",
+      "textSuffix": "",
+      "fingerprint": "",
+      "neighborText": "",
+      "xPct": 0,
+      "yPct": 0,
+      "wPct": 0,
+      "hPct": 0,
+      "status": "todo",
+      "kind": "pin",
+      "sequenceNumber": 56,
+      "pinX": 602,
+      "pinY": 3023,
+      "capturedElements": [
+        {
+          "tag": "img",
+          "attributes": {
+            "src": "https://images.ctfassets.net/9vgcz0fppkl3/1VVeyPnTgbJxynbgzZUIrv/487afb7046e7316ea848c60021b57c26/BlueLogoBertelsmannFoundation-05.jpg",
+            "alt": "",
+            "style": "aspect-ratio: 1 / 1; width: 100%; object-fit: cover;"
+          },
+          "rect": {
+            "x": 483.3333435058594,
+            "y": 239.7291717529297,
+            "w": 305.3333435058594,
+            "h": 305.3333435058594
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "class": "wf-card__media"
+          },
+          "rect": {
+            "x": 483.3333435058594,
+            "y": 239.7291717529297,
+            "w": 305.3333435058594,
+            "h": 305.3333435058594
+          }
+        },
+        {
+          "tag": "li",
+          "attributes": {
+            "class": "wf-card"
+          },
+          "rect": {
+            "x": 462.66668701171875,
+            "y": 219.0625,
+            "w": 346.66668701171875,
+            "h": 440.07293701171875
+          }
+        },
+        {
+          "tag": "ul",
+          "attributes": {
+            "class": "grid",
+            "data-gap": "m",
+            "style": "grid-template-columns: repeat(3, 1fr);"
+          },
+          "rect": {
+            "x": 86,
+            "y": -775.0833740234375,
+            "w": 1100,
+            "h": 2401.36474609375
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "class": "center | stack",
+            "data-gap": "m"
+          },
+          "rect": {
+            "x": 66,
+            "y": -833.5833740234375,
+            "w": 1140,
+            "h": 2459.86474609375
+          }
+        },
+        {
+          "tag": "section",
+          "attributes": {
+            "class": "wf-slot",
+            "data-label": "Team",
+            "id": "team"
+          },
+          "rect": {
+            "x": 0,
+            "y": -873.5833740234375,
+            "w": 1272,
+            "h": 2620.53125
+          }
+        },
+        {
+          "tag": "main",
+          "attributes": {
+            "id": "wf-main",
+            "class": "stack",
+            "data-gap": "xl"
+          },
+          "rect": {
+            "x": 0,
+            "y": -2441.20849609375,
+            "w": 1272,
+            "h": 5859.53125
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "class": "wireframe"
+          },
+          "rect": {
+            "x": 0,
+            "y": -2500,
+            "w": 1272,
+            "h": 6554.3232421875
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "id": "__nuxt"
+          },
+          "rect": {
+            "x": 0,
+            "y": -2500,
+            "w": 1272,
+            "h": 6554.3232421875
+          }
+        }
+      ]
+    },
+    {
+      "id": "e0c1cdbf-c556-474d-a0c4-b7bfa4c9661f",
+      "projectName": "bfna-wireframes",
+      "message": "delete Heaven Sullivan",
+      "authorName": "Irene",
+      "url": "https://wireframes--bfna-site-v2.netlify.app/wireframes/about",
+      "path": "/wireframes/about",
+      "viewport": "1272x668",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 Edg/151.0.0.0",
+      "createdAt": "2026-08-05T19:42:32.344Z",
+      "cssSelector": "",
+      "xpath": "",
+      "textSnippet": "",
+      "elementTag": "",
+      "textPrefix": "",
+      "textSuffix": "",
+      "fingerprint": "",
+      "neighborText": "",
+      "xPct": 0,
+      "yPct": 0,
+      "wPct": 0,
+      "hPct": 0,
+      "status": "todo",
+      "kind": "pin",
+      "sequenceNumber": 55,
+      "pinX": 982,
+      "pinY": 2540,
+      "capturedElements": [
+        {
+          "tag": "img",
+          "attributes": {
+            "src": "https://bfna.simplyas.com/assets/d0f5f1b6-e2b5-4f10-ad02-ab087af00bdc",
+            "alt": "",
+            "style": "aspect-ratio: 1 / 1; width: 100%; object-fit: cover;"
+          },
+          "rect": {
+            "x": 860,
+            "y": 169.65625,
+            "w": 305.3333435058594,
+            "h": 305.3333435058594
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "class": "wf-card__media"
+          },
+          "rect": {
+            "x": 860,
+            "y": 169.65625,
+            "w": 305.3333435058594,
+            "h": 305.3333435058594
+          }
+        },
+        {
+          "tag": "li",
+          "attributes": {
+            "class": "wf-card"
+          },
+          "rect": {
+            "x": 839.3333740234375,
+            "y": 148.98959350585938,
+            "w": 346.66668701171875,
+            "h": 440.07293701171875
+          }
+        },
+        {
+          "tag": "ul",
+          "attributes": {
+            "class": "grid",
+            "data-gap": "m",
+            "style": "grid-template-columns: repeat(3, 1fr);"
+          },
+          "rect": {
+            "x": 86,
+            "y": -375.0833435058594,
+            "w": 1100,
+            "h": 2401.36474609375
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "class": "center | stack",
+            "data-gap": "m"
+          },
+          "rect": {
+            "x": 66,
+            "y": -433.5833435058594,
+            "w": 1140,
+            "h": 2459.86474609375
+          }
+        },
+        {
+          "tag": "section",
+          "attributes": {
+            "class": "wf-slot",
+            "data-label": "Team",
+            "id": "team"
+          },
+          "rect": {
+            "x": 0,
+            "y": -473.5833435058594,
+            "w": 1272,
+            "h": 2620.53125
+          }
+        },
+        {
+          "tag": "main",
+          "attributes": {
+            "id": "wf-main",
+            "class": "stack",
+            "data-gap": "xl"
+          },
+          "rect": {
+            "x": 0,
+            "y": -2041.2083740234375,
+            "w": 1272,
+            "h": 5859.53125
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "class": "wireframe"
+          },
+          "rect": {
+            "x": 0,
+            "y": -2100,
+            "w": 1272,
+            "h": 6554.3232421875
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "id": "__nuxt"
+          },
+          "rect": {
+            "x": 0,
+            "y": -2100,
+            "w": 1272,
+            "h": 6554.3232421875
+          }
+        }
+      ]
+    },
+    {
+      "id": "c831da14-c227-4e7f-9f46-f5c6fa67e65e",
+      "projectName": "bfna-wireframes",
+      "message": "delete Chloe Ladd",
+      "authorName": "Irene",
+      "url": "https://wireframes--bfna-site-v2.netlify.app/wireframes/about",
+      "path": "/wireframes/about",
+      "viewport": "1272x668",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 Edg/151.0.0.0",
+      "createdAt": "2026-08-05T19:42:13.478Z",
+      "cssSelector": "",
+      "xpath": "",
+      "textSnippet": "",
+      "elementTag": "",
+      "textPrefix": "",
+      "textSuffix": "",
+      "fingerprint": "",
+      "neighborText": "",
+      "xPct": 0,
+      "yPct": 0,
+      "wPct": 0,
+      "hPct": 0,
+      "status": "todo",
+      "kind": "pin",
+      "sequenceNumber": 54,
+      "pinX": 1058,
+      "pinY": 2074,
+      "capturedElements": [
+        {
+          "tag": "h3",
+          "attributes": {},
+          "rect": {
+            "x": 860,
+            "y": 558.9166870117188,
+            "w": 305.3333435058594,
+            "h": 32.40625
+          }
+        },
+        {
+          "tag": "li",
+          "attributes": {
+            "class": "wf-card"
+          },
+          "rect": {
+            "x": 839.3333740234375,
+            "y": 224.9166717529297,
+            "w": 346.66668701171875,
+            "h": 494.07293701171875
+          }
+        },
+        {
+          "tag": "ul",
+          "attributes": {
+            "class": "grid",
+            "data-gap": "m",
+            "style": "grid-template-columns: repeat(3, 1fr);"
+          },
+          "rect": {
+            "x": 86,
+            "y": 224.9166717529297,
+            "w": 1100,
+            "h": 2401.36474609375
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "class": "center | stack",
+            "data-gap": "m"
+          },
+          "rect": {
+            "x": 66,
+            "y": 166.4166717529297,
+            "w": 1140,
+            "h": 2459.86474609375
+          }
+        },
+        {
+          "tag": "section",
+          "attributes": {
+            "class": "wf-slot",
+            "data-label": "Team",
+            "id": "team"
+          },
+          "rect": {
+            "x": 0,
+            "y": 126.41667175292969,
+            "w": 1272,
+            "h": 2620.53125
+          }
+        },
+        {
+          "tag": "main",
+          "attributes": {
+            "id": "wf-main",
+            "class": "stack",
+            "data-gap": "xl"
+          },
+          "rect": {
+            "x": 0,
+            "y": -1441.2083740234375,
+            "w": 1272,
+            "h": 5859.53125
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "class": "wireframe"
+          },
+          "rect": {
+            "x": 0,
+            "y": -1500,
+            "w": 1272,
+            "h": 6554.3232421875
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "id": "__nuxt"
+          },
+          "rect": {
+            "x": 0,
+            "y": -1500,
+            "w": 1272,
+            "h": 6554.3232421875
+          }
+        }
+      ]
+    },
+    {
+      "id": "c783436f-0cab-4f1e-9b54-1db832cd8fcd",
+      "projectName": "bfna-wireframes",
+      "message": "delete Brandon Bohrn",
+      "authorName": "Irene",
+      "url": "https://wireframes--bfna-site-v2.netlify.app/wireframes/about",
+      "path": "/wireframes/about",
+      "viewport": "1272x668",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 Edg/151.0.0.0",
+      "createdAt": "2026-08-05T19:42:00.840Z",
+      "cssSelector": "",
+      "xpath": "",
+      "textSnippet": "",
+      "elementTag": "",
+      "textPrefix": "",
+      "textSuffix": "",
+      "fingerprint": "",
+      "neighborText": "",
+      "xPct": 0,
+      "yPct": 0,
+      "wPct": 0,
+      "hPct": 0,
+      "status": "todo",
+      "kind": "pin",
+      "sequenceNumber": 53,
+      "pinX": 731,
+      "pinY": 2086,
+      "capturedElements": [
+        {
+          "tag": "h3",
+          "attributes": {},
+          "rect": {
+            "x": 483.3333435058594,
+            "y": 558.9166870117188,
+            "w": 305.3333435058594,
+            "h": 32.40625
+          }
+        },
+        {
+          "tag": "li",
+          "attributes": {
+            "class": "wf-card"
+          },
+          "rect": {
+            "x": 462.66668701171875,
+            "y": 224.9166717529297,
+            "w": 346.66668701171875,
+            "h": 494.07293701171875
+          }
+        },
+        {
+          "tag": "ul",
+          "attributes": {
+            "class": "grid",
+            "data-gap": "m",
+            "style": "grid-template-columns: repeat(3, 1fr);"
+          },
+          "rect": {
+            "x": 86,
+            "y": 224.9166717529297,
+            "w": 1100,
+            "h": 2401.36474609375
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "class": "center | stack",
+            "data-gap": "m"
+          },
+          "rect": {
+            "x": 66,
+            "y": 166.4166717529297,
+            "w": 1140,
+            "h": 2459.86474609375
+          }
+        },
+        {
+          "tag": "section",
+          "attributes": {
+            "class": "wf-slot",
+            "data-label": "Team",
+            "id": "team"
+          },
+          "rect": {
+            "x": 0,
+            "y": 126.41667175292969,
+            "w": 1272,
+            "h": 2620.53125
+          }
+        },
+        {
+          "tag": "main",
+          "attributes": {
+            "id": "wf-main",
+            "class": "stack",
+            "data-gap": "xl"
+          },
+          "rect": {
+            "x": 0,
+            "y": -1441.2083740234375,
+            "w": 1272,
+            "h": 5859.53125
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "class": "wireframe"
+          },
+          "rect": {
+            "x": 0,
+            "y": -1500,
+            "w": 1272,
+            "h": 6554.3232421875
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "id": "__nuxt"
+          },
+          "rect": {
+            "x": 0,
+            "y": -1500,
+            "w": 1272,
+            "h": 6554.3232421875
+          }
+        }
+      ]
+    },
+    {
+      "id": "877c04a8-a966-4c15-85df-8023f553b50c",
+      "projectName": "bfna-wireframes",
+      "message": "please put team members in alphabetical order",
+      "authorName": "Irene",
+      "url": "https://wireframes--bfna-site-v2.netlify.app/wireframes/about",
+      "path": "/wireframes/about",
+      "viewport": "1272x668",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 Edg/151.0.0.0",
+      "createdAt": "2026-08-05T19:41:43.677Z",
+      "cssSelector": "",
+      "xpath": "",
+      "textSnippet": "",
+      "elementTag": "",
+      "textPrefix": "",
+      "textSuffix": "",
+      "fingerprint": "",
+      "neighborText": "",
+      "xPct": 0,
+      "yPct": 0,
+      "wPct": 0,
+      "hPct": 0,
+      "status": "todo",
+      "kind": "pin",
+      "sequenceNumber": 52,
+      "pinX": 216,
+      "pinY": 1695,
+      "capturedElements": [
+        {
+          "tag": "div",
+          "attributes": {
+            "class": "center | stack",
+            "data-gap": "m"
+          },
+          "rect": {
+            "x": 66,
+            "y": 166.4166717529297,
+            "w": 1140,
+            "h": 2459.86474609375
+          }
+        },
+        {
+          "tag": "section",
+          "attributes": {
+            "class": "wf-slot",
+            "data-label": "Team",
+            "id": "team"
+          },
+          "rect": {
+            "x": 0,
+            "y": 126.41667175292969,
+            "w": 1272,
+            "h": 2620.53125
+          }
+        },
+        {
+          "tag": "main",
+          "attributes": {
+            "id": "wf-main",
+            "class": "stack",
+            "data-gap": "xl"
+          },
+          "rect": {
+            "x": 0,
+            "y": -1441.2083740234375,
+            "w": 1272,
+            "h": 5859.53125
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "class": "wireframe"
+          },
+          "rect": {
+            "x": 0,
+            "y": -1500,
+            "w": 1272,
+            "h": 6554.3232421875
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "id": "__nuxt"
+          },
+          "rect": {
+            "x": 0,
+            "y": -1500,
+            "w": 1272,
+            "h": 6554.3232421875
+          }
+        }
+      ]
+    },
+    {
+      "id": "453e12e6-791a-4ef1-b939-11681ba55eef",
+      "projectName": "bfna-wireframes",
+      "message": "please add Irene Braam to the Board Members. We are also adding two new board members (will send info separately)",
+      "authorName": "Irene",
+      "url": "https://wireframes--bfna-site-v2.netlify.app/wireframes/about",
+      "path": "/wireframes/about",
+      "viewport": "1272x668",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 Edg/151.0.0.0",
+      "createdAt": "2026-08-05T19:41:17.048Z",
+      "cssSelector": "",
+      "xpath": "",
+      "textSnippet": "",
+      "elementTag": "",
+      "textPrefix": "",
+      "textSuffix": "",
+      "fingerprint": "",
+      "neighborText": "",
+      "xPct": 0,
+      "yPct": 0,
+      "wPct": 0,
+      "hPct": 0,
+      "status": "todo",
+      "kind": "pin",
+      "sequenceNumber": 51,
+      "pinX": 388,
+      "pinY": 1513,
+      "capturedElements": [
+        {
+          "tag": "section",
+          "attributes": {
+            "class": "wf-slot",
+            "data-label": "Board of Directors",
+            "id": "board"
+          },
+          "rect": {
+            "x": 0,
+            "y": 20.17708396911621,
+            "w": 1272,
+            "h": 686.2396240234375
+          }
+        },
+        {
+          "tag": "main",
+          "attributes": {
+            "id": "wf-main",
+            "class": "stack",
+            "data-gap": "xl"
+          },
+          "rect": {
+            "x": 0,
+            "y": -841.2083740234375,
+            "w": 1272,
+            "h": 5859.53125
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "class": "wireframe"
+          },
+          "rect": {
+            "x": 0,
+            "y": -900,
+            "w": 1272,
+            "h": 6554.3232421875
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "id": "__nuxt"
+          },
+          "rect": {
+            "x": 0,
+            "y": -900,
+            "w": 1272,
+            "h": 6554.3232421875
+          }
+        }
+      ]
+    },
+    {
+      "id": "3418da7b-a40b-4568-98c7-d28ebcdbf0f3",
+      "projectName": "bfna-wireframes",
+      "message": "not sure whether we should keep the Projects tab here",
+      "authorName": "Irene",
+      "url": "https://wireframes--bfna-site-v2.netlify.app/wireframes",
+      "path": "/wireframes",
+      "viewport": "1272x668",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 Edg/151.0.0.0",
+      "createdAt": "2026-08-05T19:12:57.488Z",
+      "cssSelector": "",
+      "xpath": "",
+      "textSnippet": "",
+      "elementTag": "",
+      "textPrefix": "",
+      "textSuffix": "",
+      "fingerprint": "",
+      "neighborText": "",
+      "xPct": 0,
+      "yPct": 0,
+      "wPct": 0,
+      "hPct": 0,
+      "status": "todo",
+      "kind": "pin",
+      "sequenceNumber": 50,
+      "pinX": 739,
+      "pinY": 5767,
+      "capturedElements": [
+        {
+          "tag": "p",
+          "attributes": {},
+          "rect": {
+            "x": 656,
+            "y": 255.46875,
+            "w": 245,
+            "h": 27
+          }
+        },
+        {
+          "tag": "nav",
+          "attributes": {
+            "class": "stack",
+            "data-gap": "xs",
+            "aria-label": "Footer — Projects"
+          },
+          "rect": {
+            "x": 656,
+            "y": 255.46875,
+            "w": 245,
+            "h": 216
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "class": "grid",
+            "data-gap": "l",
+            "style": "grid-template-columns: repeat(4, 1fr);"
+          },
+          "rect": {
+            "x": 86,
+            "y": 255.46875,
+            "w": 1100,
+            "h": 283
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "class": "center | stack",
+            "data-gap": "l"
+          },
+          "rect": {
+            "x": 66,
+            "y": 145.46875,
+            "w": 1140,
+            "h": 494
+          }
+        },
+        {
+          "tag": "footer",
+          "attributes": {
+            "class": "wf-footer"
+          },
+          "rect": {
+            "x": 0,
+            "y": 103.46875,
+            "w": 1272,
+            "h": 576
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "class": "wireframe"
+          },
+          "rect": {
+            "x": 0,
+            "y": -5500,
+            "w": 1272,
+            "h": 6179.46875
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "id": "__nuxt"
+          },
+          "rect": {
+            "x": 0,
+            "y": -5500,
+            "w": 1272,
+            "h": 6179.46875
+          }
+        }
+      ]
+    },
+    {
+      "id": "ca79202c-37b7-4617-b607-58ad558a6e41",
+      "projectName": "bfna-wireframes",
+      "message": "can we change the order to this: LinkedIn , Instagram, Bluesky, Facebook, YouTube, Vimeo",
+      "authorName": "Irene",
+      "url": "https://wireframes--bfna-site-v2.netlify.app/wireframes",
+      "path": "/wireframes",
+      "viewport": "1272x668",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 Edg/151.0.0.0",
+      "createdAt": "2026-08-05T19:12:17.945Z",
+      "cssSelector": "",
+      "xpath": "",
+      "textSnippet": "",
+      "elementTag": "",
+      "textPrefix": "",
+      "textSuffix": "",
+      "fingerprint": "",
+      "neighborText": "",
+      "xPct": 0,
+      "yPct": 0,
+      "wPct": 0,
+      "hPct": 0,
+      "status": "todo",
+      "kind": "pin",
+      "sequenceNumber": 49,
+      "pinX": 318,
+      "pinY": 6055,
+      "capturedElements": [
+        {
+          "tag": "ul",
+          "attributes": {
+            "class": "cluster",
+            "data-gap": "s",
+            "aria-label": "Social media",
+            "style": "justify-content: center;"
+          },
+          "rect": {
+            "x": 86,
+            "y": 538.46875,
+            "w": 1100,
+            "h": 36
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "class": "center | stack",
+            "data-gap": "l"
+          },
+          "rect": {
+            "x": 66,
+            "y": 145.46875,
+            "w": 1140,
+            "h": 494
+          }
+        },
+        {
+          "tag": "footer",
+          "attributes": {
+            "class": "wf-footer"
+          },
+          "rect": {
+            "x": 0,
+            "y": 103.46875,
+            "w": 1272,
+            "h": 576
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "class": "wireframe"
+          },
+          "rect": {
+            "x": 0,
+            "y": -5500,
+            "w": 1272,
+            "h": 6179.46875
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "id": "__nuxt"
+          },
+          "rect": {
+            "x": 0,
+            "y": -5500,
+            "w": 1272,
+            "h": 6179.46875
+          }
+        }
+      ]
+    },
+    {
+      "id": "edb4ed62-b199-4bf3-b5ea-a7f954db0c77",
+      "projectName": "bfna-wireframes",
+      "message": "delete Twitter and replace by BlueSky",
+      "authorName": "Irene",
+      "url": "https://wireframes--bfna-site-v2.netlify.app/wireframes",
+      "path": "/wireframes",
+      "viewport": "1272x668",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 Edg/151.0.0.0",
+      "createdAt": "2026-08-05T19:11:22.182Z",
+      "cssSelector": "",
+      "xpath": "",
+      "textSnippet": "",
+      "elementTag": "",
+      "textPrefix": "",
+      "textSuffix": "",
+      "fingerprint": "",
+      "neighborText": "",
+      "xPct": 0,
+      "yPct": 0,
+      "wPct": 0,
+      "hPct": 0,
+      "status": "todo",
+      "kind": "pin",
+      "sequenceNumber": 48,
+      "pinX": 496,
+      "pinY": 6054,
+      "capturedElements": [
+        {
+          "tag": "a",
+          "attributes": {
+            "href": "https://twitter.com/BertelsmannFdn",
+            "data-external": ""
+          },
+          "rect": {
+            "x": 463.44793701171875,
+            "y": 539.8021240234375,
+            "w": 63.770835876464844,
+            "h": 24
+          }
+        },
+        {
+          "tag": "li",
+          "attributes": {},
+          "rect": {
+            "x": 463.44793701171875,
+            "y": 538.46875,
+            "w": 63.770835876464844,
+            "h": 27
+          }
+        },
+        {
+          "tag": "ul",
+          "attributes": {
+            "class": "cluster",
+            "data-gap": "s",
+            "aria-label": "Social media",
+            "style": "justify-content: center;"
+          },
+          "rect": {
+            "x": 86,
+            "y": 538.46875,
+            "w": 1100,
+            "h": 36
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "class": "center | stack",
+            "data-gap": "l"
+          },
+          "rect": {
+            "x": 66,
+            "y": 145.46875,
+            "w": 1140,
+            "h": 494
+          }
+        },
+        {
+          "tag": "footer",
+          "attributes": {
+            "class": "wf-footer"
+          },
+          "rect": {
+            "x": 0,
+            "y": 103.46875,
+            "w": 1272,
+            "h": 576
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "class": "wireframe"
+          },
+          "rect": {
+            "x": 0,
+            "y": -5500,
+            "w": 1272,
+            "h": 6179.46875
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "id": "__nuxt"
+          },
+          "rect": {
+            "x": 0,
+            "y": -5500,
+            "w": 1272,
+            "h": 6179.46875
+          }
+        }
+      ]
+    },
+    {
+      "id": "46c3f117-9b53-4bf8-88f3-058ade48d841",
+      "projectName": "bfna-wireframes",
+      "message": "delete newsletters",
+      "authorName": "Irene",
+      "url": "https://wireframes--bfna-site-v2.netlify.app/wireframes",
+      "path": "/wireframes",
+      "viewport": "1272x668",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 Edg/151.0.0.0",
+      "createdAt": "2026-08-05T19:10:38.224Z",
+      "cssSelector": "",
+      "xpath": "",
+      "textSnippet": "",
+      "elementTag": "",
+      "textPrefix": "",
+      "textSuffix": "",
+      "fingerprint": "",
+      "neighborText": "",
+      "xPct": 0,
+      "yPct": 0,
+      "wPct": 0,
+      "hPct": 0,
+      "status": "todo",
+      "kind": "pin",
+      "sequenceNumber": 47,
+      "pinX": 636,
+      "pinY": 5212,
+      "capturedElements": [
+        {
+          "tag": "h2",
+          "attributes": {},
+          "rect": {
+            "x": 86,
+            "y": 298.38543701171875,
+            "w": 1100,
+            "h": 28.5
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "class": "center | stack",
+            "data-gap": "s"
+          },
+          "rect": {
+            "x": 66,
+            "y": 298.38543701171875,
+            "w": 1140,
+            "h": 224.4166717529297
+          }
+        },
+        {
+          "tag": "section",
+          "attributes": {
+            "class": "wf-slot",
+            "data-label": "Subscribe CTA",
+            "id": "subscribe"
+          },
+          "rect": {
+            "x": 0,
+            "y": 258.38543701171875,
+            "w": 1272,
+            "h": 385.0833435058594
+          }
+        },
+        {
+          "tag": "main",
+          "attributes": {
+            "id": "wf-main",
+            "class": "stack",
+            "data-gap": "xl"
+          },
+          "rect": {
+            "x": 0,
+            "y": -4841.20849609375,
+            "w": 1272,
+            "h": 5484.67724609375
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "class": "wireframe"
+          },
+          "rect": {
+            "x": 0,
+            "y": -4900,
+            "w": 1272,
+            "h": 6179.46875
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "id": "__nuxt"
+          },
+          "rect": {
+            "x": 0,
+            "y": -4900,
+            "w": 1272,
+            "h": 6179.46875
+          }
+        }
+      ]
+    },
+    {
+      "id": "4f3a63c2-9c4b-4e7c-9482-556e9e62c434",
+      "projectName": "bfna-wireframes",
+      "message": "I suggest we move the Magazine to the Insights",
+      "authorName": "Irene",
+      "url": "https://wireframes--bfna-site-v2.netlify.app/wireframes",
+      "path": "/wireframes",
+      "viewport": "1272x668",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 Edg/151.0.0.0",
+      "createdAt": "2026-08-05T19:10:12.073Z",
+      "cssSelector": "",
+      "xpath": "",
+      "textSnippet": "",
+      "elementTag": "",
+      "textPrefix": "",
+      "textSuffix": "",
+      "fingerprint": "",
+      "neighborText": "",
+      "xPct": 0,
+      "yPct": 0,
+      "wPct": 0,
+      "hPct": 0,
+      "status": "todo",
+      "kind": "pin",
+      "sequenceNumber": 46,
+      "pinX": 464,
+      "pinY": 2421,
+      "capturedElements": [
+        {
+          "tag": "h2",
+          "attributes": {},
+          "rect": {
+            "x": 86,
+            "y": 306.6770935058594,
+            "w": 1100,
+            "h": 28.5
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "class": "center | stack",
+            "data-gap": "m"
+          },
+          "rect": {
+            "x": 66,
+            "y": 306.6770935058594,
+            "w": 1140,
+            "h": 438.5
+          }
+        },
+        {
+          "tag": "section",
+          "attributes": {
+            "class": "wf-slot",
+            "data-label": "Product — Transponder Magazine"
+          },
+          "rect": {
+            "x": 0,
+            "y": 266.6770935058594,
+            "w": 1272,
+            "h": 599.1666870117188
+          }
+        },
+        {
+          "tag": "main",
+          "attributes": {
+            "id": "wf-main",
+            "class": "stack",
+            "data-gap": "xl"
+          },
+          "rect": {
+            "x": 0,
+            "y": -2041.2083740234375,
+            "w": 1272,
+            "h": 5484.67724609375
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "class": "wireframe"
+          },
+          "rect": {
+            "x": 0,
+            "y": -2100,
+            "w": 1272,
+            "h": 6179.46875
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "id": "__nuxt"
+          },
+          "rect": {
+            "x": 0,
+            "y": -2100,
+            "w": 1272,
+            "h": 6179.46875
+          }
+        }
+      ]
+    },
+    {
+      "id": "a01e9500-82fc-409d-a74b-982b94a1d5a8",
+      "projectName": "bfna-wireframes",
+      "message": "same comment as in Future Leadership box",
+      "authorName": "Irene",
+      "url": "https://wireframes--bfna-site-v2.netlify.app/wireframes",
+      "path": "/wireframes",
+      "viewport": "1272x668",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 Edg/151.0.0.0",
+      "createdAt": "2026-08-05T19:08:49.589Z",
+      "cssSelector": "",
+      "xpath": "",
+      "textSnippet": "",
+      "elementTag": "",
+      "textPrefix": "",
+      "textSuffix": "",
+      "fingerprint": "",
+      "neighborText": "",
+      "xPct": 0,
+      "yPct": 0,
+      "wPct": 0,
+      "hPct": 0,
+      "status": "todo",
+      "kind": "pin",
+      "sequenceNumber": 45,
+      "pinX": 749,
+      "pinY": 826,
+      "capturedElements": [
+        {
+          "tag": "a",
+          "attributes": {
+            "href": "/wireframes/transatlantic-relations-global-challenges",
+            "class": ""
+          },
+          "rect": {
+            "x": 480,
+            "y": 364.0833435058594,
+            "w": 218.90625,
+            "h": 56.40625
+          }
+        },
+        {
+          "tag": "li",
+          "attributes": {
+            "class": "wf-card"
+          },
+          "rect": {
+            "x": 459.3333435058594,
+            "y": 339.41668701171875,
+            "w": 353.3333435058594,
+            "h": 234.73959350585938
+          }
+        },
+        {
+          "tag": "ul",
+          "attributes": {
+            "class": "switcher",
+            "data-gap": "m"
+          },
+          "rect": {
+            "x": 86,
+            "y": 339.41668701171875,
+            "w": 1100,
+            "h": 234.73959350585938
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "class": "center | stack",
+            "data-gap": "m"
+          },
+          "rect": {
+            "x": 66,
+            "y": 280.91668701171875,
+            "w": 1140,
+            "h": 293.2395935058594
+          }
+        },
+        {
+          "tag": "section",
+          "attributes": {
+            "class": "wf-slot",
+            "data-label": "Programs"
+          },
+          "rect": {
+            "x": 0,
+            "y": 240.9166717529297,
+            "w": 1272,
+            "h": 453.90625
+          }
+        },
+        {
+          "tag": "main",
+          "attributes": {
+            "id": "wf-main",
+            "class": "stack",
+            "data-gap": "xl"
+          },
+          "rect": {
+            "x": 0,
+            "y": -241.20834350585938,
+            "w": 1272,
+            "h": 5484.67724609375
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "class": "wireframe"
+          },
+          "rect": {
+            "x": 0,
+            "y": -300,
+            "w": 1272,
+            "h": 6179.46875
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "id": "__nuxt"
+          },
+          "rect": {
+            "x": 0,
+            "y": -300,
+            "w": 1272,
+            "h": 6179.46875
+          }
+        }
+      ]
+    },
+    {
+      "id": "5b3d4ced-c37d-4de8-8331-e2d8e9a0c64a",
+      "projectName": "bfna-wireframes",
+      "message": "can we add more explanatory text here? what is the word or character limit?",
+      "authorName": "Irene",
+      "url": "https://wireframes--bfna-site-v2.netlify.app/wireframes",
+      "path": "/wireframes",
+      "viewport": "1272x668",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 Edg/151.0.0.0",
+      "createdAt": "2026-08-05T19:08:20.910Z",
+      "cssSelector": "",
+      "xpath": "",
+      "textSnippet": "",
+      "elementTag": "",
+      "textPrefix": "",
+      "textSuffix": "",
+      "fingerprint": "",
+      "neighborText": "",
+      "xPct": 0,
+      "yPct": 0,
+      "wPct": 0,
+      "hPct": 0,
+      "status": "todo",
+      "kind": "pin",
+      "sequenceNumber": 44,
+      "pinX": 973,
+      "pinY": 805,
+      "capturedElements": [
+        {
+          "tag": "a",
+          "attributes": {
+            "href": "/wireframes/future-leadership",
+            "class": ""
+          },
+          "rect": {
+            "x": 853.3333740234375,
+            "y": 364.0833435058594,
+            "w": 175.3125,
+            "h": 24
+          }
+        },
+        {
+          "tag": "li",
+          "attributes": {
+            "class": "wf-card"
+          },
+          "rect": {
+            "x": 832.6666870117188,
+            "y": 339.41668701171875,
+            "w": 353.3333435058594,
+            "h": 234.73959350585938
+          }
+        },
+        {
+          "tag": "ul",
+          "attributes": {
+            "class": "switcher",
+            "data-gap": "m"
+          },
+          "rect": {
+            "x": 86,
+            "y": 339.41668701171875,
+            "w": 1100,
+            "h": 234.73959350585938
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "class": "center | stack",
+            "data-gap": "m"
+          },
+          "rect": {
+            "x": 66,
+            "y": 280.91668701171875,
+            "w": 1140,
+            "h": 293.2395935058594
+          }
+        },
+        {
+          "tag": "section",
+          "attributes": {
+            "class": "wf-slot",
+            "data-label": "Programs"
+          },
+          "rect": {
+            "x": 0,
+            "y": 240.9166717529297,
+            "w": 1272,
+            "h": 453.90625
+          }
+        },
+        {
+          "tag": "main",
+          "attributes": {
+            "id": "wf-main",
+            "class": "stack",
+            "data-gap": "xl"
+          },
+          "rect": {
+            "x": 0,
+            "y": -241.20834350585938,
+            "w": 1272,
+            "h": 5484.67724609375
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "class": "wireframe"
+          },
+          "rect": {
+            "x": 0,
+            "y": -300,
+            "w": 1272,
+            "h": 6179.46875
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "id": "__nuxt"
+          },
+          "rect": {
+            "x": 0,
+            "y": -300,
+            "w": 1272,
+            "h": 6179.46875
+          }
+        }
+      ]
+    },
+    {
+      "id": "010601c4-3537-4293-9610-0b60ea6f12bd",
+      "projectName": "bfna-wireframes",
+      "message": "should we call this Explore Our Work ?",
+      "authorName": "Irene",
+      "url": "https://wireframes--bfna-site-v2.netlify.app/wireframes",
+      "path": "/wireframes",
+      "viewport": "1272x668",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 Edg/151.0.0.0",
+      "createdAt": "2026-08-05T19:07:31.114Z",
+      "cssSelector": "",
+      "xpath": "",
+      "textSnippet": "",
+      "elementTag": "",
+      "textPrefix": "",
+      "textSuffix": "",
+      "fingerprint": "",
+      "neighborText": "",
+      "xPct": 0,
+      "yPct": 0,
+      "wPct": 0,
+      "hPct": 0,
+      "status": "todo",
+      "kind": "pin",
+      "sequenceNumber": 43,
+      "pinX": 240,
+      "pinY": 374,
+      "capturedElements": [
+        {
+          "tag": "a",
+          "attributes": {
+            "href": "/wireframes/democracy",
+            "class": "wf-button",
+            "data-variant": "primary"
+          },
+          "rect": {
+            "x": 86,
+            "y": 342.3125,
+            "w": 187.3854217529297,
+            "h": 40.79166793823242
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "class": "cluster",
+            "data-gap": "s"
+          },
+          "rect": {
+            "x": 86,
+            "y": 342.3125,
+            "w": 1100,
+            "h": 40.79166793823242
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "class": "center | stack",
+            "data-gap": "s"
+          },
+          "rect": {
+            "x": 66,
+            "y": 177.2604217529297,
+            "w": 1140,
+            "h": 205.84375
+          }
+        },
+        {
+          "tag": "section",
+          "attributes": {
+            "class": "wf-slot wf-hero",
+            "data-label": "Hero"
+          },
+          "rect": {
+            "x": 0,
+            "y": 120.125,
+            "w": 1272,
+            "h": 400.79168701171875
+          }
+        },
+        {
+          "tag": "main",
+          "attributes": {
+            "id": "wf-main",
+            "class": "stack",
+            "data-gap": "xl"
+          },
+          "rect": {
+            "x": 0,
+            "y": 58.79166793823242,
+            "w": 1272,
+            "h": 5484.67724609375
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "class": "wireframe"
+          },
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 1272,
+            "h": 6179.46875
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "id": "__nuxt"
+          },
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 1272,
+            "h": 6179.46875
+          }
+        }
+      ]
+    },
+    {
+      "id": "9e1462c9-5331-4d8f-9173-0dcff0fe11c7",
+      "projectName": "bfna-wireframes",
+      "message": "we have no newsletter so this can be deleted",
+      "authorName": "Irene",
+      "url": "https://wireframes--bfna-site-v2.netlify.app/wireframes",
+      "path": "/wireframes",
+      "viewport": "1272x668",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 Edg/151.0.0.0",
+      "createdAt": "2026-08-05T19:07:09.469Z",
+      "cssSelector": "",
+      "xpath": "",
+      "textSnippet": "",
+      "elementTag": "",
+      "textPrefix": "",
+      "textSuffix": "",
+      "fingerprint": "",
+      "neighborText": "",
+      "xPct": 0,
+      "yPct": 0,
+      "wPct": 0,
+      "hPct": 0,
+      "status": "todo",
+      "kind": "pin",
+      "sequenceNumber": 42,
+      "pinX": 448,
+      "pinY": 368,
+      "capturedElements": [
+        {
+          "tag": "a",
+          "attributes": {
+            "href": "#subscribe",
+            "class": "wf-button"
+          },
+          "rect": {
+            "x": 293.38543701171875,
+            "y": 342.3125,
+            "w": 165.39584350585938,
+            "h": 40.79166793823242
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "class": "cluster",
+            "data-gap": "s"
+          },
+          "rect": {
+            "x": 86,
+            "y": 342.3125,
+            "w": 1100,
+            "h": 40.79166793823242
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "class": "center | stack",
+            "data-gap": "s"
+          },
+          "rect": {
+            "x": 66,
+            "y": 177.2604217529297,
+            "w": 1140,
+            "h": 205.84375
+          }
+        },
+        {
+          "tag": "section",
+          "attributes": {
+            "class": "wf-slot wf-hero",
+            "data-label": "Hero"
+          },
+          "rect": {
+            "x": 0,
+            "y": 120.125,
+            "w": 1272,
+            "h": 400.79168701171875
+          }
+        },
+        {
+          "tag": "main",
+          "attributes": {
+            "id": "wf-main",
+            "class": "stack",
+            "data-gap": "xl"
+          },
+          "rect": {
+            "x": 0,
+            "y": 58.79166793823242,
+            "w": 1272,
+            "h": 5484.67724609375
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "class": "wireframe"
+          },
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 1272,
+            "h": 6179.46875
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "id": "__nuxt"
+          },
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 1272,
+            "h": 6179.46875
+          }
+        }
+      ]
+    },
+    {
+      "id": "71532e60-c5eb-46fc-8d02-068eb386c34a",
+      "projectName": "bfna-wireframes",
+      "message": "should we take out the Projects button on the navigation menu? having both Programs and Projects might be confusing?",
+      "authorName": "Irene",
+      "url": "https://wireframes--bfna-site-v2.netlify.app/wireframes",
+      "path": "/wireframes",
+      "viewport": "1272x668",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 Edg/151.0.0.0",
+      "createdAt": "2026-08-05T19:06:44.566Z",
+      "cssSelector": "",
+      "xpath": "",
+      "textSnippet": "",
+      "elementTag": "",
+      "textPrefix": "",
+      "textSuffix": "",
+      "fingerprint": "",
+      "neighborText": "",
+      "xPct": 0,
+      "yPct": 0,
+      "wPct": 0,
+      "hPct": 0,
+      "status": "todo",
+      "kind": "pin",
+      "sequenceNumber": 41,
+      "pinX": 677,
+      "pinY": 120,
+      "capturedElements": [
+        {
+          "tag": "section",
+          "attributes": {
+            "class": "wf-slot wf-hero",
+            "data-label": "Hero"
+          },
+          "rect": {
+            "x": 0,
+            "y": 120.125,
+            "w": 1272,
+            "h": 400.79168701171875
+          }
+        },
+        {
+          "tag": "main",
+          "attributes": {
+            "id": "wf-main",
+            "class": "stack",
+            "data-gap": "xl"
+          },
+          "rect": {
+            "x": 0,
+            "y": 58.79166793823242,
+            "w": 1272,
+            "h": 5484.67724609375
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "class": "wireframe"
+          },
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 1272,
+            "h": 6179.46875
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "id": "__nuxt"
+          },
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 1272,
+            "h": 6179.46875
+          }
+        }
+      ]
+    },
+    {
+      "id": "08dec8d1-308f-4a42-bbef-b3dc140c32f0",
+      "projectName": "bfna-wireframes",
+      "message": "question from some team members, can this banner contain moving images?",
+      "authorName": "Irene",
+      "url": "https://wireframes--bfna-site-v2.netlify.app/wireframes",
+      "path": "/wireframes",
+      "viewport": "1272x668",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 Edg/151.0.0.0",
+      "createdAt": "2026-08-05T19:05:05.639Z",
+      "cssSelector": "",
+      "xpath": "",
+      "textSnippet": "",
+      "elementTag": "",
+      "textPrefix": "",
+      "textSuffix": "",
+      "fingerprint": "",
+      "neighborText": "",
+      "xPct": 0,
+      "yPct": 0,
+      "wPct": 0,
+      "hPct": 0,
+      "status": "todo",
+      "kind": "pin",
+      "sequenceNumber": 40,
+      "pinX": 716,
+      "pinY": 366,
+      "capturedElements": [
+        {
+          "tag": "div",
+          "attributes": {
+            "class": "cluster",
+            "data-gap": "s"
+          },
+          "rect": {
+            "x": 86,
+            "y": 342.3125,
+            "w": 1100,
+            "h": 40.79166793823242
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "class": "center | stack",
+            "data-gap": "s"
+          },
+          "rect": {
+            "x": 66,
+            "y": 177.2604217529297,
+            "w": 1140,
+            "h": 205.84375
+          }
+        },
+        {
+          "tag": "section",
+          "attributes": {
+            "class": "wf-slot wf-hero",
+            "data-label": "Hero"
+          },
+          "rect": {
+            "x": 0,
+            "y": 120.125,
+            "w": 1272,
+            "h": 400.79168701171875
+          }
+        },
+        {
+          "tag": "main",
+          "attributes": {
+            "id": "wf-main",
+            "class": "stack",
+            "data-gap": "xl"
+          },
+          "rect": {
+            "x": 0,
+            "y": 58.79166793823242,
+            "w": 1272,
+            "h": 5484.67724609375
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "class": "wireframe"
+          },
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 1272,
+            "h": 6179.46875
+          }
+        },
+        {
+          "tag": "div",
+          "attributes": {
+            "id": "__nuxt"
+          },
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 1272,
+            "h": 6179.46875
+          }
+        }
+      ]
+    },
+    {
+      "id": "wf-seed-001",
+      "projectName": "bfna-wireframes",
+      "message": "Featured strip = first 4 of the 8 `featured` records in the consolidated dataset (texts per Irene’s Jul 23 email); below it, the 6 most recent active insights. Note: the latest 6 skew Transatlantic Relations — editorial mix may need a curation rule.",
+      "authorName": "Claude — wireframe annotations",
+      "url": "/wireframes",
+      "path": "/wireframes",
+      "viewport": "1280x800",
+      "userAgent": "seed",
+      "createdAt": "2026-07-31T12:00:00.000Z",
+      "status": "done",
+      "kind": "target",
+      "cssSelector": "[data-label=\"Insights\"]",
+      "xpath": "",
+      "textSnippet": "Insights",
+      "elementTag": "section",
+      "textPrefix": "",
+      "textSuffix": "",
+      "fingerprint": "",
+      "neighborText": "",
+      "xPct": 0.05,
+      "yPct": 0.02,
+      "wPct": 0.9,
+      "hPct": 0.1,
+      "sequenceNumber": 108
+    },
+    {
+      "id": "wf-seed-002",
+      "projectName": "bfna-wireframes",
+      "message": "Wired to Mailchimp (Q13) — real signup form replaces the current external link (today: bfna.us20.list-manage.com, per static-content.json).",
+      "authorName": "Claude — wireframe annotations",
+      "url": "/wireframes",
+      "path": "/wireframes",
+      "viewport": "1280x800",
+      "userAgent": "seed",
+      "createdAt": "2026-07-31T12:00:00.000Z",
+      "status": "done",
+      "kind": "target",
+      "cssSelector": "[data-label=\"Subscribe CTA\"]",
+      "xpath": "",
+      "textSnippet": "Subscribe CTA",
+      "elementTag": "section",
+      "textPrefix": "",
+      "textSuffix": "",
+      "fingerprint": "",
+      "neighborText": "",
+      "xPct": 0.05,
+      "yPct": 0.02,
+      "wPct": 0.9,
+      "hPct": 0.1,
+      "sequenceNumber": 109
+    },
+    {
+      "id": "wf-seed-003",
+      "projectName": "bfna-wireframes",
+      "message": "Projects from projects.json (consolidated dataset); descriptions from Irene’s Jul 29 docx via the dataset. Sub-projects (parent_project set) are never listed here. Aug 3: CEPI 2010/2011 were top-level rows in the dataset — nested under `cepi` (parent row doesn’t exist yet; backend must create it or archive the two cohort pages).",
+      "authorName": "Claude — wireframe annotations",
+      "url": "/wireframes/democracy",
+      "path": "/wireframes/democracy",
+      "viewport": "1280x800",
+      "userAgent": "seed",
+      "createdAt": "2026-07-31T12:00:00.000Z",
+      "status": "done",
+      "kind": "target",
+      "cssSelector": "[data-label=\"Projects in this area\"]",
+      "xpath": "",
+      "textSnippet": "Projects in this area",
+      "elementTag": "section",
+      "textPrefix": "",
+      "textSuffix": "",
+      "fingerprint": "",
+      "neighborText": "",
+      "xPct": 0.05,
+      "yPct": 0.02,
+      "wPct": 0.9,
+      "hPct": 0.1,
+      "sequenceNumber": 110
+    },
+    {
+      "id": "wf-seed-004",
+      "projectName": "bfna-wireframes",
+      "message": "Live from content.json: all active insights for this area (up to 9 shown). Archived items reachable via the labeled toggle, never shown by default (GGS 3-year rule; archive ≠ delete).",
+      "authorName": "Claude — wireframe annotations",
+      "url": "/wireframes/democracy",
+      "path": "/wireframes/democracy",
+      "viewport": "1280x800",
+      "userAgent": "seed",
+      "createdAt": "2026-07-31T12:00:00.000Z",
+      "status": "done",
+      "kind": "target",
+      "cssSelector": "[data-label=\"Recent insights\"]",
+      "xpath": "",
+      "textSnippet": "Recent insights",
+      "elementTag": "section",
+      "textPrefix": "",
+      "textSuffix": "",
+      "fingerprint": "",
+      "neighborText": "",
+      "xPct": 0.05,
+      "yPct": 0.02,
+      "wPct": 0.9,
+      "hPct": 0.1,
+      "sequenceNumber": 111
+    },
+    {
+      "id": "wf-seed-005",
+      "projectName": "bfna-wireframes",
+      "message": "Projects from projects.json (consolidated dataset); descriptions from Irene’s Jul 29 docx via the dataset. Sub-projects (parent_project set) are never listed here. Aug 3: CEPI 2010/2011 were top-level rows in the dataset — nested under `cepi` (parent row doesn’t exist yet; backend must create it or archive the two cohort pages).",
+      "authorName": "Claude — wireframe annotations",
+      "url": "/wireframes/transatlantic-relations-global-challenges",
+      "path": "/wireframes/transatlantic-relations-global-challenges",
+      "viewport": "1280x800",
+      "userAgent": "seed",
+      "createdAt": "2026-07-31T12:00:00.000Z",
+      "status": "done",
+      "kind": "target",
+      "cssSelector": "[data-label=\"Projects in this area\"]",
+      "xpath": "",
+      "textSnippet": "Projects in this area",
+      "elementTag": "section",
+      "textPrefix": "",
+      "textSuffix": "",
+      "fingerprint": "",
+      "neighborText": "",
+      "xPct": 0.05,
+      "yPct": 0.02,
+      "wPct": 0.9,
+      "hPct": 0.1,
+      "sequenceNumber": 112
+    },
+    {
+      "id": "wf-seed-006",
+      "projectName": "bfna-wireframes",
+      "message": "Live from content.json: all active insights for this area (up to 9 shown). Archived items reachable via the labeled toggle, never shown by default (GGS 3-year rule; archive ≠ delete).",
+      "authorName": "Claude — wireframe annotations",
+      "url": "/wireframes/transatlantic-relations-global-challenges",
+      "path": "/wireframes/transatlantic-relations-global-challenges",
+      "viewport": "1280x800",
+      "userAgent": "seed",
+      "createdAt": "2026-07-31T12:00:00.000Z",
+      "status": "done",
+      "kind": "target",
+      "cssSelector": "[data-label=\"Recent insights\"]",
+      "xpath": "",
+      "textSnippet": "Recent insights",
+      "elementTag": "section",
+      "textPrefix": "",
+      "textSuffix": "",
+      "fingerprint": "",
+      "neighborText": "",
+      "xPct": 0.05,
+      "yPct": 0.02,
+      "wPct": 0.9,
+      "hPct": 0.1,
+      "sequenceNumber": 113
+    },
+    {
+      "id": "wf-seed-007",
+      "projectName": "bfna-wireframes",
+      "message": "Projects from projects.json (consolidated dataset); descriptions from Irene’s Jul 29 docx via the dataset. Sub-projects (parent_project set) are never listed here. Aug 3: CEPI 2010/2011 were top-level rows in the dataset — nested under `cepi` (parent row doesn’t exist yet; backend must create it or archive the two cohort pages).",
+      "authorName": "Claude — wireframe annotations",
+      "url": "/wireframes/future-leadership",
+      "path": "/wireframes/future-leadership",
+      "viewport": "1280x800",
+      "userAgent": "seed",
+      "createdAt": "2026-07-31T12:00:00.000Z",
+      "status": "done",
+      "kind": "target",
+      "cssSelector": "[data-label=\"Projects in this area\"]",
+      "xpath": "",
+      "textSnippet": "Projects in this area",
+      "elementTag": "section",
+      "textPrefix": "",
+      "textSuffix": "",
+      "fingerprint": "",
+      "neighborText": "",
+      "xPct": 0.05,
+      "yPct": 0.02,
+      "wPct": 0.9,
+      "hPct": 0.1,
+      "sequenceNumber": 114
+    },
+    {
+      "id": "wf-seed-008",
+      "projectName": "bfna-wireframes",
+      "message": "Live from content.json: all active insights for this area (up to 9 shown). Archived items reachable via the labeled toggle, never shown by default (GGS 3-year rule; archive ≠ delete).",
+      "authorName": "Claude — wireframe annotations",
+      "url": "/wireframes/future-leadership",
+      "path": "/wireframes/future-leadership",
+      "viewport": "1280x800",
+      "userAgent": "seed",
+      "createdAt": "2026-07-31T12:00:00.000Z",
+      "status": "done",
+      "kind": "target",
+      "cssSelector": "[data-label=\"Recent insights\"]",
+      "xpath": "",
+      "textSnippet": "Recent insights",
+      "elementTag": "section",
+      "textPrefix": "",
+      "textSuffix": "",
+      "fingerprint": "",
+      "neighborText": "",
+      "xPct": 0.05,
+      "yPct": 0.02,
+      "wPct": 0.9,
+      "hPct": 0.1,
+      "sequenceNumber": 115
+    },
+    {
+      "id": "wf-seed-009",
+      "projectName": "bfna-wireframes",
+      "message": "Projects = top-level rows of projects.json (parent_project null). BFNA Documentaries is stubbed — in the dataset’s pending_copy but has no row in any source (Q7); Transponder copy also pending (Q6). \"Pending re-tag\" group at the bottom = projects whose new program is unresolved (Q3).",
+      "authorName": "Claude — wireframe annotations",
+      "url": "/wireframes/projects",
+      "path": "/wireframes/projects",
+      "viewport": "1280x800",
+      "userAgent": "seed",
+      "createdAt": "2026-07-31T12:00:00.000Z",
+      "status": "done",
+      "kind": "target",
+      "cssSelector": "[data-label=\"Projects index\"]",
+      "xpath": "",
+      "textSnippet": "Projects index",
+      "elementTag": "section",
+      "textPrefix": "",
+      "textSuffix": "",
+      "fingerprint": "",
+      "neighborText": "",
+      "xPct": 0.05,
+      "yPct": 0.02,
+      "wPct": 0.9,
+      "hPct": 0.1,
+      "sequenceNumber": 116
+    },
+    {
+      "id": "wf-seed-010",
+      "projectName": "bfna-wireframes",
+      "message": "Overview is the real CMS excerpt from content.json (981 chars) — components must tolerate real-length copy, not lorem.",
+      "authorName": "Claude — wireframe annotations",
+      "url": "/wireframes/projects/the-bertelsmann-foundation-fellowship",
+      "path": "/wireframes/projects/the-bertelsmann-foundation-fellowship",
+      "viewport": "1280x800",
+      "userAgent": "seed",
+      "createdAt": "2026-07-31T12:00:00.000Z",
+      "status": "done",
+      "kind": "target",
+      "cssSelector": "[data-label=\"Project overview\"]",
+      "xpath": "",
+      "textSnippet": "Project overview",
+      "elementTag": "section",
+      "textPrefix": "",
+      "textSuffix": "",
+      "fingerprint": "",
+      "neighborText": "",
+      "xPct": 0.05,
+      "yPct": 0.02,
+      "wPct": 0.9,
+      "hPct": 0.1,
+      "sequenceNumber": 117
+    },
+    {
+      "id": "wf-seed-011",
+      "projectName": "bfna-wireframes",
+      "message": "Participation title + CTA draft copy now lives in the dataset: `participation` field added (Aug 3) to all 18 top-level projects.json rows (Fellowship: \"Become a Fellow\" / Apply / Nominate; external platforms: \"Use the platform\"; others: \"Follow this project\"). Drafts are CCM placeholders — eligibility/timeline copy still needed from Irene/program team. Backend export should adopt the field.",
+      "authorName": "Claude — wireframe annotations",
+      "url": "/wireframes/projects/the-bertelsmann-foundation-fellowship",
+      "path": "/wireframes/projects/the-bertelsmann-foundation-fellowship",
+      "viewport": "1280x800",
+      "userAgent": "seed",
+      "createdAt": "2026-07-31T12:00:00.000Z",
+      "status": "done",
+      "kind": "target",
+      "cssSelector": "[data-label=\"Participation path\"]",
+      "xpath": "",
+      "textSnippet": "Participation path",
+      "elementTag": "section",
+      "textPrefix": "",
+      "textSuffix": "",
+      "fingerprint": "",
+      "neighborText": "",
+      "xPct": 0.05,
+      "yPct": 0.02,
+      "wPct": 0.9,
+      "hPct": 0.1,
+      "sequenceNumber": 118
+    },
+    {
+      "id": "wf-seed-012",
+      "projectName": "bfna-wireframes",
+      "message": "Real class pages from content.json — the ~21 legacy \"Class of 20XX\"/Participants pages are absorbed here as cohort sections (pending Irene), not separate site pages.",
+      "authorName": "Claude — wireframe annotations",
+      "url": "/wireframes/projects/the-bertelsmann-foundation-fellowship",
+      "path": "/wireframes/projects/the-bertelsmann-foundation-fellowship",
+      "viewport": "1280x800",
+      "userAgent": "seed",
+      "createdAt": "2026-07-31T12:00:00.000Z",
+      "status": "done",
+      "kind": "target",
+      "cssSelector": "[data-label=\"Outcomes / alumni\"]",
+      "xpath": "",
+      "textSnippet": "Outcomes / alumni",
+      "elementTag": "section",
+      "textPrefix": "",
+      "textSuffix": "",
+      "fingerprint": "",
+      "neighborText": "",
+      "xPct": 0.05,
+      "yPct": 0.02,
+      "wPct": 0.9,
+      "hPct": 0.1,
+      "sequenceNumber": 119
+    },
+    {
+      "id": "wf-seed-013",
+      "projectName": "bfna-wireframes",
+      "message": "Now REAL M2M: insights carry `projects` slugs in the consolidated dataset — the old heading-match hack is gone. Cohort chips come from parent_project children (18 real pages).",
+      "authorName": "Claude — wireframe annotations",
+      "url": "/wireframes/projects/the-bertelsmann-foundation-fellowship",
+      "path": "/wireframes/projects/the-bertelsmann-foundation-fellowship",
+      "viewport": "1280x800",
+      "userAgent": "seed",
+      "createdAt": "2026-07-31T12:00:00.000Z",
+      "status": "done",
+      "kind": "target",
+      "cssSelector": "[data-label=\"Related insights\"]",
+      "xpath": "",
+      "textSnippet": "Related insights",
+      "elementTag": "section",
+      "textPrefix": "",
+      "textSuffix": "",
+      "fingerprint": "",
+      "neighborText": "",
+      "xPct": 0.05,
+      "yPct": 0.02,
+      "wPct": 0.9,
+      "hPct": 0.1,
+      "sequenceNumber": 120
+    },
+    {
+      "id": "wf-seed-014",
+      "projectName": "bfna-wireframes",
+      "message": "Overview is the real CMS excerpt from content.json — components must tolerate real-length copy, not lorem.",
+      "authorName": "Claude — wireframe annotations",
+      "url": "/wireframes/projects/transatlantic-barometer",
+      "path": "/wireframes/projects/transatlantic-barometer",
+      "viewport": "1280x800",
+      "userAgent": "seed",
+      "createdAt": "2026-07-31T12:00:00.000Z",
+      "status": "done",
+      "kind": "target",
+      "cssSelector": "[data-label=\"Project overview\"]",
+      "xpath": "",
+      "textSnippet": "Project overview",
+      "elementTag": "section",
+      "textPrefix": "",
+      "textSuffix": "",
+      "fingerprint": "",
+      "neighborText": "",
+      "xPct": 0.05,
+      "yPct": 0.02,
+      "wPct": 0.9,
+      "hPct": 0.1,
+      "sequenceNumber": 121
+    },
+    {
+      "id": "wf-seed-015",
+      "projectName": "bfna-wireframes",
+      "message": "Q4 resolved (Claudio, Jul 31): thin on-site page with the microsite as primary CTA — clear external signaling per GGS.",
+      "authorName": "Claude — wireframe annotations",
+      "url": "/wireframes/projects/transatlantic-barometer",
+      "path": "/wireframes/projects/transatlantic-barometer",
+      "viewport": "1280x800",
+      "userAgent": "seed",
+      "createdAt": "2026-07-31T12:00:00.000Z",
+      "status": "done",
+      "kind": "target",
+      "cssSelector": "[data-label=\"Microsite CTA\"]",
+      "xpath": "",
+      "textSnippet": "Microsite CTA",
+      "elementTag": "section",
+      "textPrefix": "",
+      "textSuffix": "",
+      "fingerprint": "",
+      "neighborText": "",
+      "xPct": 0.05,
+      "yPct": 0.02,
+      "wPct": 0.9,
+      "hPct": 0.1,
+      "sequenceNumber": 122
+    },
+    {
+      "id": "wf-seed-016",
+      "projectName": "bfna-wireframes",
+      "message": "GGS requirement: every project page states a participation path with a specific CTA — no \"Learn More\".",
+      "authorName": "Claude — wireframe annotations",
+      "url": "/wireframes/projects/transatlantic-barometer",
+      "path": "/wireframes/projects/transatlantic-barometer",
+      "viewport": "1280x800",
+      "userAgent": "seed",
+      "createdAt": "2026-07-31T12:00:00.000Z",
+      "status": "done",
+      "kind": "target",
+      "cssSelector": "[data-label=\"Participation path\"]",
+      "xpath": "",
+      "textSnippet": "Participation path",
+      "elementTag": "section",
+      "textPrefix": "",
+      "textSuffix": "",
+      "fingerprint": "",
+      "neighborText": "",
+      "xPct": 0.05,
+      "yPct": 0.02,
+      "wPct": 0.9,
+      "hPct": 0.1,
+      "sequenceNumber": 123
+    },
+    {
+      "id": "wf-seed-017",
+      "projectName": "bfna-wireframes",
+      "message": "Filters are live against the consolidated dataset (format × program × include-archive via query params). Archived results labeled inline (GGS: tier-aware feeds). 193 legacy \"article|report\" items count as Article pending the split; 52 items still carry RE-TAG/PENDING-Q3 areas and match no area filter.",
+      "authorName": "Claude — wireframe annotations",
+      "url": "/wireframes/insights",
+      "path": "/wireframes/insights",
+      "viewport": "1280x800",
+      "userAgent": "seed",
+      "createdAt": "2026-07-31T12:00:00.000Z",
+      "status": "done",
+      "kind": "target",
+      "cssSelector": "[data-label=\"Filters\"]",
+      "xpath": "",
+      "textSnippet": "Filters",
+      "elementTag": "section",
+      "textPrefix": "",
+      "textSuffix": "",
+      "fingerprint": "",
+      "neighborText": "",
+      "xPct": 0.05,
+      "yPct": 0.02,
+      "wPct": 0.9,
+      "hPct": 0.1,
+      "sequenceNumber": 124
+    },
+    {
+      "id": "wf-seed-018",
+      "projectName": "bfna-wireframes",
+      "message": "The italic lead is the real CMS summary (GGS: clear descriptive summary on every page, enforced by a required field — doubles as the AI/SEO description). Article body renders below with prose.css styles.",
+      "authorName": "Claude — wireframe annotations",
+      "url": "/wireframes/insights/from-idea-to-impact",
+      "path": "/wireframes/insights/from-idea-to-impact",
+      "viewport": "1280x800",
+      "userAgent": "seed",
+      "createdAt": "2026-07-31T12:00:00.000Z",
+      "status": "done",
+      "kind": "target",
+      "cssSelector": "[data-label=\"Body\"]",
+      "xpath": "",
+      "textSnippet": "Body",
+      "elementTag": "section",
+      "textPrefix": "",
+      "textSuffix": "",
+      "fingerprint": "",
+      "neighborText": "",
+      "xPct": 0.05,
+      "yPct": 0.02,
+      "wPct": 0.9,
+      "hPct": 0.1,
+      "sequenceNumber": 125
+    },
+    {
+      "id": "wf-seed-019",
+      "projectName": "bfna-wireframes",
+      "message": "Relationship insight → program → project is explicit on the page AND in schema.org Article markup (Front 4) — the taxonomy is the AI-readability play.",
+      "authorName": "Claude — wireframe annotations",
+      "url": "/wireframes/insights/from-idea-to-impact",
+      "path": "/wireframes/insights/from-idea-to-impact",
+      "viewport": "1280x800",
+      "userAgent": "seed",
+      "createdAt": "2026-07-31T12:00:00.000Z",
+      "status": "done",
+      "kind": "target",
+      "cssSelector": "[data-label=\"Related insights\"]",
+      "xpath": "",
+      "textSnippet": "Related insights",
+      "elementTag": "section",
+      "textPrefix": "",
+      "textSuffix": "",
+      "fingerprint": "",
+      "neighborText": "",
+      "xPct": 0.05,
+      "yPct": 0.02,
+      "wPct": 0.9,
+      "hPct": 0.1,
+      "sequenceNumber": 126
+    },
+    {
+      "id": "wf-seed-020",
+      "projectName": "bfna-wireframes",
+      "message": "Chronological by year; a curated \"notable past work\" strip would sit at the top if Q10 lands on curation. Evergreen exemptions (Q9) pull items out of this index entirely.",
+      "authorName": "Claude — wireframe annotations",
+      "url": "/wireframes/archive",
+      "path": "/wireframes/archive",
+      "viewport": "1280x800",
+      "userAgent": "seed",
+      "createdAt": "2026-07-31T12:00:00.000Z",
+      "status": "done",
+      "kind": "target",
+      "cssSelector": "[data-label=\"Archive index\"]",
+      "xpath": "",
+      "textSnippet": "Archive index",
+      "elementTag": "section",
+      "textPrefix": "",
+      "textSuffix": "",
+      "fingerprint": "",
+      "neighborText": "",
+      "xPct": 0.05,
+      "yPct": 0.02,
+      "wPct": 0.9,
+      "hPct": 0.1,
+      "sequenceNumber": 127
+    },
+    {
+      "id": "wf-seed-021",
+      "projectName": "bfna-wireframes",
+      "message": "Real counts per year from content.json. Every item keeps its URL and stays indexed (AI SEO requirement) — item pages carry the archive banner.",
+      "authorName": "Claude — wireframe annotations",
+      "url": "/wireframes/archive",
+      "path": "/wireframes/archive",
+      "viewport": "1280x800",
+      "userAgent": "seed",
+      "createdAt": "2026-07-31T12:00:00.000Z",
+      "status": "done",
+      "kind": "target",
+      "cssSelector": "[data-label=\"By year\"]",
+      "xpath": "",
+      "textSnippet": "By year",
+      "elementTag": "section",
+      "textPrefix": "",
+      "textSuffix": "",
+      "fingerprint": "",
+      "neighborText": "",
+      "xPct": 0.05,
+      "yPct": 0.02,
+      "wPct": 0.9,
+      "hPct": 0.1,
+      "sequenceNumber": 128
+    },
+    {
+      "id": "wf-seed-022",
+      "projectName": "bfna-wireframes",
+      "message": "Board + Team now render real people.json rows (17 people; board = job_title contains \"Board\": Liz Mohn, Stephen F. Szabo, Wilhelm-Friedrich Uhr). Full board roster likely longer — dataset only has Directus/Contentful people.",
+      "authorName": "Claude — wireframe annotations",
+      "url": "/wireframes/about",
+      "path": "/wireframes/about",
+      "viewport": "1280x800",
+      "userAgent": "seed",
+      "createdAt": "2026-07-31T12:00:00.000Z",
+      "status": "done",
+      "kind": "target",
+      "cssSelector": "[data-label=\"Board of Directors\"]",
+      "xpath": "",
+      "textSnippet": "Board of Directors",
+      "elementTag": "section",
+      "textPrefix": "",
+      "textSuffix": "",
+      "fingerprint": "",
+      "neighborText": "",
+      "xPct": 0.05,
+      "yPct": 0.02,
+      "wPct": 0.9,
+      "hPct": 0.1,
+      "sequenceNumber": 129
+    },
+    {
+      "id": "wf-seed-023",
+      "projectName": "bfna-wireframes",
+      "message": "Hero renders the `home` row added to pages.json (Aug 3): GGS value prop (\"Strengthening the Transatlantic Relationship\") + the opening line of Irene’s Jul 29 About Us copy as the dek. No dedicated hero copy exists in any email/doc — placeholder until Irene confirms. Backend export should adopt this row.",
+      "authorName": "Claude — wireframe annotations",
+      "url": "/wireframes",
+      "path": "/wireframes",
+      "viewport": "1280x800",
+      "userAgent": "seed",
+      "createdAt": "2026-07-31T12:00:00.000Z",
+      "status": "done",
+      "kind": "target",
+      "cssSelector": "[data-label=\"Hero\"]",
+      "xpath": "",
+      "textSnippet": "Hero",
+      "elementTag": "section",
+      "textPrefix": "",
+      "textSuffix": "",
+      "fingerprint": "",
+      "neighborText": "",
+      "xPct": 0.05,
+      "yPct": 0.02,
+      "wPct": 0.9,
+      "hPct": 0.1,
+      "sequenceNumber": 130
+    },
+    {
+      "id": "wf-seed-024",
+      "projectName": "bfna-wireframes",
+      "message": "Card taglines = first sentence of each program intro from programs.json (Irene’s Jul 29 copy). Full intros render on the hub pages.",
+      "authorName": "Claude — wireframe annotations",
+      "url": "/wireframes",
+      "path": "/wireframes",
+      "viewport": "1280x800",
+      "userAgent": "seed",
+      "createdAt": "2026-07-31T12:00:00.000Z",
+      "status": "done",
+      "kind": "target",
+      "cssSelector": "[data-label=\"Programs\"]",
+      "xpath": "",
+      "textSnippet": "Our Programs",
+      "elementTag": "section",
+      "textPrefix": "",
+      "textSuffix": "",
+      "fingerprint": "",
+      "neighborText": "",
+      "xPct": 0.05,
+      "yPct": 0.02,
+      "wPct": 0.9,
+      "hPct": 0.1,
+      "sequenceNumber": 131
+    },
+    {
+      "id": "wf-seed-025",
+      "projectName": "bfna-wireframes",
+      "message": "Subscribe copy is the current site’s (\"Subscribe to receive our updates & newsletters\" / \"Enter your email and customize your preferences.\", static-content.json). Fine to keep or rewrite with Irene.",
+      "authorName": "Claude — wireframe annotations",
+      "url": "/wireframes",
+      "path": "/wireframes",
+      "viewport": "1280x800",
+      "userAgent": "seed",
+      "createdAt": "2026-07-31T12:00:00.000Z",
+      "status": "done",
+      "kind": "target",
+      "cssSelector": "[data-label=\"Subscribe CTA\"]",
+      "xpath": "",
+      "textSnippet": "Subscribe CTA",
+      "elementTag": "section",
+      "textPrefix": "",
+      "textSuffix": "",
+      "fingerprint": "",
+      "neighborText": "",
+      "xPct": 0.05,
+      "yPct": 0.02,
+      "wPct": 0.9,
+      "hPct": 0.1,
+      "sequenceNumber": 132
+    },
+    {
+      "id": "wf-seed-026",
+      "projectName": "bfna-wireframes",
+      "message": "Intro is the real programs.json copy (Irene Jul 29 docx via the consolidated dataset).",
+      "authorName": "Claude — wireframe annotations",
+      "url": "/wireframes/democracy",
+      "path": "/wireframes/democracy",
+      "viewport": "1280x800",
+      "userAgent": "seed",
+      "createdAt": "2026-07-31T12:00:00.000Z",
+      "status": "done",
+      "kind": "target",
+      "cssSelector": "[data-label=\"Hub intro\"]",
+      "xpath": "",
+      "textSnippet": "Hub intro",
+      "elementTag": "section",
+      "textPrefix": "",
+      "textSuffix": "",
+      "fingerprint": "",
+      "neighborText": "",
+      "xPct": 0.05,
+      "yPct": 0.02,
+      "wPct": 0.9,
+      "hPct": 0.1,
+      "sequenceNumber": 133
+    },
+    {
+      "id": "wf-seed-027",
+      "projectName": "bfna-wireframes",
+      "message": "Intro is the real programs.json copy (Irene Jul 29 docx via the consolidated dataset).",
+      "authorName": "Claude — wireframe annotations",
+      "url": "/wireframes/transatlantic-relations-global-challenges",
+      "path": "/wireframes/transatlantic-relations-global-challenges",
+      "viewport": "1280x800",
+      "userAgent": "seed",
+      "createdAt": "2026-07-31T12:00:00.000Z",
+      "status": "done",
+      "kind": "target",
+      "cssSelector": "[data-label=\"Hub intro\"]",
+      "xpath": "",
+      "textSnippet": "Hub intro",
+      "elementTag": "section",
+      "textPrefix": "",
+      "textSuffix": "",
+      "fingerprint": "",
+      "neighborText": "",
+      "xPct": 0.05,
+      "yPct": 0.02,
+      "wPct": 0.9,
+      "hPct": 0.1,
+      "sequenceNumber": 134
+    },
+    {
+      "id": "wf-seed-028",
+      "projectName": "bfna-wireframes",
+      "message": "Intro is the real programs.json copy (Irene Jul 29 docx via the consolidated dataset).",
+      "authorName": "Claude — wireframe annotations",
+      "url": "/wireframes/future-leadership",
+      "path": "/wireframes/future-leadership",
+      "viewport": "1280x800",
+      "userAgent": "seed",
+      "createdAt": "2026-07-31T12:00:00.000Z",
+      "status": "done",
+      "kind": "target",
+      "cssSelector": "[data-label=\"Hub intro\"]",
+      "xpath": "",
+      "textSnippet": "Hub intro",
+      "elementTag": "section",
+      "textPrefix": "",
+      "textSuffix": "",
+      "fingerprint": "",
+      "neighborText": "",
+      "xPct": 0.05,
+      "yPct": 0.02,
+      "wPct": 0.9,
+      "hPct": 0.1,
+      "sequenceNumber": 135
+    },
+    {
+      "id": "wf-seed-029",
+      "projectName": "bfna-wireframes",
+      "message": "Intro line now lives in the dataset: `projects` row added to pages.json (Aug 3), rendered under the h1. Copy is still the CCM draft (\"Every BFNA project, grouped by program.\") — pending Irene review.",
+      "authorName": "Claude — wireframe annotations",
+      "url": "/wireframes/projects",
+      "path": "/wireframes/projects",
+      "viewport": "1280x800",
+      "userAgent": "seed",
+      "createdAt": "2026-07-31T12:00:00.000Z",
+      "status": "done",
+      "kind": "target",
+      "cssSelector": "[data-label=\"Projects index\"]",
+      "xpath": "",
+      "textSnippet": "Projects index",
+      "elementTag": "section",
+      "textPrefix": "",
+      "textSuffix": "",
+      "fingerprint": "",
+      "neighborText": "",
+      "xPct": 0.05,
+      "yPct": 0.02,
+      "wPct": 0.9,
+      "hPct": 0.1,
+      "sequenceNumber": 136
+    },
+    {
+      "id": "wf-seed-030",
+      "projectName": "bfna-wireframes",
+      "message": "Intro line now lives in the dataset: `insights` row added to pages.json (Aug 3), rendered under the h1. Copy is still the CCM draft (\"Analysis, reports, videos, and infographics from across our work.\") — pending Irene review. Backend export should adopt the row.",
+      "authorName": "Claude — wireframe annotations",
+      "url": "/wireframes/insights",
+      "path": "/wireframes/insights",
+      "viewport": "1280x800",
+      "userAgent": "seed",
+      "createdAt": "2026-07-31T12:00:00.000Z",
+      "status": "done",
+      "kind": "target",
+      "cssSelector": "[data-label=\"Insights feed\"]",
+      "xpath": "",
+      "textSnippet": "Insights feed",
+      "elementTag": "section",
+      "textPrefix": "",
+      "textSuffix": "",
+      "fingerprint": "",
+      "neighborText": "",
+      "xPct": 0.05,
+      "yPct": 0.02,
+      "wPct": 0.9,
+      "hPct": 0.1,
+      "sequenceNumber": 137
+    },
+    {
+      "id": "wf-seed-031",
+      "projectName": "bfna-wireframes",
+      "message": "Intro line now lives in the dataset: `archive` row added to pages.json (Aug 3), rendered under the h1. Copy is still the CCM draft (GGS archive ≠ delete policy) — pending Irene review.",
+      "authorName": "Claude — wireframe annotations",
+      "url": "/wireframes/archive",
+      "path": "/wireframes/archive",
+      "viewport": "1280x800",
+      "userAgent": "seed",
+      "createdAt": "2026-07-31T12:00:00.000Z",
+      "status": "done",
+      "kind": "target",
+      "cssSelector": "[data-label=\"Archive index\"]",
+      "xpath": "",
+      "textSnippet": "Archive index",
+      "elementTag": "section",
+      "textPrefix": "",
+      "textSuffix": "",
+      "fingerprint": "",
+      "neighborText": "",
+      "xPct": 0.05,
+      "yPct": 0.02,
+      "wPct": 0.9,
+      "hPct": 0.1,
+      "sequenceNumber": 138
+    },
+    {
+      "id": "wf-seed-032",
+      "projectName": "bfna-wireframes",
+      "message": "CTA copy now lives in the dataset: `microsite_cta` field added (Aug 3) to all 6 external projects in projects.json (+ Documentaries stub) — \"The complete experience lives on the {project} microsite.\" Backend export should adopt the field.",
+      "authorName": "Claude — wireframe annotations",
+      "url": "/wireframes/projects/transatlantic-barometer",
+      "path": "/wireframes/projects/transatlantic-barometer",
+      "viewport": "1280x800",
+      "userAgent": "seed",
+      "createdAt": "2026-07-31T12:00:00.000Z",
+      "status": "done",
+      "kind": "target",
+      "cssSelector": "[data-label=\"Microsite CTA\"]",
+      "xpath": "",
+      "textSnippet": "Microsite CTA",
+      "elementTag": "section",
+      "textPrefix": "",
+      "textSuffix": "",
+      "fingerprint": "",
+      "neighborText": "",
+      "xPct": 0.05,
+      "yPct": 0.02,
+      "wPct": 0.9,
+      "hPct": 0.1,
+      "sequenceNumber": 139
+    },
+    {
+      "id": "wf-seed-033",
+      "projectName": "bfna-wireframes",
+      "message": "Banner microcopy now lives in the dataset: `archive-banner` row added to pages.json (Aug 3) with a {date} placeholder — rendered on every archived insight. Copy pending Irene review.",
+      "authorName": "Claude — wireframe annotations",
+      "url": "/wireframes/insights/the-crossroads",
+      "path": "/wireframes/insights/the-crossroads",
+      "viewport": "1280x800",
+      "userAgent": "seed",
+      "createdAt": "2026-07-31T12:00:00.000Z",
+      "status": "done",
+      "kind": "target",
+      "cssSelector": "[data-label=\"Archive banner\"]",
+      "xpath": "",
+      "textSnippet": "Archive banner",
+      "elementTag": "section",
+      "textPrefix": "",
+      "textSuffix": "",
+      "fingerprint": "",
+      "neighborText": "",
+      "xPct": 0.05,
+      "yPct": 0.02,
+      "wPct": 0.9,
+      "hPct": 0.1,
+      "sequenceNumber": 140
+    },
+    {
+      "id": "wf-seed-034",
+      "projectName": "bfna-wireframes",
+      "message": "Q1 RESOLVED (Irene email, Jul 31): the 3 top-level areas are \"Programs\"; the things within them are \"Projects\" (BFNA internal language, clarified with GGS). Labels flipped site-wide same day. Live counts at snapshot: Democracy 13 active insights · 4 projects; Transatlantic Relations & Global Challenges 66 · 8; Future Leadership 7 · 3.",
+      "authorName": "Claude — wireframe annotations",
+      "url": "/wireframes",
+      "path": "/wireframes",
+      "viewport": "1280x800",
+      "userAgent": "seed",
+      "createdAt": "2026-07-31T12:00:00.000Z",
+      "status": "done",
+      "kind": "target",
+      "cssSelector": "[data-label=\"Programs\"]",
+      "xpath": "",
+      "textSnippet": "Our Programs",
+      "elementTag": "section",
+      "textPrefix": "",
+      "textSuffix": "",
+      "fingerprint": "",
+      "neighborText": "",
+      "xPct": 0.05,
+      "yPct": 0.02,
+      "wPct": 0.9,
+      "hPct": 0.1,
+      "sequenceNumber": 141
+    },
+    {
+      "id": "wf-seed-035",
+      "projectName": "bfna-wireframes",
+      "message": "CCM DRAFT copy (Aug 3): real `bfna-documentaries` row added to projects.json, description drafted from the bfnadocs.org About page in the site’s project-description voice (~490 chars, 2 paragraphs, 37 films / 3 series). Q7 remains open — Irene must approve or replace this draft.",
+      "authorName": "Claude — wireframe annotations",
+      "url": "/wireframes/projects/bfna-documentaries",
+      "path": "/wireframes/projects/bfna-documentaries",
+      "viewport": "1280x800",
+      "userAgent": "seed",
+      "createdAt": "2026-07-31T12:00:00.000Z",
+      "status": "done",
+      "kind": "target",
+      "cssSelector": "[data-label=\"Project overview\"]",
+      "xpath": "",
+      "textSnippet": "Project overview",
+      "elementTag": "section",
+      "textPrefix": "",
+      "textSuffix": "",
+      "fingerprint": "",
+      "neighborText": "",
+      "xPct": 0.05,
+      "yPct": 0.02,
+      "wPct": 0.9,
+      "hPct": 0.1,
+      "sequenceNumber": 142
+    },
+    {
+      "id": "wf-seed-036",
+      "projectName": "bfna-wireframes",
+      "message": "About Us now renders pages.json (Irene’s Jul 29 copy via the consolidated dataset, 4 paragraphs). The old site’s five \"what we do\" bullet statements are NOT in the dataset and were dropped from this page — confirm drop, or add them to the dataset.",
+      "authorName": "Claude — wireframe annotations",
+      "url": "/wireframes/about",
+      "path": "/wireframes/about",
+      "viewport": "1280x800",
+      "userAgent": "seed",
+      "createdAt": "2026-07-31T12:00:00.000Z",
+      "status": "done",
+      "kind": "target",
+      "cssSelector": "[data-label=\"Mission\"]",
+      "xpath": "",
+      "textSnippet": "Mission",
+      "elementTag": "section",
+      "textPrefix": "",
+      "textSuffix": "",
+      "fingerprint": "",
+      "neighborText": "",
+      "xPct": 0.05,
+      "yPct": 0.02,
+      "wPct": 0.9,
+      "hPct": 0.1,
+      "sequenceNumber": 143
+    },
+    {
+      "id": "wf-seed-037",
+      "projectName": "bfna-wireframes",
+      "message": "Renders the `stiftung` row added to pages.json (Aug 3) — Irene’s replacement text from Megan’s Jul 30 email, incl. the new Executive Board (Dr. Brigitte Mohn, Prof. Dr. Andreas Pinkwart, Wilhelm-Friedrich Uhr). Photo kept, old \"image film\" link removed per Irene. Backend export should adopt this row.",
+      "authorName": "Claude — wireframe annotations",
+      "url": "/wireframes/about",
+      "path": "/wireframes/about",
+      "viewport": "1280x800",
+      "userAgent": "seed",
+      "createdAt": "2026-07-31T12:00:00.000Z",
+      "status": "done",
+      "kind": "target",
+      "cssSelector": "[data-label=\"Bertelsmann Stiftung\"]",
+      "xpath": "",
+      "textSnippet": "Bertelsmann Stiftung",
+      "elementTag": "section",
+      "textPrefix": "",
+      "textSuffix": "",
+      "fingerprint": "",
+      "neighborText": "",
+      "xPct": 0.05,
+      "yPct": 0.02,
+      "wPct": 0.9,
+      "hPct": 0.1,
+      "sequenceNumber": 144
+    },
+    {
+      "id": "wf-seed-038",
+      "projectName": "bfna-wireframes",
+      "message": "Byline shows \"[author]\" because the author is empty in legacy data for this item — the CMS must enforce author as a required field (applies to titles/summaries too, per GGS).",
+      "authorName": "Claude — wireframe annotations",
+      "url": "/wireframes/insights/from-idea-to-impact",
+      "path": "/wireframes/insights/from-idea-to-impact",
+      "viewport": "1280x800",
+      "userAgent": "seed",
+      "createdAt": "2026-07-31T12:00:00.000Z",
+      "status": "done",
+      "kind": "target",
+      "cssSelector": "[data-label=\"Insight header\"]",
+      "xpath": "",
+      "textSnippet": "Insight header",
+      "elementTag": "section",
+      "textPrefix": "",
+      "textSuffix": "",
+      "fingerprint": "",
+      "neighborText": "",
+      "xPct": 0.05,
+      "yPct": 0.02,
+      "wPct": 0.9,
+      "hPct": 0.1,
+      "sequenceNumber": 145
+    },
+    {
+      "id": "wf-seed-039",
+      "projectName": "bfna-wireframes",
+      "message": "Semantic search PATTERN: one natural-language box, results ranked by relevance (not substring) over the live dataset (insights, projects, people), archived results labelled inline. Ranking is SIMULATED — a real embedding/vector search is Front 4. Facets are program + format only; granular country/topic tags are intentionally dropped (semantic ranking replaces them, Aug 4 call).",
+      "authorName": "Claude — wireframe annotations",
+      "url": "/wireframes/search",
+      "path": "/wireframes/search",
+      "viewport": "1280x800",
+      "userAgent": "seed",
+      "createdAt": "2026-07-31T12:00:00.000Z",
+      "status": "done",
+      "kind": "target",
+      "cssSelector": "[data-label=\"Search\"]",
+      "xpath": "",
+      "textSnippet": "Search",
+      "elementTag": "section",
+      "textPrefix": "",
+      "textSuffix": "",
+      "fingerprint": "",
+      "neighborText": "",
+      "xPct": 0.05,
+      "yPct": 0.02,
+      "wPct": 0.9,
+      "hPct": 0.1,
+      "sequenceNumber": 146
+    }
+  ]
+}
