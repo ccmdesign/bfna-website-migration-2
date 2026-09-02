@@ -3,7 +3,7 @@
 Running list of things we need Irene to decide or send. Add to this as they come
 up; clear items out once she answers.
 
-**Status:** 6 open (2 now carry our position) · 1 answered, decision on our side · last updated 2026-09-02
+**Status:** 5 open (2 carry our position) · 2 answered, nothing needed back · last updated 2026-09-02
 **Context for all of these:** the wireframe review at
 https://wireframes--bfna-site-v2.netlify.app/wireframes/
 
@@ -56,17 +56,7 @@ We are not recommending a change to the menu structure either way.
 
 *Source: GGS + BFNA Website Refresh — Site Flow + UX Recommendations, sections 3 and 6.*
 
-### 2. Programme card text length
-
-> can we add more explanatory text here? what is the word or character limit?
-
-She left the same note on a second card ("same comment as in Future Leadership box").
-
-**Our answer:** there is no hard limit — we set one so the three cards stay even.
-**What we need:** roughly how much she wants. If she sends the actual copy she has
-in mind for each of the three programmes, we will size the cards to fit it.
-
-### 3. Transponder Magazine placement
+### 2. Transponder Magazine placement
 
 > I suggest we move the Magazine to the Insights
 
@@ -99,7 +89,7 @@ button on that band currently has nowhere to go. Its description is a placeholde
 (marked pending in our notes). Both need to come from BFNA whichever way the placement
 question lands.
 
-### 4. Democracy articles — archive, not tagging
+### 3. Democracy articles — archive, not tagging
 
 > there a probably more democracy related articles, if they do not appear here is
 > that due to a tagging issue?
@@ -116,7 +106,7 @@ question lands.
 programme pages, or whether older work should surface there too. See also the next
 item, which pushes in the opposite direction.
 
-### 5. Democracy Insights limited to 2026
+### 4. Democracy Insights limited to 2026
 
 > can we limit the content showing up under Insights here to content released in 2026?
 
@@ -143,9 +133,33 @@ come back with a recommendation shortly.
 
 **No action needed from Irene** — we will bring her the options.
 
+### How much text a programme card can hold
+
+> can we add more explanatory text here? what is the word or character limit?
+
+She left the same note on a second card ("same comment as in Future Leadership box").
+
+**There is no hard limit.** Nothing technical stops us running longer copy on those
+cards — it is a common-sense judgement about how much text earns its place on the
+homepage, not a constraint we are working around.
+
+For a sense of where things stand, the cards currently show the opening sentence of
+each programme intro from her 29 July copy, and those are very uneven:
+
+- **Democracy** — 197 characters
+- **Transatlantic Relations & Global Challenges** — 58 characters
+- **Future Leadership** — 62 characters
+
+That gap is most of why the three cards look unbalanced today.
+
+GGS may come back with a recommendation for this copy. Once we have their suggestion,
+or hers, we will size the cards around it.
+
+**No action needed from Irene right now.**
+
 ## Waiting on material from her
 
-### 6. Two new board members
+### 5. Two new board members
 
 > please add Irene Braam to the Board Members. We are also adding two new board
 > members (will send info separately)
