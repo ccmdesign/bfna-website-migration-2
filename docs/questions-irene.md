@@ -3,7 +3,7 @@
 Running list of things we need Irene to decide or send. Add to this as they come
 up; clear items out once she answers.
 
-**Status:** 8 open (1 now has our position attached) · last updated 2026-09-01
+**Status:** 7 open (1 now has our position attached) · last updated 2026-09-01
 **Context for all of these:** the wireframe review at
 https://wireframes--bfna-site-v2.netlify.app/wireframes/
 
@@ -56,17 +56,7 @@ We are not recommending a change to the menu structure either way.
 
 *Source: GGS + BFNA Website Refresh — Site Flow + UX Recommendations, sections 3 and 6.*
 
-### 2. Homepage button wording
-
-> should we call this Explore Our Work ?
-
-**Context:** the homepage hero button currently reads "Explore our programs". She
-separately asked us to change the *programme page* buttons to "Explore our work",
-and we did. This is about whether the homepage should match.
-
-**What we need:** yes or no.
-
-### 3. Moving images in the top banner
+### 2. Moving images in the top banner
 
 > question from some team members, can this banner contain moving images?
 
@@ -75,7 +65,7 @@ and we did. This is about whether the homepage should match.
 footage. Worth flagging that it affects load time and accessibility, so it is a
 design decision rather than a free one.
 
-### 4. Programme card text length
+### 3. Programme card text length
 
 > can we add more explanatory text here? what is the word or character limit?
 
@@ -85,7 +75,7 @@ She left the same note on a second card ("same comment as in Future Leadership b
 **What we need:** roughly how much she wants. If she sends the actual copy she has
 in mind for each of the three programmes, we will size the cards to fit it.
 
-### 5. Transponder Magazine placement
+### 4. Transponder Magazine placement
 
 > I suggest we move the Magazine to the Insights
 
@@ -93,7 +83,7 @@ in mind for each of the three programmes, we will size the cards to fit it.
 because it is an external product rather than a project. Moving it into Insights is
 doable; we just want to be sure it is a decision and not a passing thought.
 
-### 6. Democracy articles — archive, not tagging
+### 5. Democracy articles — archive, not tagging
 
 > there a probably more democracy related articles, if they do not appear here is
 > that due to a tagging issue?
@@ -110,7 +100,7 @@ doable; we just want to be sure it is a decision and not a passing thought.
 programme pages, or whether older work should surface there too. See also the next
 item, which pushes in the opposite direction.
 
-### 7. Democracy Insights limited to 2026
+### 6. Democracy Insights limited to 2026
 
 > can we limit the content showing up under Insights here to content released in 2026?
 
@@ -123,7 +113,7 @@ the other asks why there is so little.
 
 ## Waiting on material from her
 
-### 8. Two new board members
+### 7. Two new board members
 
 > please add Irene Braam to the Board Members. We are also adding two new board
 > members (will send info separately)
@@ -142,6 +132,8 @@ Also outstanding, from the same round:
 
 ## Answered — keep for the record
 
+- **Should the homepage button say "Explore Our Work"?** Yes — done, so all four
+  buttons now match.
 - **Remove Insights from the Future Leadership page only?** Yes. Done.
 - **Keep Future Leadership as a programme?** Yes, it stays — articles and surveys
   may come later.
