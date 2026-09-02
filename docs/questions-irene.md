@@ -66,7 +66,9 @@ real rather than to a description.
 The Transponder used to sit in its own band between Projects and Insights. That band
 is gone. The magazine now leads the Insights section as a double-width card spanning
 the full row, so it lives with the rest of the content but still reads as its own
-thing rather than as an ordinary insight.
+thing rather than as an ordinary insight. It is also now listed as "Transponder
+Magazine" in the Insights menu, in both the top bar and the footer, which is where
+GGS originally placed it.
 
 **What we need:** confirmation that this is what she pictured. If she meant the two
 sections simply sitting closer together visually while staying separate, we can do
