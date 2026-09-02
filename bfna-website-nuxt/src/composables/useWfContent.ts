@@ -172,6 +172,11 @@ const MENUS: WfMenu[] = [
     { label: 'Reports', to: '/wireframes/insights?format=report' },
     { label: 'Videos', to: '/wireframes/insights?format=video' },
     { label: 'Infographics', to: '/wireframes/insights?format=infographic' },
+    // Transponder Magazine lives under Insights (GGS nav had it here; Claudio,
+    // Sep 2 — pairs with the product card in the homepage Insights grid). It's an
+    // external product, so the link is its site. NOTE: PLACEHOLDER until Irene
+    // supplies the URL (Q6) — same convention as the Podcasts button below.
+    { label: 'Transponder Magazine', href: projectsAll.find(p => p.slug === 'transponder-magazine')?.external_url ?? '#transponder-magazine-url', external: true },
     { label: 'Archive', to: '/wireframes/archive', strong: true }
   ] },
   // Pruned-nav plain buttons (BF-142): external links, no dropdowns, no landing pages.
