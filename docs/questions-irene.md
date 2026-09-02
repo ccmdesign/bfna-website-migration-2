@@ -56,38 +56,25 @@ We are not recommending a change to the menu structure either way.
 
 *Source: GGS + BFNA Website Refresh — Site Flow + UX Recommendations, sections 3 and 6.*
 
-### 2. Transponder Magazine placement
+### 2. Transponder Magazine placement — built, please confirm
 
 > I suggest we move the Magazine to the Insights
 
-**Where it sits today:** its own band on the homepage, between Projects and Insights,
-because the Transponder is an external product rather than a project.
+**We have gone ahead and built a version of this**, so she can react to something
+real rather than to a description.
 
-**Our thinking.** The Transponder feels like a different kind of thing to us — closer
-to a "special insights box" than to an ordinary insight. So we want to check what she
-pictured before we move it.
+The Transponder used to sit in its own band between Projects and Insights. That band
+is gone. The magazine now leads the Insights section as a double-width card spanning
+the full row, so it lives with the rest of the content but still reads as its own
+thing rather than as an ordinary insight.
 
-Two readings, and we would take either:
+**What we need:** confirmation that this is what she pictured. If she meant the two
+sections simply sitting closer together visually while staying separate, we can do
+that instead.
 
-1. **Bring the two sections closer visually.** They stay separate sections, as they
-   are now, but we style them so they read as connected rather than as two unrelated
-   bands. If that is what she meant, it is straightforward.
-
-2. **Put the current issue inside the Insights grid as a "special" item.** Rather than
-   folding the Transponder in as just another card, the latest issue would always take
-   a double-width (2×1) slot in the grid, so it still stands out as its own thing while
-   living with the rest of the content.
-
-We are less sure about fully merging the Transponder issues into Insights — it risks
-losing what makes the magazine distinct.
-
-**What we need:** which of those she was envisioning, or whether she had something else
-in mind.
-
-**Also still outstanding on the Transponder:** we have no web address for it, so the
-button on that band currently has nowhere to go. Its description is a placeholder too
-(marked pending in our notes). Both need to come from BFNA whichever way the placement
-question lands.
+**Also still outstanding on the Transponder, either way:** we have no web address for
+it, so its link goes nowhere, and its description is still our placeholder rather than
+final copy.
 
 ### 3. Democracy Insights — the 2026 filter and "where are the rest?"
 
