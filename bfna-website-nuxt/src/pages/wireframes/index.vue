@@ -66,7 +66,6 @@
       <wf-grid-insights :insights="latest" :excerpt-length="160" :extra-chips="i => i.program ? [shortArea(i.program)] : []" />
       <p><NuxtLink to="/wireframes/insights"><strong>All insights →</strong></NuxtLink></p>
     </wf-section>
-    <!-- Subscribe band comes from the layout (global) -->
   </NuxtLayout>
 </template>
 

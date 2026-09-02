@@ -1,5 +1,5 @@
-<!-- Top bar: logo + menu dropdowns (shared MENUS data, same as footer) + search
-     + subscribe button. -->
+<!-- Top bar: logo + menu dropdowns (shared MENUS data, same as footer) + search.
+     The Subscribe button was removed with the newsletter band (Irene, Aug 5). -->
 <template>
   <header class="wf-header">
     <nav class="wf-nav | center cluster" aria-label="Main" data-gap="s">
@@ -20,8 +20,6 @@
       </template>
 
       <NuxtLink to="/wireframes/search" class="wf-nav__search">Search</NuxtLink>
-      <!-- Every page carries the layout's subscribe band, so this anchors locally -->
-      <NuxtLink to="#subscribe" class="wf-button">Subscribe</NuxtLink>
     </nav>
   </header>
 </template>

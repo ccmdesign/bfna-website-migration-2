@@ -1,6 +1,5 @@
-<!-- Base layout shell: top-bar → hero slot → body (default slot) → subscribe →
-     footer. Pages fill #hero (wfHero / wfPageHeader) and the body; the subscribe
-     band is global, so pages never render their own. Use via
+<!-- Base layout shell: top-bar → hero slot → body (default slot) → footer.
+     Pages fill #hero (wfHero / wfPageHeader) and the body. Use via
      <NuxtLayout name="wireframe"> + definePageMeta({ layout: false }). -->
 <template>
   <div class="wireframe">
@@ -9,14 +8,10 @@
     <main id="wf-main" class="stack" data-gap="xl">
       <slot name="hero" />
       <slot />
-      <!-- Global conversion band. "newsletters" dropped from the heading —
-           no newsletter exists (Irene, Aug 5 widget feedback). -->
-      <wf-cta-section
-        id="subscribe" label="Subscribe CTA" form
-        heading="Subscribe to receive our updates"
-        message="Enter your email and customize your preferences."
-        :ctas="[{ label: 'Subscribe' }]"
-      />
+      <!-- The global Subscribe band was removed here: BFNA runs no newsletter,
+           so the signup has no purpose (Irene, Aug 5 widget comments #47 and the
+           About-page twin; confirmed by Claudio Sep 1). The nav's Subscribe
+           button went with it — it anchored to this section. -->
     </main>
     <wf-footer />
   </div>

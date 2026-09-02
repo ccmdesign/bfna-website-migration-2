@@ -1,5 +1,5 @@
-<!-- Contact section: contact form only — the subscribe band is global (base
-     layout renders it on every page), so it no longer lives here. -->
+<!-- Contact section: contact form only. (The global subscribe band that used to
+     follow it was removed — BFNA runs no newsletter; Irene, Aug 5.) -->
 <template>
   <wf-section label="Contact" layout="switcher" gap="l">
     <form class="stack" data-gap="s" @submit.prevent>

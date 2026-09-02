@@ -30,7 +30,6 @@
       <wf-section label="Related insights" :heading="`More on ${insight.program}`">
         <wf-grid-insights :insights="related" />
       </wf-section>
-      <!-- Subscribe band comes from the layout (global) -->
     </template>
 
     <div v-else class="center | stack" style="padding-block: var(--space-xl);">
