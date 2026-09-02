@@ -307,6 +307,16 @@
     gap: var(--space-2xs, 0.5rem);
   }
 
+  /* "Special" card inside a card grid — the Transponder issue leading the
+     homepage Insights grid (Claudio, Sep 2). In that 2-column grid this is the
+     2x1 slot he described; `1 / -1` keeps it full width whatever the column
+     count, so it can't overflow when the grid collapses to one column. The
+     heavier border is what makes it read as special rather than just wide. */
+  .wireframe .wf-card[data-span="full"] {
+    grid-column: 1 / -1;
+    border-width: 2px;
+  }
+
   .wireframe .wf-card__media { order: -2; }
   .wireframe .wf-card__chips { order: -1; }
 

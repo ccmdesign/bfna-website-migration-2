@@ -32,37 +32,12 @@
       <p><NuxtLink to="/wireframes/projects"><strong>All projects →</strong></NuxtLink></p>
     </wf-section>
 
-    <!-- Zone 3b: Product band — external-only offerings (e.g. The Transponder
-         magazine), moved here from the program pages. Data-driven via `external_only`. -->
-    <wf-section
-      v-for="prod in products" :key="prod.slug"
-      :label="`Product — ${prod.heading}`" :heading="prod.heading"
-    >
-      <!-- Side-by-side: image left, content right. The image is wrapped in a plain
-           div so the switcher treats it as a normal flex child — a bare <img> with
-           width:100% forces its own row and collapses the layout to stacked. -->
-      <div class="switcher" data-gap="l">
-        <div v-if="prod.image"><wf-media :src="prod.image" alt="" ratio="3/2" /></div>
-        <div class="stack" data-gap="s">
-          <p v-if="prod.excerpt || prod.description" data-measure="normal">
-            {{ productBlurb(prod) }}
-          </p>
-          <div class="cluster" data-gap="s">
-            <a
-              v-if="prod.external_url"
-              :href="prod.external_url" class="wf-button" data-variant="primary" data-external="true"
-            >Visit {{ prod.heading }} ↗</a>
-            <!-- external_url pending (Q6): no fabricated link — status note per the
-                 wireframe "Copy pending Qx" convention. -->
-            <span v-else class="wf-chip">External link pending {{ prod.pending ?? 'Q6' }}</span>
-          </div>
-        </div>
-      </div>
-    </wf-section>
-
     <!-- Zone 4: Insights (highlights folded in as featured strip) -->
     <wf-section label="Insights" heading="Insights">
+      <!-- The Transponder issue leads the grid as a full-width "special" card
+           instead of sitting in its own band above (Claudio, Sep 2). -->
       <ul class="grid" data-gap="m" style="grid-template-columns: repeat(2, 1fr);">
+        <wf-card-product v-for="prod in products" :key="prod.slug" :product="prod" />
         <wf-card-featured v-for="h in featured" :key="h.slug" :item="h" />
       </ul>
       <wf-grid-insights :insights="latest" :excerpt-length="160" :extra-chips="i => i.program ? [shortArea(i.program)] : []" />
@@ -74,20 +49,13 @@
 <script setup lang="ts">
 definePageMeta({ layout: false })
 
-const { active, highlights, featuredProjects, programs, announcement, homePage, allProducts, plain } = useWfContent()
+const { active, highlights, featuredProjects, programs, announcement, homePage, allProducts } = useWfContent()
 
 const banner = announcement()
 const home = homePage()
 const featured = highlights().slice(0, 4)
 const latest = active.slice(0, 6)
 const products = allProducts()
-
-// Product blurb: real dataset copy, trimmed to the lead sentence so trailing
-// markdown links in the raw excerpt don't leak into the wireframe.
-const productBlurb = (p: { excerpt: string | null, description: string | null }) => {
-  const t = plain(p.excerpt ?? p.description)
-  return t.length > 220 ? t.slice(0, 220).trimEnd() + '…' : t
-}
 
 // Card tagline = first sentence of the area intro (dataset copy, Irene Jul 29)
 const areaCards = programs().map(a => ({
