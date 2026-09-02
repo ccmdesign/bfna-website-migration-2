@@ -190,6 +190,9 @@ Also outstanding, from the same round:
 
 ## Answered — keep for the record
 
+- **Align the top of the Bertelsmann Stiftung photo with the top of the text?** Yes.
+  The two already line up on the wireframe, and it will be properly aligned in the
+  designed version.
 - **Should the homepage button say "Explore Our Work"?** Yes — done, so all four
   buttons now match.
 - **Remove Insights from the Future Leadership page only?** Yes. Done.
