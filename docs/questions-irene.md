@@ -3,7 +3,7 @@
 Running list of things we need Irene to decide or send. Add to this as they come
 up; clear items out once she answers.
 
-**Status:** 7 open (1 now has our position attached) · last updated 2026-09-01
+**Status:** 6 open · 1 answered, decision on our side · last updated 2026-09-02
 **Context for all of these:** the wireframe review at
 https://wireframes--bfna-site-v2.netlify.app/wireframes/
 
@@ -56,16 +56,7 @@ We are not recommending a change to the menu structure either way.
 
 *Source: GGS + BFNA Website Refresh — Site Flow + UX Recommendations, sections 3 and 6.*
 
-### 2. Moving images in the top banner
-
-> question from some team members, can this banner contain moving images?
-
-**Our answer:** technically yes — video or an animated sequence is possible.
-**What we need from her:** whether they actually want it, and who supplies the
-footage. Worth flagging that it affects load time and accessibility, so it is a
-design decision rather than a free one.
-
-### 3. Programme card text length
+### 2. Programme card text length
 
 > can we add more explanatory text here? what is the word or character limit?
 
@@ -75,7 +66,7 @@ She left the same note on a second card ("same comment as in Future Leadership b
 **What we need:** roughly how much she wants. If she sends the actual copy she has
 in mind for each of the three programmes, we will size the cards to fit it.
 
-### 4. Transponder Magazine placement
+### 3. Transponder Magazine placement
 
 > I suggest we move the Magazine to the Insights
 
@@ -83,7 +74,7 @@ in mind for each of the three programmes, we will size the cards to fit it.
 because it is an external product rather than a project. Moving it into Insights is
 doable; we just want to be sure it is a decision and not a passing thought.
 
-### 5. Democracy articles — archive, not tagging
+### 4. Democracy articles — archive, not tagging
 
 > there a probably more democracy related articles, if they do not appear here is
 > that due to a tagging issue?
@@ -100,7 +91,7 @@ doable; we just want to be sure it is a decision and not a passing thought.
 programme pages, or whether older work should surface there too. See also the next
 item, which pushes in the opposite direction.
 
-### 6. Democracy Insights limited to 2026
+### 5. Democracy Insights limited to 2026
 
 > can we limit the content showing up under Insights here to content released in 2026?
 
@@ -111,9 +102,25 @@ down to **1**, because only one Democracy piece has been published in 2026 so fa
 window. Note this pulls against item 6 above: one asks for less content on the page,
 the other asks why there is so little.
 
+## Answering her — nothing needed back
+
+### Moving images in the banner
+
+> question from some team members, can this banner contain moving images?
+
+**Yes.** The banner can carry video, or several images as a slider, or an animated
+sequence — none of that is a technical constraint.
+
+What it is, is a design decision, and one we want to make deliberately rather than by
+default: motion in a hero affects page weight, load time on slower connections, and
+accessibility for anyone sensitive to movement. We are working through that and will
+come back with a recommendation shortly.
+
+**No action needed from Irene** — we will bring her the options.
+
 ## Waiting on material from her
 
-### 7. Two new board members
+### 6. Two new board members
 
 > please add Irene Braam to the Board Members. We are also adding two new board
 > members (will send info separately)
