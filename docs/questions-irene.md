@@ -3,7 +3,7 @@
 Running list of things we need Irene to decide or send. Add to this as they come
 up; clear items out once she answers.
 
-**Status:** 8 open · last updated 2026-09-01
+**Status:** 8 open (1 now has our position attached) · last updated 2026-09-01
 **Context for all of these:** the wireframe review at
 https://wireframes--bfna-site-v2.netlify.app/wireframes/
 
@@ -14,7 +14,7 @@ https://wireframes--bfna-site-v2.netlify.app/wireframes/
 These came out of her 5 Aug comments on the wireframe. They were questions rather
 than instructions, so nothing was changed.
 
-### 1. "Projects" in the navigation
+### 1. "Programs" vs "Projects" — a naming problem, not a navigation one
 
 > should we take out the Projects button on the navigation menu? having both Programs
 > and Projects might be confusing?
@@ -23,8 +23,38 @@ She raised the same doubt again on the footer:
 
 > not sure whether we should keep the Projects tab here
 
-**What we need:** keep both Programs and Projects in the menu, or collapse to one.
-Affects the top bar and the footer together, since they share one menu structure.
+**Our position:** we agree the confusion is real, but we think it comes from the two
+words being near-synonyms rather than from having two levels in the menu. Both levels
+in the top navigation was GGS's own recommendation, and we think it is the right
+structure — people arriving for "the Barometer" should not have to guess which theme
+it lives under first.
+
+**Worth knowing — GGS used different words for the same two levels.** Their
+recommended top-level navigation was:
+
+> About · **Focus Areas** · **Programs** · Insights · Search · Subscribe
+
+with **Focus Areas** = Democracy, Politics & Society, Future Leadership, Digital World,
+and **Programs** = Transatlantic Periscope, RANGE Forecasting, Transatlantic Barometer,
+BFNA Documentaries. Their content model called that second tier "Programs & Platforms".
+
+When the taxonomy was settled on 31 July, "Focus Areas" became **Programs** and
+"Programs" became **Projects**. The structure did not change — only the labels — but
+the new pair reads as two words for the same thing, where GGS's pair did not.
+
+Worth noting that GGS listed "no clear distinction between focus areas, programs, and
+content" as one of the four key problems they were trying to fix.
+
+**What we need:** whether to revisit the two labels. Options, roughly:
+
+- Keep **Programs / Projects** as they are and accept the overlap.
+- Go back to GGS's **Focus Areas / Programs**.
+- Keep **Programs** at the top and rename the tier below it to something with more
+  daylight between them — GGS's own "Platforms", or "Initiatives".
+
+We are not recommending a change to the menu structure either way.
+
+*Source: GGS + BFNA Website Refresh — Site Flow + UX Recommendations, sections 3 and 6.*
 
 ### 2. Homepage button wording
 
