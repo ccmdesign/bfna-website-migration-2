@@ -33,11 +33,8 @@
         </div>
       </wf-section>
 
-      <!-- Cross-navigation: keep topic explorers moving (GGS journey) -->
-      <wf-section label="Other programs" layout="cluster">
-        <span>Also explore:</span>
-        <NuxtLink v-for="o in otherAreas" :key="o.slug" :to="`/wireframes/${o.slug}`">{{ o.name }}</NuxtLink>
-      </wf-section>
+      <!-- The "Other programs" cross-nav band was removed from all three hubs
+           (Claudio, Sep 2 widget comment #136). -->
     </template>
 
     <div v-else class="center | stack" style="padding-block: var(--space-xl);">
@@ -51,7 +48,7 @@
 definePageMeta({ layout: false })
 
 const route = useRoute()
-const { programBySlug, programs, gridProjectsByProgram, activeByProgram, archivedCountByProgram, projectBySlug, paragraphs } = useWfContent()
+const { programBySlug, gridProjectsByProgram, activeByProgram, archivedCountByProgram, projectBySlug, paragraphs } = useWfContent()
 
 const area = programBySlug(route.params.area as string)
 const projects = area ? gridProjectsByProgram(area.name) : []
@@ -63,7 +60,6 @@ const insights = area
 // Future Leadership carries no Insights band (Irene Aug 5 → Claudio Sep 1)
 const showInsights = area?.slug !== 'future-leadership'
 const archivedCount = area ? archivedCountByProgram(area.name) : 0
-const otherAreas = area ? programs().filter(a => a.slug !== area.slug) : []
 
 const programName = (slug: string) => projectBySlug(slug)?.heading ?? slug
 </script>
