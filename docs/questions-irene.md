@@ -3,7 +3,7 @@
 Running list of things we need Irene to decide or send. Add to this as they come
 up; clear items out once she answers.
 
-**Status:** 5 open (2 carry our position) · 2 answered, nothing needed back · last updated 2026-09-02
+**Status:** 4 open (3 carry our position) · 2 answered, nothing needed back · last updated 2026-09-02
 **Context for all of these:** the wireframe review at
 https://wireframes--bfna-site-v2.netlify.app/wireframes/
 
@@ -89,33 +89,45 @@ button on that band currently has nowhere to go. Its description is a placeholde
 (marked pending in our notes). Both need to come from BFNA whichever way the placement
 question lands.
 
-### 3. Democracy articles — archive, not tagging
+### 3. Democracy Insights — the 2026 filter and "where are the rest?"
+
+Two of her comments on the Democracy page pull in opposite directions, so they are
+best decided together.
+
+> can we limit the content showing up under Insights here to content released in 2026?
 
 > there a probably more democracy related articles, if they do not appear here is
 > that due to a tagging issue?
 
-**Our answer, after checking the data:** mostly not a tagging problem.
+**Done as asked** — the Democracy Insights section is now 2026-only. **It shows one
+article**, because only one Democracy piece has been published in 2026 so far.
 
-- 73 articles are tagged Democracy. 60 of them are older than the three-year
-  archive cutoff, so they sit in the Archive rather than on the programme page.
-  That was the agreed rule, not a fault.
-- A tagging gap does exist, but it is small: 52 items across the whole site still
-  carry placeholder tags, and only one or two of those look like Democracy.
+**On the missing articles: it is mostly not a tagging problem.** We checked the data.
 
-**What we need:** whether the three-year archive rule is still what she wants for
-programme pages, or whether older work should surface there too. See also the next
-item, which pushes in the opposite direction.
+- 73 articles are tagged Democracy. **60 of them predate the three-year archive
+  cutoff**, so they live in the Archive rather than on the programme page. That is the
+  agreed rule working as intended, not a fault.
+- That leaves 13 active, spread thinly: 3 from 2023, 4 from 2024, 5 from 2025, 1 from
+  2026.
+- A tagging gap does exist, but it is small. 52 items across the whole site still
+  carry placeholder tags, and only one or two of those read as Democracy. Re-tagging
+  them would add a card or two, not a page full.
 
-### 4. Democracy Insights limited to 2026
+**So the two asks work against each other.** The 2026 filter is the main reason the
+section looks empty; the archive cutoff is why the pool was small to begin with.
+Tagging is a rounding error next to either.
 
-> can we limit the content showing up under Insights here to content released in 2026?
+**What we need:** which of these she wants for the Democracy page.
 
-**Done as asked — but worth a second look.** It takes that section from 13 articles
-down to **1**, because only one Democracy piece has been published in 2026 so far.
+1. **Leave it as it is** — 2026 only, one article, and it fills up through the year.
+2. **Widen the window** — for example the last three years, which brings it to 13.
+3. **Surface archived work too** — up to 73 articles. Worth knowing that older items
+   are thin: only 10 of the 60 archived Democracy pieces have an image and 20 have a
+   summary, so they would need a plainer, more compact treatment rather than the
+   picture cards used now.
 
-**What we need:** confirm she is happy with a near-empty section, or pick a wider
-window. Note this pulls against item 6 above: one asks for less content on the page,
-the other asks why there is so little.
+The same choice would apply to the other two programme pages if she wants them
+consistent.
 
 ## Answering her — nothing needed back
 
@@ -159,7 +171,7 @@ or hers, we will size the cards around it.
 
 ## Waiting on material from her
 
-### 5. Two new board members
+### 4. Two new board members
 
 > please add Irene Braam to the Board Members. We are also adding two new board
 > members (will send info separately)
