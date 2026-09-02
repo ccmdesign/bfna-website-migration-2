@@ -3,7 +3,7 @@
 Running list of things we need Irene to decide or send. Add to this as they come
 up; clear items out once she answers.
 
-**Status:** 6 open · 1 answered, decision on our side · last updated 2026-09-02
+**Status:** 6 open (2 now carry our position) · 1 answered, decision on our side · last updated 2026-09-02
 **Context for all of these:** the wireframe review at
 https://wireframes--bfna-site-v2.netlify.app/wireframes/
 
@@ -70,9 +70,34 @@ in mind for each of the three programmes, we will size the cards to fit it.
 
 > I suggest we move the Magazine to the Insights
 
-**What we need:** confirm. Today the Magazine sits as its own band on the homepage
-because it is an external product rather than a project. Moving it into Insights is
-doable; we just want to be sure it is a decision and not a passing thought.
+**Where it sits today:** its own band on the homepage, between Projects and Insights,
+because the Transponder is an external product rather than a project.
+
+**Our thinking.** The Transponder feels like a different kind of thing to us — closer
+to a "special insights box" than to an ordinary insight. So we want to check what she
+pictured before we move it.
+
+Two readings, and we would take either:
+
+1. **Bring the two sections closer visually.** They stay separate sections, as they
+   are now, but we style them so they read as connected rather than as two unrelated
+   bands. If that is what she meant, it is straightforward.
+
+2. **Put the current issue inside the Insights grid as a "special" item.** Rather than
+   folding the Transponder in as just another card, the latest issue would always take
+   a double-width (2×1) slot in the grid, so it still stands out as its own thing while
+   living with the rest of the content.
+
+We are less sure about fully merging the Transponder issues into Insights — it risks
+losing what makes the magazine distinct.
+
+**What we need:** which of those she was envisioning, or whether she had something else
+in mind.
+
+**Also still outstanding on the Transponder:** we have no web address for it, so the
+button on that band currently has nowhere to go. Its description is a placeholder too
+(marked pending in our notes). Both need to come from BFNA whichever way the placement
+question lands.
 
 ### 4. Democracy articles — archive, not tagging
 
