@@ -10,8 +10,10 @@
 
       <!-- `home` row in pages.json: GGS value prop + Irene's About Us opening (placeholder until Irene confirms) -->
       <wf-hero :heading="home?.heading" :description="home?.description">
-        <!-- "Get our newsletter" removed — no newsletter exists (Irene, Aug 5) -->
-        <NuxtLink to="/wireframes/democracy" class="wf-button" data-variant="primary">Explore our programs</NuxtLink>
+        <!-- "Get our newsletter" removed — no newsletter exists (Irene, Aug 5).
+             Label matches the programme hubs: Irene asked for "Explore our work"
+             on Democracy (#59) and TR&GC (#63), and proposed the same here (#43). -->
+        <NuxtLink to="/wireframes/democracy" class="wf-button" data-variant="primary">Explore our work</NuxtLink>
       </wf-hero>
     </template>
 
