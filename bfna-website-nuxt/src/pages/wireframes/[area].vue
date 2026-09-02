@@ -22,8 +22,10 @@
       <!-- The Transponder product band moved to the homepage (between Projects
            and Insights) — see pages/wireframes/index.vue. -->
 
-      <!-- GGS hub template zone 3: recent insights (active tier only) -->
-      <wf-section label="Recent insights" heading="Insights">
+      <!-- GGS hub template zone 3: recent insights (active tier only).
+           Hidden on Future Leadership per Irene (Aug 5 widget thread, answered
+           by Claudio Sep 1: "Remove Insights from the Future Leadership page"). -->
+      <wf-section v-if="showInsights" label="Recent insights" heading="Insights">
         <wf-grid-insights :insights="insights.slice(0, 9)" :extra-chips="i => i.projects?.map(programName)" />
         <div class="cluster" data-gap="s">
           <NuxtLink :to="`/wireframes/insights?area=${area.slug}`" class="wf-button">All {{ area.name }} insights ({{ insights.length }})</NuxtLink>
@@ -58,6 +60,8 @@ const projects = area ? gridProjectsByProgram(area.name) : []
 const insights = area
   ? activeByProgram(area.name).filter(i => area.slug !== 'democracy' || (i.publish_date ?? '').startsWith('2026'))
   : []
+// Future Leadership carries no Insights band (Irene Aug 5 → Claudio Sep 1)
+const showInsights = area?.slug !== 'future-leadership'
 const archivedCount = area ? archivedCountByProgram(area.name) : 0
 const otherAreas = area ? programs().filter(a => a.slug !== area.slug) : []
 
