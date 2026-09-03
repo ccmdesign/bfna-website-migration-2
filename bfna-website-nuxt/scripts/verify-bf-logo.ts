@@ -27,16 +27,21 @@
  *     one — compared against their content on the merge-base with `dev`.
  *  5. The spec's own literal `grep` acceptance expressions, run as written.
  *
- * When `.output/public/bf-probe/14-bf-logo/index.html` exists (i.e. after
- * `npx nuxt generate`), the prerendered markup is checked too: six marks, the
- * `<title>`/`aria-labelledby` wiring, and no colour literal in the emitted
- * SVG. Without it those checks are skipped, not failed, so the script is
- * useful before a build as well as after one.
+ * Section 7 reads `.output/` — the prerendered probe page and the compiled
+ * stylesheet — for six marks, the `<title>`/`aria-labelledby` wiring, the
+ * `--_bf-logo-size` values, and no colour literal in the emitted SVG. Run
+ * `npx nuxt generate` first.
  *
- * Exit code 0 = every check passed; 1 = at least one failed (each printed).
+ * ## Exit contract
+ *
+ * `0` only when every check ran **and** passed. A skipped check exits `1`
+ * too, as INCOMPLETE: a skip means a check could not be evaluated (no build
+ * output, no `dev` ref in a shallow clone), and a verification that quietly
+ * downgrades itself to "PASS (7 skipped)" is worse than no verification —
+ * it is exactly how a broken component ships green.
  */
 import { execFileSync } from 'node:child_process'
-import { existsSync, readFileSync } from 'node:fs'
+import { existsSync, readdirSync, readFileSync } from 'node:fs'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -49,6 +54,7 @@ const legacyWhitePath = join(appRoot, 'src/components/legacy/atoms/LogoWhite.vue
 const probePath = join(appRoot, 'src/pages/bf-probe/14-bf-logo.vue')
 const contractsPath = join(appRoot, 'src/types/bf-contracts.ts')
 const builtProbePath = join(appRoot, '.output/public/bf-probe/14-bf-logo/index.html')
+const builtCssDir = join(appRoot, '.output/public/_nuxt')
 
 let failures = 0
 let skipped = 0
@@ -95,9 +101,26 @@ const geometry = (source: string): string[] =>
  * epic would count as a new colour. Path data contains no `#`, and `viewBox`
  * numbers are not `hsl(`, so this runs over the whole file without carve-outs.
  */
+const NAMED_COLOURS = 'white|black|red|green|blue|gray|grey|silver|navy|teal|olive|lime|aqua|cyan|magenta|fuchsia|maroon|purple|yellow|orange|pink|brown|beige|gold|ivory|tan|violet|indigo|transparent'
+
 const colourLiterals = (source: string): string[] =>
-  [...source.matchAll(/#[0-9a-fA-F]{3,8}\b|\b(?:hsla?|rgba?|oklch|lab|lch|color-mix)\(|\bfill="(?!currentColor|none)[^"]*"/g)]
-    .map(m => m[0]!)
+  [
+    ...source.matchAll(
+      new RegExp(
+        // #hex
+        '#[0-9a-fA-F]{3,8}\\b'
+        // a colour function
+        + '|\\b(?:hsla?|rgba?|oklch|oklab|lab|lch|color-mix)\\('
+        // an SVG paint attribute that is not currentColor
+        + '|\\bfill="(?!currentColor|none)[^"]*"'
+        // a bare CSS named colour as a declaration value — `transparent`
+        // included, since the epic counts any hard-coded paint as a colour.
+        // `var(--color-white)` does not match: `var(` follows the colon.
+        + `|:\\s*(?:${NAMED_COLOURS})\\b`,
+        'g'
+      )
+    )
+  ].map(m => m[0]!)
 
 /* ------------------------------------------------------- 0. file exists -- */
 
@@ -226,19 +249,53 @@ if (existsSync(builtProbePath)) {
     6
   )
   check(
-    'every mark got its --_bf-logo-size through $attrs',
-    marks.map(m => /--_bf-logo-size:\s*([^;"]+)/.exec(m)?.[1]?.trim()).join(','),
-    '1.25rem,2.5rem,5rem,1.25rem,2.5rem,5rem'
+    'the m/l marks got their --_bf-logo-size through $attrs; s got none',
+    marks.map(m => /--_bf-logo-size:\s*([^;"]+)/.exec(m)?.[1]?.trim() ?? '').join(','),
+    ',2.5rem,5rem,,2.5rem,5rem'
   )
   check('no colour literal in the emitted marks', marks.flatMap(colourLiterals), [])
   check('the geometry survived the render', geometry(marks[0] ?? ''), legacyGeometry)
+  check(
+    'the first mark passes no --_bf-logo-size, so the CSS default applies',
+    /--_bf-logo-size/.test(marks[0] ?? ''),
+    false
+  )
+
+  /*
+   * Not a check — a disclosure. `@layer components` is present in the SFC
+   * source (asserted in section 5) but `postcss-preset-env` at `stage: 1`
+   * runs its cascade-layers polyfill over every Vite-compiled stylesheet and
+   * flattens the wrapper away, so the shipped rule is unlayered. That is a
+   * repo-wide build-config issue, not a defect in this component (unlayered
+   * CSS still paints correctly), and it is filed as a residual. Reported
+   * here so the next `bf-*` author sees the real state of the artifact
+   * instead of trusting section 5's source-text match.
+   */
+  const builtCss = readdirSync(builtCssDir)
+    .filter(f => f.endsWith('.css'))
+    .map(f => read(join(builtCssDir, f)))
+    .join('\n')
+  const layerSurvived = /@layer\s+components/.test(builtCss) || /@layer\s+components/.test(html)
+  console.log(
+    `  info  @layer components in the compiled CSS: ${layerSurvived ? 'present' : 'ABSENT — flattened by the postcss-preset-env cascade-layers polyfill (see residual)'}`
+  )
 } else {
   skip('prerendered markup', 'run `npx nuxt generate` first')
 }
 
 /* ------------------------------------------------------------- verdict -- */
 
-console.log(
-  `\n${failures === 0 ? 'PASS' : `FAIL — ${failures} check(s)`}${skipped ? ` (${skipped} skipped)` : ''}`
-)
-process.exit(failures === 0 ? 0 : 1)
+if (failures > 0) {
+  console.log(`\nFAIL — ${failures} check(s)${skipped ? `, ${skipped} skipped` : ''}`)
+  process.exit(1)
+}
+if (skipped > 0) {
+  console.log(
+    `\nINCOMPLETE — ${skipped} check(s) could not be evaluated. Acceptance is not`
+    + '\nsatisfied until every check runs: `npx nuxt generate` first, and run this'
+    + '\nfrom a checkout that has the `dev` ref.'
+  )
+  process.exit(1)
+}
+console.log('\nPASS')
+process.exit(0)

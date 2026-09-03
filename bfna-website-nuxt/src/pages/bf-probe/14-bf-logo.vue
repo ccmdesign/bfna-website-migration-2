@@ -45,9 +45,16 @@ useHead({
   link: [{ rel: 'stylesheet', href: '/css/styles.css' }]
 })
 
-/** The three sizes the acceptance criterion asks for, as `--_bf-logo-size`. */
+/**
+ * The three sizes the acceptance criterion asks for.
+ *
+ * `s` deliberately passes **no** `--_bf-logo-size`: it renders on the
+ * component's own CSS default, so the default is exercised at runtime rather
+ * than only asserted as a string in the source. `m` and `l` override the hook
+ * through `$attrs`, which is the whole point of the hook.
+ */
 const sizes = [
-  { key: 's', value: '1.25rem', note: 'the default — matches .wf-nav__logo' },
+  { key: 's', value: '', note: 'no override — the component default, 1.25rem' },
   { key: 'm', value: '2.5rem', note: '' },
   { key: 'l', value: '5rem', note: '' }
 ] as const
@@ -114,8 +121,13 @@ onMounted(() => {
     // --- 2. $attrs fallthrough lands on the component root -----------------
     {
       label: '$attrs `style` reached the <svg> root (--_bf-logo-size set)',
-      expected: '1.25rem,2.5rem,5rem',
+      expected: ',2.5rem,5rem',
       actual: defaults.map(m => m.style.getPropertyValue('--_bf-logo-size').trim()).join(',')
+    },
+    {
+      label: '  …the first mark passes no override, so the CSS default applies',
+      expected: '1.25rem',
+      actual: defaults[0] ? getComputedStyle(defaults[0]).getPropertyValue('--_bf-logo-size').trim() : ''
     },
     {
       label: '$attrs `data-probe-size` reached the <svg> root',
@@ -197,7 +209,24 @@ onMounted(() => {
 const passed = computed(() =>
   checks.value.filter(c => String(c.actual) === String(c.expected)).length
 )
-const allPass = computed(() => checks.value.length > 0 && passed.value === checks.value.length)
+
+/**
+ * Three states, not two. The assertions run in `onMounted`, so during
+ * prerender `checks` is empty — and a two-state verdict would bake
+ * `data-state="fail"` into the static HTML for a component that is fine. A
+ * later issue grepping this probe would read that as a regression. `pending`
+ * says what is actually true of the prerendered page: nothing has run yet.
+ */
+const state = computed<'pending' | 'pass' | 'fail'>(() => {
+  if (checks.value.length === 0) return 'pending'
+  return passed.value === checks.value.length ? 'pass' : 'fail'
+})
+
+const verdict = computed(() =>
+  state.value === 'pending'
+    ? 'PENDING — assertions run on mount; open this page in a browser'
+    : `${state.value === 'pass' ? 'PASS' : 'FAIL'} — ${passed.value}/${checks.value.length} checks`
+)
 </script>
 
 <template>
@@ -223,10 +252,12 @@ const allPass = computed(() => checks.value.length > 0 && passed.value === check
           <figure v-for="s in sizes" :key="`default-${s.value}`" class="probe__mark">
             <bfLogo
               variant="default"
-              :style="{ '--_bf-logo-size': s.value }"
+              :style="s.value ? { '--_bf-logo-size': s.value } : undefined"
               :data-probe-size="s.key"
             />
-            <figcaption><code>{{ s.value }}</code>{{ s.note ? ` — ${s.note}` : '' }}</figcaption>
+            <figcaption>
+              <code>{{ s.value || 'default' }}</code>{{ s.note ? ` — ${s.note}` : '' }}
+            </figcaption>
           </figure>
         </div>
       </div>
@@ -239,10 +270,12 @@ const allPass = computed(() => checks.value.length > 0 && passed.value === check
           <figure v-for="s in sizes" :key="`white-${s.value}`" class="probe__mark">
             <bfLogo
               variant="white"
-              :style="{ '--_bf-logo-size': s.value }"
+              :style="s.value ? { '--_bf-logo-size': s.value } : undefined"
               :data-probe-size="s.key"
             />
-            <figcaption><code>{{ s.value }}</code>{{ s.note ? ` — ${s.note}` : '' }}</figcaption>
+            <figcaption>
+              <code>{{ s.value || 'default' }}</code>{{ s.note ? ` — ${s.note}` : '' }}
+            </figcaption>
           </figure>
         </div>
       </div>
@@ -250,10 +283,10 @@ const allPass = computed(() => checks.value.length > 0 && passed.value === check
 
     <p
       class="probe__verdict"
-      :data-state="allPass ? 'pass' : 'fail'"
+      :data-state="state"
       data-testid="probe-14-verdict"
     >
-      {{ allPass ? 'PASS' : 'FAIL' }} — {{ passed }}/{{ checks.length }} checks
+      {{ verdict }}
     </p>
 
     <table class="probe__table" data-testid="probe-14-table">
@@ -282,8 +315,21 @@ const allPass = computed(() => checks.value.length > 0 && passed.value === check
 </template>
 
 <style scoped>
+/*
+  `layout: false` means nothing paints a ground, so the probe would inherit the
+  host's colour scheme and render the near-black `variant="default"` marks
+  dark-on-dark. Pin it to the existing `--color-white` / `--color-text` tokens,
+  as probe 03 does — no new colour, no new token.
+*/
+:global(html) {
+  color-scheme: light;
+  background-color: var(--color-white);
+  color: var(--color-text);
+}
+
 .probe {
   padding-block: var(--space-l, 2rem);
+  min-block-size: 100dvh;
 }
 
 .probe__lede {
@@ -323,6 +369,11 @@ const allPass = computed(() => checks.value.length > 0 && passed.value === check
 
 .probe__verdict[data-state='fail'] {
   color: var(--color-error);
+}
+
+.probe__verdict[data-state='pending'] {
+  font-weight: 400;
+  font-style: italic;
 }
 
 .probe__table {

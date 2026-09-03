@@ -82,8 +82,12 @@ public` → 0 hits), but the mark was never rendering at the SVG default black:
 `.bfna-logo { width: 100%; fill: #222 }` and `.bfna-logo--white { fill: #fff }` —
 and the unstyled `class="st0"` children inherit it. So the like-for-like swap is
 `#222 → var(--color-text)` (`--color-text` → `--color-base` → `hsl(0 0% 3%)`,
-the nearest existing semantic token) and `#fff → var(--color-white)`. Still no
-new colour and no new token, and the component now contains zero colour
+the nearest existing semantic token) and `#fff → var(--color-white)`. Note
+`--color-white` is a *primitive*, not a semantic token — BRIEF §5 rule 2
+prefers semantics, the token layer has no semantic white, and adding one would
+be a new `--color-*` token that the same rule forbids. The spec names
+`--color-white` explicitly, so this issue follows it and files the conflict
+for a human ruling (#99). Either way: no new colour and no new token, and the component now contains zero colour
 literals of any form (asserted, not grepped by eye — see D14.6).
 
 **D14.2 — `--_bf-logo-size` means block-size, default `1.25rem`, read from the
@@ -134,7 +138,7 @@ dropped (`class="st0"`, `version`, `xmlns:xlink`, `x`/`y`, `xml:space`,
 `dev` is broken and pre-existing, so per the gh#20/gh#21/gh#22 precedent this
 issue's acceptance is:
 
-- `npx tsx bfna-website-nuxt/scripts/verify-bf-logo.ts` — 38 checks, exit 0.
+- `npx tsx bfna-website-nuxt/scripts/verify-bf-logo.ts` — 39 checks, exit 0.
   It runs the spec's own literal `grep` expressions, and adds the assertions
   that actually carry weight: every `d`/`points` value compared **byte-for-byte
   against the legacy file**; `LogoWhite.vue` proven to differ from `Logo.vue`
@@ -164,3 +168,63 @@ and the constraint is documented on `LogoVariant` in `bf-contracts.ts`.
 `npx nuxt generate` exit 0, 753 routes. Wireframe-source diff against the
 pre-epic base `f757a64` — empty, over the full DoD-4 path list.
 
+**D14.9 — code-review round (3 reviewers, report-only) and what it changed.**
+Applied in `fix(review)`:
+
+- **The probe now exercises the CSS default.** All six marks previously passed
+  an explicit `--_bf-logo-size`, so the component's own `1.25rem` default was
+  only ever "proved" by a regex finding the string in the source. The `s` mark
+  in each row now passes **no** override, and both the probe (computed value)
+  and the script (absent from the prerendered `style`) assert it.
+- **The prerendered probe no longer claims FAIL.** The verdict was two-state
+  and `checks` is empty until `onMounted`, so `nuxt generate` baked
+  `data-state="fail"` / `FAIL — 0/0` into the static HTML of a healthy
+  component. It now renders a third state, `pending`. The other five probes
+  still have the two-state version — filed as #100.
+- **The probe pins its ground.** `layout: false` paints no background, so
+  under a dark host colour scheme the near-black `variant="default"` marks
+  rendered invisible — the one thing the page exists to show. Pinned to
+  `--color-white` / `--color-text` exactly as probe 03 does.
+- **The script's exit contract is stricter.** A skipped check now exits `1` as
+  INCOMPLETE. Section 7 (the only part that reads real built output) used to
+  `skip` silently when `.output/` was absent, and section 6 (legacy files
+  untouched) `skip`s in a shallow clone with no `dev` ref — so on a fresh
+  checkout the script printed `PASS (7 skipped)` having verified almost
+  nothing. A verification that quietly downgrades itself is how a broken
+  component ships green.
+- **Wider colour net.** `colourLiterals()` now also catches bare CSS named
+  colours used as declaration values (`: white`, `: transparent`, …), not just
+  hex and colour functions.
+- **No colour literal in the doc comments either.** The comments quoted the
+  legacy `fill` values they replaced, which made the spec's *verbatim*
+  acceptance `grep` return 1 while the script (which strips comments) returned
+  0. The comments now describe the values instead of quoting them, so the
+  spec's command passes as written.
+- **Decorative use documented.** Fallthrough `$attrs` override the same-named
+  local attribute, so `<bfLogo aria-hidden="true" />` suppresses the
+  accessible name where the mark sits inside a link that already carries the
+  text (`bfNav`, issue 35). Noted in the template.
+
+Handed off, not applied — three residuals, each out of scope for a
+single-component issue:
+
+- **#98 (P1)** — `postcss-preset-env` at `stage: 1` runs its cascade-layers
+  polyfill over every Vite-compiled stylesheet and **strips `@layer` from the
+  shipped CSS**. `@layer components` is in this component's source but not in
+  its build output; the script now prints that as an `info` line every run.
+  Benign today (unlayered CSS just wins) but backwards, and every later
+  `bf-*` component inherits it. Fix is one flag in `nuxt.config.ts`, repo-wide.
+- **#99 (P1, human decision)** — `--color-white` is a **primitive**, and BRIEF
+  §5 rule 2 says never use one directly; but the token layer has no semantic
+  white, and adding one would be a new `--color-*` token, which the same rule
+  forbids. The issue-14 spec names `--color-white` explicitly, so this issue
+  followed it. Needs a ruling before the first inverted template (issue 47).
+- **#100 (P2)** — probe-page runtime assertions are read by nothing
+  automated. gh#23's 18/18 came from driving the page headlessly by hand; a
+  `scripts/verify-bf-probes.ts` would make that reproducible for all probes.
+
+**D14.10 — browser verification.** `.output/public` served statically and
+`/bf-probe/14-bf-logo` driven headlessly: **18/18 runtime assertions pass**, no
+console errors, both colourways legible (default on the white ground, white on
+the dark panel), all three sizes correct, and the layout holds at 375 px with
+no horizontal overflow.

@@ -9,11 +9,18 @@
  *
  * Presentational-only (BRIEF D8): props in, nothing else. No data access.
  *
- * Colour: the legacy pair was painted by `css-legacy/global.css`
- * (`.bfna-logo { fill: #222 }` / `.bfna-logo--white { fill: #fff }`) on the
- * root `<svg>`, which the unstyled `class="st0"` children inherited. That is a
- * like-for-like swap to the existing semantic tokens `--color-text` and
- * `--color-white` — no new colour, no literal anywhere in this file.
+ * Colour: the legacy pair was painted by `css-legacy/global.css:1305-1315`,
+ * which set a near-black `fill` on `.bfna-logo` and a white one on
+ * `.bfna-logo--white` — on the root `<svg>`, which the unstyled children
+ * inherited. Those two values map onto the existing tokens `--color-text` and
+ * `--color-white`, so this is a like-for-like swap: no new colour, no new
+ * token, and no colour literal anywhere in this file — not even in this
+ * comment, so the spec's verbatim `grep` acceptance expression returns 0.
+ * (`--color-white` is a *primitive*, and BRIEF §5 rule 2 prefers semantic
+ * tokens — but the token layer has no semantic white, and adding one would be
+ * a new `--color-*` token, which the same rule forbids. The issue-14 spec
+ * names `--color-white` explicitly, so this follows it; the conflict is filed
+ * for a human ruling as issue #99.)
  *
  * Size: `--_bf-logo-size` sets the **block-size**; the inline size follows
  * from the viewBox aspect ratio. The default `1.25rem` is the computed size of
@@ -50,6 +57,12 @@ const titleId = useId()
     `$attrs` falls through to this root by default (no `inheritAttrs: false` —
     this is a base component, not a wrapper), so callers pass `class`, `style`
     (including `--_bf-logo-size`), `data-*` and `aria-hidden` straight through.
+
+    Decorative placements: fallthrough attrs override the same-named attribute
+    below, so a consumer that already supplies the text — a home link reading
+    "Bertelsmann Foundation North America" wrapping this mark, say — suppresses
+    the duplicate announcement with `<bfLogo aria-hidden="true" />` rather than
+    a second component or a prop.
   -->
   <svg
     class="bf-logo"
