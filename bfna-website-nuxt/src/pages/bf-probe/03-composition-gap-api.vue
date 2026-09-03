@@ -14,6 +14,14 @@
  * Extended for issue 04 / gh#13 with a `.grid[data-min-width]` section: the
  * responsive contract is viewport-dependent, so those grids are read back at
  * 1200 / 800 / 400px and must resolve 3 / 2 / 1 tracks with no inline `style`.
+ *
+ * Extended again for issue 05 / gh#14 with a `[data-measure]` section: the
+ * attribute used to work only through `.center`, so a bare `<p>`, `<div>` or
+ * `<li>` carrying it was inert. Those three elements are read back with
+ * `getComputedStyle(el).maxInlineSize` and must resolve 60ch / 90ch / 75ch,
+ * all narrower than the unset control. A `.center[data-measure="narrow"]`
+ * row is included as the non-regression case: the universal rule must not
+ * take over `.center`'s own `max-inline-size`.
  */
 defineOptions({ name: 'BfProbe03CompositionGapApi' })
 
@@ -46,6 +54,20 @@ const items = ['A', 'B', 'C']
  * three, two or one track without the item count being the limiting factor.
  */
 const gridItems = ['1', '2', '3', '4', '5', '6']
+
+/**
+ * Issue 05 — `[data-measure]`. Long enough to overflow a 90ch cap at any
+ * realistic viewport, so the three caps read as visibly different line
+ * lengths rather than as three copies of the same short line.
+ */
+const measureText =
+  'Measure is the line length a reader can track without losing their place. '
+  + 'This paragraph is deliberately long enough that every cap in the scale '
+  + 'wraps well before the container edge, so the difference between 60ch, '
+  + '75ch and 90ch is legible as a difference in line length and not merely '
+  + 'as a number read back out of the computed style. If this text renders '
+  + 'full-bleed across the container, the rule is inert and the issue has '
+  + 'regressed.'
 </script>
 
 <template>
@@ -201,6 +223,93 @@ const gridItems = ['1', '2', '3', '4', '5', '6']
           >
             {{ i }}
           </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="probe__section">
+      <h2>[data-measure] — universal line-length cap (issue 05)</h2>
+      <p class="probe__note">
+        None of the four elements below carries the <code>center</code> class.
+        Before this issue every one of them was inert. Expected computed
+        <code>max-inline-size</code>: 60ch, 90ch, 75ch, and no cap on the
+        control.
+      </p>
+
+      <div class="probe__case">
+        <p class="probe__caption">
+          bare <code>&lt;p data-measure="narrow"&gt;</code> — 60ch
+        </p>
+        <p
+          data-measure="narrow"
+          data-testid="measure-p-narrow"
+        >
+          {{ measureText }}
+        </p>
+      </div>
+
+      <div class="probe__case">
+        <p class="probe__caption">
+          bare <code>&lt;div data-measure="wide"&gt;</code> — 90ch
+        </p>
+        <div
+          data-measure="wide"
+          data-testid="measure-div-wide"
+        >
+          {{ measureText }}
+        </div>
+      </div>
+
+      <div class="probe__case">
+        <p class="probe__caption">
+          bare <code>&lt;li data-measure="normal"&gt;</code> in a plain
+          <code>&lt;ul&gt;</code> — 75ch
+        </p>
+        <ul>
+          <li
+            data-measure="normal"
+            data-testid="measure-li-normal"
+          >
+            {{ measureText }}
+          </li>
+        </ul>
+      </div>
+
+      <div class="probe__case">
+        <p class="probe__caption">
+          control — bare <code>&lt;p&gt;</code>, no attribute; must be wider
+          than all three above
+        </p>
+        <p data-testid="measure-control">
+          {{ measureText }}
+        </p>
+      </div>
+
+      <div class="probe__case">
+        <p class="probe__caption">
+          non-regression — <code>.center[data-measure="narrow"]</code> must
+          still resolve through <code>--_center-measure</code> (60ch), i.e. the
+          universal rule must not take over <code>.center</code>
+        </p>
+        <div
+          class="center"
+          data-measure="narrow"
+          data-testid="measure-center-narrow"
+        >
+          {{ measureText }}
+        </div>
+      </div>
+
+      <div class="probe__case">
+        <p class="probe__caption">
+          non-regression — plain <code>.center</code>, no attribute; must keep
+          its <code>1100px</code> default
+        </p>
+        <div
+          class="center"
+          data-testid="measure-center-default"
+        >
+          {{ measureText }}
         </div>
       </div>
     </section>
