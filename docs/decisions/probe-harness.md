@@ -178,7 +178,16 @@ cascade among those rules is what it was; what changed is that the declared laye
 governs them. A scan of every file `styles.css` composes found no other unlayered region.
 
 `wireframe.css`'s two deliberately-unlayered rules still outrank them, which is exactly what
-their own comments say they rely on.
+their own comments say they rely on — verified in the browser on `/wireframes`:
+`ul.grid > li` still computes `margin-bottom: 0`, and `p`, `li` and `a` still compute
+`font-weight: 100`.
+
+**One wireframe pixel did move, deliberately.** `.wireframe .wf-button { font: inherit }`
+lives in `@layer overrides`, so it used to *lose* to the unlayered `button { font-weight: 100 }`
+and now wins: the single `.wf-button` on the wireframes (the hero's "Explore our work")
+renders at the inherited weight instead of hairline — which is what the skin declares and
+was being silently overridden. Checked visually; the page is otherwise unchanged. Wireframe
+**source** byte-identity, which is the epic's rule, is untouched.
 
 ### Consequence for probes that measure the wireframe
 
