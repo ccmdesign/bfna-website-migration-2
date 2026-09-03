@@ -120,8 +120,10 @@ const checks: Check[] = [
     )
   },
   {
-    // The point of gh#89: no project anywhere still carries the sentinel.
-    label: '  …and no project keeps the MAX_SAFE_INTEGER sentinel',
+    // The point of gh#89: nothing that reaches a grid still carries the
+    // sentinel. Scoped to the 18 top-level projects because that is the set
+    // every list member reads — cohort/year children never reach a grid.
+    label: '  …and no top-level project keeps the MAX_SAFE_INTEGER sentinel',
     expected: 0,
     actual: projects().filter(p => p.grid_order === Number.MAX_SAFE_INTEGER).length
   },
