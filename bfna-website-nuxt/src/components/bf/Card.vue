@@ -47,10 +47,15 @@
  *
  * ## The stretched link
  *
- * The heading link's `::after` is absolutely positioned over the whole card,
+ * The heading link's `::before` is absolutely positioned over the whole card,
  * so the entire card is its hit area and no "Read more" CTA is needed — one
  * link per card, whose accessible name is the heading text rather than the
  * word "more" repeated twenty times down a grid.
+ *
+ * `::before` rather than `::after` since gh#36 / #138: `external-link.css`
+ * paints its `↗` marker on `a[data-external]::after` at a *lower*
+ * specificity, so an overlay on `::after` silently erased the marker on every
+ * card heading link in the system. See D-27.1 in the stylesheet below.
  *
  * Three consequences, all handled in the stylesheet below and asserted by
  * probe 20:
@@ -59,7 +64,7 @@
  * 2. any *other* link in the card has to be raised above the overlay or it
  *    becomes unclickable;
  * 3. the focus ring has to move to the card, because an `outline` is drawn
- *    around the anchor's own boxes and not around its `::after` — leaving the
+ *    around the anchor's own boxes and not around its `::before` — leaving the
  *    ring on the heading text would mark a hit area the size of a card with an
  *    indicator the size of a line of text.
  *
@@ -228,7 +233,7 @@ if (import.meta.dev) {
     --_bf-card-hover-color: var(--color-text);
     --_bf-card-link-z-index: 1;
 
-    /* The containing block for the heading link's stretched `::after`. */
+    /* The containing block for the heading link's stretched `::before`. */
     position: relative;
 
     display: flex;
@@ -276,6 +281,75 @@ if (import.meta.dev) {
   .bf-card__chips { order: -1; }
 
   /*
+    ## The row modifier — `.bf-card-row` (`bfCardRow`, gh#36 / issue 27)
+
+    The dense list row used by search results and the archive accordion: chip,
+    linked heading and date on **one line**, wrapping gracefully rather than
+    stacking.
+
+    It lives here, in the base's own stylesheet, rather than in a stylesheet of
+    its own. It is a *modifier of this card* and every declaration below undoes
+    exactly one thing a rule a few lines up declared — a second file would have
+    had to re-specify `.bf-card__chips`'s `order` and `.bf-card > time`'s
+    `margin` from outside, and would have raced this block for both.
+
+    A **class** rather than a `data-*` attribute, unlike `data-span="full"`.
+    `span` is a value out of a closed set and reads as a state; "this card is a
+    row" is a kind, and a kind is what a class is for. It also gives #43 and
+    #55 a name to hang their container rules on (`.bf-search__results
+    .bf-card-row`) without either of them learning an attribute private to this
+    file. `bfCardRow` renders it; `$attrs` merges a caller's own classes
+    alongside rather than replacing it.
+
+    Every selector below is written `.bf-card.bf-card-row` — (0,2,x) — so the
+    modifier outranks the base rule it overrides on specificity rather than on
+    source order. At (0,1,x) `.bf-card > time { margin-block-start: auto }`
+    would tie with the row's zero and win on document order, which is a bug
+    waiting for someone to reorder this block.
+
+    Tokens only. No new colour, and no `:not()` anywhere — D-20.5 (#29) bans
+    `:not()` around a complex selector, and this modifier needs none.
+  */
+  .bf-card.bf-card-row {
+    /*
+      The spec's hook, defaulting to the `xs` Utopia step — the same gap
+      `archive.vue:17`'s `class="cluster" data-gap="xs"` resolves to, which is
+      the hand-built markup this component replaces.
+    */
+    --_bf-card-row-gap: var(--space-xs);
+
+    /*
+      One line, not a stack. `wrap` — never `nowrap` — is what makes the row
+      degrade into two or three lines at narrow widths instead of overflowing
+      its container. That is the spec's "wraps gracefully" clause, and it is
+      why the heading gets no `white-space` and no fixed-width column here or
+      anywhere: a 980-character heading has to wrap *inside* the row.
+    */
+    flex-direction: row;
+    flex-wrap: wrap;
+
+    /*
+      `baseline` rather than `center`. The chip, the heading and the date are
+      three runs of text at three different sizes; aligning their boxes'
+      centres would leave three visibly different text baselines on one line.
+    */
+    align-items: baseline;
+
+    gap: var(--_bf-card-row-gap);
+  }
+
+  /*
+    `margin-block-start: auto` floats the date to a *column's* bottom edge, and
+    that is what it does on every other card. On the cross axis of a row an
+    auto margin overrides `align-items` outright and drops the `<time>` to the
+    row's bottom edge, off the baseline everything else shares. Zeroed, the
+    date sits on the line with the rest of the row.
+  */
+  .bf-card.bf-card-row > time {
+    margin-block-start: 0;
+  }
+
+  /*
     Dates sit at the card's bottom edge so a row of cards of unequal text
     length still aligns its dates. `> time`, so a `<time>` inside an excerpt
     is not yanked to the floor.
@@ -291,8 +365,31 @@ if (import.meta.dev) {
     correctly holds an `h3` while the same card under an `h3` holds an `h4`.
     `:is()` takes the specificity of its most specific argument, so this is
     (0,1,2) — identical to what `.wf-card h3 a::after` scored.
+
+    ## Why `::before` and not `::after` (D-27.1, gh#138)
+
+    The frozen skin, and this file until gh#36, painted the overlay on
+    `::after`. That collided with `components/external-link.css`, which paints
+    the external marker through `a[data-external]::after` at (0,1,1). This
+    selector scores (0,1,2), both live in `@layer components`, so the card's
+    empty `content` won and **no `bfCard` heading link could ever show its
+    `↗`** — the defect #138 records, measured (not merely asserted) by probe
+    26.
+
+    Moving the overlay to `::before` frees `::after` for the marker, which then
+    applies unopposed. Nothing else changes: the overlay is
+    `position: absolute`, so it is out of flow and generates no inline box in
+    the anchor's text — `::before` and `::after` differ only in the tree
+    position of a box that has been taken out of the tree. Both pseudo-elements
+    paint after the anchor's own background either way, and only these two
+    exist, so the stacking within the anchor is unchanged too.
+
+    The overlay stays anonymous either way: it has no text, so it adds nothing
+    to any accessible name. Probe 20 asserts all three halves of this — the
+    marker's `content` is non-empty, the overlay is on `::before`, and the card
+    is still hit-testable over its whole area.
   */
-  .bf-card :is(h2, h3, h4) a::after {
+  .bf-card :is(h2, h3, h4) a::before {
     content: "";
     position: absolute;
     inset: 0;
@@ -312,7 +409,7 @@ if (import.meta.dev) {
   /*
     The focus indicator belongs to the card, not to the heading text. An
     `outline` is painted around an element's own boxes and not around its
-    `::after`, so a ring left on the anchor would mark a line of text as the
+    `::before`, so a ring left on the anchor would mark a line of text as the
     focus target of a hit area the size of the whole card (WCAG 2.4.7, and the
     2.4.11 focus-appearance intent). Two rings, as gh#24 established: the
     `outline` survives forced-colors mode, where `box-shadow` is dropped, and
@@ -339,7 +436,7 @@ if (import.meta.dev) {
   /*
     Any other link in a card stays clickable above the overlay — an external
     CTA, a chip that is a link, a "listen" button. Without this the stretched
-    `::after` swallows it and the card silently has one link.
+    `::before` swallows it and the card silently has one link.
 
     Written as raise-everything-then-exempt-the-heading rather than the obvious
     `a:not(:is(h2, h3, h4) a)`, and the reason is not style. `postcss-preset-env`
@@ -347,7 +444,7 @@ if (import.meta.dev) {
     *wrongly*: `a:not(:is(h2, h3, h4) a)` ships as
     `a:not(h2):not(h3):not(h4)` — which every anchor satisfies. The heading link
     would then be `position: relative` itself, become the containing block for
-    its own `::after`, and shrink the card-sized hit area down to the width of
+    its own `::before`, and shrink the card-sized hit area down to the width of
     the heading text. Silent, and invisible to a source grep. Probe 20 asserts
     the heading anchor's computed `position` is `static` for exactly this
     reason.

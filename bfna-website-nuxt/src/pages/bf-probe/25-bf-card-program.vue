@@ -393,12 +393,20 @@ onMounted(() => {
 
     // --- 5. the card is a link surface -------------------------------------
     {
-      label: 'the heading link generates bfCard\'s stretched ::after',
+      /*
+       * `::before`, not `::after`, since gh#36 / #138: `external-link.css`
+       * paints its `↗` on `a[data-external]::after` at a lower specificity in
+       * the same layer, so an overlay on `::after` erased the marker on every
+       * card heading link in the system. Moving the overlay freed `::after`
+       * for the marker; this row follows it. `bfCard`'s own probe 20 asserts
+       * the move in full — both pseudo-elements and the hit test.
+       */
+      label: 'the heading link generates bfCard\'s stretched ::before',
       expected: rowEls.length,
       actual: rowEls.filter((el) => {
         const a = linkEl(el)
         if (!a) return false
-        const content = getComputedStyle(a, '::after').content
+        const content = getComputedStyle(a, '::before').content
         return content !== 'none' && content !== ''
       }).length
     },

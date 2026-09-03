@@ -392,3 +392,52 @@ export type Announcement = z.infer<typeof bfAnnouncementSchema>
 
 /** A `Page`'s provenance pointer into the legacy Directus records. */
 export type PageLegacyRef = z.infer<typeof bfPageLegacySchema>
+
+/* -------------------------------------------------------------------------
+ * Card wrappers that arrive after the entity types
+ * ------------------------------------------------------------------------- */
+
+/**
+ * The union `bfCardRow` accepts.
+ *
+ * Named here rather than written inline in `CardRow.vue` because it is a
+ * shared shape by construction: issue 43 (`bfSearchShell`) and issue 55 (the
+ * `/archive` accordion) both build arrays of it to feed the row, and a union
+ * spelled three times drifts in three directions. BRIEF §5 rule 11.
+ *
+ * The two members have no discriminant field of their own — neither schema
+ * carries a `type` or `__typename` — so the component narrows structurally.
+ * See `isInsight` in `CardRow.vue` for which field does the work and why the
+ * obvious candidate does not.
+ */
+export type CardRowItem = Insight | Project
+
+/**
+ * Props of `bfCardRow` — the dense list row.
+ *
+ * `item` is the whole entity, never a handful of extracted fields, for the
+ * same reason `bfCardInsight` takes an `Insight`: the caller has the row, the
+ * component knows what a row looks like, and a `heading` + `to` + `chip` +
+ * `date` prop list is a second, undeclared schema that drifts from the first.
+ * It is also what lets one `v-for` over a mixed array render both entity
+ * types, which is this component's whole reason to exist.
+ *
+ * `variant` is deliberately an open `string`, exactly as the spec types it.
+ * There is no `wf-*` precedent to name values from — the wireframe left this
+ * row un-componentised — so a union invented here would be a guess with a
+ * compile error attached. It renders as `data-variant` and styles nothing on
+ * its own; the two real consumers (#43, #55) are what will name its values,
+ * and widening a `string` to a union later is the cheap direction.
+ *
+ * This is the one place in the `bf-*` set where an open `string` is right, and
+ * it is the opposite call from `TimeFormat`: there, a silently-ignored value
+ * would render the wrong *content*; here, an unrecognised `variant` renders an
+ * inert attribute that changes nothing, which is a visible no-op rather than a
+ * lie.
+ */
+export interface CardRowProps extends CardWrapperProps {
+  /** One `bfInsights` **or** one `bfProjects` row. Passed whole. */
+  item: CardRowItem
+  /** Presentation hint, rendered as `data-variant`. Styles nothing by itself. */
+  variant?: string
+}

@@ -42,11 +42,19 @@
  *    `external_url` on the site's own host renders the link **without** the
  *    marker (D-26.1), which is the whole reason the attribute is bound through
  *    `isExternal()` rather than asserted;
- * 6. what the marker actually paints on a card heading — `bfCard`'s stretched
- *    `::after` is (0,1,2) against the marker's (0,1,1) in the same layer, so
- *    the arrow's `content` loses to the empty string that makes the card
- *    clickable. Measured rather than asserted, because it is surprising, and it
- *    is parity with the frozen skin, whose selectors score identically;
+ * 6. what the marker actually paints on a card heading. This is the row that
+ *    found [#138]: `bfCard`'s stretched overlay used to be
+ *    `.bf-card :is(h2, h3, h4) a::after` at (0,1,2) against the marker's
+ *    (0,1,1) in the same layer, so the arrow's `content` lost to the empty
+ *    string that makes the card clickable — on *every* card heading link in
+ *    the system, this one included. Measured rather than asserted, which is
+ *    why the defect was visible at all. gh#36 moved the overlay to `::before`
+ *    and freed `::after` for the marker, so the same two measurements now read
+ *    the other way: the ↗ paints, and the overlay is on the other
+ *    pseudo-element. The corner hit-test two rows up is what proves the move
+ *    cost nothing;
+ *
+ * [#138]: https://github.com/ccmdesign/bfna-website-migration-2/issues/138
  * 7. the `Magazine` chip is unconditional and the pending chip is not;
  * 8. the excerpt is `excerpt ?? description` cut at `excerptLength` with an
  *    ellipsis — including the `??` half, where an **empty-string** excerpt does
@@ -540,7 +548,7 @@ onMounted(() => {
         }).length
     },
     {
-      label: 'the linked card IS a link surface: stretched ::after, corner hit-test',
+      label: 'the linked card IS a link surface: stretched ::before, corner hit-test',
       expected: 'the heading link',
       actual: hitTestCorner(linked)
     },
@@ -566,13 +574,21 @@ onMounted(() => {
       actual: linked ? linked.querySelectorAll('a').length : -1
     },
     {
-      label: 'the marker\'s ↗ loses to bfCard\'s stretched ::after (same layer, 0,1,2 > 0,1,1)',
-      expected: '""',
+      /* #138, fixed in gh#36. This row read `""` before that. */
+      label: 'the marker\'s ↗ survives on ::after — the overlay moved to ::before (#138)',
+      expected: '" ↗"',
       actual: afterContent
     },
     {
-      label: '  …which is what makes the whole card clickable',
+      label: '  …and ::before is what makes the whole card clickable',
       expected: 'absolute',
+      actual: linkedAnchor
+        ? getComputedStyle(linkedAnchor, '::before').position
+        : 'missing'
+    },
+    {
+      label: '  …with ::after carrying no overlay of its own any more',
+      expected: 'static',
       actual: linkedAnchor
         ? getComputedStyle(linkedAnchor, '::after').position
         : 'missing'
