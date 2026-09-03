@@ -72,4 +72,74 @@ today (no `bf/CtaSection.vue`), passes once done.
 
 ## Decisions
 
-_Runner appends here._
+**D-40.1 — a label-only CTA renders `<button>`, not `<a href="#">`.**
+Both Participation-path call sites pass `{ label }` alone
+(`participation.ctas.map(label => ({ label }))`) — neither `to` nor `href`. The
+wf source renders those as `<a :href="c.href ?? '#'">`: an element that
+announces itself as a link, takes the tab order as a link, and then navigates to
+the top of the page. `bfButton`'s own three-way branch (gh#24) resolves
+"neither" to `<button type="button">`, and that is kept rather than papered over
+with a synthetic `'#'`. It is the honest render of an action whose target has
+not been decided yet, and the dataset can grow a `to` into it without the markup
+changing shape. Probe 40 asserts the branch each of the three real call-site
+shapes lands on.
+
+**D-40.2 — `isPrimary` returns a `ButtonVariant`, not a raw attribute value.**
+The condition is the wf source's, verbatim: `c.primary ?? idx === 0`, `??` and
+not `||` so an explicit `primary: false` on the first entry really demotes it.
+Only the return value changed — `bfButton` takes a typed `variant` prop where
+the wf source wrote `:data-variant` directly, so this returns `'default'` where
+upstream returned `undefined`. Identical render. The rule stays *per entry*
+rather than "exactly one primary": a list whose second entry sets `primary` gets
+two filled buttons, because the first entry's default is unconditional. That is
+upstream's behaviour and narrowing it here would be a change nobody asked for.
+
+**D-40.3 — no `<style>` block at all.**
+The spec asks for "no new CSS variables beyond `bfSection`'s and `bfButton`'s
+existing hooks". Shipping no stylesheet is the strongest available statement of
+that — it is satisfied by construction rather than by inspection — and it
+follows `bfPageHeader` (gh#47). Probe 40 asserts that no rule anywhere in the
+loaded CSS selects `bf-cta-section`, so a stylesheet appearing later fails the
+harness. D-20.5 is satisfied vacuously and still asserted across all `bf-*` CSS.
+
+**D-40.4 — `padded` is not passed to `bfSection`.**
+The wf source does not pass it either. A CTA band inherits the page's own band
+rhythm; `bfPageHeader` is the one that asks for its own padding, and it does so
+because its wf source does.
+
+**D-40.5 (test-harness substitution, per the epic's residual #86 rule) — the
+spec's `grep -Lq` acceptance lines cannot fail, and were replaced.**
+The spec's acceptance block writes:
+
+```bash
+grep -Lq "form" src/components/bf/CtaSection.vue
+grep -Lq "<form" src/components/bf/CtaSection.vue
+grep -Lq "<form\|type=\"email\"" .output/public/bf-probe/40-bf-cta-section/index.html
+```
+
+`grep -L` prints the names of files *without* a match and exits `0` whenever the
+file is readable — so each of those passes whether or not the string is present.
+They are inert in both directions (D-37.5). Substituted with correct-polarity
+checks, all run and recorded on the PR:
+
+```bash
+[ "$(grep -o -i form src/components/bf/CtaSection.vue | wc -l)" -eq 0 ]     # → 0
+[ "$(grep -c '<form' .output/public/bf-probe/40-bf-cta-section/index.html)" -eq 0 ]
+[ "$(grep -c 'type=.email.' .output/public/bf-probe/40-bf-cta-section/index.html)" -eq 0 ]
+grep -q 'Cta\[\]' src/components/bf/CtaSection.vue
+```
+
+plus three runtime rows on probe 40 that read the live DOM
+(`querySelectorAll('form, input[type=email]').length === 0`), the serialised
+`documentElement.outerHTML`, and the absence of any `[type="submit"]` inside a
+band. `npm run typecheck` in the spec is likewise the epic's no-new-errors gate
+(`npx nuxt typecheck`, baseline 178 → 178, 0 in `src/components/bf|src/types`).
+
+**D-40.6 — the probe never writes the literals it hunts for.**
+A probe row's label is rendered into the page it then reads, so writing `<form`
+or `type="email"` into a label would plant the very string the next row greps
+for. `report()` happens to snapshot `outerHTML` before assigning `checks.value`,
+so it would not actually have failed — but a check that depends on that ordering
+is one refactor away from lying. The three literals are assembled from fragments
+in `40-bf-cta-section.vue` and never appear in a rendered string.
+
