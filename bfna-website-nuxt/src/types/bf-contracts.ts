@@ -51,6 +51,46 @@ export interface LogoProps {
   variant?: LogoVariant
 }
 
+/**
+ * Visual variant of `bfButton`.
+ *
+ * `primary` is the filled treatment — the `bf-*` reading of
+ * `.wf-button[data-variant="primary"]`. `default` is the base: bordered,
+ * unfilled, and the value the component falls back to, so a caller that
+ * passes no variant gets the wireframe's plain button.
+ */
+export type ButtonVariant = 'primary' | 'default'
+
+/**
+ * Props of `bfButton`.
+ *
+ * The element is resolved from the props rather than chosen by the caller:
+ * `disabled` wins outright and renders `<button disabled>` (neither `<a>` nor
+ * `NuxtLink` supports a native `disabled`, and a disabled-looking but still
+ * clickable, still focusable link is the failure this avoids); otherwise `to`
+ * renders `NuxtLink`, `href` renders `<a>`, and neither renders `<button>`.
+ *
+ * `size` is deliberately an open `string`, as the spec types it. The component
+ * recognises `'s' | 'm' | 'l'`, mapping them onto the existing Utopia type
+ * steps; any other value — and no value at all — inherits the surrounding font
+ * size, which is what `.wf-button`'s `font: inherit` does. Because the padding
+ * is expressed in `em`, the whole box scales with that one declaration.
+ */
+export interface ButtonProps {
+  /** Internal route. Renders `NuxtLink`. A string path or a route-location object. */
+  to?: string | Record<string, unknown>
+  /** URL. Renders `<a href>`. Ignored when `to` is set. */
+  href?: string
+  /** Marks an `href` as leaving the site: renders the `[data-external]` hook. */
+  external?: boolean
+  /** Filled (`primary`) or bordered (`default`, the base). */
+  variant?: ButtonVariant
+  /** Type step. `'s' | 'm' | 'l'` are recognised; anything else inherits. */
+  size?: string
+  /** Renders a non-interactive, non-focusable `<button disabled>`, whatever `to`/`href` say. */
+  disabled?: boolean
+}
+
 /** One breadcrumb node. `to` omitted marks the current (non-linked) page. */
 export interface Crumb {
   label: string
