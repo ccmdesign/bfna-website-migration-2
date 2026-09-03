@@ -39,6 +39,16 @@
  *    A programmatic `.focus()` would not answer the question: `:focus-visible`
  *    is exactly the thing that behaves differently for one.
  * 9. `.bf-card` rules are inside `@layer components` in the live CSSOM.
+ * 10. **The external marker survives the overlay** (gh#36, residual #138).
+ *     `external-link.css` paints its `↗` on `a[data-external]::after` at
+ *     (0,1,1); the overlay used to be `.bf-card :is(h2, h3, h4) a::after` at
+ *     (0,1,2), in the same layer, so the marker's `content` was overwritten by
+ *     the empty string that makes the card clickable — on *every* card heading
+ *     link in the system. The overlay now lives on `::before`. The card with
+ *     `data-probe-card="external"` asserts all three halves of that: the
+ *     marker's resolved `content` is non-empty, the overlay is on `::before`,
+ *     and the card is **still** hit-testable over its whole area, which is the
+ *     thing the move could have broken.
  *
  * The vitest harness on `dev` is broken and pre-existing (residual #86), so
  * acceptance is this page under `npx tsx scripts/check-probes.ts --only 20`,
@@ -84,6 +94,22 @@ const cards = [
       'Twenty-four fellows from eleven countries, convening quarterly through '
       + 'the year. Applications for the next cohort open in the autumn.',
     datetime: '2023-11-06'
+  },
+  {
+    /*
+     * The #138 case: a heading link that leaves the site. Its anchor carries
+     * `data-external`, so `external-link.css`'s `a[data-external]::after`
+     * marker and `bfCard`'s stretched overlay meet on the same element — which
+     * is the collision this card exists to keep resolved.
+     */
+    key: 'external',
+    heading: 'Read it on the Transponder microsite',
+    chips: ['Magazine'],
+    excerpt:
+      'The card is fully clickable and the arrow is visible, which before '
+      + 'gh#36 could not both be true: the overlay is on ::before now, leaving '
+      + '::after to the marker.',
+    datetime: '2024-09-02'
   }
 ] as const
 
@@ -216,9 +242,24 @@ onMounted(() => {
   /* ---------------------------------------------------------------- *
    * The stretched link, hit-tested
    * ---------------------------------------------------------------- */
+  /**
+   * Bring an element fully into the viewport before hit-testing it.
+   * `document.elementFromPoint` is defined in *viewport* coordinates and
+   * returns `null` for any point outside them — so a probe that grows a card
+   * would otherwise start reporting "the stretched link is broken" when what
+   * actually happened is that the card moved below the fold. Scroll position
+   * affects no other measurement on this page (every other assertion is a
+   * width, a computed value, or a comparison between two rects read in the
+   * same frame), so this is safe to do between them.
+   */
+  const intoView = (el: HTMLElement) => {
+    el.scrollIntoView({ block: 'center', inline: 'nearest' })
+    return el.getBoundingClientRect()
+  }
+
   const stretched = plain!
   const stretchedLink = headingLink(stretched)!
-  const rect = stretched.getBoundingClientRect()
+  const rect = intoView(stretched)
 
   /*
    * Six pixels in from the card's bottom-right corner: inside the 1px border,
@@ -250,18 +291,82 @@ onMounted(() => {
    * offers one.
    */
   const secondary = document.querySelector<HTMLAnchorElement>('[data-probe-secondary]')!
-  const sRect = secondary.getBoundingClientRect()
+  const sRect = intoView(secondary)
   const secondaryHit = document.elementFromPoint(
     sRect.left + sRect.width / 2,
     sRect.top + sRect.height / 2
   )
+
+  /* ---------------------------------------------------------------- *
+   * The external marker, and the overlay it used to erase (#138)
+   * ---------------------------------------------------------------- */
+  const externalCard = card('external')!
+  const externalLink = headingLink(externalCard)!
+
+  /*
+   * The two pseudo-elements on the one anchor where they collide. `content` on
+   * `::after` is the marker; `position` on `::before` is the overlay. Read
+   * from the live CSSOM rather than grepped out of the source, because the
+   * defect #138 records is a *cascade* outcome — the source of both rules was
+   * correct all along and the ↗ still never painted.
+   */
+  const markerContent = getComputedStyle(externalLink, '::after').content
+  const overlayPosition = getComputedStyle(externalLink, '::before').position
+
+  /*
+   * …and the half that the move could have broken. Same hit test as the
+   * `stretch` card above, six pixels in from the bottom-right corner: if
+   * `::before` does not cover the card, this returns the `<li>` (or the
+   * excerpt) instead of the anchor, and the whole card silently stops being
+   * clickable.
+   */
+  const eRect = intoView(externalCard)
+  const externalHit = document.elementFromPoint(eRect.right - 6, eRect.bottom - 6)
+
+  let externalClickedName = 'none'
+  const onExternalClick = (event: Event) => {
+    externalClickedName = (event.currentTarget as HTMLElement).dataset.probeLink ?? 'unnamed'
+    event.preventDefault()
+  }
+  externalLink.addEventListener('click', onExternalClick)
+  ;(externalHit as HTMLElement | null)?.dispatchEvent(
+    new MouseEvent('click', { bubbles: true, cancelable: true })
+  )
+  externalLink.removeEventListener('click', onExternalClick)
+
+  /* ---------------------------------------------------------------- *
+   * Put the keyboard back at the start of the document
+   * ---------------------------------------------------------------- */
+  /*
+   * Everything above scrolled the page and dispatched clicks into cards, and
+   * both of those move the browser's **sequential focus navigation starting
+   * point** — the place a `Tab` with nothing focused resumes from. Left as it
+   * is, the harness's Tab resumes beside the last card hit-tested and check 8
+   * measures the wrong card, reporting a focus-ring regression that is really
+   * an artefact of the probe's own measuring.
+   *
+   * Focusing an element and immediately blurring it returns the active element
+   * to `<body>`, from which sequential navigation starts at the beginning of
+   * the document again. `preventScroll` so the focus call does not re-scroll
+   * what the following line is about to reset, and the `tabindex` is removed
+   * again so the page's real tab order is exactly what it was.
+   *
+   * This runs **before** the `focusin` listener is attached, so the reset does
+   * not register as the first focus the probe saw.
+   */
+  const focusReset = document.querySelector<HTMLElement>('h1')!
+  focusReset.tabIndex = -1
+  focusReset.focus({ preventScroll: true })
+  focusReset.blur()
+  focusReset.removeAttribute('tabindex')
+  window.scrollTo(0, 0)
 
   /** Everything that does not need a keyboard. Ordered as the doc comment lists it. */
   const staticChecks: Check[] = [
     // --- 1. the grid is real, and the three slots rendered -----------------
     { label: 'the card group is a <ul>', expected: 'UL', actual: grid.tagName },
     { label: 'every card is an <li>', expected: cardEls.length, actual: cardEls.filter(el => el.tagName === 'LI').length },
-    { label: 'five cards rendered', expected: 5, actual: cardEls.length },
+    { label: 'six cards rendered', expected: 6, actual: cardEls.length },
     {
       label: 'the grid resolves to ≥2 columns (or the span check is vacuous)',
       expected: 'true',
@@ -269,17 +374,17 @@ onMounted(() => {
     },
     {
       label: 'default slot: every card leads with its heading',
-      expected: 5,
+      expected: 6,
       actual: cardEls.filter(el => el.children[0]?.tagName === 'H3').length
     },
     {
       label: 'chips slot: every card renders a .bf-card__chips wrapper',
-      expected: 5,
+      expected: 6,
       actual: cardEls.filter(el => el.querySelector(':scope > .bf-card__chips')).length
     },
     {
       label: 'media slot: every card renders a .bf-card__media wrapper',
-      expected: 5,
+      expected: 6,
       actual: cardEls.filter(el => el.querySelector(':scope > .bf-card__media')).length
     },
     {
@@ -394,7 +499,7 @@ onMounted(() => {
     },
     {
       label: '$attrs fallthrough: data-probe-card reached every <li>',
-      expected: 5,
+      expected: 6,
       actual: cardEls.filter(el => el.dataset.probeCard).length
     },
     {
@@ -445,6 +550,38 @@ onMounted(() => {
       label: '  …because it is raised out of the overlay',
       expected: 'relative/1',
       actual: `${getComputedStyle(secondary).position}/${getComputedStyle(secondary).zIndex}`
+    },
+
+    // --- 10. the external marker survives the overlay (#138) ---------------
+    {
+      label: 'the external heading link carries [data-external]',
+      expected: 'true',
+      actual: String(externalLink.hasAttribute('data-external'))
+    },
+    {
+      /*
+       * The defect itself. Before gh#36 this read `""` — the overlay's empty
+       * content, winning at (0,1,2) over the marker's (0,1,1) in the same
+       * layer — so the arrow was invisible on every card heading link.
+       */
+      label: '  …and its ::after paints the ↗ marker, not the overlay\'s empty content',
+      expected: 'true',
+      actual: String(markerContent !== '' && markerContent !== 'none' && markerContent !== '""')
+    },
+    {
+      label: '  …because the overlay moved to ::before',
+      expected: 'absolute',
+      actual: overlayPosition
+    },
+    {
+      label: '  …and the card is STILL clickable over its whole area',
+      expected: 'external',
+      actual: (externalHit as HTMLElement | null)?.dataset.probeLink ?? `${externalHit?.tagName ?? 'null'}`
+    },
+    {
+      label: '  …with the click reaching the heading link\'s handler',
+      expected: 'external',
+      actual: externalClickedName
     },
 
     // --- 9. cascade layer --------------------------------------------------
@@ -595,6 +732,17 @@ const verdict = computed(() =>
       <code>data-span="full"</code> attribute on <code>$attrs</code>, which is
       the call shape the typed wrappers inherit.
     </p>
+    <p class="probe__lede">
+      The third card links off-site. Its heading anchor carries
+      <code>[data-external]</code>, so <code>external-link.css</code>'s
+      <code>↗</code> marker and the card's stretched overlay meet on one
+      element — the collision issue #138 records. (Written as text, not as a
+      link: this paragraph precedes the cards, so a focusable element here
+      would take the first Tab and the keyboard assertions below would measure
+      it instead of a card.) The overlay lives on <code>::before</code> since gh#36, which
+      leaves <code>::after</code> to the marker; the rows below assert that the
+      arrow is painted <em>and</em> that the whole card is still clickable.
+    </p>
 
     <!--
       The group is a real `<ul class="grid">` with a `data-min-width`, not a
@@ -612,7 +760,18 @@ const verdict = computed(() =>
           :class="c.key === 'stretch' ? 'probe__tinted' : undefined"
         >
           <h3>
-            <a :href="`#card-${c.key}`" :data-probe-link="c.key">{{ c.heading }}</a>
+            <!--
+              The `external` card gets a real off-site `href` and the
+              `[data-external]` hook `bfButton` / `bfChip` render for the same
+              purpose; every other card keeps its in-page fragment. Two
+              attributes, one card, because #138 is a *collision* — it only
+              exists where the marker and the overlay share an anchor.
+            -->
+            <a
+              :href="c.key === 'external' ? 'https://www.bfna.org/' : `#card-${c.key}`"
+              :data-external="c.key === 'external' ? '' : undefined"
+              :data-probe-link="c.key"
+            >{{ c.heading }}</a>
           </h3>
           <p>{{ c.excerpt }}</p>
           <!--
