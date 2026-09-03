@@ -104,6 +104,18 @@ interface Snapshot {
   /** `<h2>`s this band contributes. */
   headingCount: number
   headingText: string
+  /**
+   * The band's accessible name, resolved through `aria-labelledby` — residual
+   * #164, folded into gh#55.
+   *
+   * Three distinguishable values, because the failure modes differ: the target
+   * heading's text when the idref resolves, `dangling idref` when the attribute
+   * names an element that is not there (worse than no name — some screen
+   * readers then fall back to the band's whole content), and `absent` when
+   * there is no attribute at all, which is the correct state for a band with no
+   * heading.
+   */
+  accessibleName: string
   /** The inner `center | <layout>` box. */
   innerClasses: string
   /** `null` when the attribute is absent, which is what `plain` must be. */
@@ -261,6 +273,12 @@ const snapshot = (key: string): Snapshot => {
     inlineStyle: root !== null && root.style.cssText.trim() !== '',
     headingCount: h2s.length,
     headingText: (root?.querySelector('h2')?.textContent ?? '').trim(),
+    accessibleName: (() => {
+      const ref = root?.getAttribute('aria-labelledby') ?? ''
+      if (ref === '') return 'absent'
+      const target = document.getElementById(ref)
+      return target ? (target.textContent ?? '').trim() : 'dangling idref'
+    })(),
     innerClasses: inner ? Array.from(inner.classList).sort().join(' ') : 'no inner box',
     /* `absent` is a value here, and for `plain` it is the required one. */
     innerGap: inner?.getAttribute('data-gap') ?? 'absent',
@@ -457,6 +475,19 @@ const report = () => {
       label: '  …and no <h2> at all when `heading` is not given',
       expected: 0,
       actual: plain?.headingCount ?? 'missing'
+    },
+    {
+      /*
+       * Residual #164. A bare `<section>` is not a landmark: `region` is one of
+       * the roles HTML-AAM gates on an accessible name, so a band that rendered
+       * a visible heading and wired nothing to it was a generic container that
+       * never appeared in the landmark list. Both halves in one row, because
+       * the negative is the load-bearing half — a component that named every
+       * band, heading or not, would ship a dangling idref.
+       */
+      label: '  …and a heading gives the band an accessible name (none without one)',
+      expected: `${BAND_HEADING}|absent`,
+      actual: `${stack?.accessibleName ?? 'missing'}|${plain?.accessibleName ?? 'missing'}`
     },
     {
       label: '`label` reaches the root as data-label',

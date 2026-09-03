@@ -147,6 +147,39 @@ const innerClass = computed(() =>
 const innerGap = computed(() =>
   props.layout === 'plain' ? undefined : props.gap
 )
+
+/**
+ * The id the band's `<h2>` carries, so the `<section>` can point an
+ * `aria-labelledby` at it — residual #164, folded into gh#55.
+ *
+ * A bare `<section>` is **not** a landmark. `region` is one of the roles the
+ * HTML-AAM spec gates on an accessible name: without one, a `<section>` is
+ * mapped to a generic container and disappears from the landmark list every
+ * screen-reader user navigates a page by. So a band that renders a visible
+ * heading was announcing the heading as ordinary text and offering no way to
+ * jump between bands — the whole point of composing a page out of them.
+ *
+ * Nuxt's SSR-stable `useId()`, not `crypto.randomUUID()` and not a counter: the
+ * value has to survive the server render and hydrate to the same string, or the
+ * idref points at nothing for the first frame and Vue logs a mismatch.
+ * (`bfLogo` and `bfFormField` set the precedent.)
+ */
+const headingId = useId()
+
+/**
+ * The idref, **only** when there is a heading to point at.
+ *
+ * `undefined` rather than `''` when there is not: `aria-labelledby=""` is a
+ * different, invalid thing, and an idref naming an element that does not exist
+ * is worse than no name at all — some screen readers fall back to the element's
+ * content, others announce nothing. Vue drops the attribute entirely on
+ * `undefined`.
+ *
+ * A `label`-only band is deliberately left unnamed. `label` renders as
+ * `data-label`, not as text, and naming a landmark from an attribute nothing
+ * displays would give the band an accessible name no sighted user can see.
+ */
+const headingLabelledBy = computed(() => (props.heading ? headingId : undefined))
 </script>
 
 <template>
@@ -166,6 +199,7 @@ const innerGap = computed(() =>
       'bf-section--full-width': fullWidth
     }"
     :data-label="label"
+    :aria-labelledby="headingLabelledBy"
     v-bind="rootAttrs"
   >
     <!--
@@ -188,8 +222,13 @@ const innerGap = computed(() =>
         `v-if`, so an absent heading renders no element rather than an empty
         `<h2>` that would still take a gap in the stack. Rank fixed at 2 — see
         `SectionProps.heading`.
+
+        The `id` is the target of the root's `aria-labelledby` (#164): together
+        they are what makes a band with a heading a named `region` landmark
+        rather than a generic container. Both appear and disappear on the same
+        `heading` condition, so there is never an idref without an element.
       -->
-      <h2 v-if="heading" class="bf-section__heading">{{ heading }}</h2>
+      <h2 v-if="heading" :id="headingId" class="bf-section__heading">{{ heading }}</h2>
       <slot />
     </div>
   </section>
