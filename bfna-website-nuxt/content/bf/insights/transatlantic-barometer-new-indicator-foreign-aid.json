@@ -13,7 +13,7 @@
   "program": "Transatlantic Barometer",
   "authors": [],
   "projects": [],
-  "archived": null,
+  "archived": false,
   "evergreen": false,
   "featured": false,
   "retired_news": true

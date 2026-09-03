@@ -219,8 +219,9 @@ const excerptText = computed(() => {
       <bfChip>{{ formatLabel(insight.format) }}</bfChip>
       <bfChip v-for="chip in extraChips" :key="chip">{{ chip }}</bfChip>
       <!--
-        `archived` is `boolean | null`, so the guard is truthiness rather than
-        `=== true`; 256 of the 371 real rows are archived.
+        `archived` is a non-nullable `boolean` since gh#140 (it was
+        `boolean | null`), so truthiness and `=== true` agree; 256 of the 371
+        real rows are archived.
       -->
       <bfChip v-if="insight.archived">Archive</bfChip>
     </template>

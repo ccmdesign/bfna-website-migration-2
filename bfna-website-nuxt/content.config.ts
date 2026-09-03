@@ -21,6 +21,17 @@ const contentDir = resolve(rootDir, 'content')
  * list in the spec: `.nullable()` marks a field the normaliser emits as
  * `T | null`, `.optional()` marks one it may omit entirely.
  *
+ * NO BOOLEAN IS NULLABLE (gh#140, promoted residual #139). `@nuxt/content`
+ * stores a nullable boolean column in a shape its own `.where(f, '=', true)`
+ * predicate does not match, so a `z.boolean().nullable()` flag makes that
+ * query return zero rows with no error — which is how
+ * `.where('external_only', '=', true)` missed the Transponder row it plainly
+ * carried. Every boolean below is therefore a bare `z.boolean()`, and the
+ * normaliser's `boolFlag()` guarantees a real `true`/`false` for each one;
+ * `npx tsx scripts/normalise-wireframe-data.ts --check` asserts it on the
+ * emitted files. Adding a flag here means adding it to that script's
+ * `BOOLEAN_FIELDS` table too.
+ *
  * The 14 collections above are untouched — these six are appended.
  */
 
@@ -40,8 +51,10 @@ export const bfPageLegacySchema = z.object({
  * One insight. 371 documents: the 354 `items` rows plus the 8 `featured` and
  * 9 `retired_news` highlight records, which are separate Directus rows with no
  * slug overlap and are flattened onto boolean fields here (issue 07 Decisions).
- * `featured` / `retired_news` are computed by the normaliser and never null;
- * `archived` / `evergreen` pass through from the source and may be null.
+ * `featured` / `retired_news` are computed by the normaliser; `archived` /
+ * `evergreen` pass through from the source, where 20 rows carry neither value —
+ * `boolFlag()` resolves those to `false` (gh#140), since `archived: null` and
+ * `archived: false` mean the same thing to every consumer. None is nullable.
  */
 export const bfInsightSchema = z.object({
   slug: z.string(),
@@ -58,16 +71,19 @@ export const bfInsightSchema = z.object({
   program: z.string().nullable(),
   authors: z.array(z.string()),
   projects: z.array(z.string()),
-  archived: z.boolean().nullable(),
-  evergreen: z.boolean().nullable(),
+  archived: z.boolean(),
+  evergreen: z.boolean(),
   featured: z.boolean(),
   retired_news: z.boolean()
 })
 
 /**
  * One project. `featured` / `nav` / `grid_eligible` / `grid_order` are derived
- * by the normaliser from the wireframe composable's own predicates and are
- * never null. `pending` is present on only two documents, hence `.optional()`.
+ * by the normaliser from the wireframe composable's own predicates. `archived`
+ * / `exclude_from_grid` / `external_only` come from the source, where most rows
+ * simply omit them; `boolFlag()` resolves those to `false` (gh#140) so that
+ * `.where('external_only', '=', true)` finds the one product row that has it.
+ * `pending` is present on only two documents, hence `.optional()`.
  */
 export const bfProjectSchema = z.object({
   slug: z.string(),
@@ -79,9 +95,9 @@ export const bfProjectSchema = z.object({
   external_url: z.string().nullable(),
   image: z.string().nullable(),
   parent_project: z.string().nullable(),
-  archived: z.boolean().nullable(),
-  exclude_from_grid: z.boolean().nullable(),
-  external_only: z.boolean().nullable(),
+  archived: z.boolean(),
+  exclude_from_grid: z.boolean(),
+  external_only: z.boolean(),
   featured: z.boolean(),
   nav: z.boolean(),
   grid_eligible: z.boolean(),
@@ -159,8 +175,8 @@ export const bfPageSchema = z.object({
   format: z.string().nullable(),
   kind: z.string().nullable(),
   program: z.string().nullable(),
-  archived: z.boolean().nullable(),
-  evergreen: z.boolean().nullable(),
+  archived: z.boolean(),
+  evergreen: z.boolean(),
   copy_source: z.string().nullable(),
   legacy: bfPageLegacySchema.nullable()
 })

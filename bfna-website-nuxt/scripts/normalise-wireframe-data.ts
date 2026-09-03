@@ -33,8 +33,14 @@
  * the script twice produces byte-identical files.
  *
  * Usage: `npm run data:normalise`
+ *        `npx tsx scripts/normalise-wireframe-data.ts --check`  — assert only, writes nothing
+ *
+ * NULL-BOOLEAN ASSERTION (gh#140): every boolean flag listed in `BOOLEAN_FIELDS` must be a
+ * real `true`/`false` in every emitted document. `--check` runs that assertion against the
+ * files already on disk without regenerating them, and a normal writing run ends with the
+ * same assertion, so `content/bf/**` and the schemas cannot drift apart unnoticed.
  */
-import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import { mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -86,9 +92,26 @@ const plainOrNull = (s: unknown): string | null => {
 
 const strOrNull = (v: unknown): string | null => (typeof v === 'string' && v !== '' ? v : null)
 
-/** Keeps `null` for an absent flag; coerces any other defined value rather than dropping it. */
-const boolOrNull = (v: unknown): boolean | null =>
-  (v === null || v === undefined ? null : Boolean(v))
+/**
+ * Every boolean flag this normaliser emits goes through here, and it NEVER returns
+ * `null` (gh#140, promoted residual #139).
+ *
+ * The predecessor was `boolFlag()`, which preserved the `null` of an absent source
+ * flag. That looked faithful and was in fact a trap: `@nuxt/content` stores a nullable
+ * boolean column in a shape its own `.where(field, '=', true)` predicate does not match,
+ * so `queryCollection('bfProjects').where('external_only', '=', true).all()` returned
+ * ZERO rows while `transponder-magazine.json` plainly carried `"external_only": true` —
+ * an empty result set with no error. Non-nullable flags (`featured`, `nav`, `board`,
+ * `retired_news`, `grid_eligible`) never had the problem.
+ *
+ * Collapsing the state loses nothing: `archived: null` and `archived: false` mean the
+ * same thing to every consumer, and every consumer to date already tested truthiness
+ * (`!i.archived`, `p.external_only`) rather than `=== null`. `isGridEligible()` reads
+ * the RAW snapshot row, where `null` and `false` are equally falsy, so `grid_eligible`,
+ * `nav` and the derived `menus.json` are provably unchanged by this.
+ */
+const boolFlag = (v: unknown): boolean =>
+  (v === null || v === undefined ? false : Boolean(v))
 
 const strArray = (v: unknown): string[] =>
   Array.isArray(v) ? v.filter((x): x is string => typeof x === 'string') : []
@@ -171,8 +194,8 @@ interface InsightDoc {
   program: string | null
   authors: string[]
   projects: string[]
-  archived: boolean | null
-  evergreen: boolean | null
+  archived: boolean
+  evergreen: boolean
   featured: boolean
   retired_news: boolean
 }
@@ -198,8 +221,8 @@ const toInsightDoc = (raw: RawInsight, flags: { featured: boolean, retired_news:
   program: strOrNull(raw.program),
   authors: strArray(raw.authors),
   projects: strArray(raw.projects),
-  archived: boolOrNull(raw.archived),
-  evergreen: boolOrNull(raw.evergreen),
+  archived: boolFlag(raw.archived),
+  evergreen: boolFlag(raw.evergreen),
   featured: flags.featured,
   retired_news: flags.retired_news
 })
@@ -276,9 +299,9 @@ interface ProjectDoc {
   external_url: string | null
   image: string | null
   parent_project: string | null
-  archived: boolean | null
-  exclude_from_grid: boolean | null
-  external_only: boolean | null
+  archived: boolean
+  exclude_from_grid: boolean
+  external_only: boolean
   featured: boolean
   nav: boolean
   grid_eligible: boolean
@@ -351,9 +374,9 @@ const normaliseProjects = (): number => {
       external_url: strOrNull(raw.external_url),
       image: strOrNull(raw.image),
       parent_project: strOrNull(raw.parent_project),
-      archived: boolOrNull(raw.archived),
-      exclude_from_grid: boolOrNull(raw.exclude_from_grid),
-      external_only: boolOrNull(raw.external_only),
+      archived: boolFlag(raw.archived),
+      exclude_from_grid: boolFlag(raw.exclude_from_grid),
+      external_only: boolFlag(raw.external_only),
       featured: FEATURED_SLUGS.includes(raw.slug),
       nav: NAV_SLUGS.includes(raw.slug),
       grid_eligible: isGridEligible(raw),
@@ -547,8 +570,8 @@ interface PageDoc {
   format: string | null
   kind: string | null
   program: string | null
-  archived: boolean | null
-  evergreen: boolean | null
+  archived: boolean
+  evergreen: boolean
   copy_source: string | null
   legacy: RawPageLegacy | null
 }
@@ -582,8 +605,8 @@ const normalisePages = (): number => {
       format: strOrNull(raw.format),
       kind: strOrNull(raw.kind),
       program: strOrNull(raw.program),
-      archived: boolOrNull(raw.archived),
-      evergreen: boolOrNull(raw.evergreen),
+      archived: boolFlag(raw.archived),
+      evergreen: boolFlag(raw.evergreen),
       copy_source: strOrNull(raw.copy_source),
       legacy: raw.legacy ?? null
     }
@@ -745,9 +768,87 @@ const normaliseMenus = (): number => {
   return menus.length
 }
 
+// ---- boolean-flag assertion (gh#140) ---------------------------------------
+
+/**
+ * Every boolean field the `bf*` zod schemas declare, per collection.
+ *
+ * This is the machine-readable half of the gh#140 contract: `content.config.ts` declares
+ * each of these `z.boolean()` (never `.nullable()`, never `.optional()`), so a `null` or a
+ * missing key here is a build-breaking schema violation — but only *after* someone runs
+ * `nuxt generate`, and only with a zod error that does not say "this is the #139 trap
+ * again". The assertion below says it in one line, and runs in a second rather than a
+ * three-minute prerender.
+ *
+ * Keep in sync with `content.config.ts` when a flag is added to a collection.
+ */
+const BOOLEAN_FIELDS: Record<string, string[]> = {
+  insights: ['archived', 'evergreen', 'featured', 'retired_news'],
+  projects: ['archived', 'exclude_from_grid', 'external_only', 'featured', 'nav', 'grid_eligible'],
+  programs: [],
+  people: ['board'],
+  pages: ['archived', 'evergreen'],
+  announcements: []
+}
+
+/**
+ * Reads the emitted `content/bf/**` documents and reports every boolean flag that is not a
+ * real `true`/`false`. Returns the human-readable violations; an empty array is a pass.
+ *
+ * Missing keys count as violations alongside explicit `null`s: an omitted flag reaches
+ * `@nuxt/content` as `undefined`, which stores exactly like the `null` that broke #139.
+ */
+const findNullBooleans = (): string[] => {
+  const problems: string[] = []
+  for (const [collection, fields] of Object.entries(BOOLEAN_FIELDS)) {
+    if (fields.length === 0) continue
+    const dir = join(OUT_DIR, collection)
+    let files: string[]
+    try {
+      files = readdirSync(dir).filter(f => f.endsWith('.json')).sort()
+    } catch {
+      problems.push(`${collection}: directory is missing — run the normaliser`)
+      continue
+    }
+    if (files.length === 0) problems.push(`${collection}: no documents on disk`)
+    for (const file of files) {
+      const doc = JSON.parse(readFileSync(join(dir, file), 'utf8')) as Record<string, unknown>
+      for (const field of fields) {
+        const value = doc[field]
+        if (typeof value === 'boolean') continue
+        problems.push(
+          `${collection}/${file}: ${field} is ${value === undefined ? 'missing' : JSON.stringify(value)}, expected a boolean`
+        )
+      }
+    }
+  }
+  return problems
+}
+
+/** Prints the verdict. Returns `true` on a pass. */
+const reportBooleanFlags = (): boolean => {
+  const problems = findNullBooleans()
+  const checked = Object.values(BOOLEAN_FIELDS).flat().length
+  if (problems.length === 0) {
+    console.log(`boolean-flag check: OK — ${checked} flag columns, no null/undefined values`)
+    return true
+  }
+  console.error(`boolean-flag check: ${problems.length} violation(s) — a nullable boolean silently breaks queryCollection().where() (gh#140 / #139)`)
+  for (const p of problems.slice(0, 20)) console.error(`  ${p}`)
+  if (problems.length > 20) console.error(`  … and ${problems.length - 20} more`)
+  return false
+}
+
 // ---- run -------------------------------------------------------------------
 
 const main = (): void => {
+  // `--check` asserts against what is already on disk and writes nothing, so CI and the
+  // issue acceptance can run it without a snapshot round trip.
+  if (process.argv.slice(2).includes('--check')) {
+    if (!reportBooleanFlags()) process.exitCode = 1
+    return
+  }
+
   mkdirSync(OUT_DIR, { recursive: true })
   const counts = {
     insights: normaliseInsights(),
@@ -768,6 +869,10 @@ const main = (): void => {
     console.error(`normalise-wireframe-data: produced zero documents for ${[...empty, ...(menus ? [] : ['menus'])].join(', ')}`)
     process.exitCode = 1
   }
+
+  // Same assertion `--check` runs, on the files just written — the writing path cannot
+  // regress while the check path stays green.
+  if (!reportBooleanFlags()) process.exitCode = 1
 }
 
 main()
