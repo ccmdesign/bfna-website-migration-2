@@ -8,6 +8,8 @@
 
 /* Defaults Layer */
 @import "base/tables.css";
+/* The stack's one focus indicator (gh#146). Read its header before editing. */
+@import "base/focus.css";
 
 /* Tokens Layer */
 @import 'tokens/fonts.css';

@@ -22,6 +22,13 @@
  * all narrower than the unset control. A `.center[data-measure="narrow"]`
  * row is included as the non-regression case: the universal rule must not
  * take over `.center`'s own `max-inline-size`.
+ *
+ * Extended again for gh#146 with a bare `<a>` and the harness's keyboard
+ * handshake: the CUBE stack now declares one global `:focus-visible` rule in
+ * `@layer defaults`, and this is where an anchor belonging to no `bf-*`
+ * component is Tabbed to and read back. Because those rows need a **trusted**
+ * Tab, the whole probe's verdict is now published from `finalise()` rather
+ * than straight out of `onMounted` — see the block comment above `armed`.
  */
 defineOptions({ name: 'BfProbe03CompositionGapApi' })
 
@@ -89,7 +96,118 @@ const checks = ref<Check[]>([])
 
 const px = (n: number) => (Number.isFinite(n) ? `${Math.round(n * 100) / 100}px` : 'n/a')
 
-onMounted(() => {
+/* ------------------------------------------------------------------ *
+ * gh#146 — the stack's global focus ring.
+ *
+ * `base/focus.css` states one `:focus-visible` rule in `@layer defaults`, so
+ * that a bare `<a>` — one belonging to no `bf-*` component — has a stated
+ * focus appearance instead of falling back to the UA default. This probe is
+ * where that is asserted, because a bare anchor under the `bf-probe` layout
+ * (the layout is the sole stylesheet injector: `/css/styles.css` and nothing
+ * else) is exactly the "no component involved" case the rule exists for.
+ *
+ * ## Why a trusted Tab and not `.focus()`
+ *
+ * `:focus-visible` is a heuristic about the *last input modality*. A
+ * programmatic `.focus()` matches it in a document that has seen no pointer
+ * interaction and does not match it in one that has, so a computed-style read
+ * after `.focus()` passes headless and fails in a browser pane on identical,
+ * correct code — the trap probe 28 documents at :521 and declined to walk into.
+ *
+ * The sound alternative is the harness's keyboard handshake (gh#28,
+ * `docs/decisions/probe-harness.md` Decision 4): the root publishes
+ * `data-probe-keys="Tab"` once this component has mounted and its listeners
+ * are attached, and `scripts/check-probes.ts` dispatches a **trusted** Tab.
+ * The anchor below is the first tabbable element in the document — this page
+ * has no others — so one Tab from a fresh document lands on it.
+ *
+ * The cost is that probe 03's whole verdict now waits on a keypress. That is
+ * why `FALLBACK_MS` exists: a human who opens this page and never presses Tab
+ * gets a red row saying so, rather than an eternal `PENDING`.
+ * ------------------------------------------------------------------ */
+
+/**
+ * Bound to `data-probe-keys` on the root, so the attribute appears only after
+ * `onMounted` — which is what makes it a handshake rather than a race.
+ */
+const armed = ref(false)
+
+/** How long to wait for a Tab before finalising without one. */
+const FALLBACK_MS = 3000
+
+/** What the keyboard actually did, filled in by the listeners in `onMounted`. */
+const seen = reactive({
+  tabTrusted: false,
+  firstFocused: '',
+  focusVisible: false,
+  checkVisibility: false,
+  outlineStyle: '',
+  outlineWidth: Number.NaN,
+  outlineColor: '',
+  boxShadow: ''
+})
+
+/** A short, stable description of an element, for the "what got focused" row. */
+const describe = (el: Element | null): string => {
+  if (!el || el === document.body) return 'body'
+  const id = el.id ? `#${el.id}` : ''
+  const cls = el.classList.length > 0 ? `.${el.classList[0]}` : ''
+  return `${el.tagName.toLowerCase()}${id}${cls}`
+}
+
+/**
+ * Walk every reachable stylesheet — `@import`ed ones included, since
+ * `/css/styles.css` is nothing but a list of imports — for a `:focus-visible`
+ * style rule whose ancestry includes a `@layer defaults` block. Cross-origin
+ * sheets throw on `cssRules`; they are skipped, not failed. (The helper probes
+ * 14–19 use, with the layer name and the predicate parameterised.)
+ */
+const layeredRule = (layerName: string, match: (selector: string) => boolean): CSSStyleRule | null => {
+  const LAYER_BLOCK = globalThis.CSSLayerBlockRule
+  if (!LAYER_BLOCK) return null
+
+  const walk = (rules: CSSRuleList, inside: boolean): CSSStyleRule | null => {
+    for (const rule of Array.from(rules)) {
+      const nowInside =
+        inside || (rule instanceof LAYER_BLOCK && (rule as CSSLayerBlockRule).name === layerName)
+
+      if (nowInside && rule instanceof CSSStyleRule && match(rule.selectorText)) return rule
+
+      if (rule instanceof CSSImportRule) {
+        try {
+          const imported = rule.styleSheet?.cssRules
+          const hit = imported ? walk(imported, nowInside) : null
+          if (hit) return hit
+        } catch {
+          // Cross-origin import target — unreadable, not a failure.
+        }
+        continue
+      }
+
+      const nested = (rule as CSSGroupingRule).cssRules
+      const hit = nested ? walk(nested, nowInside) : null
+      if (hit) return hit
+    }
+    return null
+  }
+
+  for (const sheet of Array.from(document.styleSheets)) {
+    try {
+      const hit = walk(sheet.cssRules, false)
+      if (hit) return hit
+    } catch {
+      // Cross-origin sheet (the font link) — skipped, not failed.
+    }
+  }
+  return null
+}
+
+let finalised = false
+
+const finalise = () => {
+  if (finalised) return
+  finalised = true
+
   const results: Check[] = []
   const el = (testid: string) => document.querySelector<HTMLElement>(`[data-testid="${testid}"]`)
 
@@ -216,7 +334,153 @@ onMounted(() => {
     actual: capOf('measure-center-default')
   })
 
+  /* -- gh#146: the stack's global focus ring on a bare <a> -- */
+
+  /*
+   * The declared rule, read out of the live CSSOM. This row is what pins the
+   * rule to the right **layer**: `defaults` is under `components` in the order
+   * `styles.css` declares, which is what lets every `bf-*` atom's own ring win
+   * over it without extra specificity. A rule that drifted into `components`
+   * or `overrides` would silently start outranking the atoms it is meant to
+   * sit beneath, and every computed-style row below would still be green.
+   */
+  const globalFocusRule = layeredRule('defaults', s => s.trim() === ':focus-visible')
+
+  results.push({
+    label: 'gh#146 — a bare :focus-visible rule exists in @layer defaults',
+    expected: 'true',
+    actual: String(globalFocusRule !== null)
+  })
+  results.push({
+    label: '  …and it declares BOTH an outline and the --outline-focus halo',
+    expected: 'outline+halo',
+    actual: (() => {
+      const r = globalFocusRule
+      if (!r) return 'no rule'
+      const hasOutline = r.style.outline !== '' || r.style.outlineWidth !== ''
+      const hasHalo = r.style.boxShadow !== ''
+      return `${hasOutline ? 'outline' : '-'}+${hasHalo ? 'halo' : '-'}`
+    })()
+  })
+  results.push({
+    /*
+     * `--color-text`, not `currentcolor` — the gh#24-P2-1 finding, restated at
+     * the foundation. `outline-offset` draws the ring outside the element, on
+     * the page ground, so a ring in the element's own colour can paint
+     * light-on-light (WCAG 1.4.11).
+     */
+    label: '  …in --color-text, never currentcolor (gh#24-P2-1)',
+    expected: 'true',
+    actual: (() => {
+      const r = globalFocusRule
+      if (!r) return 'no rule'
+      const declared = `${r.style.outline} ${r.style.outlineColor}`
+      return String(declared.includes('--color-text') && !/currentcolor/i.test(declared))
+    })()
+  })
+
+  results.push({
+    label: 'a real (trusted) Tab was delivered to the page',
+    expected: 'true',
+    actual: String(seen.tabTrusted)
+  })
+  results.push({
+    label: 'that Tab focused the bare <a> — no bf-* component involved',
+    expected: 'a#focus-ring-probe',
+    actual: seen.firstFocused || 'nothing was focused'
+  })
+  results.push({
+    /*
+     * The heuristic itself. Asserted separately from the paint, so a failure
+     * says which half broke: a bare anchor that does not match `:focus-visible`
+     * after a keyboard Tab means the modality never registered, not that the
+     * rule is missing.
+     */
+    label: '  …and the anchor matches :focus-visible after a keyboard Tab',
+    expected: 'true',
+    actual: String(seen.focusVisible)
+  })
+  results.push({
+    /*
+     * `checkVisibility()`, never a bounding rect (D-31.6): Chrome hides some
+     * content with `content-visibility`, which a rect cannot see.
+     */
+    label: '  …and the focused anchor is visible (checkVisibility, not a rect)',
+    expected: 'true',
+    actual: String(seen.checkVisibility)
+  })
+  results.push({
+    /*
+     * The row this issue exists for. Both halves are required: an
+     * `outline-style` of `none` is no ring however wide it claims to be, and a
+     * zero width is no ring however solid. Read from the *computed* style of a
+     * genuinely keyboard-focused element, so it measures what the cascade
+     * actually resolved on the page rather than what a stylesheet declares.
+     */
+    label: 'a bare <a> paints a real focus ring: outline-style ≠ none AND width > 0',
+    expected: 'solid|>0',
+    actual: (() => {
+      if (seen.outlineStyle === '') return 'never focused'
+      const w = seen.outlineWidth
+      return `${seen.outlineStyle}|${Number.isFinite(w) && w > 0 ? '>0' : px(w)}`
+    })()
+  })
+  results.push({
+    label: '  …and the --outline-focus halo resolves too (forced-colors keeps the outline)',
+    expected: 'true',
+    actual: (() => {
+      if (seen.outlineStyle === '') return 'never focused'
+      return String(seen.boxShadow !== '' && seen.boxShadow !== 'none')
+    })()
+  })
+
   checks.value = results
+}
+
+onMounted(() => {
+  /*
+   * `focusin` rather than `focus`: it bubbles, so one listener sees whatever
+   * the browser's sequential navigation reaches — including the case worth
+   * catching, where it reaches something other than the anchor.
+   */
+  document.addEventListener('focusin', event => {
+    const target = event.target as HTMLElement | null
+    if (seen.firstFocused === '') seen.firstFocused = describe(target)
+
+    if (!target || target.id !== 'focus-ring-probe') return
+
+    const cs = getComputedStyle(target)
+    seen.focusVisible = target.matches(':focus-visible')
+    seen.checkVisibility = target.checkVisibility()
+    seen.outlineStyle = cs.outlineStyle
+    seen.outlineWidth = Number.parseFloat(cs.outlineWidth)
+    seen.outlineColor = cs.outlineColor
+    seen.boxShadow = cs.boxShadow
+  })
+
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Tab') seen.tabTrusted ||= event.isTrusted
+  })
+
+  document.addEventListener('keyup', event => {
+    if (event.key !== 'Tab') return
+    /* A beat for focus to settle before anything is read back. */
+    setTimeout(finalise, 60)
+  })
+
+  /*
+   * Only now — with every listener attached — ask for the key. The harness
+   * polls for this attribute, so its appearance is the handshake; publishing
+   * it in the template unconditionally would race the listeners above.
+   */
+  armed.value = true
+
+  /*
+   * And a floor under the wait, so a human reading this page without touching
+   * the keyboard sees a red row rather than an eternal PENDING. The harness
+   * dispatches its Tab within a poll interval or two, well inside this.
+   */
+  setTimeout(finalise, FALLBACK_MS)
 })
 
 const passed = computed(() =>
@@ -251,8 +515,35 @@ const verdict = computed(() =>
     class="probe container"
     data-probe="03"
     :data-probe-verdict="state.toUpperCase()"
+    :data-probe-keys="armed ? 'Tab' : undefined"
   >
     <h1>Probe 03 — composition gap API</h1>
+
+    <!--
+      gh#146. The first — and only — tabbable element on the page, so one
+      trusted Tab from a fresh document lands here. Deliberately bare: no
+      `bf-*` component, no class that could carry an outline of its own (the
+      scoped `.probe__item` rule below is unlayered author CSS and would
+      outrank the whole cascade), nothing but an `<a href>`. If this shows a
+      ring, the stack's own `@layer defaults` rule is what painted it.
+    -->
+    <section class="probe__section">
+      <h2>gh#146 — the stack's focus ring on a bare <code>&lt;a&gt;</code></h2>
+      <p class="probe__note">
+        Press <kbd>Tab</kbd> from a fresh load. The anchor below belongs to no
+        component and carries no styling of its own; the ring it shows comes
+        from the one <code>:focus-visible</code> rule in
+        <code>@layer defaults</code>.
+      </p>
+      <p class="probe__case">
+        <a
+          id="focus-ring-probe"
+          href="#focus-ring-probe"
+          data-testid="focus-ring-probe"
+        >a bare anchor</a>
+      </p>
+    </section>
+
     <p class="probe__lede">
       Each primitive is rendered at <code>data-gap="xs"</code>,
       <code>data-gap="l"</code> and <code>data-gap="3xl"</code>. The three gaps
