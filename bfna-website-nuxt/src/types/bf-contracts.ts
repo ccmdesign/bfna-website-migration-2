@@ -91,6 +91,47 @@ export interface ButtonProps {
   disabled?: boolean
 }
 
+/**
+ * Props of `bfChip`.
+ *
+ * Like `ButtonProps`, the element is resolved from the props rather than
+ * chosen by the caller — but here the priority is `toggle` first, because
+ * only a real `<button>` can carry the toggle contract. `NuxtLink` navigates
+ * when activated and a `<span>` cannot take focus at all, so neither can be
+ * an `aria-pressed` control. `toggle` therefore wins outright; passing it
+ * alongside `to`/`href` is a caller mistake, and those props are ignored.
+ *
+ * With no `toggle`, `to` renders `NuxtLink`, `href` renders `<a>`, and
+ * neither renders a `<span>` — the same three-way branch the wireframe chip
+ * already demonstrates.
+ *
+ * `active` and `modelValue` are the same visual state reached two ways.
+ * `active` is a **presentational** flag for the three non-interactive modes:
+ * the chip looks selected and emits nothing. `modelValue` is the toggle
+ * mode's `v-model` half: it drives both `aria-pressed` and the same selected
+ * styling, and activation emits `update:modelValue` with the negated value.
+ * In toggle mode `active` is ignored; outside it `modelValue` is.
+ *
+ * There is deliberately no `size` or `variant`. A chip is one size — its
+ * padding is `em`-relative, so a caller changes the box by changing the font
+ * size — and its only variable input is the selected state, which is why this
+ * component ships a `[data-active]` rule instead of a `cssVars` style binding.
+ */
+export interface ChipProps {
+  /** Internal route. Renders `NuxtLink`. A string path or a route-location object. */
+  to?: string | Record<string, unknown>
+  /** URL. Renders `<a href>`. Ignored when `to` is set. */
+  href?: string
+  /** Marks an `href` as leaving the site: renders the `[data-external]` hook. */
+  external?: boolean
+  /** Selected styling for the span/link/anchor modes. Visual only — no emit. */
+  active?: boolean
+  /** Renders `<button type="button" aria-pressed>`, whatever `to`/`href` say. */
+  toggle?: boolean
+  /** The `v-model` half of toggle mode. Drives `aria-pressed` and the selected styling. */
+  modelValue?: boolean
+}
+
 /** One breadcrumb node. `to` omitted marks the current (non-linked) page. */
 export interface Crumb {
   label: string
