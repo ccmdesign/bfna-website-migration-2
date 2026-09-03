@@ -81,4 +81,33 @@ distinct gaps each (manual/visual check, per the issues.md `verify` column).
 
 ## Decisions
 
-_Runner appends here._
+**D-03.1 — `data-gap` is canonical, `data-space` is the alias.** Both selector
+blocks are specificity (0,2,0), so an element carrying *both* attributes is
+resolved by source order. To make that uniform across all four primitives the
+`data-gap` block is declared **last** in every file: appended after the
+`[data-space]` block in `stack.css`, `cluster.css` and `switcher.css`, and in
+`grid.css` the new `[data-space]` block is inserted **before** the pre-existing
+`[data-gap]` block rather than appended. `data-gap` therefore wins everywhere.
+**Consequence for issue 04:** `grid.css` gains its `data-min-width` work below
+these blocks — do not move the `[data-gap]` block above the `[data-space]` one,
+or precedence silently inverts. The probe's `-both` rows assert this.
+
+**D-03.2 — `switcher.css` rule order.** The `[data-gap]` block sits directly
+after the `[data-space]` block and *before* the unrelated `[data-limit]` block.
+`data-limit` writes `--_switcher-limit`, a different variable, so this keeps
+`data-gap` last among the `--_switcher-space` writers while keeping the two
+spacing blocks adjacent, as in the other three files.
+
+**D-03.3 — probe standalone rendering.** `src/pages/bf-probe/03-composition-gap-api.vue`
+uses `definePageMeta({ layout: false })` and pulls `/css/styles.css` via
+`useHead`, mirroring `layouts/wireframe.vue:50`. The composition sheet lives
+under `src/public/css/` and is served, not bundled, so no layout is needed.
+Because `layout: false` bypasses the only layout that sets them, the probe sets
+`htmlAttrs.lang` (WCAG 3.1.1) and `robots: noindex` itself. Probe styling uses
+`currentColor` outlines only — no colour literal, no new token (DoD-6).
+
+**D-03.4 — wireframe rendering shift is expected.** ~50 previously-inert
+`data-gap` writes on `.stack`/`.cluster`/`.switcher` in `wf-*` files start
+applying the moment this lands. No `wf-*` **source** file is touched; the
+cumulative DoD-4 diff against the pre-epic SHA `f757a64` is empty. DoD-4
+explicitly permits the rendered-output change.
