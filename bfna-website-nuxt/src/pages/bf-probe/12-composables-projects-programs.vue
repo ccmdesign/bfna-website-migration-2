@@ -22,7 +22,8 @@
  *  3. The top-level / children split matches `topProjects` / `projectsAll`.
  *  4. The curated `navProjects` / `featuredProjects` orders survive the move
  *     from array-lookup to stored-flag + ordering key.
- *  5. `useBfPrograms` returns all 3 programs with the normaliser's `tagline`.
+ *  5. `useBfPrograms` returns all 3 programs with the normaliser's `tagline`,
+ *     in the snapshot's curated order via the stored `order` ordinal (gh#180).
  *
  * (The vitest harness on `dev` is broken and pre-existing — residual #86 — so
  * acceptance is this page, rendered by `npx nuxt generate` against the real
@@ -233,6 +234,26 @@ const checks: Check[] = [
     label: 'programs() slugs',
     expected: 'democracy,future-leadership,transatlantic-relations-global-challenges',
     actual: programs().map(p => p.slug).sort().join(',')
+  },
+  // gh#180 — the row above sorts before comparing, so it proves membership and
+  // nothing about sequence. The three programs are a **curated** list: the
+  // wireframe renders Democracy → Transatlantic Relations & Global Challenges →
+  // Future Leadership because `useWfContent` reads `programs.json`'s `items`
+  // array directly. Per-file documents lose that (`queryCollection` returns
+  // file-stem order), which is why the home Programs band shipped Future
+  // Leadership second at review checkpoint 2. The expected sequence below is the
+  // snapshot's own array order, read offline from
+  // `src/assets/wireframe-data/programs.json`; it holds only while the stored
+  // `order` ordinal carries it — the programs' `grid_order` equivalent (gh#89).
+  {
+    label: 'programs() — curated snapshot order, not alphabetical (gh#180)',
+    expected: 'democracy,transatlantic-relations-global-challenges,future-leadership',
+    actual: programs().map(p => p.slug).join(',')
+  },
+  {
+    label: '  …carried by the stored ordinal, 1-based and strictly ascending',
+    expected: '1,2,3',
+    actual: programs().map(p => p.order).join(',')
   },
   { label: "programBySlug('democracy').name", expected: 'Democracy', actual: program?.name ?? 'undefined' },
   {

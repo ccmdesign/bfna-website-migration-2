@@ -183,13 +183,22 @@ export const bfProjectSchema = z.object({
 /**
  * One program. `tagline` is required: the normaliser derives it as the first
  * sentence of `intro` for all three programs (issues 07 / 09 / 25 Decisions).
+ *
+ * `order` is the snapshot's curated array position, 1-based (gh#180). The three
+ * programs are a sequence, not a set — Democracy, Transatlantic Relations &
+ * Global Challenges, Future Leadership — and `queryCollection` returns file-stem
+ * (alphabetical) order, so without a stored ordinal the home Programs band
+ * diverged from the wireframe. Materialised in the normaliser for the same
+ * reason `grid_order` is (gh#89): ordering is derived once, at build time, never
+ * re-derived in a composable or a page.
  */
 export const bfProgramSchema = z.object({
   slug: z.string(),
   name: z.string(),
   tagline: z.string(),
   intro: z.string().nullable(),
-  image: z.string().nullable()
+  image: z.string().nullable(),
+  order: z.number()
 })
 
 /**
