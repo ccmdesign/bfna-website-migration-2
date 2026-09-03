@@ -1,7 +1,40 @@
+/*
+  `.grid` — auto-fitting grid composition.
+
+  Column count is never authored. It derives from the available inline size and
+  a per-instance minimum track width, so a `.grid` reflows on its own with no
+  media query and no hand-pinned `grid-template-columns`.
+
+  `data-min-width` — minimum track width (writes `--_grid-min-width`):
+
+    | value | track floor |
+    |-------|-------------|
+    | xs    | 160px       |
+    | s     | 200px       |
+    | m     | 240px       | (also the unset default)
+    | l     | 300px       |
+    | xl    | 400px       |
+    | 2xl   | 500px       |
+
+  The floor is wrapped in `min(<floor>, 100%)`: when the container is narrower
+  than the floor the track collapses to the container instead of overflowing
+  it, so every value degrades to a single full-width column on small screens.
+
+  `data-gap` / `data-space` — gap between tracks, on the 9-step Utopia scale
+  (writes `--_grid-gap`, default `--space-s`). `data-gap` is canonical and
+  `data-space` is its alias; both blocks are specificity (0,2,0), so the
+  `[data-gap]` block is declared LAST and wins when an element carries both
+  (D-03.1, issue 03). Do not reorder those two blocks.
+
+  The two attributes compose: the gap is subtracted from the available inline
+  size before the column count is resolved, so a larger `data-gap` can yield
+  one fewer column at the same width. Both are independent of each other and
+  may be set together.
+*/
 @layer composition {
   .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(var(--_grid-min-width, 240px), 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(var(--_grid-min-width, 240px), 100%), 1fr));
     gap: var(--_grid-gap, var(--space-s));
   }
   
@@ -32,7 +65,10 @@
   .grid[data-gap="2xl"] { --_grid-gap: var(--space-2xl); }
   .grid[data-gap="3xl"] { --_grid-gap: var(--space-3xl); }
   
-  /* Grid min-width */
+  /* Grid min-width — minimum track width; see the table at the top of this
+     file. Declared after the gap blocks and writing a different variable
+     (`--_grid-min-width`), so it does not participate in the D-03.1
+     `data-gap` / `data-space` precedence at all. */
   .grid[data-min-width="xs"] { --_grid-min-width: 160px; }
   .grid[data-min-width="s"] { --_grid-min-width: 200px; }
   .grid[data-min-width="m"] { --_grid-min-width: 240px; }
