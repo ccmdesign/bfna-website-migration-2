@@ -268,7 +268,14 @@ const innerGap = computed(() =>
     measure cap cannot quietly re-narrow it.
   */
   .bf-section--full-width {
-    width: var(--_bf-section-full-width);
+    /*
+      `inline-size`, not `width`: `margin-inline` and `max-inline-size` beside
+      it are logical, and in a vertical writing mode a physical `width` here
+      would set the *block* size while the margins went on the inline axis —
+      an incoherent rule. Identical in `horizontal-tb`, which is every page
+      this ships on today.
+    */
+    inline-size: var(--_bf-section-full-width);
     max-inline-size: var(--_bf-section-full-width);
     margin-inline: calc(50% - var(--_bf-section-full-width) / 2);
   }

@@ -99,8 +99,6 @@ interface Snapshot {
   /** The root `<section>`'s classes, sorted. */
   rootClasses: string
   dataLabel: string
-  /** Every attribute name on the root, sorted — the prop-leak row reads this. */
-  attrNames: string
   /** Does the root carry an inline style *declaration* (not just the attr)? */
   inlineStyle: boolean
   /** `<h2>`s this band contributes. */
@@ -255,9 +253,6 @@ const snapshot = (key: string): Snapshot => {
     found: root !== null,
     rootClasses: root ? Array.from(root.classList).sort().join(' ') : 'no root',
     dataLabel: root?.getAttribute('data-label') ?? '',
-    attrNames: root
-      ? Array.from(root.attributes).map(a => a.name).sort().join(',')
-      : 'no root',
     /*
      * Read as a *declaration*, not as the presence of the attribute — the
      * reasoning probe 33 records: an attribute that declares nothing is not an
