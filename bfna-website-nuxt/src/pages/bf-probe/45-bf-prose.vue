@@ -13,7 +13,7 @@
  * | `legacy` | Directus-era HTML with a rank-1 heading, `<br>`, `<strong>`, `<a>`, `&amp;`, `&nbsp;` | the legacy **strip** path, the entity decode, and the rank-1 case by construction |
  * | `empty` | `''` | the `[body copy]` fallback |
  * | `nullish` | `null` | the same fallback from the other nullish value |
- * | `long` | a real 600+ character excerpt, `measure="narrow"` | the cap, measured |
+ * | `long` | a real 476-character excerpt, `measure="narrow"` | the cap, measured |
  * | `uncapped` | the same excerpt, `measure="full"` | the reference width to measure it against |
  *
  * Every one of them is mounted inside its own `bfSection`, because the cap
