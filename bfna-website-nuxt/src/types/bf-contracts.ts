@@ -1196,3 +1196,46 @@ export interface SearchShellProps extends Pick<CardWrapperProps, 'headingLevel'>
    */
   debounceMs?: number
 }
+
+/* ---------------------------------------------------------------------------
+ * Prose organism (issue 45 / gh#54)
+ * ------------------------------------------------------------------------- */
+
+/**
+ * Props of `bfProse` — the body-string renderer.
+ *
+ * One prop, and deliberately only one. The component is a parser with a
+ * template attached: it takes a body field and renders block-level text, and
+ * every other decision a reader might expect it to expose belongs somewhere
+ * else in the stack.
+ *
+ * ## Why there is no `headingLevel`
+ *
+ * Every typed card wrapper takes one (`CardWrapperProps.headingLevel`, gh#128)
+ * because a card's heading rank depends on where the card is mounted. Prose is
+ * different in kind: the ranks it emits are **inside a document outline the
+ * body itself declares** — `##` means "a section of this body", `###` means "a
+ * subsection of that" — so shifting them from the call site would flatten a
+ * two-level outline into one level, or push a subsection to rank 4 with no
+ * rank-3 parent. The body's own structure is the contract, and the page keeps
+ * its single rank-1 heading by never letting this component emit one.
+ *
+ * ## Why there is no `measure`
+ *
+ * The line-length cap is the caller's, applied by the `bfSection` this renders
+ * inside (`measure="narrow"` at every `wf-*` call site). See the component.
+ */
+export interface ProseProps {
+  /**
+   * The body, as a plain string, in either supported shape — markdown-lite or
+   * legacy HTML. The component detects which from the content itself; there is
+   * no format prop, because no call site knows the answer any more reliably
+   * than `/<[a-z][^>]*>/i` does.
+   *
+   * Optional, and explicitly nullable: `data`-collection fields arrive as
+   * `string | null | undefined` and a body that is missing is a normal state,
+   * not a caller error. Both render the same `[body copy]` placeholder, which
+   * is the frozen wireframe's own fallback.
+   */
+  content?: string | null
+}
