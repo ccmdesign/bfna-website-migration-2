@@ -440,6 +440,72 @@ export interface AccordionProps {
   open?: boolean
 }
 
+/**
+ * Props of `bfLoadMore`.
+ *
+ * Five props and one event, and **none of them is pagination state**. The
+ * component never learns what a page is, never slices an array and never holds
+ * a cursor: the caller keeps its own `visible` ref exactly as
+ * `pages/wireframes/insights/index.vue` does today (`visible += 24`) and
+ * increments it in the `@load` handler. Everything here is a question the
+ * caller has already answered and is passing down as a rendered fact.
+ */
+export interface LoadMoreProps {
+  /**
+   * Is there anything left to load? The caller's `filtered.length > visible`,
+   * computed by the caller.
+   *
+   * `false` removes the button — the wireframe's own behaviour, where the whole
+   * `<p>` carries `v-if="filtered.length > visible"` and the control simply is
+   * not there once everything is on the page. It does **not** remove the live
+   * region when the caller is announcing counts; see `visibleCount`.
+   */
+  hasMore: boolean
+  /**
+   * A load is in flight. Renders the button `disabled`, so it cannot be
+   * double-fired.
+   *
+   * Optional and, for the insights feed, never set: that caller slices a
+   * build-time-static array synchronously, so there is no flight to be in. It
+   * exists for a caller that fetches.
+   */
+  loading?: boolean
+  /**
+   * The button's label. Defaults to `'Load more'`.
+   *
+   * The wireframe writes a richer string — `Load more (128 remaining)` — and
+   * the remainder in it is the caller's arithmetic, not this component's, so
+   * the caller composes that string and passes it whole. There is deliberately
+   * no `remaining` prop and no template to interpolate: two ways to say the
+   * same thing is one way too many.
+   */
+  label?: string
+  /**
+   * How many items are on the page right now, and how many exist in total.
+   *
+   * Together they drive one visually-hidden `aria-live="polite"` region —
+   * *"Showing 48 of 354 items"* — which is the only reason a sighted-mouse
+   * interaction pattern like this is usable with a screen reader at all:
+   * without it, activating the button appends items far below the control and
+   * announces nothing whatsoever.
+   *
+   * **Both or neither.** With either omitted the component announces nothing,
+   * which is the spec's default and the configuration in which `hasMore=false`
+   * renders literally nothing — no element at all.
+   *
+   * With both supplied, the region **outlives the button**: at `hasMore=false`
+   * the button is removed and the region is not. A live region only announces a
+   * mutation observed inside a region that was already in the accessibility
+   * tree, so a region removed in the same tick as its final update announces
+   * nothing on the load that matters most — the last one, where the control
+   * also vanishes. The region is `position: absolute` and clipped, so it
+   * occupies no space and paints no pixel either way.
+   */
+  visibleCount?: number
+  /** @see {@link LoadMoreProps.visibleCount} — both or neither. */
+  totalCount?: number
+}
+
 /** One breadcrumb node. `to` omitted marks the current (non-linked) page. */
 export interface Crumb {
   label: string
