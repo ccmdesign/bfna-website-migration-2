@@ -32,9 +32,16 @@
  *    silently "fixed" by a later edit.
  * 4. **The legal row carries the current year**, computed at render rather than
  *    baked in at build time.
- * 5. **Menu items sit at line-height spacing** — measured margins, not a
- *    reading of the rule that sets them, because the rule this replaces was an
- *    unlayered workaround for a defect gh#116 has since fixed.
+ * 5. **`gap` is the only thing spacing the footer's lists.** Menu items sit at
+ *    line-height spacing, and — the consequence that actually bites — the menu
+ *    grid's row gap equals its column gap once the row wraps, which is measured
+ *    between two stacked columns in the 400px slot rather than read off the
+ *    declared value. A block margin on a grid item is *added* to the row gap,
+ *    so a grid whose vertical rhythm changes with its column count is exactly
+ *    what the frozen skin's own `ul.grid > li` rule exists to prevent. Measured
+ *    margins throughout, not a reading of the rule that sets them, because the
+ *    rule this replaces was an unlayered workaround for a defect gh#116 has
+ *    since fixed.
  * 6. `.bf-footer` rules live in `@layer components` in the live CSSOM, the
  *    named hooks resolve, `$attrs` reaches the `<footer>`, and the focus ring
  *    is the stack's own `:focus-visible` (#146) rather than a private copy.
@@ -332,7 +339,7 @@ const finalise = () => {
       actual: wideTracks.tracks
     },
     {
-      label: '  …and the wide count is what auto-fill implies for the measured width',
+      label: `  …and the wide count is what auto-fill implies for the measured width (${wideTracks.implied})`,
       expected: 'true',
       actual: String(wideTracks.agrees)
     },
@@ -347,7 +354,7 @@ const finalise = () => {
       actual: String(narrowTracks.tracks > 0 && narrowTracks.tracks < wideTracks.tracks)
     },
     {
-      label: '  …and the narrow count is what auto-fill implies for the measured width',
+      label: `  …and the narrow count is what auto-fill implies for the measured width (${narrowTracks.implied})`,
       expected: 'true',
       actual: String(narrowTracks.agrees)
     },
@@ -415,9 +422,46 @@ const finalise = () => {
       actual: itemMargins
     },
     {
+      label: '  …and so does every other <li> the footer owns, columns included',
+      expected: 0,
+      actual: Array.from(wide?.querySelectorAll('li') ?? []).filter(li => {
+        const cs = getComputedStyle(li)
+        return Number.parseFloat(cs.marginBlockStart) !== 0
+          || Number.parseFloat(cs.marginBlockEnd) !== 0
+      }).length
+    },
+    {
+      /*
+       * The consequence, not the rule. The grid's `<li>` columns are grid
+       * items, so a block margin on them is added to the row gap the moment the
+       * row wraps — which is every narrow width. A grid whose vertical rhythm
+       * changes with its column count is the failure the frozen skin's own
+       * `ul.grid > li { margin-block: 0 }` rule exists to prevent, and the
+       * 400px slot is the wrapped case that exposes it.
+       */
+      label: `the wrapped grid's row gap equals its column gap (${narrowTracks.tracks} track(s), so it wraps)`,
+      expected: 'true',
+      actual: (() => {
+        if (!narrowGrid) return 'missing'
+        const cs = getComputedStyle(narrowGrid)
+        const row = Number.parseFloat(cs.rowGap)
+        const col = Number.parseFloat(cs.columnGap)
+        const rows = narrowGrid.querySelectorAll(':scope > li').length / Math.max(1, narrowTracks.tracks)
+        const first = narrowGrid.children[0]?.getBoundingClientRect()
+        const second = narrowGrid.children[narrowTracks.tracks]?.getBoundingClientRect()
+        /* Measured distance between two stacked rows, not just the declared gap. */
+        const measured = first && second ? second.top - first.bottom : row
+        return String(
+          rows > 1 && Math.abs(row - col) < 0.5 && Math.abs(measured - col) < 0.5
+        )
+      })()
+    },
+    {
       label: '  …and the rule doing it is inside @layer components, not unlayered',
       expected: 'true',
-      actual: String(layeredRule(s => s.includes('.bf-footer__items')) !== null)
+      actual: String(
+        layeredRule(s => /\.bf-footer\b/.test(s) && /(^|\s)li\b/.test(s)) !== null
+      )
     },
 
     // --- 6. out of scope stayed out ---------------------------------------

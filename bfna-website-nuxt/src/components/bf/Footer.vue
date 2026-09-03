@@ -300,18 +300,33 @@ const year = new Date().getFullYear()
   }
 
   /*
-    Footer menu items sit at line-height spacing — no gap between a column
-    heading and its first item, and none between items (Claudio, Aug 5). The
-    frozen skin gets there with an *unlayered* rule, because when it was written
-    `base/typography.css` leaked `li { margin-bottom: 0.5em }` outside its
-    `@layer defaults` block and unlayered author rules outrank every layer.
-    gh#116 moved that closing brace, so the declaration is now inside
-    `defaults` and this ordinary `@layer components` rule outranks it. Copying
-    the wireframe's unlayered workaround would be reintroducing the defect it
-    worked around. The probe measures the resulting margin rather than trusting
-    this note.
+    Every list item in the footer, so `gap` is the single source of spacing here
+    and nothing else contributes to it.
+
+    Two separate consequences, which is why the selector is the broad one rather
+    than only the menu-item list:
+
+    1. **Menu items sit at line-height spacing** — no gap between a column
+       heading and its first item, and none between items (Claudio, Aug 5).
+    2. **Row gaps equal column gaps in the menu grid.** Its `<li>` columns are
+       grid items, so a block margin on them is *added* to the row gap the
+       moment the row wraps — which is every narrow width, where four columns
+       become four rows. A grid whose vertical rhythm changes with its column
+       count is the exact failure the frozen skin's own
+       `ul.grid > li { margin-block: 0 }` rule exists to prevent, and its
+       comment says so.
+
+    The frozen skin reaches both with *unlayered* rules, because when they were
+    written `base/typography.css` leaked `li { margin-bottom: 0.5em }` outside
+    its `@layer defaults` block and unlayered author rules outrank every layer.
+    gh#116 moved that closing brace, so the declaration is now inside `defaults`
+    and this ordinary `@layer components` rule outranks it. Copying the
+    wireframe's unlayered workaround would be reintroducing the defect it worked
+    around. The probe measures the resulting margins, and separately measures
+    that the grid's row gap equals its column gap when it wraps — rather than
+    trusting this note.
   */
-  .bf-footer__items > li {
+  .bf-footer li {
     margin-block: 0;
   }
 

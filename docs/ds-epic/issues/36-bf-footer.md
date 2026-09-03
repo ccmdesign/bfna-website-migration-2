@@ -127,6 +127,24 @@ around. The probe measures the resulting margins (`0/0`) and separately asserts
 the rule that produces them is inside `@layer components`, so neither half can
 regress silently.
 
+**D-36.7 — `gap` is the only thing spacing the footer's lists (found in review).**
+The first cut of this component zeroed block margins only on the menu-item list
+(`.bf-footer__items > li`), leaving the grid's own `<li>` column wrappers — and
+the social strip's items — carrying the `li { margin-bottom: 0.5em }` that
+`base/typography.css` declares in `@layer defaults`. A block margin on a **grid
+item** is added to the row gap, so the moment the four columns wrap (every
+narrow width) the footer's vertical rhythm would have been 0.5em larger than its
+horizontal one, and would have changed with the column count. That is precisely
+what the frozen skin's `ul.grid > li { margin-block: 0 }` rule exists to prevent,
+and its own comment says so — the first cut ported one of the skin's two
+margin-zeroing rules and not the other.
+
+The selector is now the broad `.bf-footer li`, so `gap` is the single source of
+spacing everywhere in the footer. Two probe rows guard it: every `<li>` the
+component renders reports zero block margins, and — the consequence rather than
+the rule — the wrapped grid's row gap is **measured between two stacked columns**
+in the 400px slot and must equal its column gap.
+
 **D-36.4 — vitest substitution (residual #86).** The vitest harness on `dev` is
 broken and pre-existing, so this issue's acceptance is
 `src/pages/bf-probe/36-bf-footer.vue` under
