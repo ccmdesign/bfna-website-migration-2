@@ -320,7 +320,17 @@ const verdict = computed(() =>
 </script>
 
 <template>
-  <main class="probe container">
+  <!--
+    Harness contract (docs/decisions/probe-harness.md): the root carries
+    `data-probe` + `data-probe-verdict`, and every check row carries
+    `data-probe-row` + `data-ok`, so `scripts/check-probes.ts` can fail the
+    build on a red probe instead of relying on someone opening the page.
+  -->
+  <main
+    class="probe container"
+    data-probe="14"
+    :data-probe-verdict="state.toUpperCase()"
+  >
     <h1>Probe 14 — <code>bfLogo</code></h1>
     <p class="probe__lede">
       The BFNA wordmark, one component for both colourways. Both variants are
@@ -393,6 +403,8 @@ const verdict = computed(() =>
           v-for="c in checks"
           :key="c.label"
           :data-state="String(c.actual) === String(c.expected) ? 'pass' : 'fail'"
+          :data-probe-row="c.label"
+          :data-ok="String(c.actual) === String(c.expected) ? 'true' : 'false'"
         >
           <td>{{ c.label }}</td>
           <td><code>{{ c.expected }}</code></td>

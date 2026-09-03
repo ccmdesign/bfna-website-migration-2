@@ -343,20 +343,35 @@ if (!existsSync(builtProbePath)) {
    * `router-link-active` of its own to the ones pointing at this page.
    */
   const instances = [...html.matchAll(/<(?:a|button)\b[^>]*class="[^"]*\bbf-button\b[^"]*"[^>]*>/g)].map(m => m[0])
-  check('24 matrix instances + 3 disabled + 2 $attrs probes render', instances.length, 29)
-  check('  …8 resolved to NuxtLink', instances.filter(a => a.includes('data-element="link"')).length, 8)
-  check('  …8 resolved to <a href>', instances.filter(a => a.includes('data-element="anchor"')).length, 8)
+
+  /*
+   * Bounds and self-consistency, not pinned totals (residual #115). The probe
+   * header invites later issues to add instances, and an absolute count breaks
+   * on a correct component the moment one does. The load-bearing claims are
+   * that every branch of the element resolver renders, that every rendered
+   * button classified into exactly one of them, and that the marker attributes
+   * land only where they belong — none of which a total was checking.
+   */
+  const modes = {
+    link: instances.filter(a => a.includes('data-element="link"')).length,
+    anchor: instances.filter(a => a.includes('data-element="anchor"')).length,
+    button: instances.filter(a => a.includes('data-element="button"')).length
+  }
+
+  check('every rendered button resolved into exactly one mode', modes.link + modes.anchor + modes.button, instances.length)
+  check('  …and all three modes render', Object.values(modes).every(n => n >= 1), true)
   check(
-    '  …the rest are <button> (8 matrix + 3 disabled + 2 $attrs)',
-    instances.filter(a => a.includes('data-element="button"')).length,
-    13
+    `  …the three modes (link/anchor/button: ${modes.link}/${modes.anchor}/${modes.button})`,
+    instances.length >= 20,
+    true
   )
+  check('  …at least one instance is variant="primary"', instances.filter(a => a.includes('data-variant="primary"')).length >= 1, true)
   check(
-    '  …14 are variant="primary" (12 matrix + the disabled one + the override probe)',
-    instances.filter(a => a.includes('data-variant="primary"')).length,
-    14
+    '  …[data-external] appears only on <a href> instances',
+    instances.filter(a => a.includes('data-external')).every(a => a.includes('data-element="anchor"')),
+    true
   )
-  check('  …8 external anchors carry the [data-external] marker', instances.filter(a => a.includes('data-external')).length, 8)
+  check('  …and at least one external anchor carries the marker', instances.filter(a => a.includes('data-external')).length >= 1, true)
 
   /*
    * The failure this component exists to prevent, asserted against the shipped
@@ -370,7 +385,7 @@ if (!existsSync(builtProbePath)) {
    */
   const disabledTags = [...html.matchAll(/<(\w+)[^>]*\sdisabled(?=[\s>=])/g)].map(m => m[1])
   check('every disabled element in the prerendered page is a <button>', [...new Set(disabledTags)], ['button'])
-  check('  …and there are exactly three of them', disabledTags.length, 3)
+  check('  …and the disabled demo renders at all', disabledTags.length >= 1, true)
   check('no anchor carries aria-disabled instead', /aria-disabled/.test(html), false)
 
   /*
@@ -379,8 +394,8 @@ if (!existsSync(builtProbePath)) {
    * a `fail` baked into the static output would be a real regression, and a
    * `pass` there would mean the three-state verdict had been broken back into
    * two. What it deliberately does **not** claim is that the runtime checks
-   * passed; nothing in this process can know that. Machine-enforcing probe
-   * verdicts across the epic is filed as a residual.
+   * passed; nothing in this process can know that — `scripts/check-probes.ts`
+   * (gh#109) is what does, by loading this page in a headless browser.
    */
   check(
     'the verdict cell prerenders in the `pending` state',
