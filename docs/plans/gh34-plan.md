@@ -92,7 +92,8 @@ under `pages/wireframes/`, `components/wireframe/`, `layouts/wireframe.vue` or
   `:nth-last-child(n + var(--_switcher-limit))`, which is invalid CSS (`var()` is not
   permitted in an `An+B`) and is dropped by the parser. Pre-existing, in a frozen-by-consumption
   composition file, and irrelevant at three children — noted, not touched, and the probe
-  derives nothing from it: it asserts the three cards sit on one flex row by measuring their
-  `offsetTop`, not by trusting the stylesheet.
+  derives nothing from it: it asserts the three cards sit on one flex row by comparing their
+  measured `getBoundingClientRect().top` values (all within a pixel of each other), not by
+  trusting the stylesheet.
 - **Vitest is not available** (broken on `dev`, residual #86). The probe plus `check-probes.ts`
   is the substitute, recorded in the spec's Decisions.
