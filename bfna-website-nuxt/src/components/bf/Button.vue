@@ -34,6 +34,11 @@
  * rather than `"false"` on internal links. The marker is formalised as a
  * documented style hook in issue 19; this component only emits it.
  *
+ * `external` applies to the `href` branch only. `<bfButton to="…" external>`
+ * emits no marker: `to` is an internal route by definition, so that pairing is
+ * a caller mistake rather than a case to render. It is ignored rather than
+ * warned about — a presentational atom has nowhere useful to warn.
+ *
  * ## Colour
  *
  * No new colour (BRIEF §5 rule 2) and no primitive — every value is an
@@ -130,6 +135,14 @@ const cssVars = computed<Record<string, string>>(() => {
     vars['--_bf-button-bg'] = 'var(--color-primary)'
     vars['--_bf-button-color'] = 'var(--color-text-inverse)'
     vars['--_bf-button-border'] = 'var(--border-width-medium) solid var(--color-primary)'
+    /*
+     * Review finding gh#24-P2-1. The focus ring is drawn outside the button,
+     * over the page ground, so it must contrast with the ground rather than
+     * with the fill. Left on `currentcolor` it would inherit this variant's
+     * light label colour — a white ring on a white page, i.e. no visible focus
+     * indicator. `--color-text` contrasts with both the page and the fill.
+     */
+    vars['--_bf-button-focus-color'] = 'var(--color-text)'
   }
 
   const step = props.size ? SIZE_STEPS[props.size] : undefined
@@ -208,6 +221,7 @@ const cssVars = computed<Record<string, string>>(() => {
     --_bf-button-color: var(--color-text);
     --_bf-button-border: var(--border-width-medium) solid var(--color-text);
     --_bf-button-padding: 0.4em 1.2em;
+    --_bf-button-focus-color: currentcolor;
 
     display: inline-block;
     padding: var(--_bf-button-padding);
@@ -230,13 +244,19 @@ const cssVars = computed<Record<string, string>>(() => {
 
   /*
     Two rings, not one. `--outline-focus` is the existing token (a `box-shadow`
-    triple) and supplies the halo; the `outline` in `currentcolor` is what
-    survives forced-colors mode, where `box-shadow` is dropped and an outline
-    is repainted in a system colour. `currentcolor` is the variant's own label
-    colour, so the ring is visible on either ground and introduces no colour.
+    triple) and supplies the halo; the `outline` is what survives forced-colors
+    mode, where `box-shadow` is dropped and an outline is repainted in a system
+    colour.
+
+    The ring colour comes from a hook rather than straight from `currentcolor`.
+    `outline-offset` draws the ring **outside** the button, on the page ground,
+    so the colour that has to contrast is the ground's — not the fill's. On the
+    filled variant `currentcolor` is the light label colour, which made the
+    ring white-on-white and left no visible focus indicator at all (WCAG
+    1.4.11; review finding gh#24-P2-1). No new colour either way.
   */
   .bf-button:focus-visible {
-    outline: var(--border-width-medium) solid currentcolor;
+    outline: var(--border-width-medium) solid var(--_bf-button-focus-color);
     outline-offset: var(--border-width-medium);
     box-shadow: var(--outline-focus);
   }

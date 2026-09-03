@@ -258,6 +258,42 @@ check('the component ships @layer components', /@layer components \{/.test(compo
 if (!existsSync(builtCssDir)) {
   skip('@layer components reaches the emitted stylesheet', 'no .output — run `npx nuxt generate`')
 } else {
+  /**
+   * Every `@layer …{ … }` block removed, brace-matched.
+   *
+   * The obvious `/@layer components\s*\{[^]*?\.bf-button/` only proves that an
+   * `@layer` opener appears *somewhere before* the selector; it never checks
+   * that the block is still open at that point, so a flattened rule sharing a
+   * chunk with a layered one would still match. Deleting the blocks and then
+   * looking for what is left is the check that cannot be fooled that way.
+   */
+  const outsideLayers = (css: string): string => {
+    let out = ''
+    let i = 0
+    while (i < css.length) {
+      const at = css.indexOf('@layer', i)
+      if (at === -1) { out += css.slice(i); break }
+      const brace = css.indexOf('{', at)
+      const semi = css.indexOf(';', at)
+      // A layer-order statement (`@layer a, b;`) opens no block.
+      if (brace === -1 || (semi !== -1 && semi < brace)) {
+        out += css.slice(i, semi === -1 ? css.length : semi + 1)
+        i = semi === -1 ? css.length : semi + 1
+        continue
+      }
+      out += css.slice(i, at)
+      let depth = 1
+      let j = brace + 1
+      while (j < css.length && depth > 0) {
+        if (css[j] === '{') depth += 1
+        else if (css[j] === '}') depth -= 1
+        j += 1
+      }
+      i = j
+    }
+    return out
+  }
+
   const cssFiles = readdirSync(builtCssDir).filter(f => f.endsWith('.css'))
   const withButton = cssFiles
     .map(f => read(join(builtCssDir, f)))
@@ -265,8 +301,13 @@ if (!existsSync(builtCssDir)) {
 
   check('the component stylesheet was emitted', withButton.length > 0, true)
   check(
-    '  …and its rules are still inside @layer components',
-    withButton.length > 0 && withButton.every(css => /@layer\s+components\s*\{[^]*?\.bf-button/.test(css)),
+    '  …and no .bf-button rule sits outside a cascade layer',
+    withButton.length > 0 && withButton.every(css => !outsideLayers(css).includes('.bf-button')),
+    true
+  )
+  check(
+    '  …with the layer named `components`',
+    withButton.length > 0 && withButton.every(css => /@layer\s+components\s*\{/.test(css)),
     true
   )
 }
@@ -332,7 +373,20 @@ if (!existsSync(builtProbePath)) {
   check('  …and there are exactly three of them', disabledTags.length, 3)
   check('no anchor carries aria-disabled instead', /aria-disabled/.test(html), false)
 
-  check('the verdict cell is present and pending before hydration', /data-testid="probe-15-verdict"[^>]*/.test(html), true)
+  /*
+   * The verdict is `pending` in the prerendered HTML by design — the 37
+   * runtime assertions run on mount. This asserts exactly that and no more:
+   * a `fail` baked into the static output would be a real regression, and a
+   * `pass` there would mean the three-state verdict had been broken back into
+   * two. What it deliberately does **not** claim is that the runtime checks
+   * passed; nothing in this process can know that. Machine-enforcing probe
+   * verdicts across the epic is filed as a residual.
+   */
+  check(
+    'the verdict cell prerenders in the `pending` state',
+    html.match(/data-testid="probe-15-verdict"[^>]*data-state="(\w+)"|data-state="(\w+)"[^>]*data-testid="probe-15-verdict"/)?.slice(1).find(Boolean),
+    'pending'
+  )
   check('the wireframe reference button prerenders for the metrics check', html.includes('probe-15-wf-button'), true)
 }
 

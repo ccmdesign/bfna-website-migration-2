@@ -118,7 +118,8 @@ onMounted(() => {
 
   /** Does this element actually take focus when asked? */
   const takesFocus = (el: HTMLElement) => {
-    el.focus()
+    // `preventScroll`: 27 focus calls in a row would otherwise walk the page.
+    el.focus({ preventScroll: true })
     const got = document.activeElement === el
     el.blur()
     return got
@@ -226,6 +227,56 @@ onMounted(() => {
   const sized = (size: string) =>
     matrix.find(el => (el.dataset.size ?? '') === size && el.dataset.variant === 'default')
 
+  /**
+   * The colour the focus ring is actually painted in, resolved in the
+   * element's own context.
+   *
+   * Reading `getComputedStyle(el).outlineColor` after `el.focus()` does not
+   * work: `:focus-visible` is a heuristic, and a programmatic focus with no
+   * preceding keyboard interaction does not satisfy it, so the computed
+   * outline stays `none`. Instead the hook's own computed value is painted
+   * onto a throwaway child — a child, so that a value of `currentcolor`
+   * resolves against the button's colour rather than the document's.
+   */
+  const focusRingColour = (el: HTMLElement) => {
+    const raw = getComputedStyle(el).getPropertyValue('--_bf-button-focus-color').trim()
+    if (!raw) return ''
+    const probeEl = document.createElement('span')
+    probeEl.style.cssText = 'position:absolute;visibility:hidden'
+    probeEl.style.color = raw
+    el.appendChild(probeEl)
+    const value = getComputedStyle(probeEl).color
+    probeEl.remove()
+    return value
+  }
+
+  /** WCAG 2.1 relative luminance of an `rgb()` / `rgba()` string. */
+  const luminance = (colour: string) => {
+    const parts = colour.match(/[\d.]+/g)?.slice(0, 3).map(Number) ?? []
+    if (parts.length < 3) return Number.NaN
+    const channel = (v: number) => {
+      const c = v / 255
+      return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4
+    }
+    return 0.2126 * channel(parts[0]!) + 0.7152 * channel(parts[1]!) + 0.0722 * channel(parts[2]!)
+  }
+
+  /** WCAG contrast ratio between two opaque colours. */
+  const contrast = (a: string, b: string) => {
+    const [x, y] = [luminance(a), luminance(b)]
+    if (Number.isNaN(x) || Number.isNaN(y)) return 0
+    return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05)
+  }
+
+  /**
+   * The ground the ring is painted on. `outline-offset` is positive, so the
+   * ring sits outside the border box, clear of the button's own fill — the
+   * page ground is what it has to contrast with (WCAG 1.4.11), which is
+   * exactly what the first cut of this component got wrong for the filled
+   * variant.
+   */
+  const pageGround = getComputedStyle(document.documentElement).backgroundColor
+
   const attrsProbe = document.querySelector<HTMLElement>('[data-testid="probe-15-attrs"]')
   const overrideProbe = document.querySelector<HTMLElement>('[data-testid="probe-15-override"]')
 
@@ -302,6 +353,34 @@ onMounted(() => {
       label: '  …and the existing --outline-focus halo',
       expected: 'true',
       actual: String(/box-shadow:\s*var\(\s*--outline-focus\s*\)/.test(focusCss))
+    },
+    /*
+     * The rule existing is not the same as the ring being visible. These two
+     * measure the colour the ring is actually painted in and check it against
+     * the ground it is painted on — the check that would have caught the
+     * white-on-white filled variant the first cut shipped.
+     */
+    {
+      label: 'default ring contrasts with the page ground (WCAG 1.4.11, ≥3:1)',
+      expected: 'true',
+      actual: String(contrast(focusRingColour(bfBase as HTMLElement), pageGround) >= 3)
+    },
+    {
+      label: 'primary ring contrasts with the page ground (≥3:1)',
+      expected: 'true',
+      actual: (() => {
+        const el = matrix.find(m => m.dataset.variant === 'primary')
+        return String(!!el && contrast(focusRingColour(el), pageGround) >= 3)
+      })()
+    },
+    {
+      label: '  …and with the filled variant’s own ground too',
+      expected: 'true',
+      actual: (() => {
+        const el = matrix.find(m => m.dataset.variant === 'primary')
+        if (!el) return 'false'
+        return String(contrast(focusRingColour(el), getComputedStyle(el).backgroundColor) >= 3)
+      })()
     },
 
     // --- 5. box metrics equal the wireframe class's -----------------------
