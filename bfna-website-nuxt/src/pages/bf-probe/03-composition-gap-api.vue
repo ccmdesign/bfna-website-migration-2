@@ -17,6 +17,10 @@ definePageMeta({ layout: false })
 
 useHead({
   title: 'bf-probe 03 — composition gap API',
+  // `layout: false` bypasses the only layout that sets these, so set them here:
+  // `lang` for WCAG 3.1.1, `noindex` because probes are dev-only scaffolding.
+  htmlAttrs: { lang: 'en' },
+  meta: [{ name: 'robots', content: 'noindex' }],
   link: [{ rel: 'stylesheet', href: '/css/styles.css' }]
 })
 
@@ -78,12 +82,33 @@ const items = ['A', 'B', 'C']
 
       <div class="probe__case">
         <p class="probe__caption">
-          <code>data-space="l"</code> (alias)
+          <code>data-space="l"</code> (alias — must equal the <code>data-gap="l"</code> row)
         </p>
         <div
           :class="p.key"
           data-space="l"
           :data-testid="`${p.key}-space-l`"
+        >
+          <div
+            v-for="i in items"
+            :key="i"
+            class="probe__item"
+          >
+            {{ i }}
+          </div>
+        </div>
+      </div>
+
+      <div class="probe__case">
+        <p class="probe__caption">
+          <code>data-gap="3xl" data-space="xs"</code> (precedence — must equal
+          the <code>data-gap="3xl"</code> row)
+        </p>
+        <div
+          :class="p.key"
+          data-gap="3xl"
+          data-space="xs"
+          :data-testid="`${p.key}-both`"
         >
           <div
             v-for="i in items"

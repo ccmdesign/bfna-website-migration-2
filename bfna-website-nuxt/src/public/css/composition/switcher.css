@@ -43,13 +43,6 @@
   .switcher[data-space="2xl"] { --_switcher-space: var(--space-2xl); }
   .switcher[data-space="3xl"] { --_switcher-space: var(--space-3xl); }
   
-  /* Switcher limit (max items before forcing stack) */
-  .switcher[data-limit="2"] { --_switcher-limit: 2; }
-  .switcher[data-limit="3"] { --_switcher-limit: 3; }
-  .switcher[data-limit="4"] { --_switcher-limit: 4; }
-  .switcher[data-limit="5"] { --_switcher-limit: 5; }
-  .switcher[data-limit="6"] { --_switcher-limit: 6; }
-  
   /* Switcher spacing — `data-gap` alias (canonical name; declared last so it
      wins over `data-space` at equal specificity if both are present) */
   .switcher[data-gap="3xs"] { --_switcher-space: var(--space-3xs); }
@@ -61,4 +54,11 @@
   .switcher[data-gap="xl"] { --_switcher-space: var(--space-xl); }
   .switcher[data-gap="2xl"] { --_switcher-space: var(--space-2xl); }
   .switcher[data-gap="3xl"] { --_switcher-space: var(--space-3xl); }
+  
+  /* Switcher limit (max items before forcing stack) */
+  .switcher[data-limit="2"] { --_switcher-limit: 2; }
+  .switcher[data-limit="3"] { --_switcher-limit: 3; }
+  .switcher[data-limit="4"] { --_switcher-limit: 4; }
+  .switcher[data-limit="5"] { --_switcher-limit: 5; }
+  .switcher[data-limit="6"] { --_switcher-limit: 6; }
 }
