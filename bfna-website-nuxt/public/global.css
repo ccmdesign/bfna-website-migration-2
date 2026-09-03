@@ -23,14 +23,6 @@
   --text-base-line-height: 1.62;
   --fonts-primary: "trade-gothic-next", "Helvetica Neue", Arial, sans-serif;
   --fonts-heading: "trade-gothic-next", "Helvetica Neue", Arial, sans-serif;
-  --colors-default: $black;
-  --colors-white: #FFFFFF;
-  --colors-orange: $orange;
-  --colors-teal: $teal;
-  --colors-yellow: $yellow;
-  --colors-red: $red;
-  --colors-alt: --colors-teal;
-  --colors-black: --colors-default;
 }
 @media screen and (min-width: 64em) {
   :root {
@@ -263,7 +255,7 @@ html, body {
   --color-gray-30: hsla(var(--gray-30-hsl), 1);
   --color-gray-70: hsla(var(--gray-70-hsl), 1);
   --color-gray-80: hsla(var(--gray-80-hsl), 1);
-  --color-black: hsla(var(--black-hsl) 1);
+  --color-black: hsla(var(--black-hsl), 1);
   --color-error: hsla(var(--red-hsl), 1);
   --color-warning: hsla(var(--yellow-hsl), 1);
   --color-success: hsla(var(--success-green-hsl), 1);
@@ -1532,7 +1524,7 @@ input:checked + .simple-filters__item {
   font-weight: 600;
   font-size: 0.75rem;
   text-transform: uppercase;
-  color: var(--colors-white);
+  color: var(--color-white);
   background-color: hsl(var(--theme-hsl), 1);
 }
 
@@ -1634,7 +1626,7 @@ input:checked + .simple-filters__item {
 
 .footer {
     background-color: var(--color-navy);
-    color: var(--colors-white);
+    color: var(--color-white);
     padding-top: 4rem;
     font-size: 1.1rem;
   }
@@ -1711,7 +1703,7 @@ input:checked + .simple-filters__item {
   
   .main-nav__logo {
     background-color: var(--color-navy);
-    color: var(--colors-white);
+    color: var(--color-white);
     max-width: 140px;
   }
   
@@ -1733,7 +1725,7 @@ input:checked + .simple-filters__item {
     height: 30px;
     width: 30px;
     padding: 0;
-    border: 1px solid var(--colors-white);
+    border: 1px solid var(--color-white);
     border-radius: 50%;
     padding: 2px;
   }
@@ -2275,7 +2267,7 @@ input:checked + .simple-filters__item {
 
 /* Visual Styles */
 .person-modal .modal__content {
-  background-color: var(--colors-white);
+  background-color: var(--color-white);
   box-shadow: 8px 8px 32px hsl(var(--black-hsl), 0.2);
   padding: var(--s2);
 }

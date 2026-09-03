@@ -32,11 +32,10 @@
   
       /* UI Feedback Colors */
       --color-success: var(--color-green);
-      --color-error: var(--color-fail);
       --color-fail: var(--color-red);
+      --color-error: var(--color-fail);
       --color-warning: var(--color-yellow);
       --color-info: var(--color-navy);
-      --color-neutral: var(--color-black);
   
       /* HSL Tokens for Alpha Variants */
       --hsl-primary: var(--hsl-blue);
