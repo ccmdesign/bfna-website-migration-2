@@ -28,9 +28,10 @@
  * The one honest caveat, stated rather than hidden: `--space-m` is a fluid
  * Utopia clamp, so a rail's padding resolves at the *harness* viewport, not at
  * the width the rail emulates. It moves the content width by a few pixels and
- * every pinned count here sits far from its boundary — three tracks need
- * ≥ ~972px of content and the 1200 rail has ~1150 — which is what the second
- * row exists to prove rather than assert on faith.
+ * every pinned count here sits far from its boundary — measured on this page,
+ * the 1200 rail gives **1140px** of content against a 30px gap, where three
+ * 300px tracks need ≥ 960px and a fourth would need ≥ 1290px — which is what
+ * the arithmetic row exists to prove rather than assert on faith.
  *
  * ## What it proves
  *
@@ -67,12 +68,17 @@
  *
  * The **page** queries ten real documents — six `bfInsights`, four
  * `bfProjects` — and hands them over as props (BRIEF §5 rule 10; the
- * components themselves fetch nothing, D8). They are chosen for spread, not
- * convenience: an insight with a null `image` and one with none of the optional
- * fields, excerpts from 0 to 1550 characters, an archived row and a live one, a
- * project with a `pending` flag and an external URL, and `cepi-2010` — no
- * `kind`, no `external_url`, no `pending` — which renders no chip cluster at
- * all.
+ * components themselves fetch nothing, D8). They are chosen for spread across
+ * the fields these cards actually render, not for convenience: excerpts from
+ * **0 to 1550 characters** (three insight rows carry none at all, as 195 of the
+ * 371 real rows do — so a card with no `<p>` sits beside one truncated at 140),
+ * archived rows next to live ones, three of the four `format` values, a project
+ * with a `pending` flag and an external URL, and `cepi-2010` — no `kind`, no
+ * `external_url`, no `pending` — which renders no chip cluster at all.
+ *
+ * Row heights therefore differ inside every grid, which is the case that
+ * matters for a card in a grid track: it is what makes the row-gap measurement
+ * below a measurement rather than a restatement of the declared value.
  *
  * The vitest harness on `dev` is broken and pre-existing (residual #86), so
  * acceptance is this page under `npx tsx scripts/check-probes.ts --only 42`,
@@ -100,9 +106,12 @@ interface Check {
 /**
  * The six insight slugs, named once so the assertions can quote them.
  *
- * `a-developing-dilemma-…` is the null-`image` row and `a-new-constellation`
- * carries no excerpt at all (195 of the 371 real rows do not) — between them
- * they cover the two fields most likely to be assumed present.
+ * `a-green-light-for-lichtenberg` is the row `extraChips` answers for.
+ * `12-days-of-christmas-in-europe`, `a-developing-dilemma-…` and
+ * `a-new-constellation` carry no excerpt at all (195 of the 371 real rows do
+ * not), so three of the six cards render no `<p>` and the grid holds rows of
+ * unequal height; those three are also the archived ones, so the `Archive` chip
+ * is present on half the grid and absent on the other half.
  */
 const INSIGHT_SLUGS = [
   '12-days-of-christmas-in-europe',
