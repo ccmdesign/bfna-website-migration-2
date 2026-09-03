@@ -99,6 +99,46 @@ defineOptions({ name: 'BfCard' })
  * card in the site to say nothing.
  */
 defineProps<CardBaseProps>()
+
+/**
+ * The `<li>` itself, so the dev-time guard below can look at what it was put
+ * inside. Never rendered as an attribute; `$attrs` is untouched by it.
+ */
+const root = ref<HTMLLIElement | null>(null)
+
+/**
+ * A card is a list item, and a list item outside a list is neither valid HTML
+ * nor announced as one of N — the whole reason this component renders an `<li>`
+ * rather than a `<div>`. `bfCard` cannot render its own parent, so the rule is
+ * the caller's half of the bargain and this is where it is checked: once, here,
+ * instead of in seven wrappers and three grids that each have to remember it.
+ *
+ * Same shape as `bfMedia`'s missing-`alt` warning (gh#26): a dev-time
+ * `console.warn`, never a silent fallback and never a thrown error, and
+ * `import.meta.dev` keeps the whole thing out of the production bundle.
+ *
+ * `role="list"` is accepted alongside `<ul>` / `<ol>`: it is how an author
+ * restores list semantics to a container that lost them, and it is a correct
+ * answer here.
+ */
+if (import.meta.dev) {
+  onMounted(() => {
+    const parent = root.value?.parentElement
+    if (!parent) return
+
+    const isList =
+      parent.tagName === 'UL'
+      || parent.tagName === 'OL'
+      || parent.getAttribute('role') === 'list'
+
+    if (!isList) {
+      console.warn(
+        '[bfCard] renders an <li> and must be a direct child of a <ul>, an <ol> '
+        + `or a role="list" container. Found <${parent.tagName.toLowerCase()}>.`
+      )
+    }
+  })
+}
 </script>
 
 <template>
@@ -116,7 +156,7 @@ defineProps<CardBaseProps>()
     `data-span`, the fallthrough is merged last and wins; both spell the same
     value, so the two can only agree.
   -->
-  <li class="bf-card" :data-span="span">
+  <li ref="root" class="bf-card" :data-span="span">
     <!--
       The card body: heading first, then whatever the caller stacks under it
       (excerpt, `<time>`, a secondary link). Unnamed, because it is the card —
@@ -185,6 +225,7 @@ defineProps<CardBaseProps>()
     --_bf-card-border-color: var(--color-base-light);
     --_bf-card-border: var(--_bf-card-border-width) solid var(--_bf-card-border-color);
     --_bf-card-focus-color: var(--color-text);
+    --_bf-card-hover-color: var(--color-text);
     --_bf-card-link-z-index: 1;
 
     /* The containing block for the heading link's stretched `::after`. */
@@ -264,8 +305,8 @@ defineProps<CardBaseProps>()
     the edge without moving the box), painted from tokens.
   */
   .bf-card:has(:is(h2, h3, h4) a):hover {
-    --_bf-card-border-color: var(--color-text);
-    box-shadow: 0 0 0 var(--_bf-card-border-width) var(--color-text);
+    --_bf-card-border-color: var(--_bf-card-hover-color);
+    box-shadow: 0 0 0 var(--_bf-card-border-width) var(--_bf-card-hover-color);
   }
 
   /*

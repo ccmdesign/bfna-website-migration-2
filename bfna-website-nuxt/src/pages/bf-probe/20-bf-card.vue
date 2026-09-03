@@ -123,7 +123,7 @@ onMounted(() => {
   const card = (key: string) =>
     document.querySelector<HTMLElement>(`.probe__cards > [data-probe-card="${key}"]`)
   const headingLink = (el: HTMLElement | null) =>
-    el?.querySelector<HTMLAnchorElement>(':scope > h3 > a') ?? null
+    el?.querySelector<HTMLAnchorElement>(':scope > :is(h2, h3, h4) > a') ?? null
 
   const px = (n: number) => `${Math.round(n)}px`
 
