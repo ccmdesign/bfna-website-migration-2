@@ -140,6 +140,49 @@ export interface ChipProps {
   modelValue?: boolean
 }
 
+/**
+ * Props of `bfMedia`.
+ *
+ * The two branches are decided by `src` alone, exactly as `wfMedia.vue`
+ * decides them: a `src` renders the real image, no `src` renders the
+ * crosshatch placeholder box. There is no `variant` prop and no way to ask
+ * for the placeholder while holding a `src` — "no image yet" is a fact about
+ * the data, not a presentation choice.
+ *
+ * `ratio` is deliberately **optional with no runtime default**. The default
+ * (`16 / 9`, the same one `wfMedia.vue` ships) lives in the component's
+ * `--_bf-media-ratio` declaration in `@layer components`, so an instance that
+ * passes no `ratio` can be re-proportioned by a consumer's own stylesheet —
+ * a class, an ancestor, `:has()`. An instance that *does* pass one gets the
+ * property inline, which a consumer overrides through `style` on the
+ * component (`$attrs` merges last and wins).
+ *
+ * That split is the reason this component exists. `wfMedia.vue` wrote
+ * `aspect-ratio` into an inline `style` string, which no consumer rule can
+ * outrank at any specificity, so the full-width Transponder card could not be
+ * given the taller ratio its slot wanted.
+ *
+ * `alt` is required whenever `src` is set (BRIEF §5 rule 9). Omitting it is a
+ * dev-time `console.warn`, not a silent `alt=""`; an explicit `alt=""` is the
+ * decorative declaration and passes silently.
+ */
+export interface MediaProps {
+  /** Image URL. Absent (or null) renders the placeholder box instead. */
+  src?: string | null
+  /**
+   * Alternative text. Required whenever `src` is set; pass `''` deliberately
+   * for a decorative image. Ignored on the placeholder branch, which is
+   * `aria-hidden` — there is no content there to describe.
+   */
+  alt?: string | null
+  /**
+   * CSS `aspect-ratio` value for the box, e.g. `'16/9'`, `'3/2'`, `'1/1'`.
+   * Omit it to inherit the component default and stay overridable from a
+   * consumer stylesheet.
+   */
+  ratio?: string
+}
+
 /** One breadcrumb node. `to` omitted marks the current (non-linked) page. */
 export interface Crumb {
   label: string
