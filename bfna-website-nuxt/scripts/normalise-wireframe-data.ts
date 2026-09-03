@@ -96,7 +96,7 @@ const strOrNull = (v: unknown): string | null => (typeof v === 'string' && v !==
  * Every boolean flag this normaliser emits goes through here, and it NEVER returns
  * `null` (gh#140, promoted residual #139).
  *
- * The predecessor was `boolFlag()`, which preserved the `null` of an absent source
+ * The predecessor was `boolOrNull()`, which preserved the `null` of an absent source
  * flag. That looked faithful and was in fact a trap: `@nuxt/content` stores a nullable
  * boolean column in a shape its own `.where(field, '=', true)` predicate does not match,
  * so `queryCollection('bfProjects').where('external_only', '=', true).all()` returned
@@ -780,7 +780,11 @@ const normaliseMenus = (): number => {
  * again". The assertion below says it in one line, and runs in a second rather than a
  * three-minute prerender.
  *
- * Keep in sync with `content.config.ts` when a flag is added to a collection.
+ * Keep in sync with `content.config.ts` when a flag is added to a collection — though
+ * `findNullBooleans()` also INFERS flags from the data (any field that is a boolean on at
+ * least one document must be a boolean on all of them), so a stale entry here degrades to
+ * a slightly later failure rather than a silent pass. The declared list still matters for
+ * the one case inference cannot see: a flag that is `null` on every row.
  */
 const BOOLEAN_FIELDS: Record<string, string[]> = {
   insights: ['archived', 'evergreen', 'featured', 'retired_news'],
@@ -800,8 +804,7 @@ const BOOLEAN_FIELDS: Record<string, string[]> = {
  */
 const findNullBooleans = (): string[] => {
   const problems: string[] = []
-  for (const [collection, fields] of Object.entries(BOOLEAN_FIELDS)) {
-    if (fields.length === 0) continue
+  for (const collection of Object.keys(BOOLEAN_FIELDS)) {
     const dir = join(OUT_DIR, collection)
     let files: string[]
     try {
@@ -810,10 +813,31 @@ const findNullBooleans = (): string[] => {
       problems.push(`${collection}: directory is missing — run the normaliser`)
       continue
     }
-    if (files.length === 0) problems.push(`${collection}: no documents on disk`)
-    for (const file of files) {
-      const doc = JSON.parse(readFileSync(join(dir, file), 'utf8')) as Record<string, unknown>
-      for (const field of fields) {
+    if (files.length === 0) {
+      problems.push(`${collection}: no documents on disk`)
+      continue
+    }
+
+    const docs = files.map(file => ({
+      file,
+      doc: JSON.parse(readFileSync(join(dir, file), 'utf8')) as Record<string, unknown>
+    }))
+
+    // The declared flags, PLUS every field that is a boolean on at least one document.
+    // The second half is what keeps a `BOOLEAN_FIELDS` that has fallen behind
+    // `content.config.ts` from silently under-asserting: a flag added to a collection is
+    // caught by its own data the moment one document carries a real `true`/`false` and
+    // another does not. The declared list is still needed for the case the inference
+    // cannot see — a flag that is null on 100% of rows, which looks like no flag at all.
+    const inferred = new Set(BOOLEAN_FIELDS[collection])
+    for (const { doc } of docs) {
+      for (const [key, value] of Object.entries(doc)) {
+        if (typeof value === 'boolean') inferred.add(key)
+      }
+    }
+
+    for (const { file, doc } of docs) {
+      for (const field of [...inferred].sort()) {
         const value = doc[field]
         if (typeof value === 'boolean') continue
         problems.push(
@@ -828,9 +852,9 @@ const findNullBooleans = (): string[] => {
 /** Prints the verdict. Returns `true` on a pass. */
 const reportBooleanFlags = (): boolean => {
   const problems = findNullBooleans()
-  const checked = Object.values(BOOLEAN_FIELDS).flat().length
   if (problems.length === 0) {
-    console.log(`boolean-flag check: OK — ${checked} flag columns, no null/undefined values`)
+    const declared = Object.values(BOOLEAN_FIELDS).flat().length
+    console.log(`boolean-flag check: OK — ${declared} declared flag columns (plus any inferred), no null/undefined values`)
     return true
   }
   console.error(`boolean-flag check: ${problems.length} violation(s) — a nullable boolean silently breaks queryCollection().where() (gh#140 / #139)`)
