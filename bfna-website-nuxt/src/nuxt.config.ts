@@ -140,6 +140,12 @@ export default defineNuxtConfig({
       // Front 2 wireframes only — components used exclusively under /wireframes
       path: resolve(currentDir, 'components/wireframe'),
       pathPrefix: false
+    },
+    {
+      // Final bf-* design system — `components/bf/Card.vue` auto-imports as <bfCard>
+      path: resolve(currentDir, 'components/bf'),
+      pathPrefix: false,
+      prefix: 'bf'
     }
   ],
 })
