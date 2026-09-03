@@ -119,9 +119,10 @@ overwritten by the empty string that makes the whole card clickable.
 identically against `.wireframe a[data-external]::after`, so it is not a
 regression and no visible marker the wireframe never showed is invented here.
 Probe 26 **measures** the resolved `content` rather than trusting this
-paragraph. Raised as a residual for #47 to decide whether the home band wants
-an explicit `<span aria-hidden> ↗</span>` inside the anchor, the way
-`bfCardProject` renders one.
+paragraph. Raised as residual [#138](https://github.com/ccmdesign/bfna-website-migration-2/issues/138)
+for #47 to decide whether the home band wants an explicit
+`<span aria-hidden> ↗</span>` inside the anchor, the way `bfCardProject`
+renders one.
 
 ### D-26.3 — `span="full"` is the wrapper's default, and `$attrs` still wins
 
@@ -149,8 +150,10 @@ the content SQLite store in a shape `= true` matches; `featured` on
 `bfInsights` is a non-nullable `z.boolean()` and does match, which is why probe
 23 can push its filter into the query and probe 26 cannot. The probe therefore
 reads `.all()` and filters in the page, and asserts that products are a real
-*subset* of all projects so the filter cannot be vacuous. Raised as a residual —
-it is a data-layer question (issue 09's schema nullability), not this card's.
+*subset* of all projects so the filter cannot be vacuous. Raised as residual
+[#139](https://github.com/ccmdesign/bfna-website-migration-2/issues/139) — it is
+a data-layer question (issue 09's schema nullability), not this card's, and
+`archived` and `exclude_from_grid` have the same shape.
 
 ### D-26.5 — the probe's band drops the wireframe's hand-pinned column count
 
@@ -170,10 +173,22 @@ cards' 636px") reproduced almost exactly at a different width. The probe's band
 is `0.6 < ratio < 1.5`: the contract is *one grid row, not two*, and two rows
 plus a gap cannot be under 2×.
 
+### D-26.7 — the heading anchor's `external_url` is trimmed
+
+Applied from this issue's own review. `wfCardProduct.vue` tests
+`product.external_url` raw, so a whitespace-only value — permitted by
+`z.string().nullable()` — would render an anchor to nowhere with `bfCard`'s
+`::after` stretched over the whole card: #130's failure mode reached by a
+different road. The component trims once and uses the trimmed value for both
+the `v-if` and the `href`, and `isExternal()` trims internally, so the marker
+and the anchor cannot disagree about which string they are judging. Probe 26
+asserts the whitespace-only row renders no anchor and falls to the pending
+branch.
+
 ### D-26.6 — the vitest substitution (residual #86)
 
 The vitest harness on `dev` is broken and pre-existing. No test was added to it
 and acceptance does not depend on it. The equivalent-strength check is
-**probe 26** — 65 runtime assertions read by
+**probe 26** — 67 runtime assertions read by
 `npx tsx scripts/check-probes.ts --only 26`, which exits non-zero on any failing
 row and treats a still-`PENDING` verdict as a failure.

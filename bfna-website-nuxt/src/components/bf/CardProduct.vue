@@ -159,10 +159,17 @@ const hasHeading = computed(() => headingText.value !== '')
  * relative or malformed `external_url` is still the only destination the row
  * offers, so suppressing the anchor on it would silently drop the card's one
  * navigation.
+ *
+ * Trimmed, where the frozen source tests `product.external_url` raw. Two
+ * consequences, both wanted: a whitespace-only value renders **no link** rather
+ * than an anchor to nowhere with the whole card stretched over it (#130's
+ * failure mode reached by a different road), and a padded URL reaches `href`
+ * clean. `isExternal()` already trims internally, so the marker and the anchor
+ * cannot disagree about which string they are judging.
  */
-const href = computed(() => props.product.external_url ?? '')
+const href = computed(() => (props.product.external_url ?? '').trim())
 
-const hasLink = computed(() => href.value.trim() !== '')
+const hasLink = computed(() => href.value !== '')
 
 /**
  * D-26.1. `|| undefined` so the attribute is **absent** rather than rendered as

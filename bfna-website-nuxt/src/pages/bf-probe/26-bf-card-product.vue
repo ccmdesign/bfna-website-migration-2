@@ -175,6 +175,15 @@ const productEmptyExcerpt = computed<Project | null>(() => {
   return row ? { ...row, excerpt: '', description: DESCRIPTION_SENTINEL } : null
 })
 
+/**
+ * A whitespace-only `external_url` — permitted by `z.string().nullable()`. The
+ * anchor is suppressed, so the card cannot become a card-sized link to nowhere.
+ */
+const productBlankUrl = computed<Project | null>(() => {
+  const row = product.value
+  return row ? { ...row, external_url: '   ' } : null
+})
+
 /** A row with no `pending`, to reach the frozen source's `'Q6'` fallback. */
 const productNoPending = computed<Project | null>(() => {
   const row = product.value
@@ -309,6 +318,7 @@ onMounted(() => {
   const fallback = card('fallback')
   const emptyExcerpt = card('empty-excerpt')
   const nopending = card('nopending')
+  const blankurl = card('blankurl')
   const longExcerpt = card('long-excerpt')
   const spanned = card('spanned')
   const overridden = card('overridden')
@@ -465,6 +475,16 @@ onMounted(() => {
       label: 'a row with no `pending` field falls back to the frozen source\'s Q6',
       expected: 'Magazine|External link pending Q6',
       actual: chipTexts(nopending).join('|') || 'missing'
+    },
+    {
+      label: 'a whitespace-only external_url renders NO anchor…',
+      expected: 0,
+      actual: blankurl ? blankurl.querySelectorAll('a').length : -1
+    },
+    {
+      label: '  …and falls to the pending branch, chip and all',
+      expected: 'Magazine|External link pending Q6',
+      actual: chipTexts(blankurl).join('|') || 'missing'
     },
     {
       label: 'the Magazine chip is unconditional — present on the linked card too',
@@ -832,6 +852,17 @@ const verdict = computed(() =>
           v-if="productEmptyExcerpt"
           :product="productEmptyExcerpt"
           data-probe-card="empty-excerpt"
+        />
+
+        <!--
+          A whitespace-only `external_url`: no anchor, so the card cannot become
+          a card-sized link to nowhere. The frozen source tests the field raw
+          and would render one.
+        -->
+        <bfCardProduct
+          v-if="productBlankUrl"
+          :product="productBlankUrl"
+          data-probe-card="blankurl"
         />
 
         <!-- No `pending` field: the frozen source's Q6 fallback. -->
