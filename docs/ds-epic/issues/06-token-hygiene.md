@@ -172,6 +172,21 @@ acceptance clause.
 selector, so it adds no `src/pages/bf-probe/` route. Probe
 `03-composition-gap-api.vue` was re-run as a regression check instead.
 
+**D-06.9 — the `--color-black` comma fix is in the issue body but was
+missing from this file's Scope.** `src/public/css-legacy/global.css:266`
+(pre-change) read `--color-black: hsla(var(--black-hsl) 1);` — no comma
+before the alpha, unlike all fourteen sibling declarations in the same
+`:root`. With `--black-hsl: 0, 0%, 15%` that expands to
+`hsla(0, 0%, 15% 1)`, which mixes legacy comma syntax with a space-separated
+alpha and is not a valid `hsla()` form. GitHub issue #15's body asks for it
+("fix the `--color-black` comma bug") but this file's **Scope**, **Styling**
+and **Acceptance** sections never listed it, so it is recorded here for
+completeness. `grep 'var(--color-black)' src/public/css-legacy/global.css`
+returns nothing — the legacy token is declared and never consumed — and the
+legacy sheet never co-loads with `css/tokens/primitive-colors.css` (D-06.2),
+so the fix cannot alter any rendered pixel in either direction. It removes a
+latent trap rather than changing behaviour. Applied to both copies (D-06.6).
+
 **D-06.8 — typecheck gate.** Per the orchestrator's standing decision the
 gate is *no new errors*, not zero: before **178** `error TS` lines, after
 **178**; the scoped count over
