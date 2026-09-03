@@ -67,3 +67,77 @@ placeholder states with no cumulative layout shift (per the issues.md
 ## Decisions
 
 _Runner appends here._
+
+### D17.1 — the ratio default lives in CSS, not in `withDefaults`
+
+The spec types the prop as `ratio?: string = '16/9'`. It is implemented as
+`ratio?: string` with **no runtime default**, and `--_bf-media-ratio: 16 / 9`
+declared in the `.bf-media` rule instead. The observable default is unchanged —
+an instance with no `ratio` still renders 16/9, exactly as `wfMedia.vue` does.
+
+The reason is the one this issue was opened for. Moving `aspect-ratio` out of
+the inline `style` and into a custom property is only half a fix: if the
+component *always* writes `--_bf-media-ratio` inline, a consumer stylesheet
+still cannot outrank it, because an inline declaration beats every author rule
+at every specificity. The full-width Transponder card would have been exactly
+as stuck as it was with `wfMedia`. So:
+
+| `ratio` | what the component emits | how a consumer overrides |
+|---|---|---|
+| omitted | nothing inline; `16 / 9` comes from the `.bf-media` rule | its own CSS rule (class, ancestor, `:has()`) **or** an inline `style` |
+| passed | `style="--_bf-media-ratio: …"` from the computed `cssVars` | an inline `style` through `$attrs`, which Vue merges after the component's own binding and which therefore wins |
+
+Both paths are asserted on the probe (`§ 4`), not assumed.
+
+### D17.2 — no `width` / `height` attributes; the box is reserved by CSS
+
+The issue body asks for "explicit dimensions to avoid layout shift"; the spec
+allows "explicit `width`/`height` **or** `aspect-ratio` CSS". The CSS route is
+taken. On `NuxtImg`, `width`/`height` are **resize modifiers** sent to the image
+provider, not layout hints, so synthesising them from the `ratio` would make
+every consumer silently request one fixed pixel size. `aspect-ratio` +
+`inline-size: 100%` reserves the correct box before the bitmap arrives, while it
+decodes, and if it never arrives — which is the whole of what CLS asks for here.
+
+### D17.3 — acceptance substitutes the probe harness for vitest (residual #86)
+
+The vitest harness on `dev` is broken and pre-existing, so the spec's
+"manual/Lighthouse CLS check" is discharged instead by
+`/bf-probe/17-bf-media` under `npx tsx scripts/check-probes.ts --only 17`
+(harness decision gh#109). CLS is made machine-readable rather than eyeballed:
+each of the six boxes has its **measured** `width / height` asserted against its
+declared ratio within 1%, and the real and placeholder boxes at one ratio are
+asserted to reserve the same height in equal-width columns. A box whose ratio
+was not reserved fails both rows.
+
+No `naturalWidth` assertion is written, deliberately. `nuxt generate` emits an
+`/_ipx/…` URL with no server behind it, so the bitmap legitimately 404s in the
+harness — which is precisely the condition the reserved box has to survive, and
+a decode-dependent check would have been the flaky one.
+
+### D17.4 — placeholder colours
+
+`.wf-media` in the frozen skin is drawn with three literals (`#ccc` twice, a
+light grey ground). BRIEF §5 rule 2 forbids a new literal and forbids reaching
+for a primitive, so the same construction — a 1px border plus two full-diagonal
+hairlines over a light ground — is rebuilt from `--color-base-super-light` and
+`--color-light`, both already in `tokens/semantic-colors.css`. The probe
+asserts the resolved paints rather than the source strings.
+
+### D17.5 — `alt`
+
+The dev-time warning fires when `alt` is **unspecified** (`== null`) alongside a
+`src`, not when it is falsy. An explicit `alt=""` is the standard way to declare
+an image decorative and is a legitimate answer; warning on it would train call
+sites to ignore the warning. The placeholder branch carries `aria-hidden="true"`
+— it is the absence of an image, not an image of an absence, so there is nothing
+for a screen reader to describe.
+
+### D17.6 — planning was done inline
+
+`ce-plan` was not invoked. The first runner on this issue stalled inside a skill
+invocation before doing any work, leaving an empty worktree and branch behind;
+the plan was therefore written directly to `docs/plans/gh26-plan.md`, per the
+runner rule that a degraded inline step beats a stranded item. Same for the
+code review (`ce-code-review`), which was performed inline over
+`git diff dev...HEAD`.
