@@ -19,8 +19,8 @@
  *   - `NAV_SLUGS`               (l.148)     → `nav: boolean`
  *   - programs `heading → name` (l.109-110), `legacy_workstreams` dropped
  *   - `insights.json.featured` / `.retired_news` → booleans on the insight document
- *   - board predicate             (l.263)     → `board: boolean` on the person document
- *   - `MENUS`                     (l.153-181) → `src/assets/bf-data/menus.json`
+ *   - board predicate             (l.264)     → `board: boolean` on the person document
+ *   - `MENUS`                     (l.153-186) → `src/assets/bf-data/menus.json`
  * New (issue 07 Decisions): `Program.tagline` = first sentence of `intro`.
  *
  * Emitted field lists mirror the zod schemas of issue 09 (`bfInsights`, `bfProjects`,
@@ -435,7 +435,7 @@ interface PersonDoc {
 }
 
 /**
- * `boardMembers` predicate — `useWfContent.ts:263`, ported verbatim and materialised
+ * `boardMembers` predicate — `useWfContent.ts:264`, ported verbatim and materialised
  * as a single resolved boolean. BOTH halves are load-bearing against the real data:
  *   - raw flag only:  `irene-braam` (job title "Executive Director" — no regex match,
  *                     but her snapshot record carries `board: true`)
@@ -446,6 +446,14 @@ interface PersonDoc {
  * Dropping either half silently loses people from `/about#board`. The spec's prose
  * says 3; the predicate resolves 4 — the predicate is what the wireframe renders
  * today, so it wins. See issue 08 Decisions.
+ *
+ * !! `board` is NOT the complement of the Team list. `useWfContent.ts` runs two
+ * INDEPENDENT predicates: `teamMembers` (l.266) is `!/board/i.test(job_title)` — the
+ * regex half only — so `irene-braam` (raw flag, job title "Executive Director")
+ * appears in BOTH Board and Team by design (l.261-262). A consumer that derives the
+ * team list as `!p.board` silently drops her. Issue 09's `bfPeople` schema declares no
+ * `team` field, so it is not emitted here; issue 13's `bfTeamMembers()` must keep the
+ * job-title predicate until 09 declares one. See the residual issue linked from PR #80.
  */
 const isBoardMember = (p: RawPerson): boolean => Boolean(p.board || /board/i.test(p.job_title ?? ''))
 
@@ -602,7 +610,13 @@ const normaliseAnnouncements = (): number => {
   const snap = readSnapshot<{ items: RawAnnouncement | null }>('announcements.json')
   resetCollection('announcements')
   const raw = snap.items
-  if (!raw) return 0
+  // Guard the singleton shape explicitly: an array or a non-object would otherwise
+  // resolve every field to `null` and still report 1 document, so `main()`'s
+  // zero-document check would pass while an all-null file was written.
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) {
+    console.error('normalise-wireframe-data: announcements.json.items is not a singleton object')
+    return 0
+  }
 
   const doc: AnnouncementDoc = {
     status: strOrNull(raw.status),
@@ -619,7 +633,7 @@ const normaliseAnnouncements = (): number => {
 // ---- menus (site chrome) ---------------------------------------------------
 
 /**
- * `MENUS` is not a snapshot — it is a hardcoded constant in `useWfContent.ts:153-181`.
+ * `MENUS` is not a snapshot — it is a hardcoded constant in `useWfContent.ts:153-186`.
  * BRIEF §6 keeps the collection count at six by emitting it as a typed JSON module
  * instead of a seventh collection: `src/assets/bf-data/menus.json`, read by the layout
  * and passed as props to `bfNav` / `bfFooter` (D8 — nav and footer are presentational).
@@ -629,7 +643,10 @@ const normaliseAnnouncements = (): number => {
  * menus.json serves the final `bf-*` site at `/` and not the wireframe prototype.
  * `href` targets are external and pass through untouched.
  */
-const WIREFRAME_PREFIX = /^\/wireframes(?=\/|$)/
+// The lookahead covers `/wireframes`, `/wireframes/…`, and — should `MENUS` ever grow
+// one — a query- or hash-only `/wireframes?x` / `/wireframes#x`, which would otherwise
+// ship un-re-rooted and 404 on the `bf-*` site.
+const WIREFRAME_PREFIX = /^\/wireframes(?=[/?#]|$)/
 
 const deWireframe = (to: string): string => {
   const stripped = to.replace(WIREFRAME_PREFIX, '')
