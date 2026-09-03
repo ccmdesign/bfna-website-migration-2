@@ -52,6 +52,7 @@
  *   --only <nn|slug>   run a single probe (`--only 16`, `--only 16-bf-chip`)
  *   --timeout <ms>     per-probe budget for reaching a non-PENDING verdict
  *   --port <n>         pin the static server port (default: a free one)
+ *   --viewport <WxH>   layout viewport (default 1280x1024)
  *   --verbose          print every row, not just the failing ones
  */
 import { spawn, type ChildProcess } from 'node:child_process'
@@ -95,6 +96,25 @@ const num = (raw: string | undefined, fallback: number): number => {
 const only = flag('only')
 const timeoutMs = num(flag('timeout'), 20_000)
 const pinnedPort = num(flag('port'), 0)
+
+/**
+ * The layout viewport, set explicitly rather than inherited from the browser's
+ * default window. Probe assertions measure real boxes — probe 16 compares the
+ * rendered height of all five chip modes, probe 03 derives an expected grid
+ * track count from the container width — so the viewport is an input to the
+ * verdict, not a cosmetic detail. Left to chance it is a source of verdicts
+ * that differ between machines; a zero-size viewport (which some embedded
+ * browser panes report) fails several probes on a perfectly good build.
+ */
+const viewport = (() => {
+  const raw = flag('viewport') ?? '1280x1024'
+  const match = raw.match(/^(\d+)x(\d+)$/)
+  if (!match) {
+    console.error(`--viewport expects <width>x<height>, got "${raw}"`)
+    process.exit(2)
+  }
+  return { width: Number(match[1]), height: Number(match[2]) }
+})()
 const verbose = argv.includes('--verbose')
 
 /* ------------------------------------------------------------------ *
@@ -398,6 +418,7 @@ const READ_VERDICT = `(() => {
     ready: verdict !== 'PENDING' && verdict !== '',
     verdict,
     probe: root.getAttribute('data-probe'),
+    width: window.innerWidth,
     rows
   }
 })()`
@@ -406,7 +427,7 @@ const READ_VERDICT = `(() => {
 const numberOf = (slug: string): string => slug.split('-')[0] ?? ''
 
 type Row = { label: string, ok: boolean, detail: string }
-type Verdict = { conforms: boolean, ready: boolean, verdict: string, probe: string | null, rows: Row[] }
+type Verdict = { conforms: boolean, ready: boolean, verdict: string, probe: string | null, width?: number, rows: Row[] }
 
 const sleep = (ms: number) => new Promise(ok => setTimeout(ok, ms))
 
@@ -435,7 +456,8 @@ const run = async (): Promise<void> => {
 
     console.log(`check-probes — ${probes.length} probe${probes.length === 1 ? '' : 's'} from ${publicDir}`)
     console.log(`  server  ${origin}`)
-    console.log(`  chrome  ${executable}\n`)
+    console.log(`  chrome  ${executable}`)
+    console.log(`  viewport ${viewport.width}x${viewport.height}\n`)
 
     for (const slug of probes) {
       const url = `${origin}/bf-probe/${slug}`
@@ -443,12 +465,18 @@ const run = async (): Promise<void> => {
       const { sessionId } = await cdp.send<{ sessionId: string }>('Target.attachToTarget', { targetId, flatten: true })
 
       let verdict: Verdict = { conforms: false, ready: false, verdict: 'PENDING', probe: null, rows: [] }
+
       let note: string | undefined
 
       try {
         cdp.exceptions = []
         await cdp.send('Runtime.enable', {}, sessionId)
         await cdp.send('Page.enable', {}, sessionId)
+        await cdp.send(
+          'Emulation.setDeviceMetricsOverride',
+          { width: viewport.width, height: viewport.height, deviceScaleFactor: 1, mobile: false },
+          sessionId
+        )
         await cdp.send('Page.navigate', { url }, sessionId)
 
         const deadline = Date.now() + timeoutMs
@@ -480,6 +508,10 @@ const run = async (): Promise<void> => {
             + (cdp.exceptions.length > 0 ? ` — page exception: ${cdp.exceptions[cdp.exceptions.length - 1]}` : '')
         } else if (verdict.rows.length === 0) {
           note = 'verdict reported but no [data-probe-row] rows were found'
+        } else if (!verdict.width) {
+          /* A zero-width layout viewport fails every measured box on a build
+             that is fine. Say so rather than blaming the component. */
+          note = `the page reported a ${verdict.width}px viewport — measurements are meaningless; check --viewport`
         }
       } finally {
         await cdp.send('Target.closeTarget', { targetId }).catch(() => {})

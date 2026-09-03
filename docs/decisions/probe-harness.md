@@ -76,7 +76,16 @@ npx tsx scripts/check-probes.ts --only 16
 npm run check:probes                  # the same thing
 ```
 
-Flags: `--only <nn|slug>`, `--timeout <ms>` (default 20000), `--port <n>`, `--verbose`.
+Flags: `--only <nn|slug>`, `--timeout <ms>` (default 20000), `--port <n>`, `--viewport <WxH>`
+(default `1280x1024`), `--verbose`.
+
+**The viewport is an input to the verdict, not a cosmetic detail.** Probe 16 compares the
+rendered height of all five chip modes and probe 03 derives an expected grid track count from
+the container width, so the harness sets the layout viewport explicitly through
+`Emulation.setDeviceMetricsOverride` rather than inheriting whatever window the browser
+happened to open with, and reports a zero-width viewport as its own failure instead of letting
+it read as a broken component. (Found while cross-checking the probes in an embedded browser
+pane whose viewport measured 0px: probe 16 reported FAIL on a build the harness passed.)
 
 Exit `0` only when every probe reported `PASS` with zero failing rows. On failure the script
 names the probe **and** each failing row with its expected/actual values.
