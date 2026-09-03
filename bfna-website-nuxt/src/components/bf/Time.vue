@@ -143,17 +143,34 @@ const label = computed(() =>
 <style scoped>
 @layer components {
   /*
-   * One declaration, and the spec's "no CSS-variable hook needed" is honoured:
-   * no custom property, no token, no colour. `<time>` inherits the surrounding
-   * typography, which is what a date in a card footer or a byline should do.
+   * One property, one rule. No colour, no token, no typography: `<time>`
+   * inherits the surrounding type, which is what a date in a card footer or a
+   * byline should do, and the spec's Styling section says as much.
    *
    * `nowrap` is here because the label is a two-token string — `Mar 2024` — and
-   * the slots this atom was built for (card footers, `bfByline`, the archive's
-   * per-year rows) are the narrowest columns on the site. A date broken across
-   * two lines reads as two facts.
+   * the slots this atom was built for (card footers, `bfByline` (29), the
+   * archive's per-year rows (55)) are the narrowest columns on the site. A date
+   * broken across two lines reads as two facts.
+   *
+   * It is exposed as `--_bf-time-white-space` rather than declared flat,
+   * because the spec's Styling section says exactly that: *"if any
+   * spacing/inline-flow styling is added, use `--_bf-time-*` per the naming
+   * convention"*. `white-space` is inline-flow behaviour, so it gets the hook —
+   * a consumer whose slot is wide enough to want wrapping (a prose byline, a
+   * one-column mobile footer) sets the property instead of fighting a flat
+   * declaration with `!important`.
+   *
+   * **The default lives in this rule, not in a `cssVars` binding** — the gh#26
+   * lesson from `bfMedia`. A component that writes its custom property inline
+   * on every instance is no more overridable than one that writes the plain
+   * declaration inline, because the cascade cannot see either. `bfTime` has no
+   * styling prop and therefore emits no inline `style` at all, so a consumer's
+   * own rule always has something to win against. Asserted on the probe.
    */
   .bf-time {
-    white-space: nowrap;
+    --_bf-time-white-space: nowrap;
+
+    white-space: var(--_bf-time-white-space);
   }
 }
 </style>

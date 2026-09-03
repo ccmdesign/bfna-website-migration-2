@@ -276,6 +276,13 @@ onMounted(() => {
    */
   const galleryMarkup = gallery?.innerHTML ?? ''
 
+  /**
+   * The override instance, deliberately **outside** `.probe__gallery` so the
+   * element counts above still see exactly the eleven cases they enumerate.
+   * Same construction as probe 17's override section.
+   */
+  const overrideEl = document.querySelector<HTMLElement>('.probe__override .bf-time')
+
   const results: Check[] = [
     // --- 1. the right number of elements exist, and only those --------------
     {
@@ -426,6 +433,16 @@ onMounted(() => {
       label: 'the component contributes no inline style of its own',
       expected: 0,
       actual: rendered.filter(e => e.getAttribute('style') !== null).length
+    },
+    {
+      label: '  …so a consumer rule re-declares --_bf-time-white-space (nowrap → normal)',
+      expected: 'normal',
+      actual: overrideEl ? getComputedStyle(overrideEl).whiteSpace : 'missing'
+    },
+    {
+      label: '  …without the override leaking back onto the gallery instances',
+      expected: 'nowrap',
+      actual: rendered[0] ? getComputedStyle(rendered[0]).whiteSpace : 'missing'
     }
   ]
 
@@ -515,6 +532,28 @@ const verdict = computed(() =>
       </table>
     </section>
 
+    <!--
+      Outside `.probe__gallery` on purpose: the element counts above enumerate
+      exactly the eleven cases, so an extra instance must not be swept into that
+      set. (Same arrangement as probe 17's override section.)
+    -->
+    <section class="probe__override" aria-labelledby="override-heading">
+      <h2 id="override-heading">Overriding the one declaration</h2>
+      <p class="probe__lede">
+        The single style this atom ships is exposed as
+        <code>--_bf-time-white-space</code>, per the spec's naming convention,
+        and its default is declared in the <code>.bf-time</code> rule rather
+        than bound inline — the <code>bfMedia</code> lesson from gh#26. A
+        component that writes its own custom property inline on every instance
+        is no more overridable than one that writes the plain declaration
+        inline. <code>bfTime</code> emits no inline <code>style</code> at all,
+        so the consumer rule below wins on ordinary specificity.
+      </p>
+      <p class="probe__slot">
+        <bfTime date="2014-12-17" />
+      </p>
+    </section>
+
     <p
       class="probe__verdict"
       :data-state="state"
@@ -578,6 +617,19 @@ const verdict = computed(() =>
   outline: 1px dashed currentcolor;
   outline-offset: 2px;
   min-inline-size: 8ch;
+}
+
+/*
+  The consumer override, written the way a real consumer would write it: inside
+  `@layer components`, where it beats the component's own `.bf-time` default on
+  specificity rather than by escaping the layer system. An unlayered rule would
+  win too, but it would prove the wrong thing — that unlayered CSS outranks
+  layers, not that the component is overridable.
+*/
+@layer components {
+  .probe__override .bf-time {
+    --_bf-time-white-space: normal;
+  }
 }
 
 .probe__verdict {

@@ -135,14 +135,39 @@ all. Beyond the semantic argument the spec makes, there is a layout one: an empt
 rows would inherit a phantom `gap` at each of them. "Render nothing" has to mean
 no element, not an empty one.
 
-### D-18.6 — one style declaration, no CSS-variable hook
+### D-18.6 — one style property, exposed as `--_bf-time-white-space`
 
-Per the spec's Styling section the base build needs no `--_bf-time-*` hook and
-gets none. One declaration ships, inside `@layer components`:
-`white-space: nowrap`. The label is a two-token string (`Mar 2024`) and the slots
-this atom was built for — card footers, `bfByline` (29), the archive's per-year
-rows (55) — are the narrowest columns on the site; a date broken across two lines
-reads as two facts. No token, no colour, no custom property.
+One declaration ships, inside `@layer components`. The label is a two-token
+string (`Mar 2024`) and the slots this atom was built for — card footers,
+`bfByline` (29), the archive's per-year rows (55) — are the narrowest columns on
+the site; a date broken across two lines reads as two facts. No token, no
+colour, no typography: `<time>` inherits the surrounding type, as the spec's
+Styling section says it should.
+
+It is exposed as a custom property rather than declared flat, because that
+section states the rule directly: *"if any spacing/inline-flow styling is added,
+use `--_bf-time-*` per the naming convention"*. `white-space` **is** inline-flow
+behaviour, so it takes the hook. A consumer whose slot is wide enough to want
+wrapping — a prose byline, a one-column mobile footer — re-declares the property
+instead of fighting a flat declaration with `!important`.
+
+    .bf-time {
+      --_bf-time-white-space: nowrap;
+
+      white-space: var(--_bf-time-white-space);
+    }
+
+**The default lives in that rule, not in a `cssVars` binding** — the gh#26
+lesson from `bfMedia`, which is only half-learned if it is remembered as "put it
+in a custom property". A component that writes its own property inline on every
+instance is no more overridable than one that writes the plain declaration
+inline, because the cascade can see neither. `bfTime` has no styling prop and so
+emits no inline `style` at all, which is itself asserted on the probe alongside
+a consumer `@layer components` rule flipping `nowrap` → `normal` and a row
+confirming the override does not leak back onto the other instances.
+
+This was caught in the runner's own STEP 3 review of the diff, where the first
+cut shipped a flat `white-space: nowrap`, and applied in STEP 4.
 
 ### D-18.7 — test substitution: the probe, not vitest (residual #86)
 
@@ -157,8 +182,8 @@ equivalent-strength substitute is `src/pages/bf-probe/18-bf-time.vue` under the
 ```bash
 cd bfna-website-nuxt
 npx nuxt generate
-npx tsx scripts/check-probes.ts --only 18     # 40/40 rows
-npx tsx scripts/check-probes.ts               # 10 probes, 342 rows
+npx tsx scripts/check-probes.ts --only 18     # 42/42 rows
+npx tsx scripts/check-probes.ts               # 10 probes, 344 rows
 ```
 
 The probe is stronger than the named unit test, not weaker: it renders the real
@@ -188,7 +213,7 @@ format to.
 | Typecheck after this change | 178 — no new errors |
 | `src/(components/bf\|types\|composables/bf)` + `content.config` errors | 0 |
 | `npx nuxt generate` | exit 0, 818 routes |
-| `check-probes.ts --only 18` | exit 0, 40/40 rows |
-| `check-probes.ts` (all) | exit 0, 10 probes, 342 rows |
+| `check-probes.ts --only 18` | exit 0, 42/42 rows |
+| `check-probes.ts` (all) | exit 0, 10 probes, 344 rows |
 | Frozen `wf-*` source diff (branch and cumulative from the pre-epic SHA) | empty |
 | New colour literals or `--color-*` tokens | none |
