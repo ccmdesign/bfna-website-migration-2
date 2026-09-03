@@ -1,13 +1,14 @@
 /**
  * Build-time normaliser — wireframe snapshots → canonical `content/bf/**` JSON.
  *
- * Reads `src/assets/wireframe-data/{insights,projects,programs}.json` READ-ONLY and
- * writes one JSON document per item under `content/bf/<collection>/<slug>.json`.
+ * Reads all six `src/assets/wireframe-data/*.json` snapshots READ-ONLY and writes one
+ * JSON document per item under `content/bf/<collection>/<slug>.json`, plus the site
+ * chrome (`MENUS`) as `src/assets/bf-data/menus.json`.
  *
- * Every synthesis `src/composables/useWfContent.ts` performs for these three
- * collections is materialised here as a plain stored field, so `bf-*` components stay
- * presentational and the data composables only `queryCollection`. `useWfContent.ts`
- * itself is NOT modified — the `/wireframes/*` prototype keeps using it verbatim.
+ * Every synthesis `src/composables/useWfContent.ts` performs for these collections is
+ * materialised here as a plain stored field, so `bf-*` components stay presentational
+ * and the data composables only `queryCollection`. `useWfContent.ts` itself is NOT
+ * modified — the `/wireframes/*` prototype keeps using it verbatim.
  *
  * Ported from `useWfContent.ts`:
  *   - `plain()`                 (l.272-277) — HTML strip + entity decode
@@ -18,11 +19,14 @@
  *   - `NAV_SLUGS`               (l.148)     → `nav: boolean`
  *   - programs `heading → name` (l.109-110), `legacy_workstreams` dropped
  *   - `insights.json.featured` / `.retired_news` → booleans on the insight document
+ *   - board predicate             (l.264)     → `board: boolean` on the person document
+ *   - `MENUS`                     (l.153-186) → `src/assets/bf-data/menus.json`
  * New (issue 07 Decisions): `Program.tagline` = first sentence of `intro`.
  *
  * Emitted field lists mirror the zod schemas of issue 09 (`bfInsights`, `bfProjects`,
- * `bfPrograms`) — that is what validates this output; source fields issue 09 does not
- * declare are dropped.
+ * `bfPrograms`, `bfPeople`, `bfPages`, `bfAnnouncements`) — that is what validates this
+ * output; source fields issue 09 does not declare are dropped. `bfPages` is the one
+ * full passthrough: all 19 source fields, `copy_source` and `legacy` included.
  *
  * Output is deterministic: fixed key order, no timestamps, no generated ids. Running
  * the script twice produces byte-identical files.
@@ -33,9 +37,14 @@ import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
+// The canonical menu contracts (issue 02). Reused directly — the normaliser never
+// redeclares a shared shape (BRIEF §5 rule 11). Type-only, so tsx erases it at runtime.
+import type { Menu, MenuItem } from '../src/types/bf-contracts'
+
 const appRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const SRC_DIR = join(appRoot, 'src', 'assets', 'wireframe-data')
 const OUT_DIR = join(appRoot, 'content', 'bf')
+const BF_DATA_DIR = join(appRoot, 'src', 'assets', 'bf-data')
 
 // ---- shared helpers --------------------------------------------------------
 
@@ -399,21 +408,347 @@ const normalisePrograms = (): number => {
   return snap.items.length
 }
 
+// ---- people ----------------------------------------------------------------
+
+interface RawPerson {
+  slug: string
+  name?: string | null
+  job_title?: string | null
+  bio?: string | null
+  email?: string | null
+  linkedin?: string | null
+  twitter?: string | null
+  image?: string | null
+  board?: boolean | null
+}
+
+interface PersonDoc {
+  slug: string
+  name: string
+  job_title: string | null
+  bio: string | null
+  email: string | null
+  linkedin: string | null
+  twitter: string | null
+  image: string | null
+  board: boolean
+}
+
+/**
+ * `boardMembers` predicate — `useWfContent.ts:264`, ported verbatim and materialised
+ * as a single resolved boolean. BOTH halves are load-bearing against the real data:
+ *   - raw flag only:  `irene-braam` (job title "Executive Director" — no regex match,
+ *                     but her snapshot record carries `board: true`)
+ *   - regex only:     `liz-mohn` ("President of the Board of Directors"),
+ *                     `stephen-f-szabo` ("Member of the Board of Directors"),
+ *                     `wilhelm-friedrich-uhr` ("Executive Board and Chief Operating
+ *                     Officer")
+ * Dropping either half silently loses people from `/about#board`. The spec's prose
+ * says 3; the predicate resolves 4 — the predicate is what the wireframe renders
+ * today, so it wins. See issue 08 Decisions.
+ *
+ * !! `board` is NOT the complement of the Team list. `useWfContent.ts` runs two
+ * INDEPENDENT predicates: `teamMembers` (l.266) is `!/board/i.test(job_title)` — the
+ * regex half only — so `irene-braam` (raw flag, job title "Executive Director")
+ * appears in BOTH Board and Team by design (l.261-262). A consumer that derives the
+ * team list as `!p.board` silently drops her. Issue 09's `bfPeople` schema declares no
+ * `team` field, so it is not emitted here; issue 13's `bfTeamMembers()` must keep the
+ * job-title predicate until 09 declares one. See the residual issue linked from PR #80.
+ */
+const isBoardMember = (p: RawPerson): boolean => Boolean(p.board || /board/i.test(p.job_title ?? ''))
+
+const normalisePeople = (): number => {
+  // Top-level key is `people`, NOT `items` (BRIEF §6 / D3).
+  const snap = readSnapshot<{ people: RawPerson[] }>('people.json')
+  resetCollection('people')
+  const stem = makeStemFactory()
+
+  for (const raw of snap.people) {
+    // `status`, `source` and `legacy` are dropped — issue 09's `bfPeople` schema does
+    // not declare them, and #16 set the precedent that emitted fields follow 09.
+    const doc: PersonDoc = {
+      slug: raw.slug,
+      name: plainOrNull(raw.name) ?? '',
+      job_title: plainOrNull(raw.job_title),
+      bio: strOrNull(raw.bio),
+      email: strOrNull(raw.email),
+      linkedin: strOrNull(raw.linkedin),
+      twitter: strOrNull(raw.twitter),
+      image: strOrNull(raw.image),
+      board: isBoardMember(raw)
+    }
+    writeDoc('people', stem(raw.slug), doc)
+  }
+  return snap.people.length
+}
+
+// ---- pages -----------------------------------------------------------------
+
+/** `pages.json` carries a nested legacy provenance object, not a string. */
+interface RawPageLegacy {
+  source: string | null
+  type: string | null
+  workstream: string | null
+  id: number | null
+}
+
+interface RawPage {
+  slug: string
+  heading?: string | null
+  subheading?: string | null
+  excerpt?: string | null
+  description?: string | null
+  authors?: string[]
+  image?: string | null
+  video_url?: string | null
+  download?: string | null
+  external_url?: string | null
+  publish_date?: string | null
+  bucket?: string | null
+  format?: string | null
+  kind?: string | null
+  program?: string | null
+  archived?: boolean | null
+  evergreen?: boolean | null
+  copy_source?: string | null
+  legacy?: RawPageLegacy | null
+}
+
+interface PageDoc {
+  slug: string
+  heading: string | null
+  subheading: string | null
+  excerpt: string | null
+  description: string | null
+  authors: string[]
+  image: string | null
+  video_url: string | null
+  download: string | null
+  external_url: string | null
+  publish_date: string | null
+  bucket: string | null
+  format: string | null
+  kind: string | null
+  program: string | null
+  archived: boolean | null
+  evergreen: boolean | null
+  copy_source: string | null
+  legacy: RawPageLegacy | null
+}
+
+/**
+ * Full 19-field passthrough — no field dropped. Today's inline wireframe type reads
+ * only `slug`/`heading`/`description`; the audit flagged that as the "needs a real
+ * schema, 17 fields available" gap (01 §D/§F), so `copy_source` and `legacy` are
+ * emitted too. `plain()` is applied to the short display strings only (#16's rule);
+ * `description` is body copy and passes through byte-identical.
+ */
+const normalisePages = (): number => {
+  const snap = readSnapshot<{ items: RawPage[] }>('pages.json')
+  resetCollection('pages')
+  const stem = makeStemFactory()
+
+  for (const raw of snap.items) {
+    const doc: PageDoc = {
+      slug: raw.slug,
+      heading: plainOrNull(raw.heading),
+      subheading: plainOrNull(raw.subheading),
+      excerpt: plainOrNull(raw.excerpt),
+      description: strOrNull(raw.description),
+      authors: strArray(raw.authors),
+      image: strOrNull(raw.image),
+      video_url: strOrNull(raw.video_url),
+      download: strOrNull(raw.download),
+      external_url: strOrNull(raw.external_url),
+      publish_date: strOrNull(raw.publish_date),
+      bucket: strOrNull(raw.bucket),
+      format: strOrNull(raw.format),
+      kind: strOrNull(raw.kind),
+      program: strOrNull(raw.program),
+      archived: boolOrNull(raw.archived),
+      evergreen: boolOrNull(raw.evergreen),
+      copy_source: strOrNull(raw.copy_source),
+      legacy: raw.legacy ?? null
+    }
+    writeDoc('pages', stem(raw.slug), doc)
+  }
+  return snap.items.length
+}
+
+// ---- announcements ---------------------------------------------------------
+
+interface RawAnnouncement {
+  status?: string | null
+  url?: string | null
+  message?: string | null
+  heading?: string | null
+  excerpt?: string | null
+  workstream?: number | null
+}
+
+interface AnnouncementDoc {
+  status: string | null
+  url: string | null
+  message: string | null
+  heading: string | null
+  excerpt: string | null
+  workstream: number | null
+}
+
+/** Fixed stem: `announcements.json.items` is the Directus singleton, so exactly one. */
+const ANNOUNCEMENT_STEM = 'announcement'
+
+/**
+ * `announcements.json.items` is a SINGLE OBJECT, not an array (BRIEF §6 / D3) — it is
+ * a Directus singleton. One document is emitted under a fixed filename rather than a
+ * file-per-item sweep. The Directus audit columns (`id`, `user_created`,
+ * `date_created`, `user_updated`, `date_updated`) are dropped: issue 09's
+ * `bfAnnouncements` schema declares none of them, and `@nuxt/content` mints its own id.
+ * The `status === 'published'` gate stays in the composable (issue 13), per BRIEF §6.
+ */
+const normaliseAnnouncements = (): number => {
+  const snap = readSnapshot<{ items: RawAnnouncement | null }>('announcements.json')
+  resetCollection('announcements')
+  const raw = snap.items
+  // Guard the singleton shape explicitly: an array or a non-object would otherwise
+  // resolve every field to `null` and still report 1 document, so `main()`'s
+  // zero-document check would pass while an all-null file was written.
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) {
+    console.error('normalise-wireframe-data: announcements.json.items is not a singleton object')
+    return 0
+  }
+
+  const doc: AnnouncementDoc = {
+    status: strOrNull(raw.status),
+    url: strOrNull(raw.url),
+    message: plainOrNull(raw.message),
+    heading: plainOrNull(raw.heading),
+    excerpt: plainOrNull(raw.excerpt),
+    workstream: typeof raw.workstream === 'number' ? raw.workstream : null
+  }
+  writeDoc('announcements', ANNOUNCEMENT_STEM, doc)
+  return 1
+}
+
+// ---- menus (site chrome) ---------------------------------------------------
+
+/**
+ * `MENUS` is not a snapshot — it is a hardcoded constant in `useWfContent.ts:153-186`.
+ * BRIEF §6 keeps the collection count at six by emitting it as a typed JSON module
+ * instead of a seventh collection: `src/assets/bf-data/menus.json`, read by the layout
+ * and passed as props to `bfNav` / `bfFooter` (D8 — nav and footer are presentational).
+ *
+ * The tree below is a VERBATIM port of the constant, `/wireframes/…` paths and all;
+ * `deWireframe()` then re-roots every internal `to` in one auditable pass, because
+ * menus.json serves the final `bf-*` site at `/` and not the wireframe prototype.
+ * `href` targets are external and pass through untouched.
+ */
+// The lookahead covers `/wireframes`, `/wireframes/…`, and — should `MENUS` ever grow
+// one — a query- or hash-only `/wireframes?x` / `/wireframes#x`, which would otherwise
+// ship un-re-rooted and 404 on the `bf-*` site.
+const WIREFRAME_PREFIX = /^\/wireframes(?=[/?#]|$)/
+
+const deWireframe = (to: string): string => {
+  const stripped = to.replace(WIREFRAME_PREFIX, '')
+  return stripped === '' ? '/' : stripped
+}
+
+/** Fixed key order, and no key emitted for an absent optional — deterministic output. */
+const menuItem = (item: MenuItem): MenuItem => {
+  const out: MenuItem = { label: item.label }
+  if (item.to !== undefined) out.to = deWireframe(item.to)
+  if (item.href !== undefined) out.href = item.href
+  if (item.external !== undefined) out.external = item.external
+  if (item.strong !== undefined) out.strong = item.strong
+  return out
+}
+
+const menuGroup = (menu: Menu): Menu => {
+  const out: Menu = { label: menu.label }
+  if (menu.items !== undefined) out.items = menu.items.map(menuItem)
+  if (menu.to !== undefined) out.to = deWireframe(menu.to)
+  if (menu.href !== undefined) out.href = menu.href
+  if (menu.external !== undefined) out.external = menu.external
+  return out
+}
+
+const buildMenus = (): Menu[] => {
+  const programs = readSnapshot<{ items: RawProgram[] }>('programs.json').items
+  const projects = readSnapshot<{ items: RawProject[] }>('projects.json').items
+
+  // Same derivations the composable makes at l.109-110 / l.148 / l.127-128.
+  const programEntries = programs.map(a => ({ slug: a.slug, name: plainOrNull(a.heading) ?? '' }))
+  const navProjects = NAV_SLUGS
+    .map(slug => projects.find(p => p.slug === slug))
+    .filter((p): p is RawProject => Boolean(p))
+    .filter(isGridEligible)
+  const transponderUrl = projects.find(p => p.slug === 'transponder-magazine')?.external_url
+    ?? '#transponder-magazine-url'
+
+  const source: Menu[] = [
+    { label: 'About', items: [
+      { label: 'Mission', to: '/wireframes/about' },
+      { label: 'Board of Directors', to: '/wireframes/about#board' },
+      { label: 'Team', to: '/wireframes/about#team' },
+      { label: 'Bertelsmann Stiftung', href: '#', external: true },
+      { label: 'Contact', to: '/wireframes/about#contact' }
+    ] },
+    { label: 'Programs', items: programEntries.map(a => ({ label: a.name, to: `/wireframes/${a.slug}` })) },
+    { label: 'Projects', items: [
+      // Only on-site, active projects link here — external_only products, podcasts and
+      // archived rows are pruned so the menu tracks the data (Aug 4 mapping).
+      ...navProjects.map(p => ({ label: plainOrNull(p.heading) ?? '', to: `/wireframes/projects/${p.slug}` })),
+      { label: 'All Projects →', to: '/wireframes/projects', strong: true }
+    ] },
+    { label: 'Insights', items: [
+      { label: 'All Insights', to: '/wireframes/insights' },
+      { label: 'Articles', to: '/wireframes/insights?format=article' },
+      { label: 'Reports', to: '/wireframes/insights?format=report' },
+      { label: 'Videos', to: '/wireframes/insights?format=video' },
+      { label: 'Infographics', to: '/wireframes/insights?format=infographic' },
+      // Transponder Magazine lives under Insights. It is an external product, so the
+      // link is its own site — PLACEHOLDER until Irene supplies the URL (Q6).
+      { label: 'Transponder Magazine', href: transponderUrl, external: true },
+      { label: 'Archive', to: '/wireframes/archive', strong: true }
+    ] },
+    // Pruned-nav plain buttons (BF-142): external links, no dropdowns, no landing pages.
+    // NOTE: podcast-platform URL is a PLACEHOLDER — Irene to supply the real one.
+    { label: 'Podcasts', href: '#podcast-platform-url', external: true },
+    { label: 'Documentaries', href: 'https://bfnadocs.org', external: true }
+  ]
+
+  return source.map(menuGroup)
+}
+
+const normaliseMenus = (): number => {
+  const menus = buildMenus()
+  mkdirSync(BF_DATA_DIR, { recursive: true })
+  // A bare array, so `src/assets/bf-data/menus.ts` can type it as `Menu[]` directly.
+  writeFileSync(join(BF_DATA_DIR, 'menus.json'), `${JSON.stringify(menus, null, 2)}\n`, 'utf8')
+  return menus.length
+}
+
 // ---- run -------------------------------------------------------------------
 
 const main = (): void => {
   mkdirSync(OUT_DIR, { recursive: true })
-  const insights = normaliseInsights()
-  const projects = normaliseProjects()
-  const programs = normalisePrograms()
+  const counts = {
+    insights: normaliseInsights(),
+    projects: normaliseProjects(),
+    programs: normalisePrograms(),
+    people: normalisePeople(),
+    pages: normalisePages(),
+    announcements: normaliseAnnouncements()
+  }
+  const menus = normaliseMenus()
 
   console.log('normalise-wireframe-data → content/bf/')
-  console.log(`  insights  ${insights}`)
-  console.log(`  projects  ${projects}`)
-  console.log(`  programs  ${programs}`)
+  for (const [name, n] of Object.entries(counts)) console.log(`  ${name.padEnd(13)} ${n}`)
+  console.log(`→ src/assets/bf-data/menus.json  ${menus} top-level menus`)
 
-  if (!insights || !projects || !programs) {
-    console.error('normalise-wireframe-data: a collection produced zero documents')
+  const empty = Object.entries(counts).filter(([, n]) => !n).map(([name]) => name)
+  if (empty.length || !menus) {
+    console.error(`normalise-wireframe-data: produced zero documents for ${[...empty, ...(menus ? [] : ['menus'])].join(', ')}`)
     process.exitCode = 1
   }
 }

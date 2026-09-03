@@ -1,0 +1,21 @@
+{
+  "slug": "archive-banner",
+  "heading": "Archive banner",
+  "subheading": null,
+  "excerpt": "From our archive: published {date} — kept online and citable; may not reflect current events.",
+  "description": "From our archive: published {date} — kept online and citable; may not reflect current events.",
+  "authors": [],
+  "image": null,
+  "video_url": null,
+  "download": null,
+  "external_url": null,
+  "publish_date": null,
+  "bucket": "page",
+  "format": null,
+  "kind": null,
+  "program": null,
+  "archived": false,
+  "evergreen": true,
+  "copy_source": "ccm-draft-2026-07-31 (wireframe copy, pending Irene review)",
+  "legacy": null
+}
