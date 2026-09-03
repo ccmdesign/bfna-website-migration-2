@@ -270,29 +270,29 @@ const toInsightDoc = (
   flags: { featured: boolean, retired_news: boolean }
 ): InsightDoc => {
   const doc: InsightDoc = {
-  // `slug` is the STEM, not `raw.slug` (gh#151 / F1). For 369 of the 371 documents those
-  // are the same string; for the two collisions the stem is what makes the field unique,
-  // and it is also what the file on disk is called, so a `bySlug()` lookup and a filename
-  // can no longer disagree.
-  slug: stem.stem,
-  heading: plainOrNull(raw.heading),
-  subheading: plainOrNull(raw.subheading),
-  excerpt: plainOrNull(raw.excerpt),
-  content: strOrNull(raw.content),
-  image: strOrNull(raw.image),
-  video_url: strOrNull(raw.video_url),
-  download: strOrNull(raw.download),
-  external_url: strOrNull(raw.external_url),
-  publish_date: strOrNull(raw.publish_date),
-  format: strOrNull(raw.format),
-  program: strOrNull(raw.program),
-  authors: strArray(raw.authors),
-  projects: strArray(raw.projects),
-  archived: boolFlag(raw.archived),
-  evergreen: boolFlag(raw.evergreen),
-  featured: flags.featured,
-  retired_news: flags.retired_news,
-  legacy: toLegacy(raw.legacy)
+    // `slug` is the STEM, not `raw.slug` (gh#151 / F1). For 369 of the 371 documents those
+    // are the same string; for the two collisions the stem is what makes the field unique,
+    // and it is also what the file on disk is called, so a `bySlug()` lookup and a filename
+    // can no longer disagree.
+    slug: stem.stem,
+    heading: plainOrNull(raw.heading),
+    subheading: plainOrNull(raw.subheading),
+    excerpt: plainOrNull(raw.excerpt),
+    content: strOrNull(raw.content),
+    image: strOrNull(raw.image),
+    video_url: strOrNull(raw.video_url),
+    download: strOrNull(raw.download),
+    external_url: strOrNull(raw.external_url),
+    publish_date: strOrNull(raw.publish_date),
+    format: strOrNull(raw.format),
+    program: strOrNull(raw.program),
+    authors: strArray(raw.authors),
+    projects: strArray(raw.projects),
+    archived: boolFlag(raw.archived),
+    evergreen: boolFlag(raw.evergreen),
+    featured: flags.featured,
+    retired_news: flags.retired_news,
+    legacy: toLegacy(raw.legacy)
   }
   // Appended rather than declared inline so the key is ABSENT — not `null` — on the 369
   // documents that have neither. `content.config.ts` declares both `.optional()`.
