@@ -206,3 +206,62 @@ a document of its own.
 It must reproduce all three properties — order statement first, CUBE stack only, no
 unlayered author CSS — and #108 asks it to assert layer **order**, not just membership.
 Probe 16 now carries those three rows (`§ 12`) as the working reference.
+
+---
+
+## Decision 4 — an opt-in keyboard hook: `data-probe-keys` (gh#28)
+
+**Added by** [gh#28](https://github.com/ccmdesign/bfna-website-migration-2/issues/28)
+(issue 19, `bfSkipLink` + the `[data-external]` marker).
+
+**A probe whose root carries `data-probe-keys="Tab,Enter"` gets those keys
+dispatched as trusted input before its verdict is read.**
+
+### Why
+
+Every probe before 19 answers its focus questions with `el.focus()`. That is the
+right tool for *"can this element take focus"* and the wrong tool for the two
+questions a skip link raises:
+
+- **is it the first focusable element?** — a question about the browser's own
+  sequential focus navigation, which `.focus()` bypasses entirely. Enumerating
+  the tab order in JavaScript and asserting against that enumeration proves only
+  that the enumeration agrees with itself.
+- **does activating it move focus to the target?** — fragment navigation moves
+  focus only when the target is focusable, and a scripted `.click()` is a
+  different code path from a keyboard activation.
+
+### How
+
+| | |
+|---|---|
+| **Request** | `data-probe-keys`, a comma-separated sequence, on the same root that carries `data-probe-verdict`. Known names: `Tab`, `Enter`, `Escape`, `Space`. An unrecognised name **throws** — a keyboard assertion that quietly pressed nothing would report the wrong reason for its verdict. |
+| **Handshake** | The attribute is bound reactively, so it appears only after the probe has mounted and its listeners are attached. The harness polls for it; its appearance is both the request and the "you may drive me now". It is absent from the prerendered HTML by construction. |
+| **Dispatch** | `Input.dispatchKeyEvent` — `rawKeyDown`, an optional `char`, then `keyUp`, the triple Chrome's own front-end sends. Preceded by `Emulation.setFocusEmulationEnabled`, because an unfocused headless document runs no sequential focus navigation and Tab would do nothing on a correct component. |
+| **Timing** | Once per page load, from outside the poll's `try` — that `catch` exists to swallow the execution-context error a navigation raises, and swallowing an unknown-key error with it would turn a typo into a mystery timeout. |
+
+The verdict stays `PENDING` until the probe's own listeners have seen the
+sequence through, which the harness already treats as a failure rather than a
+skip. Opened by hand, such a probe tells the reader which keys to press.
+
+**Additive.** A probe that declares nothing is driven exactly as before; the
+full-suite run at gh#28 (11 probes, 401 rows) is the evidence.
+
+## Related: probe routes are seeded for prerender (gh#28)
+
+`src/nuxt.config.ts` now lists every `/bf-probe/*` route in
+`nitro.prerender.routes`, enumerated from `src/pages/bf-probe/` at config load.
+
+Probes are linked from nowhere — that is the point of them — so they reached the
+prerenderer only through Nuxt's `prerender.server` plugin, which hands the static
+route list to Nitro **ten at a time**, one batch per successfully rendered page.
+A batch spliced during a render that ends in a 500 goes with that response, and
+this app has three pre-existing prerender 500s (`/`, `/podcasts`, `/podcasts/`).
+Which routes land in a lost batch is a function of list order, so adding a page
+can silently drop an unrelated one: `/bf-probe/19-bf-skip-link` never reached
+`.output/public` while 03–18 did, and the harness reported it as *"does not
+follow the harness convention"* — a true statement about the file it found and a
+false one about the probe.
+
+Enumerated from disk rather than listed by hand, so a probe added by a later
+issue is picked up with no edit there — the same rule `check-probes.ts` follows.

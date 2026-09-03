@@ -1,0 +1,73 @@
+/*
+  The `[data-external]` marker — issue 19 / gh#28.
+
+  ## What it is
+
+  A documented **style hook**, not a component. The inventory's finding was that
+  external-link signalling is an attribute the anchor carries, so there is
+  nothing to wrap: `bfButton` and `bfChip` already emit
+  `:data-external="external || undefined"` (absent, never `"false"`, on internal
+  links), the `bfCard*` family will emit the same attribute, and this file is
+  the single place that decides what the reader sees because of it.
+
+  Front 2 asked for it: microsites, podcast platforms and the legacy asset host
+  all live off-site, and a link that leaves without saying so is a small
+  betrayal of the reader's expectation. `src/utils/link.ts`'s `isExternal()` is
+  the matching rule for *deciding* which links get the attribute.
+
+  ## Why a shared stylesheet rather than each component's scoped block
+
+  Because the attribute crosses components. A scoped rule inside `bfButton`
+  cannot reach `bfChip`'s anchor, let alone the plain `<a data-external>` a
+  template writes by hand — three copies of one rule, drifting the first time
+  one is edited. This is exactly the case the components layer of the CUBE stack
+  exists for, so the rule is stated once here and composed from
+  `src/public/css/styles.css`.
+
+  ## Scope and cascade
+
+  - `a[data-external]` — anchors only, matching the wireframe's own
+    `.wireframe a[data-external]::after`. The attribute on a `<button>` would be
+    meaningless (a button navigates nowhere) and is not styled.
+  - Inside `@layer components`, per BRIEF §5 rule 4 and the declared order in
+    `styles.css`. That keeps it beatable by `utils` and `overrides` and by any
+    consumer rule, and — unlike an unlayered rule — unable to outrank the whole
+    stack.
+  - `/css/wireframe.css` states its own `.wireframe a[data-external]::after`
+    with the same `content`, so on a wireframe page the two agree and nothing
+    moves. The frozen skin is untouched (D2/DoD-4).
+
+  ## The two values
+
+  `content: " ↗"` is the wireframe's, kept verbatim — this is the affordance
+  being formalised, not redesigned. The leading space is load-bearing: it is the
+  only separation between the label and the arrow, and `::after` inherits the
+  anchor's `white-space`.
+
+  `font-size: 0.8em` is likewise the wireframe's literal, kept **deliberately**.
+  The type scale is Utopia's fluid steps (`--size--1` … `--size-6`), each a
+  step of the *page's* scale rather than a ratio of the surrounding text, so
+  `--size--1` on a marker inside a large heading would render it at body size —
+  bigger, sometimes, than the text it annotates. There is no token meaning
+  "slightly smaller than whatever this sits in"; `em` is that expression. The
+  spec anticipated this call and asked for it to be recorded, which it is, in
+  the issue's Decisions section.
+
+  Both are exposed as hooks (`--_bf-external-*`) so a consumer can change either
+  without editing here. The defaults are declared on the **anchor**, not on the
+  pseudo-element: a pseudo-element inherits custom properties from the element
+  that originates it, but its own declaration would shadow a consumer's
+  override set on that element — the hook would then be unusable from outside,
+  which is the `bfMedia` lesson from gh#26.
+*/
+@layer components {
+  a[data-external] {
+    --_bf-external-marker: " ↗";
+    --_bf-external-marker-font-size: 0.8em;
+  }
+
+  a[data-external]::after {
+    content: var(--_bf-external-marker);
+    font-size: var(--_bf-external-marker-font-size);
+  }
+}

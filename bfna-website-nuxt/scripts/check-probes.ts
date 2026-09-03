@@ -24,6 +24,15 @@
  *     `data-probe-verdict="PASS" | "FAIL" | "PENDING"`;
  *   - on each check row: `data-probe-row="<label>"` and `data-ok="true|false"`.
  *
+ * Optionally (gh#28) a probe's root also carries
+ * `data-probe-keys="Tab,Enter"` — a comma-separated sequence this harness
+ * dispatches as **trusted** key events once the attribute appears, which is
+ * after hydration because the probe binds it reactively. That is how probe 19
+ * asserts that the first real Tab from a fresh document lands on the skip link
+ * and that a real Enter moves focus to the target: neither question can be
+ * answered by a programmatic `.focus()`, which asks an easier one. Opt-in and
+ * additive — a probe that declares nothing is driven exactly as before.
+ *
  * The verdict is anchored on the **root**, not on a `data-testid` or a class,
  * because probe 16 renders a second verdict cell (its keyboard lab) and a
  * class-shaped selector would be ambiguous. `PENDING` is a real third state,
@@ -400,7 +409,7 @@ const READ_VERDICT = `(() => {
       verdict. Every probe root ships in the prerendered HTML, so once the
       document is complete a missing root is conclusive.
     */
-    return { conforms: false, ready: loaded, verdict: 'MISSING', probe: null, rows: [] }
+    return { conforms: false, ready: loaded, verdict: 'MISSING', probe: null, keys: null, rows: [] }
   }
   const verdict = (root.getAttribute('data-probe-verdict') || '').toUpperCase()
   const rows = Array.from(document.querySelectorAll('[data-probe-row]')).map(el => {
@@ -418,18 +427,95 @@ const READ_VERDICT = `(() => {
     ready: verdict !== 'PENDING' && verdict !== '',
     verdict,
     probe: root.getAttribute('data-probe'),
+    /*
+      The keyboard handshake (gh#28). A probe that needs *real* key events — not
+      a programmatic \`.focus()\` — asks for them by naming them here, and binds
+      the attribute reactively so it appears only once the page has hydrated and
+      its listeners are attached. Absent on every other probe, and absent from
+      the prerendered HTML, so this is also the "you may drive me now" signal.
+    */
+    keys: root.getAttribute('data-probe-keys'),
     width: window.innerWidth,
     rows
   }
 })()`
 
+/**
+ * The CDP payload for one named key.
+ *
+ * Only the keys a probe actually asks for are listed; an unknown name is
+ * rejected loudly rather than silently dispatched as nothing, because a
+ * keyboard assertion that quietly pressed no key would pass or fail for the
+ * wrong reason. `windowsVirtualKeyCode` is what Chrome's input pipeline reads
+ * on every platform — the name is historical.
+ */
+const KEYS: Record<string, { key: string, code: string, vk: number, text?: string }> = {
+  Tab: { key: 'Tab', code: 'Tab', vk: 9 },
+  Enter: { key: 'Enter', code: 'Enter', vk: 13, text: '\r' },
+  Escape: { key: 'Escape', code: 'Escape', vk: 27 },
+  Space: { key: ' ', code: 'Space', vk: 32, text: ' ' }
+}
+
 /** The two-digit number a probe route starts with, e.g. `16-bf-chip` -> `16`. */
 const numberOf = (slug: string): string => slug.split('-')[0] ?? ''
 
 type Row = { label: string, ok: boolean, detail: string }
-type Verdict = { conforms: boolean, ready: boolean, verdict: string, probe: string | null, width?: number, rows: Row[] }
+type Verdict = { conforms: boolean, ready: boolean, verdict: string, probe: string | null, keys?: string | null, width?: number, rows: Row[] }
 
 const sleep = (ms: number) => new Promise(ok => setTimeout(ok, ms))
+
+/**
+ * Send a probe's declared key sequence as trusted input (gh#28).
+ *
+ * `data-probe-keys="Tab,Enter"` becomes a real Tab followed by a real Enter,
+ * dispatched into the renderer through `Input.dispatchKeyEvent`. Two details
+ * are load-bearing:
+ *
+ * 1. **`Emulation.setFocusEmulationEnabled`.** A headless page is not the
+ *    focused window, and an unfocused document does not run sequential focus
+ *    navigation — Tab would do nothing and the probe would fail a correct
+ *    component. Enabled per target, only when keys were asked for.
+ * 2. **`rawKeyDown` + optional `char` + `keyUp`.** That is the triple Chrome's
+ *    own front-end sends; `keyDown` alone omits the character stage that
+ *    Enter's default action on a link is derived from.
+ *
+ * An unrecognised key name throws rather than being skipped: a keyboard
+ * assertion that quietly pressed nothing would report the wrong reason for its
+ * verdict, which is the failure this whole harness exists to prevent.
+ */
+const dispatchKeys = async (cdp: Cdp, sessionId: string, sequence: string, slug: string): Promise<void> => {
+  const names = sequence.split(',').map(s => s.trim()).filter(Boolean)
+  if (names.length === 0) return
+
+  await cdp.send('Emulation.setFocusEmulationEnabled', { enabled: true }, sessionId)
+
+  for (const name of names) {
+    const k = KEYS[name]
+    if (!k) {
+      throw new Error(
+        `${slug} asked for the key "${name}", which check-probes does not know.`
+        + ` Known keys: ${Object.keys(KEYS).join(', ')}`
+      )
+    }
+
+    const base = {
+      key: k.key,
+      code: k.code,
+      windowsVirtualKeyCode: k.vk,
+      nativeVirtualKeyCode: k.vk
+    }
+
+    await cdp.send('Input.dispatchKeyEvent', { ...base, type: 'rawKeyDown' }, sessionId)
+    if (k.text !== undefined) {
+      await cdp.send('Input.dispatchKeyEvent', { ...base, type: 'char', text: k.text }, sessionId)
+    }
+    await cdp.send('Input.dispatchKeyEvent', { ...base, type: 'keyUp' }, sessionId)
+
+    /* A frame's worth of breathing room, so a focus handler runs before the
+       next key lands on whatever it focused. */
+    await sleep(60)
+  }
+}
 
 /* ------------------------------------------------------------------ *
  * Run
@@ -468,6 +554,10 @@ const run = async (): Promise<void> => {
 
       let note: string | undefined
 
+      /* One keyboard sequence per page load, at most. */
+      let keysSent = false
+      let keys: string | null = null
+
       try {
         cdp.exceptions = []
         await cdp.send('Runtime.enable', {}, sessionId)
@@ -490,10 +580,38 @@ const run = async (): Promise<void> => {
             )
             if (evaluated.result?.value) {
               verdict = evaluated.result.value
+
+              /*
+               * The keyboard handshake (gh#28). Some assertions cannot be made
+               * from inside the page at all: whether the first Tab from a fresh
+               * document lands on the skip link is a question about the
+               * browser's sequential focus navigation, and a programmatic
+               * `.focus()` answers a different, easier question. A probe that
+               * needs the real thing publishes `data-probe-keys` on its root —
+               * bound reactively, so its appearance also means "hydrated, my
+               * listeners are attached" — and these are **trusted** events:
+               * real focus navigation, real default actions.
+               *
+               * Opt-in and additive. A probe that declares nothing is driven
+               * exactly as before.
+               */
+              if (!keysSent && verdict.keys) keys = verdict.keys
+
               if (verdict.ready) break
             }
           } catch {
             /* navigation swaps the execution context; keep polling */
+          }
+
+          /*
+           * Dispatched **outside** the poll's `try`, on purpose: that `catch`
+           * exists to swallow the execution-context error a navigation raises,
+           * and swallowing an unknown-key error along with it would turn a
+           * typo in `data-probe-keys` into a mystery timeout.
+           */
+          if (keys && !keysSent) {
+            keysSent = true
+            await dispatchKeys(cdp, sessionId, keys, slug)
           }
         }
 

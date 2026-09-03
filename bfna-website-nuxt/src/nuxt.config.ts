@@ -26,6 +26,36 @@ try {
   dsComponentDirs = [dsRootDir]
 }
 
+/**
+ * Every `/bf-probe/*` route, enumerated from disk (gh#28).
+ *
+ * Probes are never linked from anywhere — that is the point of them — so they
+ * reach the prerenderer only through Nuxt's `prerender.server` plugin, which
+ * hands the static route list to Nitro **ten at a time**, one batch per
+ * successfully rendered page. A batch spliced during a render that ends in a
+ * 500 is dropped with that response, and this app has three pre-existing 500s
+ * (`/`, `/podcasts`, `/podcasts/`) during prerender. Which routes land in the
+ * lost batches is a function of list order, so adding a page can silently push
+ * an unrelated one out of the build — exactly what happened to
+ * `/bf-probe/19-bf-skip-link`, whose HTML never reached `.output/public` while
+ * probes 03–18 did.
+ *
+ * Seeding them explicitly makes the probe suite independent of that ordering.
+ * Read from the directory rather than listed by hand so a probe added by a
+ * later issue is picked up with no edit here — the same rule
+ * `scripts/check-probes.ts` follows when it enumerates what to check.
+ */
+const probeRoutes: string[] = (() => {
+  try {
+    return readdirSync(resolve(currentDir, 'pages/bf-probe'), { withFileTypes: true })
+      .filter(entry => entry.isFile() && entry.name.endsWith('.vue'))
+      .map(entry => `/bf-probe/${entry.name.replace(/\.vue$/, '')}`)
+      .sort()
+  } catch {
+    return []
+  }
+})()
+
 export default defineNuxtConfig({
   rootDir: projectRoot,
   srcDir: currentDir,
@@ -125,8 +155,10 @@ export default defineNuxtConfig({
   ssr: true,
   nitro: {
     prerender: {
-      // Wireframes aren't linked from the main site — seed them so the crawler finds them
-      routes: ['/wireframes'],
+      // Wireframes aren't linked from the main site — seed them so the crawler finds them.
+      // Probes aren't linked from anywhere at all, and the batched hand-off that
+      // would otherwise carry them is lossy — see `probeRoutes` above.
+      routes: ['/wireframes', ...probeRoutes],
       failOnError: false
     }
   },

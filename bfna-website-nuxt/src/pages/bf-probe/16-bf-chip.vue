@@ -644,18 +644,37 @@ onMounted(async () => {
     .map(url => url.pathname)
 
   /**
-   * The SFC style chunks Vite emits for the client build, by name. There are
-   * exactly two on a probe route — this page's own `<style scoped>` and the
-   * layout's — and naming them is what makes the row above meaningful: a
-   * `/_nuxt/*.css` allowance that was not checked would quietly re-admit every
-   * legacy component's stylesheet through the back door. The hash is dropped;
-   * the name is not.
+   * The SFC style chunks Vite emits for the client build, by name. Naming them
+   * is what makes the row above meaningful: a `/_nuxt/*.css` allowance that was
+   * not checked would quietly re-admit every legacy component's stylesheet
+   * through the back door. The hash is dropped; the name is not.
    */
   const sfcStyleChunks = [...new Set(
     sameOrigin
       .filter(url => url.pathname.startsWith('/_nuxt/'))
       .map(url => url.pathname.replace(/^\/_nuxt\//, '').replace(/\.[^.]+\.css$/, ''))
   )].sort()
+
+  /**
+   * What a probe route is allowed to emit: this page's own `<style scoped>`,
+   * the layout's, and the `bf-*` atoms rendered on it.
+   *
+   * Originally pinned to exactly two names — the page and the layout — which
+   * was true only while each atom's CSS happened to be inlined into the single
+   * page that used it. gh#28 added a second page rendering `bfChip`, so Vite
+   * split `Chip.css` into a shared chunk and this row failed on a build that
+   * was entirely correct: the #115 complaint (a check that breaks on a correct
+   * component is not a check), in a new place.
+   *
+   * The teeth are unchanged. The row reports every chunk *outside* this set, so
+   * a `ccm*`, `ds/` or `legacy/` stylesheet arriving through `/_nuxt/` still
+   * fails it by name — which is the back door the check exists to watch.
+   */
+  const allowedStyleChunks = new Set([
+    '16-bf-chip',
+    'bf-probe',
+    'Button', 'Chip', 'Logo', 'Media', 'SkipLink', 'Time'
+  ])
 
   /**
    * Cross-origin sheets, by host. Exactly one is expected: the Material
@@ -1171,9 +1190,9 @@ onMounted(async () => {
       actual: foreignStylesheets.join(', ')
     },
     {
-      label: '  …and the only SFC style chunks are this page\u2019s and its layout\u2019s',
-      expected: '16-bf-chip, bf-probe',
-      actual: sfcStyleChunks.join(', ')
+      label: '  …and no SFC style chunk beyond this page\u2019s, its layout\u2019s and the bf-* atoms\u2019',
+      expected: '',
+      actual: sfcStyleChunks.filter(name => !allowedStyleChunks.has(name)).join(', ')
     },
     {
       label: '  …and the only cross-origin sheet is the app-wide icon font',
