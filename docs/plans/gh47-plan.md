@@ -35,10 +35,16 @@ Eight call sites, all in `src/pages/wireframes/`: `about`, `archive`,
 
 ## Approach
 
-1. **Contract** — append `PageHeaderProps` to `src/types/bf-contracts.ts`
-   (the epic's only home for shared types), after `SectionProps`:
-   `label?`, `crumbs?: Crumb[]`, `chips?: string[]`, `heading?: string | null`,
-   `tagline?: string | string[] | null`. `Crumb` already exists (issue 02).
+1. **Contract** — a **local, unexported `interface Props`** in the component,
+   importing `Crumb` from `src/types/bf-contracts.ts`: `label?`,
+   `crumbs?: Crumb[]`, `chips?: string[]`, `heading?: string | null`,
+   `tagline?: string | string[] | null`. This follows D-28.3 (`bfBreadcrumb`)
+   rather than the `XProps`-in-contracts shape of the atoms — BRIEF §5 rule 11
+   forbids declaring a **shared** type inline, and the shared type here is
+   `Crumb`, which is imported; `Props` is shared with nobody. It is also what
+   the spec designs and what its `grep -q "crumbs?: Crumb\[\]"
+   src/components/bf/PageHeader.vue` acceptance reads. `bf-contracts.ts` is not
+   edited by this issue.
 2. **Component** — `src/components/bf/PageHeader.vue`, `defineOptions({ name:
    'BfPageHeader' })`, `withDefaults(..., { label: 'Page header' })`. Composes
    `<bfSection :label="label" gap="s" padded>` — the prop names verified against
@@ -81,8 +87,7 @@ Eight call sites, all in `src/pages/wireframes/`: `about`, `archive`,
 
 | File | Change |
 |---|---|
-| `bfna-website-nuxt/src/types/bf-contracts.ts` | add `PageHeaderProps` |
-| `bfna-website-nuxt/src/components/bf/PageHeader.vue` | new |
+| `bfna-website-nuxt/src/components/bf/PageHeader.vue` | new (local `interface Props`; `bf-contracts.ts` untouched) |
 | `bfna-website-nuxt/src/pages/bf-probe/38-bf-page-header.vue` | new |
 | `docs/ds-epic/issues/38-bf-page-header.md` | append Decisions |
 | `docs/plans/gh47-plan.md` | this file |
@@ -126,7 +131,7 @@ components`; no `:not()` with a complex selector anywhere in `bf-*`.
 
 | Risk | Mitigation |
 |---|---|
-| `chips?: string[]` narrows the wf source's `(string \| null)[]`, and three wf call sites build nullable arrays | Follow the spec's type (it is the authoritative contract) but keep the runtime filter; record in Decisions that a Phase 6 template with nullable entries filters at the call site. |
+| `chips?: string[]` narrows the wf source's `(string \| null)[]`, and three wf call sites build nullable arrays | Follow the spec's type (it is the authoritative contract) but keep the runtime filter; record in Decisions that a Phase 6 template with nullable entries filters at the call site. Probe row: a `''` in the array is dropped. |
 | Guarding on vnodes diverges from the frozen source's `$slots.chips` | Deliberate, narrow, documented in Decisions, and directly what residual #162 recommends deciding here; a probe row proves both directions. |
 | The probe must carry exactly five `<h1>` | The probe declares no `<h1>` of its own; `layouts/bf-probe.vue` is a bare `<slot />`, verified. Asserted twice — a probe row and a grep on the emitted HTML. |
 | `bfSection` sets `inheritAttrs: false` and filters `$attrs` | `bfPageHeader` passes only declared props plus `data-probe-case`, which is on the allowed `data-` prefix. Verified in `Section.vue`. |
