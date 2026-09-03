@@ -1,0 +1,27 @@
+{
+  "slug": "bridging-the-atlantic",
+  "heading": "Bridging the Atlantic",
+  "excerpt": "*Bridging the Atlantic* is a 6-part miniseries, created with [Are We Europe](https://www.areweeurope.com/), that will take stock of transatlantic relations today and examine it beyond the usual touchstones. After a tumultuous four years with the Trump administration, many following the transatlantic relationship are eager to understand how the transatlantic relationship can bounce back and become more resilient in the future. But a reset is perhaps not the right goal. \nIn the 21st century, people on both sides of the Atlantic are no longer satisfied with “back to normal” and want more. Through interviews with experts on various aspects of the transatlantic relationship, this podcast will pit our understanding of transatlantic relations over the last several years against ideas from people re-imagining what the transatlantic relationship can and should be. The outcome, we hope, is a clearer sense of the alliance that shapes our lives in visible and invisible ways.",
+  "description": null,
+  "kind": "podcast",
+  "program": "Transatlantic Relations & Global Challenges",
+  "external_url": null,
+  "image": "https://bfna.simplyas.com/assets/995ad054-adeb-46a4-b017-a48da435f04c",
+  "parent_project": null,
+  "archived": null,
+  "exclude_from_grid": true,
+  "external_only": null,
+  "featured": false,
+  "nav": false,
+  "grid_eligible": false,
+  "grid_order": 9007199254740991,
+  "microsite_cta": null,
+  "participation": {
+    "title": "Follow this project",
+    "ctas": [
+      "Subscribe for updates",
+      "Read the latest"
+    ]
+  },
+  "podcast": null
+}

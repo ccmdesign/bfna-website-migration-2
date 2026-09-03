@@ -1,0 +1,27 @@
+{
+  "slug": "graphic-images",
+  "heading": "Disrupting Democracy: Graphic Images",
+  "excerpt": "Graphic Images uses data-driven visual storytelling to examine the forces reshaping democracy around the world. Drawing on data from the Bertelsmann Transformation Index (BTI), the project explores how technological, political, economic, and social changes, including polarization and information disruption, are influencing democratic systems and shaping their future.",
+  "description": "Graphic Images uses data-driven visual storytelling to examine the forces reshaping democracy around the world. Drawing on data from the Bertelsmann Transformation Index (BTI), the project explores how technological, political, economic, and social changes, including polarization and information disruption, are influencing democratic systems and shaping their future.",
+  "kind": "data-visualization-project",
+  "program": "Democracy",
+  "external_url": null,
+  "image": null,
+  "parent_project": null,
+  "archived": false,
+  "exclude_from_grid": null,
+  "external_only": null,
+  "featured": false,
+  "nav": false,
+  "grid_eligible": true,
+  "grid_order": 0,
+  "microsite_cta": null,
+  "participation": {
+    "title": "Follow this project",
+    "ctas": [
+      "Subscribe for updates",
+      "Read the latest"
+    ]
+  },
+  "podcast": null
+}

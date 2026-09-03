@@ -21,6 +21,7 @@
     "validate:tokens:fix": "tsx scripts/validate-tokens.ts --fix",
     "check:links": "tsx scripts/check-links.ts",
     "generate:search-index": "tsx scripts/generate-search-index.ts",
+    "data:normalise": "tsx scripts/normalise-wireframe-data.ts",
     "export:contentful-data": "tsx scripts/export-contentful-data.ts",
     "lint:css": "stylelint 'src/**/*.{css,vue,scss}'",
     "lint:css:fix": "stylelint 'src/**/*.{css,vue,scss}' --fix",

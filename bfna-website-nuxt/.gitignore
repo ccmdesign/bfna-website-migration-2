@@ -23,7 +23,11 @@ logs
 .env
 .env.*
 !.env.example
-/content/
+# Directus importer output stays ignored; the build-time normaliser output
+# (content/bf/**, derived from the committed wireframe snapshots) is tracked so
+# `npx nuxt generate` has data on a fresh checkout.
+/content/*
+!/content/bf/
 
 package-lock.json
 
