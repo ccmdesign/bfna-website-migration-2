@@ -11,8 +11,8 @@
  * |---|---|---|
  * | `markdown` | `##`, `###`, `- `, `* `, paragraphs, every inline mark | the markdown-lite path, and the mark stripper |
  * | `legacy` | Directus-era HTML with a rank-1 heading, `<br>`, `<strong>`, `<a>`, `&amp;`, `&nbsp;` | the legacy **strip** path, the entity decode, and the rank-1 case by construction |
- * | `empty` | `''` | the `[body copy]` fallback |
- * | `nullish` | `null` | the same fallback from the other nullish value |
+ * | `empty` | `''` | that an absent body renders **nothing** (#186) |
+ * | `nullish` | `null` | the same, from the other nullish value |
  * | `long` | a real 476-character excerpt, `measure="narrow"` | the cap, measured |
  * | `uncapped` | the same excerpt, `measure="full"` | the reference width to measure it against |
  *
@@ -53,7 +53,13 @@
  *     checked the same way by the acceptance command, counting *occurrences*
  *     with `grep -o … | wc -l` rather than lines with `grep -c` (D-37.5: one
  *     minified line makes `grep -c` report 1 for any number of headings).
- *  5. **Both nullish bodies render exactly one `[body copy]` paragraph.**
+ *  5. **Neither nullish body renders anything** — no `[body copy]`
+ *     placeholder, no empty `<p>`, just the childless `.stack` root. That is
+ *     residual #186, decided in gh#61 for every template at once: 97 of the 354
+ *     `bfInsights` rows and 3 `bfProjects` rows store a null body, and the
+ *     placeholder ported from `wfProse` was reaching readers on all of them.
+ *     The frozen `wfProse` keeps its own placeholder (D2); the two renderers
+ *     differ here on purpose.
  *  6. **The line length is capped, and capped at 60ch** — measured three ways
  *     that must agree: the band's resolved `max-inline-size` equals a live
  *     `60ch` ruler laid inside the same band, the prose fills that box exactly,
@@ -157,8 +163,8 @@ const LEGACY_TAGS = 'p,p,p,p,p,p,p,p'
 const CASES = [
   { key: 'markdown', note: 'markdown-lite body, narrow band' },
   { key: 'legacy', note: 'legacy-HTML body opening with a rank-1 heading, narrow band' },
-  { key: 'empty', note: 'content="" — the [body copy] fallback' },
-  { key: 'nullish', note: ':content="null" — the same fallback' },
+  { key: 'empty', note: 'content="" — renders nothing (#186)' },
+  { key: 'nullish', note: ':content="null" — the same, from null' },
   { key: 'long', note: 'real excerpt, measure="narrow" — the measured cap' },
   { key: 'uncapped', note: 'the same excerpt, measure="full" — the reference width' }
 ] as const
@@ -562,16 +568,20 @@ const report = () => {
       actual: seen.documentRankOne
     },
 
-    // --- 5. the empty-content fallback -------------------------------------
+    // --- 5. the empty-content case: nothing is rendered ---------------------
     {
-      label: 'an empty string renders exactly one [body copy] paragraph',
-      expected: 'p|[body copy]',
-      actual: empty ? `${empty.tags}|${empty.text}` : 'missing'
+      label: 'an empty string renders nothing — no [body copy], no empty <p>',
+      expected: 'root present, 0 children, no text',
+      actual: empty
+        ? `root ${empty.found ? 'present' : 'missing'}, ${empty.tags === '' ? 0 : empty.tags.split(',').length} children, ${empty.text === '' ? 'no text' : `text “${empty.text}”`}`
+        : 'missing'
     },
     {
       label: '  …and so does an explicit null',
-      expected: 'p|[body copy]',
-      actual: nullish ? `${nullish.tags}|${nullish.text}` : 'missing'
+      expected: 'root present, 0 children, no text',
+      actual: nullish
+        ? `root ${nullish.found ? 'present' : 'missing'}, ${nullish.tags === '' ? 0 : nullish.tags.split(',').length} children, ${nullish.text === '' ? 'no text' : `text “${nullish.text}”`}`
+        : 'missing'
     },
 
     // --- 6. the measure, measured ------------------------------------------
@@ -663,7 +673,8 @@ const verdict = computed(() =>
       HTML — and the second of them opens with a rank-one heading on purpose, so
       the claim <em>“no rank-one heading escapes”</em> is proved against the path
       that could produce one rather than asserted about a body that never had
-      one. The next two are the empty and null bodies. The last two are the same
+      one. The next two are the empty and null bodies, which since #186 render
+      nothing at all. The last two are the same
       excerpt inside a <code>narrow</code> band and a <code>full</code> one, so
       the line cap is <em>measured</em> against a reference on the same page
       rather than read off an attribute.

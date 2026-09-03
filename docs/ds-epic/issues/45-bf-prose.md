@@ -220,3 +220,19 @@ gate (orchestrator decision after #10, residual #71): **no new errors** against
 the `dev` baseline of 178 `error TS` lines, and **zero** errors under
 `src/components/bf`, `src/types`, `src/composables/bf` or `content.config`.
 Measured after this change: **178** and **0**.
+
+### D-45.7 — superseded by #186: the empty-content placeholder is gone (gh#61)
+
+D-45.2's ported `<p>[body copy]</p>` fallback shipped to readers on 97 of the
+354 `bfInsights` rows and 3 `bfProjects` rows, whose bodies are legitimately
+null (video and infographic items, where the media *is* the body). Residual
+[#186](https://github.com/ccmdesign/bfna-website-migration-2/issues/186) raised
+it; gh#61 took option 1 of the three it offered — `bfProse` renders **nothing**
+for empty or null content: no placeholder, no empty `<p>`, just the childless
+`.stack` root.
+
+Nothing else about the port moves. The frozen `wfProse` keeps its own
+placeholder (D2) and is not edited; the two renderers differ on this one case
+by decision. Probe 45's two empty-content rows now assert that nothing is
+rendered, by the same two rows that used to assert the placeholder. Reasoning
+lives at [`52-page-project-detail.md` D-52.6](./52-page-project-detail.md).
