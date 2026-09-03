@@ -80,38 +80,56 @@
   a:not([class]):hover {
     text-decoration: underline;
   }
-}
 
-a:not([class]):visited {
-  color: var(--link-color-visited, #666);
-}
+  /*
+   * gh#116 (residual #113). Everything below used to sit OUTSIDE this
+   * `@layer defaults` block — the closing brace was here, not at the end of
+   * the file. Unlayered author rules outrank every cascade layer, so
+   * `p, li, input, button, a { font-weight: 100 }` beat anything a `bf-*`
+   * component declared in `@layer components`: `.bf-chip { font: inherit }`
+   * won on the `<span>` branch (which that selector does not match) and lost
+   * on the `<a>` and `<button>` branches — 400 against 100, measured on
+   * `/bf-probe/16-bf-chip`. Every remaining atom had the same exposure.
+   *
+   * Only the brace moved. No declaration, selector or order changed, so the
+   * relative cascade among the rules below is exactly what it was; what
+   * changed is that the declared order
+   * `reset, defaults, tokens, themes, composition, components, utils, overrides`
+   * now governs them. `wireframe.css`'s two deliberately-unlayered rules
+   * still outrank these, which is what their comments say they rely on.
+   */
 
-ul:not([class]),
-ol:not([class]) {
-  margin-top: 0;
-  margin-bottom: var(--space-3xs);
-  padding-left: var(--space-s);
-}
+  a:not([class]):visited {
+    color: var(--link-color-visited, #666);
+  }
 
-li {
-  margin-bottom: 0.5em;
-}
+  ul:not([class]),
+  ol:not([class]) {
+    margin-top: 0;
+    margin-bottom: var(--space-3xs);
+    padding-left: var(--space-s);
+  }
 
-blockquote {
-  margin: 0;
-  padding: 0 var(--base-padding-inline);
-  color: var(--base-color, #666);
-  border-left: 0;
-}
+  li {
+    margin-bottom: 0.5em;
+  }
 
-p,
-li,
-input,
-button,
-a {
-  font-weight: 100;
-}
+  blockquote {
+    margin: 0;
+    padding: 0 var(--base-padding-inline);
+    color: var(--base-color, #666);
+    border-left: 0;
+  }
 
-strong {
-  font-weight: 400;
+  p,
+  li,
+  input,
+  button,
+  a {
+    font-weight: 100;
+  }
+
+  strong {
+    font-weight: 400;
+  }
 }

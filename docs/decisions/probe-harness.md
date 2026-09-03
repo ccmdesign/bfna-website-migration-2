@@ -123,3 +123,77 @@ check that breaks on a correct component is not a check:
    `type`, which a caller may legitimately want to change, there is no honest reason to set
    `aria-pressed` from outside, and a caller who did would desync it from `[data-active]` —
    the invariant probe 16 asserts.
+
+---
+
+## Decision 3 — every probe runs under `layouts/bf-probe.vue` (gh#116)
+
+**Added by** [gh#116](https://github.com/ccmdesign/bfna-website-migration-2/issues/116)
+(promoted residual [#113](https://github.com/ccmdesign/bfna-website-migration-2/issues/113),
+with [#103](https://github.com/ccmdesign/bfna-website-migration-2/issues/103),
+[#107](https://github.com/ccmdesign/bfna-website-migration-2/issues/107) and
+[#108](https://github.com/ccmdesign/bfna-website-migration-2/issues/108) folded in).
+
+**Every probe page declares `definePageMeta({ layout: 'bf-probe' })`, and declares no
+stylesheet, `lang` or `robots` head entry of its own.** `layout: false` is no longer used
+for a probe.
+
+### Why
+
+A probe measures `bf-*` atoms, and a measurement is only worth reading if the CSS on the
+page is exactly the CSS the design system declares. Under `layout: false` each of the eight
+probes repeated its own `<link rel="stylesheet" href="/css/styles.css">`, its own
+`htmlAttrs.lang`, its own `robots: noindex` and its own `:global(html)` ground — eight
+copies of a rule with no single place to state it, enforced only by the next probe author
+remembering it. Two of them additionally pulled in `/css/wireframe.css`.
+
+`layouts/bf-probe.vue` is now the **sole stylesheet injector** for `/bf-probe/*`. That
+property was verified, not assumed: `src/nuxt.config.ts`'s `css: []` array is empty (every
+entry commented out, `styles.css` and the three `css-legacy/*` files alike), there is no
+`src/app.vue`, and `layouts/legacy-base.vue` — which pulls `/global.css`, `/fixes.css` and
+`/v2updates.css` — reaches only the routes that name it. The one exception is
+`app.head.link` in `nuxt.config`, which puts the cross-origin Material Symbols icon-font
+stylesheet on **every** route in the app; probe 16 asserts it by name rather than waving it
+past.
+
+### What the layout does
+
+| | |
+|---|---|
+| **Order statement** | Emitted inline as `<style>@layer reset, defaults, tokens, themes, composition, components, utils, overrides;</style>` with `tagPriority: 'critical'`, **then** `/css/styles.css` is linked — whose own first line is the same statement. Restating it is idempotent. The inline copy closes #108's latent case: under `nuxt dev`, Vite injects each SFC's `<style>` into the head independently of the `<link>`, so a component's own `@layer components { … }` could be the first layer the browser sees, silently making `components` the **weakest** layer while every membership assertion stayed green. |
+| **The stack** | `/css/styles.css` is linked rather than its `@import` list re-typed in the layout. A duplicated list drifts the first time that file gains a stylesheet, and drift is the failure mode this decision exists to prevent. |
+| **Ground** | `:global(html) { color-scheme: light; color: var(--color-text); background-color: var(--color-surface-page) }`. `--color-surface-page` is new in `tokens/semantic-colors.css` (#107) — an alias of the `--color-white` primitive already in that file's `var()` graph, no new colour value — and it exists because the semantic layer named the *inverted* ground (`--color-surface-inverse`, gh#101) but never the normal one, so probes reached for the primitive, which BRIEF §5 rule 2 forbids. |
+| **Template** | A bare `<slot />` with **no wrapper element**. Every probe roots itself in `<main class="probe">`, which is what the harness reads (`[data-probe-verdict]`); a second `<main>` from the layout would be invalid HTML and an a11y regression. |
+
+### The defect this closed
+
+`src/public/css/base/typography.css` closed its `@layer defaults { … }` block thirty lines
+early, leaving `p, li, input, button, a { font-weight: 100 }` and five other rules
+**unlayered**. Unlayered author rules outrank every cascade layer, so
+`.bf-chip { font: inherit }` in `@layer components` won on the `<span>` branch (which that
+selector does not match) and lost on `<a>` and `<button>`: 400 against 100, measured on
+`/bf-probe/16-bf-chip`, with `bfButton` and every remaining atom identically exposed. Only
+the closing brace moved — no declaration, selector or order changed — so the relative
+cascade among those rules is what it was; what changed is that the declared layer order now
+governs them. A scan of every file `styles.css` composes found no other unlayered region.
+
+`wireframe.css`'s two deliberately-unlayered rules still outrank them, which is exactly what
+their own comments say they rely on.
+
+### Consequence for probes that measure the wireframe
+
+`/css/wireframe.css` is the Front-2 skin, not part of the CUBE stack, and it does not stay
+inside `.wireframe`: `html:has(.wireframe), body:has(.wireframe) { background; color-scheme }`
+reaches the page ground the layout sets. Probes 15 and 16 therefore render their frozen
+measurement reference in an isolated same-origin `srcdoc` **iframe** that loads the stack
+plus the skin, and read its computed style through the frame's own `defaultView`. `srcdoc`
+is written in the template, not assigned at runtime, so `probe-15-wf-button` /
+`probe-16-wf-chip` still appear in the prerendered HTML that `verify-bf-button.ts` and
+`verify-bf-chip.ts` grep. The frozen file is unchanged and still read at full fidelity — in
+a document of its own.
+
+### For the real shell layout (#55)
+
+It must reproduce all three properties — order statement first, CUBE stack only, no
+unlayered author CSS — and #108 asks it to assert layer **order**, not just membership.
+Probe 16 now carries those three rows (`§ 12`) as the working reference.

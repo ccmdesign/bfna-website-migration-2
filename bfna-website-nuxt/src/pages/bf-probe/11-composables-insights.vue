@@ -32,15 +32,10 @@ import { useBfInsights } from '~/composables/data/useBfInsights'
 
 defineOptions({ name: 'BfProbe11ComposablesInsights' })
 
-definePageMeta({ layout: false })
+definePageMeta({ layout: 'bf-probe' })
 
 useHead({
-  title: 'bf-probe 11 — useBfInsights',
-  // `layout: false` bypasses the only layout that sets these, so set them here:
-  // `lang` for WCAG 3.1.1, `noindex` because probes are dev-only scaffolding.
-  htmlAttrs: { lang: 'en' },
-  meta: [{ name: 'robots', content: 'noindex' }],
-  link: [{ rel: 'stylesheet', href: '/css/styles.css' }]
+  title: 'bf-probe 11 — useBfInsights'
 })
 
 /** One asserted value: what it is, what it must be, what it actually is. */
