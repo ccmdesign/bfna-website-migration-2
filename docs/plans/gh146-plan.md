@@ -205,3 +205,28 @@ them.
 **D-146.7 — no vitest.** The harness on `dev` is broken and pre-existing
 (residual #86). Acceptance is `npx tsx scripts/check-probes.ts` (`--only 03` and
 the full run), per the epic's substitution rule.
+
+**D-146.8 — probe 03 asserts the ring colour twice, declared and resolved.**
+Added by the review. One row reads `--color-text` out of the declared rule's
+`style.outline`; the other compares the *resolved* `outline-color` on the
+focused anchor against the root's computed `color`, which the `bf-probe` layout
+paints from that same token. Compared, never typed out, so no colour literal
+enters the probe (epic ground rule 2). A third row asserts the ring is not the
+anchor's own `currentcolor` — the gh#24-P2-1 failure made checkable rather than
+only commented.
+
+**D-146.9 — `base/forms.css` is left alone, and filed.** Its
+`input:not(…):focus` selector is (0,1,1) in this *same* `defaults` layer, so it
+outranks the new rule and keeps writing `outline: none`; forced-colors drops the
+`box-shadow` it substitutes, leaving a focused bare `<input>` with no indicator.
+`bfFormField` is unaffected (its rule is in `@layer components`). Fixing it
+changes the form baseline of every legacy route and wants its own visual check,
+so it is residual #157 rather than a line here.
+
+**D-146.10 — the deliberate visual check #145 asked for was run.** Headless
+Chromium against `.output/public`, real `Tab` presses. `/wireframes/` Tab 1
+lands on `a.wf-skip-link` with `outline: 2px solid rgb(8, 8, 8)` and the
+`--outline-focus` halo; Tab 4 lands on a `<summary>` with the same ring;
+`/wireframes/insights` gives a tabbed `<a>` the same. Zero console errors,
+layout unchanged. Rendered output gaining focus rings is what BRIEF DoD-4
+permits; the wireframe **source** is byte-identical to `f757a64`.
