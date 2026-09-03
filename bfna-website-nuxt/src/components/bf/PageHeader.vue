@@ -137,7 +137,7 @@ const slots = useSlots()
 /**
  * The string chips, falsy entries dropped — the wf source's own `chipList`.
  *
- * `PageHeaderProps.chips` is typed `string[]`, narrower than the wf source's
+ * `Props.chips` is typed `string[]`, narrower than the wf source's
  * `(string | null)[]`, but the filter stays: three wf call sites build their
  * array as `[…, cond ? 'Archive' : null]`, and a chip whose label is an empty
  * string is a chip nobody can read. Runtime behaviour is identical to the
@@ -195,7 +195,17 @@ const hasRenderedContent = (nodes: VNode[] | undefined): boolean => {
   return nodes.some((node) => {
     if (node.type === Comment) return false
     if (node.type === Text) return String(node.children ?? '').trim() !== ''
-    if (node.type === Fragment) return hasRenderedContent(node.children as VNode[] | undefined)
+    /*
+      A fragment is what a `<template>` wrapper produces. Its children are an
+      array in every case Vue's compiler emits, but the vnode type also admits a
+      string and a slots object, and `.some` on either would throw inside a
+      render — so the array check is the guard, not the cast.
+    */
+    if (node.type === Fragment) {
+      return Array.isArray(node.children)
+        ? hasRenderedContent(node.children as VNode[])
+        : false
+    }
     return true
   })
 }
@@ -245,7 +255,7 @@ const showChips = (): boolean => chipList.value.length > 0 || hasRenderedContent
     -->
     <div
       v-if="showChips()"
-      class="cluster | bf-page-header__chips"
+      class="cluster bf-page-header__chips"
       data-gap="xs"
     >
       <bfChip
