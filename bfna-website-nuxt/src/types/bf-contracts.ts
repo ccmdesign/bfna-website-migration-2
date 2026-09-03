@@ -847,3 +847,109 @@ export interface FormGroupProps {
    */
   legend: string
 }
+
+/**
+ * The composition primitive `bfSection` lays its inner box out with.
+ *
+ * Exactly the four values `wfSection` accepts, unchanged — three CUBE
+ * primitives plus an escape hatch:
+ *
+ * | value      | inner box            | what it is for                       |
+ * |------------|----------------------|--------------------------------------|
+ * | `stack`    | `center \| stack`     | the default: a column with a rhythm  |
+ * | `switcher` | `center \| switcher`  | media beside text, stacking narrow   |
+ * | `cluster`  | `center \| cluster`   | a row of small things that wraps     |
+ * | `plain`    | `center`             | no primitive, and **no** `data-gap`  |
+ *
+ * There is deliberately **no `split` and no `video` value.** The inventory
+ * asks `bfSection` to absorb the "split section" and "video section" variants
+ * as `layout` options rather than as separate components, and the spec permits
+ * recording that `switcher` already covers them if no `wf-*` evidence of
+ * distinct markup exists. All 26 `wf-section` call sites under
+ * `pages/wireframes/` were surveyed: one passes `layout="switcher"` (the
+ * Bertelsmann Stiftung band on `about.vue` — media beside text, which *is* the
+ * split shape), one passes `layout="plain"`, the rest take the `stack`
+ * default, and no video band exists anywhere in the wireframe layer. Inventing
+ * a `split` value would ship a synonym for `switcher`, and a `video` value
+ * would ship a layout with nothing to lay out. See the spec's Decisions.
+ */
+export type SectionLayout = 'stack' | 'switcher' | 'cluster' | 'plain'
+
+/**
+ * Props of `bfSection` — the base band every template composes.
+ *
+ * Evolves `components/wireframe/wfSection.vue` (frozen, D2 — read, never
+ * edited). The prop list is that component's, plus `fullWidth`; the two
+ * behavioural changes are that `fullWidth` has real CSS behind it instead of
+ * being the documented no-op it is upstream, and that no prop of this
+ * interface can reach the DOM as an attribute (`inheritAttrs: false` plus a
+ * filtered, explicit `v-bind="$attrs"` on the root — see `Section.vue`).
+ *
+ * Presentational-only (D8): props in, one slot, nothing out.
+ */
+export interface SectionProps {
+  /**
+   * The band's name. Rendered as `data-label` on the root `<section>` — the
+   * hook the wireframe skin turns into a corner tag, kept here as a stable
+   * identifier a template or a test can select a band by.
+   *
+   * Not an accessible name: a band that needs one gets `heading`, which is a
+   * real `<h2>` in the document outline. `data-label` is invisible to the
+   * accessibility tree by design.
+   */
+  label?: string
+  /**
+   * The band's heading, rendered as an `<h2>` when given and as no element at
+   * all when not — `wfSection`'s own `v-if`, kept.
+   *
+   * The rank is fixed at 2 and there is no `headingLevel` prop, unlike the
+   * card wrappers (#128). A section is a top-level division of a page whose
+   * `<h1>` belongs to `bfHero` or `bfPageHeader`; a caller that wants a
+   * deeper rank wants a heading inside the slot, not a differently-ranked
+   * band. Fixing it here is what keeps BRIEF §5 rule 9's "sequential heading
+   * levels" true by construction for every template that composes this.
+   */
+  heading?: string
+  /**
+   * Rhythm inside the band, as a step on the space scale (`3xs`…`3xl`).
+   * Rendered as `data-gap` on the inner box and resolved entirely by
+   * `@layer composition` — this component states no spacing value of its own.
+   *
+   * A `string` rather than a union of the nine steps, because that is
+   * `wfSection`'s contract and because the composition layer degrades
+   * gracefully: an unknown value simply leaves the primitive's default in
+   * place. Ignored when `layout` is `plain`, which renders no primitive and
+   * therefore no `data-gap`.
+   */
+  gap?: string
+  /** Which composition primitive lays the inner box out. Default `stack`. */
+  layout?: SectionLayout
+  /**
+   * Line-length cap for the inner box, as a step on the measure scale
+   * (`narrow` | `normal` | `wide` | `full`). Rendered as `data-measure` and
+   * honoured universally since issue 05, not only through `.center`.
+   */
+  measure?: string
+  /**
+   * Give the band its own vertical padding, from
+   * `--_bf-section-padding-block`.
+   *
+   * A modifier class, **never** an inline `style="padding-block: …"`. The wf
+   * source binds one, and that inline style is precisely the "junk on the
+   * DOM" pattern this component exists to retire: an inline declaration also
+   * cannot be outranked by an ordinary rule, so a consumer that wanted a
+   * different band padding would have to escalate to `!important` (the
+   * `bfMedia` lesson from gh#26).
+   */
+  padded?: boolean
+  /**
+   * Break the band out of its container to the viewport edge.
+   *
+   * **This is the defect this issue fixes.** `ccmSection` documents the prop
+   * and ships no CSS for it, and `wfSection` carries the same shape; here it
+   * is a real break-out rule in `@layer components`, hooked on
+   * `--_bf-section-full-width`. See `Section.vue` for the rule and for the
+   * `100vw`/scrollbar caveat.
+   */
+  fullWidth?: boolean
+}
