@@ -121,6 +121,22 @@ contains exactly the same 13.
 the band is `v-if`'d rather than unconditional, and the acceptance asserts its
 *absence* from the generated HTML as the correct gated state.
 
+**D-51.6 — the bands are resolved once at setup, not from the template.**
+Self-review, P3. `gridProjectsByProgram()` called from inside a `v-for` re-runs
+on every render — three `.filter().sort()` passes over the 18 top-level
+projects, handing `bfGridProjects` three freshly-allocated arrays each time.
+The content is build-time static, so one pass is all it can ever need. The page
+builds a `bands` array of `{ program, headingId, projects }` in `<script
+setup>` instead, which is the shape `[program].vue` already uses. No ordering
+is re-derived by this: both orders still arrive sorted from the composables.
+
+**D-51.7 — the slotted `<h2>` carries `bf-section__heading`.** Self-review, P3.
+`bfSection` puts that class on the heading it renders itself; a slotted heading
+is still that band's heading, so it carries the same hook. The class holds no
+declarations today — it is a selector hook, and a hook that is absent from
+three bands is a skin bug waiting for whoever writes the first
+`.bf-section__heading` rule.
+
 ### Verification record (gh#60)
 
 | gate | result |

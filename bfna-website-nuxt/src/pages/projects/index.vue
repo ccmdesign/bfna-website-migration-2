@@ -64,11 +64,40 @@ const { gridProjectsByProgram, projectsPendingRetag } = await useBfProjects()
 const indexPage = pageBySlug('projects')
 
 /**
- * The three programs, already in the client's curated order. Held in a
- * `const` rather than called from the `v-for`, so the render walks one array
- * instead of allocating a fresh copy on every re-render.
+ * The `id` of a band's linked `<h2>`, and the target of that band's
+ * `aria-labelledby`.
+ *
+ * Derived from the program slug rather than from `useId()`: `useId()` returns
+ * one value per *component instance*, and this page is one instance rendering
+ * three bands, so a single id would be reused three times and the second and
+ * third `aria-labelledby` would both point at the first band's heading. The
+ * slug is unique by construction (it is the `/{program}` route segment) and
+ * stable across the server render and the client hydration, which is the other
+ * thing `useId()` is normally relied on for.
  */
-const programList = programs()
+const bandHeadingId = (slug: string) => `projects-band-${slug}`
+
+/**
+ * The three bands, resolved once at setup: the program, its heading id, and
+ * its grid rows in the stored `grid_order`.
+ *
+ * Built here rather than by calling `programs()` and
+ * `gridProjectsByProgram()` from the template, because a function call in a
+ * template re-runs on every render — three `.filter().sort()` passes over the
+ * 18 top-level projects each time, and three fresh arrays handed to
+ * `bfGridProjects` whose `:key` would then be comparing new object identities.
+ * The content is build-time static, so one pass is all it can ever need. This
+ * is the shape `[program].vue` already uses for the same call.
+ *
+ * Still no re-derivation (spec §Ordering): both orders arrive sorted from the
+ * composables — `Program.order` (gh#180) and `Project.grid_order` (gh#89) —
+ * and nothing below reorders either.
+ */
+const bands = programs().map(program => ({
+  program,
+  headingId: bandHeadingId(program.slug),
+  projects: gridProjectsByProgram(program.name)
+}))
 
 /**
  * Legacy projects whose new program is still a `RE-TAG` placeholder (Q3),
@@ -85,20 +114,6 @@ const retag = projectsPendingRetag()
  * layout's contract is that every page below the root states its own name.
  */
 useHead({ title: () => indexPage?.heading ?? 'All Projects' })
-
-/**
- * The `id` of a band's linked `<h2>`, and the target of that band's
- * `aria-labelledby`.
- *
- * Derived from the program slug rather than from `useId()`: `useId()` returns
- * one value per *component instance*, and this page is one instance rendering
- * three bands, so a single id would be reused three times and the second and
- * third `aria-labelledby` would both point at the first band's heading. The
- * slug is unique by construction (it is the `/{program}` route segment) and
- * stable across the server render and the client hydration, which is the other
- * thing `useId()` is normally relied on for.
- */
-const bandHeadingId = (slug: string) => `projects-band-${slug}`
 </script>
 
 <template>
@@ -152,17 +167,25 @@ const bandHeadingId = (slug: string) => `projects-band-${slug}`
     stated so the next reader does not have to know that.
   -->
   <bfSection
-    v-for="program in programList"
-    :key="program.slug"
-    :label="program.name"
-    :aria-labelledby="bandHeadingId(program.slug)"
+    v-for="band in bands"
+    :key="band.program.slug"
+    :label="band.program.name"
+    :aria-labelledby="band.headingId"
   >
-    <h2 :id="bandHeadingId(program.slug)">
-      <NuxtLink :to="`/${program.slug}`">{{ program.name }}</NuxtLink>
+    <!--
+      `class="bf-section__heading"` is the hook `bfSection` puts on the heading
+      it renders itself. A slotted heading is still that band's heading, so it
+      carries the same hook — otherwise a future skin rule written against
+      `.bf-section__heading` would style every band on the site except these
+      three. The class carries no declarations today; it is a selector hook,
+      and the point of a hook is that it is present before anyone needs it.
+    -->
+    <h2 :id="band.headingId" class="bf-section__heading">
+      <NuxtLink :to="`/${band.program.slug}`">{{ band.program.name }}</NuxtLink>
     </h2>
 
     <bfGridProjects
-      :projects="gridProjectsByProgram(program.name)"
+      :projects="band.projects"
       :excerpt-length="120"
       :heading-level="3"
     />
