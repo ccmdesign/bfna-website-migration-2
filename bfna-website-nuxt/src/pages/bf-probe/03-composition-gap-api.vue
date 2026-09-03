@@ -10,6 +10,10 @@
  * The composition stylesheet ships from `src/public/css` and is pulled in the
  * same way `layouts/wireframe.vue` does it, so the probe stands alone with no
  * layout (the default layout would wrap it in legacy chrome).
+ *
+ * Extended for issue 04 / gh#13 with a `.grid[data-min-width]` section: the
+ * responsive contract is viewport-dependent, so those grids are read back at
+ * 1200 / 800 / 400px and must resolve 3 / 2 / 1 tracks with no inline `style`.
  */
 defineOptions({ name: 'BfProbe03CompositionGapApi' })
 
@@ -36,6 +40,12 @@ const primitives = [
 ] as const
 
 const items = ['A', 'B', 'C']
+
+/**
+ * Issue 04 — `.grid[data-min-width]`. Six items so a 300px floor can resolve
+ * three, two or one track without the item count being the limiting factor.
+ */
+const gridItems = ['1', '2', '3', '4', '5', '6']
 </script>
 
 <template>
@@ -112,6 +122,81 @@ const items = ['A', 'B', 'C']
         >
           <div
             v-for="i in items"
+            :key="i"
+            class="probe__item"
+          >
+            {{ i }}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="probe__section">
+      <h2>.grid[data-min-width] — responsive contract (issue 04)</h2>
+      <p class="probe__note">
+        Column count is never authored. Both grids below carry
+        <strong>no inline <code>style</code></strong>; the track list is
+        resolved from the available inline size against the
+        <code>data-min-width</code> floor.
+      </p>
+
+      <div class="probe__case">
+        <p class="probe__caption">
+          <code>data-min-width="l"</code> (300px floor) — must resolve 3 tracks
+          at 1200px, 2 at 800px, 1 at 400px
+        </p>
+        <div
+          class="grid"
+          data-min-width="l"
+          data-testid="grid-min-width-l"
+        >
+          <div
+            v-for="i in gridItems"
+            :key="i"
+            class="probe__item"
+          >
+            {{ i }}
+          </div>
+        </div>
+      </div>
+
+      <div class="probe__case">
+        <p class="probe__caption">
+          <code>data-min-width="2xl"</code> (500px floor) — the
+          <code>min(…, 100%)</code> case: at 400px the floor exceeds the
+          container, so the track must collapse to one full-width column
+          instead of overflowing the page
+        </p>
+        <div
+          class="grid"
+          data-min-width="2xl"
+          data-testid="grid-min-width-2xl"
+        >
+          <div
+            v-for="i in gridItems"
+            :key="i"
+            class="probe__item"
+          >
+            {{ i }}
+          </div>
+        </div>
+      </div>
+
+      <div class="probe__case">
+        <p class="probe__caption">
+          <code>data-min-width="l" data-gap="3xl"</code> — the two attributes
+          compose: the wider gap is subtracted from the available inline size,
+          so this may resolve one fewer track than the row above at the same
+          width
+        </p>
+        <div
+          class="grid"
+          data-min-width="l"
+          data-gap="3xl"
+          data-testid="grid-min-width-l-gap-3xl"
+        >
+          <div
+            v-for="i in gridItems"
             :key="i"
             class="probe__item"
           >
