@@ -151,10 +151,33 @@ npx tsx scripts/check-probes.ts
 appears on 0 pages under `/projects` and `/insights`; each page holds exactly
 one `<h1>`.
 
+**D-52.9 — review fixes applied in this PR.** Four, all mechanical:
+
+1. **The programme chip is guarded** (P2). `100-questions` stores
+   `program: "RE-TAG (was fake category: Archives)"` and
+   `/projects/100-questions` is a prerendered page a reader can reach, so the
+   first build of this page shipped that sentence as a chip. `programName`
+   now resolves the stored string against the three real `bfPrograms` rows and
+   renders nothing when it does not match — the same guard `/insights/:slug`
+   puts on the identical field (D-50.2). Verified: `RE-TAG` appears on 0 of the
+   38 project pages.
+2. **The Body band is guarded** (P2). With D-52.6 in place, `2022`, `2023` and
+   `2024` rendered an empty labelled `<section>` paying a full `xl` stack gap.
+   The band is now conditional on the same expression the prop receives, so the
+   two can never disagree.
+3. **`role="list"` on the episode list** (P3). The scoped rule sets
+   `list-style: none`, and WebKit drops list semantics from such a list — the
+   same belt-and-braces `bfBreadcrumb` puts on its own `<ol>`.
+4. **`related` is sliced once at setup** (P3), not per render in the template.
+
 ### Known gaps, not fixed here
 
 - `wisdom-of-the-crowd` and `cepi-2011` have routes but no inbound link
   anywhere on the site, so the crawler never reaches them and they do not
   prerender. Both are archived / grid-pruned rows. Out of this issue's scope
   (it builds the template, not the link graph); raised as a residual.
+- `kindLabel('cohort')` is unmapped in `KIND_LABELS`, so the cohort pages show
+  a lowercase `cohort` chip. Byte-identical to `useWfContent`'s own behaviour,
+  so parity holds; the gap is in the shared formatter's map, not in this
+  template. Raised as a residual.
 

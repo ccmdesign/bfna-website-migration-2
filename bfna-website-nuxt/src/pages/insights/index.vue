@@ -269,7 +269,7 @@ const remaining = computed<number>(() => Math.max(filtered.value.length - visibl
     `insights` row; the fallback is the frozen page's own.
 
     **The trail is two entries, not the frozen source's one** — residual
-    [#186's sibling, #188](https://github.com/ccmdesign/bfna-website-migration-2/issues/188).
+    [#188](https://github.com/ccmdesign/bfna-website-migration-2/issues/188).
     `bfBreadcrumb` (#20) treats the *last* crumb as the current page and never
     links it, positionally, whether or not it carries a `to`. A one-entry
     `[{ label: 'Home', to: '/' }]` trail is therefore all-last, and this page

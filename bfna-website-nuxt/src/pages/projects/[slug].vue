@@ -78,6 +78,7 @@
  */
 import type { Cta } from '~/types/bf-contracts'
 import { useBfInsights } from '~/composables/data/useBfInsights'
+import { useBfPrograms } from '~/composables/data/useBfPrograms'
 import { useBfProjects } from '~/composables/data/useBfProjects'
 import { kindLabel, paragraphs } from '~/utils/format'
 
@@ -89,6 +90,7 @@ const route = useRoute()
 
 const { projectBySlug, projectChildren } = await useBfProjects()
 const { insightsForProject } = await useBfInsights()
+const { programs } = await useBfPrograms()
 
 /**
  * The document, or `undefined` for a slug that is not in the collection.
@@ -122,15 +124,24 @@ const crumbs = [
 ]
 
 /**
+ * The programme, **only if it is one** — the same guard `/insights/:slug` puts
+ * on the identical field (D-50.2), for the identical reason.
+ *
+ * `100-questions` stores `program: "RE-TAG (was fake category: Archives)"`: a
+ * migration signal addressed to the client, not a programme, and
+ * `/projects/100-questions` is a prerendered page a reader can reach. Resolving
+ * the stored string against the three real `bfPrograms` rows and dropping
+ * anything that does not match is what keeps that sentence off the page. It is
+ * a chip and nothing else hangs off it here — this route has no programme link
+ * and no programme-scoped heading — so the guard is one lookup.
+ */
+const programName = project?.program
+  ? programs().find(p => p.name === project.program)?.name
+  : undefined
+
+/**
  * The header chips, in the frozen source's order: the literal `Project`, the
  * formatted kind, the programme, and the copy-pending marker.
- *
- * `program` is rendered as stored. Unlike `/insights/:slug` (D-50.2), no
- * project row carries one of the 52 `PENDING-Q3` / `RE-TAG` placeholder
- * programme strings on a page a reader can reach: the only two `RE-TAG` rows
- * are `100-questions` (archived) and — via `pending`, not `program` —
- * `transponder-magazine`, whose `program` is a real one. Guarding it here would
- * be guarding against a value that is not in the data.
  *
  * `filter(Boolean)` with the type predicate drops the nulls the conditionals
  * leave behind; `bfPageHeader` filters non-strings out too, but the type has to
@@ -140,7 +151,7 @@ const chips: string[] = project
   ? [
       'Project',
       kindLabel(project.kind),
-      project.program,
+      programName,
       project.pending ? `Copy pending ${project.pending}` : null
     ].filter((c): c is string => typeof c === 'string' && c !== '')
   : []
@@ -186,8 +197,16 @@ const micrositeCtas: Cta[] = project?.external_url
 /** Cohort/year pages nested under this project, newest first. */
 const cohorts = project ? projectChildren(project.slug) : []
 
-/** Active insights cross-referencing this project — the real M2M. */
-const related = project ? insightsForProject(project.slug) : []
+/**
+ * Active insights cross-referencing this project — the real M2M.
+ *
+ * Sliced once here rather than in the template: `related.slice(0, 6)` inline
+ * would allocate a fresh array on every render, and `bfGridInsights` keys its
+ * `<li>`s off the rows it is handed. Six is the frozen source's own cap; the
+ * largest set in the data is three, so it is a ceiling rather than a trim
+ * today.
+ */
+const related = (project ? insightsForProject(project.slug) : []).slice(0, 6)
 </script>
 
 <template>
@@ -245,7 +264,7 @@ const related = project ? insightsForProject(project.slug) : []
       label="Related insights"
       :heading="`From ${project.heading}`"
     >
-      <bfGridInsights :insights="related.slice(0, 6)" :heading-level="3" />
+      <bfGridInsights :insights="related" :heading-level="3" />
     </bfSection>
   </template>
 
@@ -274,11 +293,18 @@ const related = project ? insightsForProject(project.slug) : []
       CMS excerpt. `measure="narrow"` is the frozen source's own — this is the
       one band here that is a column of running prose.
 
-      Since #186 `bfProse` renders nothing when both are null, so the three
-      Summer Enrichment year pages that carry neither get an empty band rather
-      than a `[body copy]` placeholder shipped to a reader.
+      Guarded, because since #186 `bfProse` renders nothing when both fields are
+      null and the band would otherwise be an empty labelled `<section>` paying
+      a full `xl` stack gap. Three rows are in that state — the Summer
+      Enrichment year pages `2022`, `2023` and `2024` — and the guard is on the
+      same expression the prop receives, so the band and its content can never
+      disagree.
     -->
-    <bfSection label="Project body" measure="narrow">
+    <bfSection
+      v-if="project.description ?? project.excerpt"
+      label="Project body"
+      measure="narrow"
+    >
       <bfProse :content="project.description ?? project.excerpt" />
     </bfSection>
 
@@ -313,13 +339,14 @@ const related = project ? insightsForProject(project.slug) : []
         </div>
 
         <!--
-          `list-style: none` and the zeroed padding come from the composition
-          layer's `.stack`, not from a rule this page ships: `role="list"` is
-          not needed because the `<li>`s carry text, and the markers are removed
-          by the utility below rather than by a stylesheet. `data-gap` does the
-          rhythm.
+          `role="list"` is explicit because the rule below removes the markers,
+          and WebKit drops list semantics from a `list-style: none` list — so
+          VoiceOver would stop announcing "list, 3 items" without it. The same
+          belt-and-braces `bfBreadcrumb` puts on its own `<ol>`. `data-gap` does
+          the rhythm; the reset lives in the one scoped rule at the foot of this
+          file.
         -->
-        <ul class="bf-project-episodes | stack" data-gap="xs">
+        <ul class="bf-project-episodes | stack" role="list" data-gap="xs">
           <li
             v-for="(ep, i) in project.podcast.episodes"
             :key="ep.title || i"
@@ -359,7 +386,7 @@ const related = project ? insightsForProject(project.slug) : []
       label="Related insights"
       :heading="`From ${project.heading}`"
     >
-      <bfGridInsights :insights="related.slice(0, 6)" :heading-level="3" />
+      <bfGridInsights :insights="related" :heading-level="3" />
     </bfSection>
   </template>
 
