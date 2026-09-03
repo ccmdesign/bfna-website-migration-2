@@ -6,6 +6,7 @@
 **Per-issue specs:** `docs/ds-epic/issues/<NN>-<slug>.md` (59 files)
 **Groundwork:** `docs/ds-epic/00-guidelines-digest.md`, `01-data-layer-audit.md`, `02-legacy-retirement-inventory.md`
 **Inventory it implements:** `_process/scoping/component-inventory-v2/component-inventory-v2.md`
+**Decision records:** [docs/decisions/probe-harness.md](../decisions/probe-harness.md) — the probe DOM convention every probe must follow, and the headless driver `scripts/check-probes.ts` uses (gh#109)
 
 ## Objective
 Build the `bf-*` design-system components (iteration-2 inventory, 46 components) and the page
@@ -20,6 +21,10 @@ Base styling only: existing Utopia space/type + colour tokens, CUBE composition,
 - Build verification is `npx nuxt generate` (never `npm run generate` — it runs the Directus
   importer and needs absent secrets).
 - Shared types live only in `src/types/bf-contracts.ts`.
+- Probe pages follow the harness convention in
+  [docs/decisions/probe-harness.md](../decisions/probe-harness.md) (`data-probe-verdict` on the
+  root, `data-probe-row` + `data-ok` on each check row), and
+  `cd bfna-website-nuxt && npx tsx scripts/check-probes.ts` must exit 0 after `npx nuxt generate`.
 
 ## Phases
 | Phase | Issues | Gate |

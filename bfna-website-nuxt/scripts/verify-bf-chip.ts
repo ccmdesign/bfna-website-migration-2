@@ -28,9 +28,11 @@
  *     probe, and no colour *primitive* either.
  *  5. **`@layer components` survived the build** into the emitted stylesheet
  *     (the gh#101 / residual #98 guard; the probe checks the live CSSOM).
- *  6. The prerendered probe really carries all four modes, the five toggles
- *     with their `aria-pressed` states, and exactly one chip with a `style`
- *     attribute — the deliberate consumer-override demo.
+ *  6. The prerendered probe really carries all four modes, every toggle with a
+ *     real `aria-pressed` state matching its `[data-active]`, and no styled
+ *     chip other than the deliberate consumer-override demo. Stated as bounds
+ *     and set equalities rather than pinned totals (residual #115), so adding
+ *     an instance to the probe cannot fail a correct component.
  *
  * Sections 5 and 7 read `.output/`. Run `npx nuxt generate` first.
  *
@@ -144,12 +146,17 @@ const lines = (needle: string) => componentSource.split('\n').filter(l => l.incl
 check('grep -c "toggle" src/components/bf/Chip.vue        >= 1', lines('toggle') >= 1, true)
 check('grep -c "aria-pressed" src/components/bf/Chip.vue  >= 1', lines('aria-pressed') >= 1, true)
 /*
- * Run over the whole file, comments included, exactly as the spec writes it —
- * this is the one expression whose value depends on that. The component's
- * prose therefore never spells the binding out, and says "style attribute"
- * where it means one.
+ * Run over the comment-stripped source, like every other check here — a
+ * deliberate deviation from the spec's literal `grep`, resolved by residual
+ * #115. Run over the whole file, the expression fails a *correct* component
+ * the moment a future doc edit merely spells the token in prose, which makes
+ * it a check on the comments rather than on the code. The component's prose
+ * still avoids spelling it out, so both readings agree today; this one keeps
+ * agreeing tomorrow.
  */
-check('grep -c ":style=" src/components/bf/Chip.vue       == 0', lines(':style='), 0)
+const codeLines = (needle: string) => code(componentSource).split('\n').filter(l => l.includes(needle)).length
+
+check('grep -c ":style=" src/components/bf/Chip.vue (code only) == 0', codeLines(':style='), 0)
 check('grep -c "wf-chip" src/components/bf/Chip.vue       == 0', lines('wf-chip'), 0)
 check(
   'the component carries no reference to the frozen class at all',
@@ -505,13 +512,31 @@ if (!existsSync(builtProbePath)) {
   const instances = [...html.matchAll(/<(?:a|button|span)\b[^>]*class="[^"]*\bbf-chip\b[^"]*"[^>]*>/g)].map(m => m[0])
   const withEl = (kind: string) => instances.filter(t => t.includes(`data-element="${kind}"`)).length
 
-  check('18 chips render (10 gallery + 2 emit + 1 keyboard + 2 precedence + 3 $attrs)', instances.length, 18)
-  check('  …5 resolved to <span>', withEl('span'), 5)
-  check('  …2 resolved to NuxtLink', withEl('link'), 2)
-  check('  …4 resolved to <a href>', withEl('anchor'), 4)
-  check('  …7 resolved to <button> (toggle)', withEl('toggle'), 7)
-  check('  …2 external anchors carry the [data-external] marker', instances.filter(t => t.includes('data-external')).length, 2)
-  check('  …7 render selected ([data-active])', instances.filter(t => t.includes('data-active')).length, 7)
+  /*
+   * Bounds and self-consistency, not pinned totals (residual #115). The probe
+   * header invites later issues to add instances, and an absolute count breaks
+   * on a correct component the moment one does. What is actually load-bearing
+   * is that every mode renders at all, and that every rendered chip resolved
+   * into exactly one of the four — an unclassified instance means the element
+   * resolver fell through, which a pinned total would only catch by accident.
+   */
+  const modes = { span: withEl('span'), link: withEl('link'), anchor: withEl('anchor'), toggle: withEl('toggle') }
+  const classified = modes.span + modes.link + modes.anchor + modes.toggle
+
+  check('every rendered chip resolved into exactly one mode', classified, instances.length)
+  check('  …and all four modes render', Object.values(modes).every(n => n >= 1), true)
+  check(
+    `  …and the gallery still renders in bulk — ${instances.length} chips (span/link/anchor/toggle: ${modes.span}/${modes.link}/${modes.anchor}/${modes.toggle}), floor 10`,
+    instances.length >= 10,
+    true
+  )
+  check(
+    '  …[data-external] appears only on <a href> chips',
+    instances.filter(t => t.includes('data-external')).every(t => t.includes('data-element="anchor"')),
+    true
+  )
+  check('  …and at least one external anchor carries the marker', instances.filter(t => t.includes('data-external')).length >= 1, true)
+  check('  …at least one chip renders selected ([data-active])', instances.filter(t => t.includes('data-active')).length >= 1, true)
 
   /*
    * `aria-pressed` must be *present* on an unpressed toggle — a toggle button
@@ -521,13 +546,19 @@ if (!existsSync(builtProbePath)) {
   check('every toggle carries aria-pressed, none of the other modes does', [
     instances.filter(t => t.includes('data-element="toggle"') && t.includes('aria-pressed')).length,
     instances.filter(t => !t.includes('data-element="toggle"') && t.includes('aria-pressed')).length
-  ], [7, 0])
-  check('  …6 unpressed render aria-pressed="false"', instances.filter(t => t.includes('aria-pressed="false"')).length, 6)
-  check('  …1 pressed renders aria-pressed="true"', instances.filter(t => t.includes('aria-pressed="true"')).length, 1)
+  ], [modes.toggle, 0])
   check(
-    '  …and aria-pressed="true" is exactly the toggle that is [data-active]',
-    instances.filter(t => t.includes('aria-pressed="true"')).every(t => t.includes('data-active')),
-    true
+    '  …every toggle reads either aria-pressed="true" or "false", never nothing',
+    instances.filter(t => /aria-pressed="(?:true|false)"/.test(t)).length,
+    modes.toggle
+  )
+  check(
+    '  …and aria-pressed="true" is exactly the set of toggles that are [data-active]',
+    [
+      instances.filter(t => t.includes('aria-pressed="true"')).every(t => t.includes('data-active')),
+      instances.filter(t => t.includes('data-element="toggle"') && t.includes('data-active')).every(t => t.includes('aria-pressed="true"'))
+    ],
+    [true, true]
   )
 
   /*
@@ -537,8 +568,8 @@ if (!existsSync(builtProbePath)) {
    * deliberate consumer-override demo.
    */
   const styled = instances.filter(t => /\sstyle="/.test(t))
-  check('exactly one chip carries a style attribute (the override demo)', styled.length, 1)
-  check('  …and it is the override demo, not a selected-state hack', styled[0]?.includes('probe-16-override'), true)
+  check('at least one chip carries a style attribute (the override demo)', styled.length >= 1, true)
+  check('  …and every styled chip is a deliberate consumer override, not a selected-state hack', styled.every(t => t.includes('probe-16-override')), true)
 
   /*
    * The headline precedence rule, asserted against the shipped HTML too
@@ -559,7 +590,8 @@ if (!existsSync(builtProbePath)) {
    * output would be a real regression, and a `pass` there would mean a
    * three-state verdict had been broken back into two. What this deliberately
    * does **not** claim is that the runtime checks passed; nothing in this
-   * process can know that.
+   * process can know that — `scripts/check-probes.ts` (gh#109) is what does,
+   * by loading this page in a headless browser.
    */
   const stateOf = (testid: string) =>
     html.match(new RegExp(`data-testid="${testid}"[^>]*data-state="(\\w+)"|data-state="(\\w+)"[^>]*data-testid="${testid}"`))?.slice(1).find(Boolean)

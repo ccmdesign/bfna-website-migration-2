@@ -139,7 +139,17 @@ const allPass = computed(() => checks.length > 0 && passed.value === checks.leng
 </script>
 
 <template>
-  <main class="probe container">
+  <!--
+    Harness contract (docs/decisions/probe-harness.md): the root carries
+    `data-probe` + `data-probe-verdict`, and every check row carries
+    `data-probe-row` + `data-ok`, so `scripts/check-probes.ts` can fail the
+    build on a red probe instead of relying on someone opening the page.
+  -->
+  <main
+    class="probe container"
+    data-probe="11"
+    :data-probe-verdict="checks.length === 0 ? 'PENDING' : allPass ? 'PASS' : 'FAIL'"
+  >
     <h1>Probe 11 — <code>useBfInsights</code></h1>
     <p class="probe__lede">
       The insight surface of <code>useWfContent</code>, read back out of the
@@ -171,6 +181,8 @@ const allPass = computed(() => checks.length > 0 && passed.value === checks.leng
           v-for="c in checks"
           :key="c.label"
           :data-state="String(c.actual) === String(c.expected) ? 'pass' : 'fail'"
+          :data-probe-row="c.label"
+          :data-ok="String(c.actual) === String(c.expected) ? 'true' : 'false'"
         >
           <td>{{ c.label }}</td>
           <td><code>{{ c.expected }}</code></td>

@@ -203,15 +203,22 @@ const onToggle = () => {
     to it. `data-active` is bound with `|| undefined` so the attribute is
     absent — not `"false"` — when the chip is not selected, which is what lets
     the stylesheet select on its bare presence.
+
+    `aria-pressed` is bound AFTER `$attrs` (residual #115): unlike `type`,
+    which a caller may legitimately want to change, there is no honest reason
+    to set `aria-pressed` from outside, and a caller who did would desync it
+    from `[data-active]` — the very invariant probe 16 asserts. Everything else
+    still falls through, so this narrows the escape hatch by exactly one
+    attribute and nothing more.
   -->
   <button
     v-if="element === 'toggle'"
     type="button"
     class="bf-chip"
     data-element="toggle"
-    :aria-pressed="ariaPressed"
     :data-active="pressed || undefined"
     v-bind="$attrs"
+    :aria-pressed="ariaPressed"
     @click="onToggle"
   >
     <slot />

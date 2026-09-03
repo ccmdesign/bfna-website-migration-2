@@ -127,7 +127,17 @@ const allPass = computed(() => checks.value.length > 0 && passed.value === check
 </script>
 
 <template>
-  <main class="probe container">
+  <!--
+    Harness contract (docs/decisions/probe-harness.md): the root carries
+    `data-probe` + `data-probe-verdict`, and every check row carries
+    `data-probe-row` + `data-ok`, so `scripts/check-probes.ts` can fail the
+    build on a red probe instead of relying on someone opening the page.
+  -->
+  <main
+    class="probe container"
+    data-probe="09"
+    :data-probe-verdict="checks.length === 0 ? 'PENDING' : allPass ? 'PASS' : 'FAIL'"
+  >
     <h1>Probe 09 — <code>bf*</code> collections + zod schemas</h1>
     <p class="probe__lede">
       Six <code>type: 'data'</code> collections read back out of the built
@@ -158,6 +168,8 @@ const allPass = computed(() => checks.value.length > 0 && passed.value === check
           v-for="c in checks"
           :key="c.label"
           :data-state="String(c.actual) === String(c.expected) ? 'pass' : 'fail'"
+          :data-probe-row="c.label"
+          :data-ok="String(c.actual) === String(c.expected) ? 'true' : 'false'"
         >
           <td>{{ c.label }}</td>
           <td><code>{{ c.expected }}</code></td>
