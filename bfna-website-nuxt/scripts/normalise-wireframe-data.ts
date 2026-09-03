@@ -76,7 +76,9 @@ const plainOrNull = (s: unknown): string | null => {
 
 const strOrNull = (v: unknown): string | null => (typeof v === 'string' && v !== '' ? v : null)
 
-const boolOrNull = (v: unknown): boolean | null => (typeof v === 'boolean' ? v : null)
+/** Keeps `null` for an absent flag; coerces any other defined value rather than dropping it. */
+const boolOrNull = (v: unknown): boolean | null =>
+  (v === null || v === undefined ? null : Boolean(v))
 
 const strArray = (v: unknown): string[] =>
   Array.isArray(v) ? v.filter((x): x is string => typeof x === 'string') : []
@@ -229,6 +231,13 @@ const normaliseInsights = (): number => {
 
 // ---- projects --------------------------------------------------------------
 
+interface ProjectPodcast {
+  title: string
+  host: string | null
+  source_note: string | null
+  episodes: { title: string, description: string | null }[]
+}
+
 interface RawProject {
   slug: string
   heading?: string | null
@@ -244,12 +253,7 @@ interface RawProject {
   external_only?: boolean | null
   microsite_cta?: string | null
   participation?: { title: string, ctas: string[] } | null
-  podcast?: {
-    title: string
-    host: string | null
-    source_note: string | null
-    episodes: { title: string, description: string | null }[]
-  } | null
+  podcast?: ProjectPodcast | null
 }
 
 interface ProjectDoc {
@@ -271,7 +275,7 @@ interface ProjectDoc {
   grid_order: number
   microsite_cta: string | null
   participation: { title: string, ctas: string[] } | null
-  podcast: RawProject['podcast']
+  podcast: ProjectPodcast | null
   pending?: string
 }
 
