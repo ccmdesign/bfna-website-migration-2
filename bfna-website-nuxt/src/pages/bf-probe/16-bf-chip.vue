@@ -37,15 +37,24 @@
  *     ring contrasts with the ground it is painted on — in **both** states
  *     (the gh#24-P2-1 defect, checked before it can recur here).
  *  7. **The box metrics equal the wireframe chip's**, measured rather than
- *     asserted. The padding is compared **em-normalised**, because the frozen
- *     rule pins its own font size and this component takes a token step: the
- *     check is about the declaration, not about the inherited size.
+ *     asserted — against a reference painted by the frozen `/css/wireframe.css`
+ *     in an isolated frame of its own (gh#116). The padding is compared
+ *     **em-normalised**, because the frozen rule pins its own font size and
+ *     this component takes a token step: the check is about the declaration,
+ *     not about the inherited size.
  *  8. Colour comes from the existing semantic tokens, and the default chip
  *     paints no ground at all.
  *  9. `@layer components` survived into the live CSSOM (the gh#101 guard).
  * 10. `$attrs` reaches whichever element rendered, and a caller's own `style`
  *     outranks the component's hooks — the escape hatch that replaces the
  *     style binding this component deliberately does not have.
+ * 11. **The page's own CSS-loading contract** (gh#116, the § 12 rows): the
+ *     `@layer` order statement reached the page *and* declares the full order,
+ *     and every stylesheet on it belongs to the CUBE stack. Those rows are
+ *     about the page rather than the chip, and they are what makes every
+ *     measurement above worth reading — an unlayered rule outside the stack
+ *     outranks every layer, which is exactly how `font-weight` used to differ
+ *     between the span and the link branches of this component.
  *
  * ## The keyboard lab
  *
@@ -66,26 +75,85 @@
  */
 defineOptions({ name: 'BfProbe16BfChip' })
 
-definePageMeta({ layout: false })
+definePageMeta({ layout: 'bf-probe' })
 
 useHead({
-  title: 'bf-probe 16 — bfChip',
-  // `layout: false` bypasses the only layout that sets these, so set them here:
-  // `lang` for WCAG 3.1.1, `noindex` because probes are dev-only scaffolding.
-  htmlAttrs: { lang: 'en' },
-  meta: [{ name: 'robots', content: 'noindex' }],
-  link: [
-    { rel: 'stylesheet', href: '/css/styles.css' },
-    /*
-     * The wireframe stylesheet, loaded **read-only** so the metrics check
-     * below can measure the real thing. Everything in it is scoped under
-     * `.wireframe`, which on this page is one off-screen measuring box, so it
-     * cannot reach the probe's own markup. The file is frozen (D2) and is not
-     * edited, imported into the build, or referenced by the component.
-     */
-    { rel: 'stylesheet', href: '/css/wireframe.css' }
-  ]
+  title: 'bf-probe 16 — bfChip'
 })
+
+/*
+ * The frozen wireframe reference this page measures against is rendered in an
+ * isolated `srcdoc` iframe (`readWireframeReference` below, and the template)
+ * rather than as an off-screen box in this document. gh#116: the `bf-probe` layout
+ * loads the CUBE stack and only the CUBE stack, and `/css/wireframe.css` is
+ * not part of it — it is the Front-2 skin, loaded nowhere but
+ * `layouts/wireframe.vue`. Keeping the link here would have left the probe
+ * asserting a CSS-loading rule it broke itself, and the leak is not
+ * hypothetical: that file's `html:has(.wireframe), body:has(.wireframe)` rule
+ * reaches *outside* `.wireframe` and repainted the ground the layout sets.
+ * The file stays frozen and is still read at full fidelity — just in a
+ * document of its own.
+ */
+
+/** The reference markup, painted by the frozen skin and nothing else. */
+const WF_REFERENCE_DOC = [
+  '<!doctype html><html lang="en"><head><meta charset="utf-8">',
+  '<link rel="stylesheet" href="/css/styles.css">',
+  '<link rel="stylesheet" href="/css/wireframe.css">',
+  '</head><body class="wireframe">',
+  '<span class="wf-chip" data-testid="probe-16-wf-chip">reference</span>',
+  '</body></html>'
+].join('')
+
+const wfFrame = ref<HTMLIFrameElement | null>(null)
+
+/**
+ * The reference element and its computed style, read from inside the frame.
+ *
+ * `getComputedStyle` is taken from the frame's **own** `defaultView`: called on
+ * the parent window it is not guaranteed to resolve another document's cascade,
+ * and a silently-empty declaration here would turn every metric row below into
+ * a comparison of two empty strings — a pass, for a check that never ran.
+ *
+ * Resolves to `null` rather than throwing if the frame never loads, so the
+ * "present and measurable" row fails loudly instead of the page dying on mount.
+ */
+const readWireframeReference = async (selector: string): Promise<{ el: HTMLElement, style: CSSStyleDeclaration } | null> => {
+  const frame = wfFrame.value
+  if (!frame) return null
+
+  if (frame.contentDocument?.readyState !== 'complete') {
+    await new Promise<void>(ok => {
+      /*
+       * Bounded. A frame that never fires `load` would otherwise leave this
+       * promise pending forever, the assertion table unbuilt and the verdict
+       * stuck on `pending` — which `scripts/check-probes.ts` reports as a
+       * timeout rather than as the failing row it really is. On expiry the
+       * lookup below simply finds nothing and the "present and measurable" row
+       * goes red, which is the honest outcome.
+       */
+      const timer = setTimeout(() => ok(), 5_000)
+      const done = () => { clearTimeout(timer); ok() }
+      frame.addEventListener('load', done, { once: true })
+      // The frame may have finished between the check and this listener.
+      if (frame.contentDocument?.readyState === 'complete') {
+        frame.removeEventListener('load', done)
+        done()
+      }
+    })
+  }
+
+  const view = frame.contentWindow
+  const doc = frame.contentDocument
+  if (!view || !doc) return null
+
+  // Metrics are em-relative on both sides of every comparison below, so the
+  // frame must have its final fonts before anything is measured.
+  await doc.fonts?.ready
+
+  const el = doc.querySelector<HTMLElement>(selector)
+  return el ? { el, style: view.getComputedStyle(el) } : null
+}
 
 /* ---- gallery state ----------------------------------------------------- */
 
@@ -415,16 +483,23 @@ onMounted(async () => {
    * is `em`-relative on both sides, and that is what this check is about.
    * Normalising isolates the declaration from the inherited size.
    */
-  const emPadding = (el: HTMLElement | null | undefined) => {
+  const emPadding = (el: HTMLElement | null | undefined, style?: CSSStyleDeclaration) => {
     if (!el) return ''
-    const s = getComputedStyle(el)
+    const s = style ?? getComputedStyle(el)
     const fs = parseFloat(s.fontSize)
     if (!fs) return ''
     const r = (v: string) => (parseFloat(v) / fs).toFixed(2)
     return [r(s.paddingTop), r(s.paddingRight), r(s.paddingBottom), r(s.paddingLeft)].join(' ')
   }
 
-  const wfProbe = document.querySelector<HTMLElement>('[data-testid="probe-16-wf-chip"]')
+  /*
+   * Read out of the isolated reference frame (gh#116). Everything below that
+   * used to call `getComputedStyle(wfProbe)` now uses `wfStyle`, which belongs
+   * to the frame's own view.
+   */
+  const wfRef = await readWireframeReference('[data-testid="probe-16-wf-chip"]')
+  const wfProbe = wfRef?.el ?? null
+  const wfStyle = wfRef?.style ?? null
   const plainSpan = modes.find(el => el.dataset.element === 'span' && !el.hasAttribute('data-active'))
   const activeSpan = modes.find(el => el.dataset.element === 'span' && el.hasAttribute('data-active'))
   const attrsProbe = document.querySelector<HTMLElement>('[data-testid="probe-16-attrs"]')
@@ -465,6 +540,78 @@ onMounted(async () => {
   const synthAfter = synthChip?.getAttribute('aria-pressed') ?? ''
 
   const toggles = all.filter(el => el.dataset.element === 'toggle')
+
+  /*
+   * gh#116. Read from the live CSSOM rather than from the HTML source: the
+   * statement can arrive inline from the layout or as the first line of
+   * `/css/styles.css`, and what matters is that the browser accepted one.
+   * `CSSLayerStatementRule` is the *statement* form (`@layer a, b, c;`), not
+   * the block form the `layeredRule` walk above looks for.
+   */
+  const layerOrder = (() => {
+    const STATEMENT = globalThis.CSSLayerStatementRule
+    if (!STATEMENT) return null
+    for (const sheet of Array.from(document.styleSheets)) {
+      let rules: CSSRuleList
+      try {
+        rules = sheet.cssRules
+      } catch {
+        continue // cross-origin sheet; not ours to read
+      }
+      for (const rule of Array.from(rules)) {
+        if (rule instanceof STATEMENT) return (rule as CSSLayerStatementRule).nameList.join(', ')
+      }
+    }
+    return null
+  })()
+
+  const linkedSheets = Array.from(
+    document.querySelectorAll<HTMLLinkElement>('link[rel~="stylesheet"]')
+  ).map(link => new URL(link.href, document.baseURI))
+
+  const sameOrigin = linkedSheets.filter(url => url.origin === location.origin)
+
+  /**
+   * Every same-origin stylesheet the page links that is neither part of the
+   * CUBE stack nor an SFC style chunk. The stack is `/css/styles.css` plus the
+   * files it `@import`s, which all live under `/css/`; `/css/wireframe.css`
+   * sits in that directory but is the Front-2 skin, not part of the stack, so
+   * it is named explicitly. Expected to be empty — this is the row that fails
+   * if `global.css`, a `css-legacy/*` file or the wireframe skin ever reaches a
+   * probe again.
+   */
+  const foreignStylesheets = sameOrigin
+    .filter(url => !url.pathname.startsWith('/_nuxt/'))
+    .filter(url => !url.pathname.startsWith('/css/') || url.pathname === '/css/wireframe.css')
+    .map(url => url.pathname)
+
+  /**
+   * The SFC style chunks Vite emits for the client build, by name. There are
+   * exactly two on a probe route — this page's own `<style scoped>` and the
+   * layout's — and naming them is what makes the row above meaningful: a
+   * `/_nuxt/*.css` allowance that was not checked would quietly re-admit every
+   * legacy component's stylesheet through the back door. The hash is dropped;
+   * the name is not.
+   */
+  const sfcStyleChunks = [...new Set(
+    sameOrigin
+      .filter(url => url.pathname.startsWith('/_nuxt/'))
+      .map(url => url.pathname.replace(/^\/_nuxt\//, '').replace(/\.[^.]+\.css$/, ''))
+  )].sort()
+
+  /**
+   * Cross-origin sheets, by host. Exactly one is expected: the Material
+   * Symbols icon font declared app-wide in `src/nuxt.config.ts`'s
+   * `app.head.link`, which reaches every route in the app and is not a layout's
+   * to remove. It is a webfont sheet — `@font-face` plus the
+   * `.material-symbols-outlined` class — and being cross-origin its rules
+   * cannot even be read into this document's cascade for the chip. Asserted by
+   * name rather than waved past, so a CDN stylesheet that is *not* that one
+   * fails this row.
+   */
+  const crossOriginSheets = [...new Set(
+    linkedSheets.filter(url => url.origin !== location.origin).map(url => url.host)
+  )].sort()
 
   const results: Check[] = [
     // --- 1. all four modes render, each as the right element --------------
@@ -569,7 +716,7 @@ onMounted(async () => {
        * contract, not a cosmetic detail. Height is measured rather than
        * inferred: it is the value that actually breaks a row.
        */
-      label: 'every mode renders the same box and the same type (font-weight excepted — see comment)',
+      label: 'every mode renders the same box and the same type, font-weight included',
       expected: 'true',
       actual: (() => {
         const resting = modes.filter(el => !el.hasAttribute('data-active'))
@@ -577,24 +724,22 @@ onMounted(async () => {
         const boxes = new Set(resting.map(el => {
           const s = getComputedStyle(el)
           /*
-           * `fontWeight` is deliberately **not** compared, and the omission is
-           * a known gap rather than a convenience. The site ships an
-           * **unlayered** rule — `p, li, input, button, a { font-weight: 100 }`
-           * — and unlayered author styles outrank every cascade layer, so
-           * `.bf-chip { font: inherit }` in `@layer components` wins on the
-           * span branch (which that selector does not match) and loses on the
-           * link, anchor and toggle branches: 400 against 100, measured.
-           *
-           * Nothing this component can declare inside its layer changes that;
-           * only `!important` or moving the legacy rule into a layer would,
-           * and both reach far beyond one atom — the same rule shadows
-           * `bfButton` and will shadow every remaining `bf-*` component.
-           * Filed as a residual rather than improvised here. Everything below
-           * IS in the component's control, and every value is uniform.
+           * `fontWeight` is back in the comparison, and it is the row that
+           * carries gh#116. It was excluded here as residual #113: the stack
+           * shipped `p, li, input, button, a { font-weight: 100 }` **outside**
+           * any `@layer` — `base/typography.css` closed its `@layer defaults`
+           * block thirty lines early — and unlayered author rules outrank every
+           * layer, so `.bf-chip { font: inherit }` in `@layer components` won
+           * on the span branch (which that selector does not match) and lost on
+           * the link, anchor and toggle branches: 400 against 100, measured
+           * here. gh#116 moved that closing brace to the end of the file, so
+           * the declared order now governs and all five modes are genuinely
+           * interchangeable — which is what `bfFilterBar` (issue 30) needs when
+           * it lays toggle chips out in a row beside link chips.
            */
           return [
             el.getBoundingClientRect().height.toFixed(2),
-            s.fontFamily, s.fontSize, s.fontStyle,
+            s.fontFamily, s.fontSize, s.fontStyle, s.fontWeight,
             s.lineHeight, s.textAlign, s.letterSpacing, s.textTransform
           ].join('|')
         }))
@@ -684,21 +829,21 @@ onMounted(async () => {
     {
       label: 'the wireframe reference chip is present and measurable',
       expected: 'true',
-      actual: String(!!wfProbe && !!plainSpan && emPadding(wfProbe).length > 0)
+      actual: String(!!wfProbe && !!plainSpan && emPadding(wfProbe, wfStyle ?? undefined).length > 0)
     },
     {
       label: 'em-normalised padding matches the wireframe chip',
-      expected: emPadding(wfProbe),
+      expected: emPadding(wfProbe, wfStyle ?? undefined),
       actual: emPadding(plainSpan)
     },
     {
       label: 'border width matches the wireframe chip',
-      expected: wfProbe ? getComputedStyle(wfProbe).borderTopWidth : '',
+      expected: wfStyle ? wfStyle.borderTopWidth : '',
       actual: plainSpan ? getComputedStyle(plainSpan).borderTopWidth : ''
     },
     {
       label: 'border radius matches the wireframe chip (--radius-pill)',
-      expected: wfProbe ? getComputedStyle(wfProbe).borderTopLeftRadius : '',
+      expected: wfStyle ? wfStyle.borderTopLeftRadius : '',
       actual: plainSpan ? getComputedStyle(plainSpan).borderTopLeftRadius : ''
     },
     {
@@ -811,6 +956,58 @@ onMounted(async () => {
       label: "a caller's @click ran alongside the component's own, not instead of it",
       expected: '2|2',
       actual: `${clickCallerHandlerRuns.value}|${clickEmits.value}`
+    },
+
+    /* --- 12. the CSS-loading contract of the `bf-probe` layout (gh#116) ----
+     *
+     * These three rows are gh#116's own acceptance, asserted here because this
+     * is the page the issue names. They are about the *page*, not the chip, and
+     * they are what keeps every measurement above worth reading: the declared
+     * cascade order actually governs, and nothing outside the CUBE stack is on
+     * the page to outrank it. The real shell layout (#55) has to reproduce all
+     * three. */
+    {
+      /*
+       * #103: the order statement is absent on every route that does not load
+       * `/css/styles.css`, and without it `@layer components` is just the first
+       * layer the browser happens to meet.
+       */
+      label: 'the @layer order statement reached the page',
+      expected: 'true',
+      actual: String(!!layerOrder)
+    },
+    {
+      /*
+       * #108: membership was asserted, order never was. If a component's own
+       * `@layer components { … }` were the first layer statement seen,
+       * `components` would become the **weakest** layer — silently, with every
+       * membership row above still green. Assert the sequence itself.
+       */
+      label: 'and it declares the full order, components after composition',
+      expected: 'reset, defaults, tokens, themes, composition, components, utils, overrides',
+      actual: layerOrder ?? ''
+    },
+    {
+      /*
+       * The `bf-probe` layout is the sole stylesheet injector for this route,
+       * and it loads the CUBE stack and nothing else — no `global.css`, no
+       * `css-legacy/*`, not the Front-2 wireframe skin (which this page reads
+       * in an isolated frame instead). A stylesheet from outside it is exactly
+       * how the unlayered `font-weight` rule above used to win.
+       */
+      label: 'every same-origin stylesheet on the page belongs to the CUBE stack',
+      expected: '',
+      actual: foreignStylesheets.join(', ')
+    },
+    {
+      label: '  …and the only SFC style chunks are this page\u2019s and its layout\u2019s',
+      expected: '16-bf-chip, bf-probe',
+      actual: sfcStyleChunks.join(', ')
+    },
+    {
+      label: '  …and the only cross-origin sheet is the app-wide icon font',
+      expected: 'fonts.googleapis.com',
+      actual: crossOriginSheets.join(', ')
     }
   ]
 
@@ -1025,13 +1222,23 @@ const verdict = computed(() =>
 
     <!--
       The measurement reference: a real wireframe chip, painted by the frozen
-      `/css/wireframe.css` this page loads read-only. Off-screen rather than
-      `hidden`, so its computed box is a used value. `aria-hidden` + no tab
-      stop keeps it out of the keyboard-reachability count above.
+      `/css/wireframe.css` inside a document of its own. An iframe rather than
+      an off-screen box in this page, because gh#116 makes the `bf-probe`
+      layout the sole stylesheet injector and the wireframe skin is not part of
+      the CUBE stack it loads. Off-screen rather than `hidden`, so the computed
+      box is still a used value; `aria-hidden` + `tabindex="-1"` keep it out of
+      the keyboard-reachability count above. `srcdoc` is rendered here rather
+      than assigned at runtime so the reference still appears in the
+      prerendered HTML that `scripts/verify-bf-chip.ts` greps.
     -->
-    <div class="probe__offscreen wireframe" aria-hidden="true">
-      <span class="wf-chip" data-testid="probe-16-wf-chip">reference</span>
-    </div>
+    <iframe
+      ref="wfFrame"
+      class="probe__reference-frame"
+      title="wireframe measurement reference"
+      aria-hidden="true"
+      tabindex="-1"
+      :srcdoc="WF_REFERENCE_DOC"
+    />
 
     <p
       class="probe__verdict"
@@ -1070,21 +1277,11 @@ const verdict = computed(() =>
 
 <style scoped>
 /*
-  `layout: false` means nothing paints a ground, so the probe would otherwise
-  inherit the host's colour scheme. Pin it to the existing tokens, as probes 03,
-  14 and 15 do — no new colour, no new token.
+  The ground is the `bf-probe` layout's job now (gh#116): it paints `html` from
+  `--color-surface-page` / `--color-text` and pins `color-scheme: light`, so the
+  per-probe `:global(html)` block each of these pages used to carry — and the
+  `--color-white` primitive some of them reached for — is gone.
 */
-:global(html) {
-  color-scheme: light;
-  /*
-    Review finding gh#25-P2-1. Was `--color-white`, a colour **primitive** --
-    exactly what BRIEF §5 rule 2 forbids and what gh#101 removed from `bfLogo`.
-    `--color-text-inverse` is the semantic alias added for this, and resolves to
-    the same paint, so every contrast measurement below is unchanged.
-  */
-  background-color: var(--color-text-inverse);
-  color: var(--color-text);
-}
 
 .probe {
   padding-block: var(--space-l, 2rem);
@@ -1125,15 +1322,19 @@ const verdict = computed(() =>
 }
 
 /*
-  Off-screen, not `display: none`: a `display: none` element has no used
-  padding to compare against.
+  Off-screen, not `display: none`: a `display: none` frame lays nothing out, so
+  there would be no used padding to compare against. It also needs a real
+  viewport — a 1px-wide one, which is what the box this replaced could get away
+  with, would wrap the reference and every measurement with it. `border: 0`
+  keeps the UA's default frame border out of the layout.
 */
-.probe__offscreen {
+.probe__reference-frame {
   position: absolute;
   inset-inline-start: -9999px;
-  inline-size: 1px;
-  block-size: 1px;
-  overflow: hidden;
+  inset-block-start: 0;
+  inline-size: 640px;
+  block-size: 200px;
+  border: 0;
 }
 
 .probe__verdict {

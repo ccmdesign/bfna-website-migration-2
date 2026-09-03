@@ -27,10 +27,11 @@
  *     out of the live CSSOM with a real outline and the existing
  *     `--outline-focus` halo.
  *  5. **The box metrics equal the wireframe's**, measured rather than
- *     asserted: `/css/wireframe.css` is loaded and a real hidden wireframe
- *     button is compared against a rendered `bf-button` for computed padding
- *     and border width. This is the "read the computed values, don't guess"
- *     check; it fails if either side drifts.
+ *     asserted: a real wireframe button, painted by the frozen
+ *     `/css/wireframe.css` in an isolated frame of its own (gh#116), is
+ *     compared against a rendered `bf-button` for computed padding and border
+ *     width. This is the "read the computed values, don't guess" check; it
+ *     fails if either side drifts.
  *  6. Colour comes from the existing semantic tokens, the two variants
  *     differ, and the default variant paints no ground at all.
  *  7. `@layer components` survived into the live CSSOM (the gh#101 guard,
@@ -44,26 +45,85 @@
  */
 defineOptions({ name: 'BfProbe15BfButton' })
 
-definePageMeta({ layout: false })
+definePageMeta({ layout: 'bf-probe' })
 
 useHead({
-  title: 'bf-probe 15 — bfButton',
-  // `layout: false` bypasses the only layout that sets these, so set them here:
-  // `lang` for WCAG 3.1.1, `noindex` because probes are dev-only scaffolding.
-  htmlAttrs: { lang: 'en' },
-  meta: [{ name: 'robots', content: 'noindex' }],
-  link: [
-    { rel: 'stylesheet', href: '/css/styles.css' },
-    /*
-     * The wireframe stylesheet, loaded **read-only** so the metrics check
-     * below can measure the real thing. Everything in it is scoped under
-     * `.wireframe`, which on this page is one off-screen measuring box, so it
-     * cannot reach the probe's own markup. The file is frozen (D2) and is not
-     * edited, imported into the build, or referenced by the component.
-     */
-    { rel: 'stylesheet', href: '/css/wireframe.css' }
-  ]
+  title: 'bf-probe 15 — bfButton'
 })
+
+/*
+ * The frozen wireframe reference this page measures against is rendered in an
+ * isolated `srcdoc` iframe (`readWireframeReference` below, and the template)
+ * rather than as an off-screen box in this document. gh#116: the `bf-probe` layout
+ * loads the CUBE stack and only the CUBE stack, and `/css/wireframe.css` is
+ * not part of it — it is the Front-2 skin, loaded nowhere but
+ * `layouts/wireframe.vue`. Keeping the link here would have left the probe
+ * asserting a CSS-loading rule it broke itself, and the leak is not
+ * hypothetical: that file's `html:has(.wireframe), body:has(.wireframe)` rule
+ * reaches *outside* `.wireframe` and repainted the ground the layout sets.
+ * The file stays frozen and is still read at full fidelity — just in a
+ * document of its own.
+ */
+
+/** The reference markup, painted by the frozen skin and nothing else. */
+const WF_REFERENCE_DOC = [
+  '<!doctype html><html lang="en"><head><meta charset="utf-8">',
+  '<link rel="stylesheet" href="/css/styles.css">',
+  '<link rel="stylesheet" href="/css/wireframe.css">',
+  '</head><body class="wireframe">',
+  '<span class="wf-button" data-testid="probe-15-wf-button">reference</span>',
+  '</body></html>'
+].join('')
+
+const wfFrame = ref<HTMLIFrameElement | null>(null)
+
+/**
+ * The reference element and its computed style, read from inside the frame.
+ *
+ * `getComputedStyle` is taken from the frame's **own** `defaultView`: called on
+ * the parent window it is not guaranteed to resolve another document's cascade,
+ * and a silently-empty declaration here would turn every metric row below into
+ * a comparison of two empty strings — a pass, for a check that never ran.
+ *
+ * Resolves to `null` rather than throwing if the frame never loads, so the
+ * "present and measurable" row fails loudly instead of the page dying on mount.
+ */
+const readWireframeReference = async (selector: string): Promise<{ el: HTMLElement, style: CSSStyleDeclaration } | null> => {
+  const frame = wfFrame.value
+  if (!frame) return null
+
+  if (frame.contentDocument?.readyState !== 'complete') {
+    await new Promise<void>(ok => {
+      /*
+       * Bounded. A frame that never fires `load` would otherwise leave this
+       * promise pending forever, the assertion table unbuilt and the verdict
+       * stuck on `pending` — which `scripts/check-probes.ts` reports as a
+       * timeout rather than as the failing row it really is. On expiry the
+       * lookup below simply finds nothing and the "present and measurable" row
+       * goes red, which is the honest outcome.
+       */
+      const timer = setTimeout(() => ok(), 5_000)
+      const done = () => { clearTimeout(timer); ok() }
+      frame.addEventListener('load', done, { once: true })
+      // The frame may have finished between the check and this listener.
+      if (frame.contentDocument?.readyState === 'complete') {
+        frame.removeEventListener('load', done)
+        done()
+      }
+    })
+  }
+
+  const view = frame.contentWindow
+  const doc = frame.contentDocument
+  if (!view || !doc) return null
+
+  // Metrics are em-relative on both sides of every comparison below, so the
+  // frame must have its final fonts before anything is measured.
+  await doc.fonts?.ready
+
+  const el = doc.querySelector<HTMLElement>(selector)
+  return el ? { el, style: view.getComputedStyle(el) } : null
+}
 
 /** The four size settings under test. `''` means "pass no `size` at all". */
 const sizes = ['', 's', 'm', 'l'] as const
@@ -80,7 +140,7 @@ interface Check {
 
 const checks = ref<Check[]>([])
 
-onMounted(() => {
+onMounted(async () => {
   const matrix = Array.from(
     document.querySelectorAll<HTMLElement>('.probe__matrix .bf-button')
   )
@@ -199,11 +259,18 @@ onMounted(() => {
   const focusCss = focusRule?.cssText ?? ''
 
   // --- the metrics comparison, against the real wireframe class -----------
-  const wfProbe = document.querySelector<HTMLElement>('[data-testid="probe-15-wf-button"]')
+  /*
+   * Read out of the isolated reference frame (gh#116) rather than from an
+   * off-screen box in this document — `wfStyle` belongs to the frame's own
+   * view, so it resolves the frame's cascade rather than this page's.
+   */
+  const wfRef = await readWireframeReference('[data-testid="probe-15-wf-button"]')
+  const wfProbe = wfRef?.el ?? null
+  const wfStyle = wfRef?.style ?? null
   const bfBase = matrix.find(el => !el.dataset.size && el.dataset.variant === 'default')
-  const box = (el: HTMLElement | null | undefined) => {
+  const box = (el: HTMLElement | null | undefined, style?: CSSStyleDeclaration) => {
     if (!el) return ''
-    const s = getComputedStyle(el)
+    const s = style ?? getComputedStyle(el)
     return [s.paddingTop, s.paddingRight, s.paddingBottom, s.paddingLeft, s.borderTopWidth].join(' ')
   }
 
@@ -217,8 +284,8 @@ onMounted(() => {
    * declaration, which is what this check is about.
    */
   const sameFontSize =
-    wfProbe && bfBase
-      ? getComputedStyle(wfProbe).fontSize === getComputedStyle(bfBase).fontSize
+    wfStyle && bfBase
+      ? wfStyle.fontSize === getComputedStyle(bfBase).fontSize
       : false
 
   const fontSizeOf = (el: HTMLElement | undefined) =>
@@ -387,7 +454,7 @@ onMounted(() => {
     {
       label: 'the wireframe reference button is present and measurable',
       expected: 'true',
-      actual: String(!!wfProbe && !!bfBase && box(wfProbe).length > 0)
+      actual: String(!!wfProbe && !!bfBase && box(wfProbe, wfStyle ?? undefined).length > 0)
     },
     {
       label: '  …measured at the same font size, so the em box is comparable',
@@ -396,7 +463,7 @@ onMounted(() => {
     },
     {
       label: 'computed padding + border width match the wireframe class',
-      expected: box(wfProbe),
+      expected: box(wfProbe, wfStyle ?? undefined),
       actual: box(bfBase)
     },
 
@@ -596,13 +663,23 @@ const verdict = computed(() =>
 
     <!--
       The measurement reference: a real wireframe button, painted by the frozen
-      `/css/wireframe.css` this page loads read-only. Off-screen rather than
-      `hidden`, so its computed box is a used value. `aria-hidden` + no tab
-      stop keeps it out of the keyboard-reachability count above.
+      `/css/wireframe.css` inside a document of its own. An iframe rather than
+      an off-screen box in this page, because gh#116 makes the `bf-probe`
+      layout the sole stylesheet injector and the wireframe skin is not part of
+      the CUBE stack it loads. Off-screen rather than `hidden`, so the computed
+      box is still a used value; `aria-hidden` + `tabindex="-1"` keep it out of
+      the keyboard-reachability count above. `srcdoc` is rendered here rather
+      than assigned at runtime so the reference still appears in the
+      prerendered HTML that `scripts/verify-bf-button.ts` greps.
     -->
-    <div class="probe__offscreen wireframe" aria-hidden="true">
-      <span class="wf-button" data-testid="probe-15-wf-button">reference</span>
-    </div>
+    <iframe
+      ref="wfFrame"
+      class="probe__reference-frame"
+      title="wireframe measurement reference"
+      aria-hidden="true"
+      tabindex="-1"
+      :srcdoc="WF_REFERENCE_DOC"
+    />
 
     <p
       class="probe__verdict"
@@ -641,15 +718,11 @@ const verdict = computed(() =>
 
 <style scoped>
 /*
-  `layout: false` means nothing paints a ground, so the probe would otherwise
-  inherit the host's colour scheme. Pin it to the existing tokens, as probes 03
-  and 14 do — no new colour, no new token.
+  The ground is the `bf-probe` layout's job now (gh#116): it paints `html` from
+  `--color-surface-page` / `--color-text` and pins `color-scheme: light`, so the
+  per-probe `:global(html)` block each of these pages used to carry — and the
+  `--color-white` primitive some of them reached for — is gone.
 */
-:global(html) {
-  color-scheme: light;
-  background-color: var(--color-white);
-  color: var(--color-text);
-}
 
 .probe {
   padding-block: var(--space-l, 2rem);
@@ -676,15 +749,19 @@ const verdict = computed(() =>
 }
 
 /*
-  Off-screen, not `display: none`: a `display: none` element has no used
-  padding to compare against.
+  Off-screen, not `display: none`: a `display: none` frame lays nothing out, so
+  there would be no used padding to compare against. It also needs a real
+  viewport — a 1px-wide one, which is what the box this replaced could get away
+  with, would wrap the reference and every measurement with it. `border: 0`
+  keeps the UA's default frame border out of the layout.
 */
-.probe__offscreen {
+.probe__reference-frame {
   position: absolute;
   inset-inline-start: -9999px;
-  inline-size: 1px;
-  block-size: 1px;
-  overflow: hidden;
+  inset-block-start: 0;
+  inline-size: 640px;
+  block-size: 200px;
+  border: 0;
 }
 
 .probe__verdict {

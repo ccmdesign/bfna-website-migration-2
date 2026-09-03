@@ -34,15 +34,10 @@
  */
 defineOptions({ name: 'BfProbe14BfLogo' })
 
-definePageMeta({ layout: false })
+definePageMeta({ layout: 'bf-probe' })
 
 useHead({
-  title: 'bf-probe 14 — bfLogo',
-  // `layout: false` bypasses the only layout that sets these, so set them here:
-  // `lang` for WCAG 3.1.1, `noindex` because probes are dev-only scaffolding.
-  htmlAttrs: { lang: 'en' },
-  meta: [{ name: 'robots', content: 'noindex' }],
-  link: [{ rel: 'stylesheet', href: '/css/styles.css' }]
+  title: 'bf-probe 14 — bfLogo'
 })
 
 /**
@@ -418,16 +413,11 @@ const verdict = computed(() =>
 
 <style scoped>
 /*
-  `layout: false` means nothing paints a ground, so the probe would inherit the
-  host's colour scheme and render the near-black `variant="default"` marks
-  dark-on-dark. Pin it to the existing `--color-white` / `--color-text` tokens,
-  as probe 03 does — no new colour, no new token.
+  The ground is the `bf-probe` layout's job now (gh#116): it paints `html` from
+  `--color-surface-page` / `--color-text` and pins `color-scheme: light`, so the
+  per-probe `:global(html)` block each of these pages used to carry — and the
+  `--color-white` primitive some of them reached for — is gone.
 */
-:global(html) {
-  color-scheme: light;
-  background-color: var(--color-white);
-  color: var(--color-text);
-}
 
 .probe {
   padding-block: var(--space-l, 2rem);

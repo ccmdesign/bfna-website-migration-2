@@ -52,6 +52,18 @@
        */
       --color-text-inverse: var(--color-white);
       --color-surface-inverse: var(--color-black);
+      /*
+       * The normal page ground, added by gh#116 for residual #107: the
+       * inverted pair above named the dark ground but nothing named the light
+       * one, so every `bf-probe` page that had to paint a canvas reached for
+       * the `--color-white` **primitive** — which BRIEF §5 rule 2 forbids and
+       * which the `verify-bf-*.ts` primitive scan does not cover on probe
+       * files. Alias of a primitive already in this file's var() graph; no new
+       * colour value. `--color-surface-page` rather than `--color-surface`,
+       * because it names the page canvas specifically — a component surface
+       * token is free to be added later without colliding with it.
+       */
+      --color-surface-page: var(--color-white);
       --color-link: var(--color-blue);
       --color-link-visited: var(--color-navy);
   

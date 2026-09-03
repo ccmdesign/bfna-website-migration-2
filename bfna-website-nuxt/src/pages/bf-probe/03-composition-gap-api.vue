@@ -25,15 +25,10 @@
  */
 defineOptions({ name: 'BfProbe03CompositionGapApi' })
 
-definePageMeta({ layout: false })
+definePageMeta({ layout: 'bf-probe' })
 
 useHead({
-  title: 'bf-probe 03 — composition gap API',
-  // `layout: false` bypasses the only layout that sets these, so set them here:
-  // `lang` for WCAG 3.1.1, `noindex` because probes are dev-only scaffolding.
-  htmlAttrs: { lang: 'en' },
-  meta: [{ name: 'robots', content: 'noindex' }],
-  link: [{ rel: 'stylesheet', href: '/css/styles.css' }]
+  title: 'bf-probe 03 — composition gap API'
 })
 
 /** The three deliberately far-apart steps of the Utopia scale under test. */
@@ -540,15 +535,11 @@ const verdict = computed(() =>
   probe introduces no colour literal and no new token (epic ground rule 2).
 */
 /*
-  `layout: false` means nothing paints a ground, so the probe would inherit the
-  host's colour scheme and render dark-on-dark. Pin it to the existing
-  `--color-white` / `--color-text` tokens — no new colour, no new token.
+  The ground is the `bf-probe` layout's job now (gh#116): it paints `html` from
+  `--color-surface-page` / `--color-text` and pins `color-scheme: light`, so the
+  per-probe `:global(html)` block each of these pages used to carry — and the
+  `--color-white` primitive some of them reached for — is gone.
 */
-:global(html) {
-  color-scheme: light;
-  background-color: var(--color-white);
-  color: var(--color-text);
-}
 
 .probe {
   padding-block: var(--space-l);
