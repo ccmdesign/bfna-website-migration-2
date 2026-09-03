@@ -3,11 +3,15 @@
  * `bfPrograms` content collection instead of the wireframe JSON snapshot.
  *
  * Issue 12 / gh#21. The smallest composable in the family: three documents, no
- * filtering, no ordering. `useWfContent` builds `PROGRAMS` by mapping the
+ * filtering, one sort. `useWfContent` builds `PROGRAMS` by mapping the
  * snapshot's `heading` to `name`; that rename is now the normaliser's
  * (issue 07), and `tagline` — the first sentence of `intro`, derived there per
  * issues 07 / 09 / 25 — arrives as a stored field too. So this file only
  * reads.
+ *
+ * Ordering is the normaliser's too, since gh#180: the snapshot's array position
+ * arrives as a stored `order`, and this file's only job beyond reading is the one
+ * ascending sort on it.
  *
  * Naming, per Irene (Jul 31) and the epic's taxonomy decision: three top-level
  * **programs** (Democracy, Future Leadership, Transatlantic Relations & Global
@@ -31,17 +35,23 @@ export const useBfPrograms = async () => {
   )
 
   /**
-   * All three programs, in collection order. They carry no ordinal — the nav
-   * and the homepage render them in the order they come back, which is what
-   * `useWfContent` does with the snapshot array.
+   * All three programs in the client's curated order — Democracy, Transatlantic
+   * Relations & Global Challenges, Future Leadership — carried across the move
+   * to per-file documents by the normaliser's stored `order` (gh#180).
+   *
+   * Sorted **once**, here, on the stored key: `queryCollection` hands back
+   * file-stem (alphabetical) order, which put Future Leadership second on the
+   * home Programs band where the wireframe puts it third. Exactly what
+   * `useBfProjects` does with `grid_order` (gh#89) — the composable compares a
+   * materialised ordinal, it never re-derives the ordering (D3).
    */
-  const all: Program[] = data.value ?? []
+  const all: Program[] = [...(data.value ?? [])].sort((a, b) => a.order - b.order)
 
   return {
     /**
-     * All three, in collection order — a fresh array per call (gh#91), so a
-     * caller's in-place `.sort()` cannot reorder the `useAsyncData` payload for
-     * every other consumer in the same render.
+     * All three, in `order` — a fresh array per call (gh#91), so a caller's
+     * in-place `.sort()` cannot reorder the `useAsyncData` payload for every
+     * other consumer in the same render.
      */
     programs: () => [...all],
     /** One program by slug, or `undefined` — backs the `/{program}` hub route. */

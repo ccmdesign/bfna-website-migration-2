@@ -18,7 +18,8 @@
  *                                                fallback ordinal — gh#89)
  *   - `FEATURED_SLUGS`          (l.144)     → `featured: boolean`
  *   - `NAV_SLUGS`               (l.148)     → `nav: boolean`
- *   - programs `heading → name` (l.109-110), `legacy_workstreams` dropped
+ *   - programs `heading → name` (l.109-110), `legacy_workstreams` dropped; the
+ *     snapshot's curated array position → `order: number` (gh#180)
  *   - `insights.json.featured` / `.retired_news` → booleans on the insight document
  *   - board predicate             (l.264)     → `board: boolean` on the person document
  *   - `MENUS`                     (l.153-186) → `src/assets/bf-data/menus.json`
@@ -511,6 +512,7 @@ interface ProgramDoc {
   tagline: string
   intro: string | null
   image: string | null
+  order: number
 }
 
 /**
@@ -534,19 +536,37 @@ const firstSentence = (intro: string | null | undefined): string => {
   return para
 }
 
+/**
+ * `Program.order` (gh#180) — the snapshot's array position, 1-based.
+ *
+ * The three programs are a **curated** sequence: `programs.json` lists Democracy,
+ * Transatlantic Relations & Global Challenges, Future Leadership, and every
+ * wireframe surface that loops over them (`useWfContent`'s `PROGRAMS`) renders
+ * them in that order because it reads the array itself. Per-file documents lose
+ * it — `queryCollection` hands the composable file-stem (alphabetical) order, so
+ * the home Programs band rendered Future Leadership second.
+ *
+ * Same fix as `grid_order` (gh#89): materialise the input order as a real stored
+ * ordinal so it survives the move, and the consumer only ever sorts ascending on
+ * it. 1-based because the value is read by humans in the emitted JSON; nothing
+ * compares it to an index.
+ */
+const orderOf = (index: number): number => index + 1
+
 const normalisePrograms = (): number => {
   const snap = readSnapshot<{ items: RawProgram[] }>('programs.json')
   resetCollection('programs')
   const stem = makeStemFactory()
 
-  for (const raw of snap.items) {
+  for (const [index, raw] of snap.items.entries()) {
     // `heading → name` and `legacy_workstreams` dropped — useWfContent.ts:109-110.
     const doc: ProgramDoc = {
       slug: raw.slug,
       name: plainOrNull(raw.heading) ?? '',
       tagline: firstSentence(raw.intro),
       intro: strOrNull(raw.intro),
-      image: strOrNull(raw.image)
+      image: strOrNull(raw.image),
+      order: orderOf(index)
     }
     writeDoc('programs', stem(raw.slug).stem, doc)
   }
