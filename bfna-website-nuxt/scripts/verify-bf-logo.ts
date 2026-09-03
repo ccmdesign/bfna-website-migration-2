@@ -302,7 +302,49 @@ if (existsSync(builtProbePath)) {
    * *inside* the `@layer components` block, so the block is brace-matched and
    * the rule looked for within it.
    */
-  const layerComponentsBody = (css: string): string => {
+  /**
+   * Replace the *contents* of CSS strings and comments with `x`, preserving
+   * length and the delimiters. Braces inside `content: "}"` or inside a
+   * comment are not structural, and counting them shifts the extracted body
+   * silently — a brace-counter that reads raw text can pass or fail against
+   * the wrong slice of CSS with no error.
+   */
+  const maskLiterals = (css: string): string => {
+    let out = ''
+    let i = 0
+    while (i < css.length) {
+      const ch = css[i]!
+      if (ch === '"' || ch === "'") {
+        out += ch
+        i += 1
+        while (i < css.length && css[i] !== ch) {
+          // A backslash escapes the next character, quote included.
+          if (css[i] === '\\' && i + 1 < css.length) {
+            out += 'xx'
+            i += 2
+            continue
+          }
+          out += 'x'
+          i += 1
+        }
+        if (i < css.length) { out += ch; i += 1 }
+        continue
+      }
+      if (ch === '/' && css[i + 1] === '*') {
+        const end = css.indexOf('*/', i + 2)
+        const stop = end === -1 ? css.length : end + 2
+        out += '/*' + 'x'.repeat(Math.max(0, stop - i - 4)) + (end === -1 ? '' : '*/')
+        i = stop
+        continue
+      }
+      out += ch
+      i += 1
+    }
+    return out
+  }
+
+  const layerComponentsBody = (raw: string): string => {
+    const css = maskLiterals(raw)
     const opener = /@layer\s+components\s*\{/g
     let match: RegExpExecArray | null
     const bodies: string[] = []
@@ -321,10 +363,17 @@ if (existsSync(builtProbePath)) {
     return bodies.join('\n')
   }
 
+  /*
+   * The class token exactly — `\b` would also fire on a future `.bf-logo-mark`
+   * (the boundary sits at the letter→hyphen), so the real `.bf-logo` rule
+   * could be renamed away while an unrelated sibling kept these checks green.
+   */
+  const BF_LOGO_SELECTOR = /\.bf-logo(?![\w-])/
+
   const cssFiles = readdirSync(builtCssDir).filter(f => f.endsWith('.css'))
   const bfLogoSheets = cssFiles
     .map(f => read(join(builtCssDir, f)))
-    .filter(css => /\.bf-logo\b/.test(css))
+    .filter(css => BF_LOGO_SELECTOR.test(css))
 
   check('a compiled stylesheet carries the .bf-logo rules', bfLogoSheets.length > 0, true)
   check(
@@ -334,7 +383,7 @@ if (existsSync(builtProbePath)) {
   )
   check(
     '  …and the .bf-logo rules sit *inside* @layer components',
-    bfLogoSheets.some(css => /\.bf-logo\b/.test(layerComponentsBody(css))),
+    bfLogoSheets.some(css => BF_LOGO_SELECTOR.test(layerComponentsBody(css))),
     true
   )
   check(

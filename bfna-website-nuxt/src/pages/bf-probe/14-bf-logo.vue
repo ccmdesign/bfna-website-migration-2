@@ -79,6 +79,7 @@ onMounted(() => {
     document.querySelectorAll<SVGSVGElement>('.probe__gallery .bf-logo')
   )
   const first = marks[0]
+  const invertedPanel = document.querySelector<HTMLElement>('.probe__row--inverted')
   const geometry = (svg: SVGSVGElement | undefined) =>
     svg
       ? Array.from(svg.querySelectorAll('path, polygon, rect'))
@@ -110,13 +111,21 @@ onMounted(() => {
   const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16
 
   /**
-   * Walk every reachable stylesheet looking for a `.bf-logo` style rule whose
-   * ancestry includes a `@layer components` block. Cross-origin sheets throw
-   * on `cssRules`; they are skipped, not failed.
+   * Walk every reachable stylesheet — `@import`ed ones included, since
+   * `/css/styles.css` is nothing but a list of imports — looking for a
+   * `.bf-logo` style rule whose ancestry includes a `@layer components`
+   * block. Cross-origin sheets throw on `cssRules`; they are skipped, not
+   * failed, so the Google Fonts link does not sink the check.
+   *
+   * The selector is matched as a whole class token: `includes('.bf-logo')`
+   * would also accept a future `.bf-logo-mark`, which would keep this green
+   * after the real rule was renamed away.
    */
   const layeredBfLogoRuleFound = (): boolean => {
     const LAYER_BLOCK = globalThis.CSSLayerBlockRule
     if (!LAYER_BLOCK) return false
+
+    const selector = /\.bf-logo(?![\w-])/
 
     const walk = (rules: CSSRuleList, insideComponents: boolean): boolean => {
       for (const rule of Array.from(rules)) {
@@ -124,12 +133,19 @@ onMounted(() => {
           insideComponents
           || (rule instanceof LAYER_BLOCK && (rule as CSSLayerBlockRule).name === 'components')
 
-        if (
-          nowInside
-          && rule instanceof CSSStyleRule
-          && rule.selectorText.includes('.bf-logo')
-        ) {
+        if (nowInside && rule instanceof CSSStyleRule && selector.test(rule.selectorText)) {
           return true
+        }
+
+        // `@import` nests its rules under `.styleSheet`, not `.cssRules`.
+        if (rule instanceof CSSImportRule) {
+          try {
+            const imported = rule.styleSheet?.cssRules
+            if (imported && walk(imported, nowInside)) return true
+          } catch {
+            // Cross-origin import target — unreadable, not a failure.
+          }
+          continue
         }
 
         const nested = (rule as CSSGroupingRule).cssRules
@@ -246,10 +262,17 @@ onMounted(() => {
       expected: resolveToken('--color-white'),
       actual: resolveToken('--color-text-inverse')
     },
+    /*
+     * `--color-surface-inverse` asserted where it actually paints, not as a
+     * second `resolveToken` round-trip: the static check in
+     * `verify-bf-logo.ts` already proves it is a `var()` alias of
+     * `--color-black`, so repeating that here would only prove the browser
+     * resolves `var()`. This proves the token reaches a real painted ground.
+     */
     {
-      label: '  …--color-surface-inverse likewise aliases --color-black',
-      expected: resolveToken('--color-black'),
-      actual: resolveToken('--color-surface-inverse')
+      label: 'the inverted panel is painted by --color-surface-inverse',
+      expected: resolveToken('--color-surface-inverse'),
+      actual: invertedPanel ? getComputedStyle(invertedPanel).backgroundColor : ''
     },
     {
       label: '  …and the two variants differ',

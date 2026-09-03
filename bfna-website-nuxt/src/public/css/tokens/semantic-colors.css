@@ -26,6 +26,8 @@
       --color-dark: var(--color-base);
       --color-light: var(--color-base-tint-02);
       --color-text: var(--color-base);
+      /* Same paint as --color-surface-inverse below; that one is the name to
+         reach for when the intent is specifically an inverted ground. */
       --color-neutral: var(--color-black);
       /*
        * Inverted colourways — text on a dark ground, and the dark ground
@@ -36,7 +38,17 @@
        * Both are aliases of primitives that already exist in
        * `primitive-colors.css` — no new colour value is introduced here, only
        * a semantic name for one already in the file's var() graph.
-       * `--color-black` is the darkest existing neutral.
+       *
+       * `--color-black` is the darkest *hand-authored* base neutral. The
+       * `--color-base-shade-*` matrix in
+       * `primitive-colors-shades-and-tints.css` is marginally darker by
+       * construction (each is `--color-base` mixed toward absolute black), but
+       * those are derivatives, not alias roots.
+       *
+       * `--color-surface-inverse` and `--color-neutral` resolve to the same
+       * paint today. They are not interchangeable by intent: `--color-neutral`
+       * names a neutral, this names the ground an inverted block sits on, and
+       * they are free to diverge. Use this one in an inverted context.
        */
       --color-text-inverse: var(--color-white);
       --color-surface-inverse: var(--color-black);

@@ -113,8 +113,22 @@ depend on it (gh#20–#23 precedent). Instead:
 body picks option 1 (a semantic alias). Two tokens rather than #99's single `--color-inverse`,
 because the semantic layer already separates the *role* of a colour from its value
 (`--color-text` vs `--color-primary`), and an inverted card needs a surface as well as a text
-colour. `--color-surface-inverse` aliases `--color-black`, the darkest existing neutral primitive.
-Naming follows the file's existing `--color-{role}[-{modifier}]` shape.
+colour. `--color-surface-inverse` aliases `--color-black`. Naming follows the file's existing
+`--color-{role}[-{modifier}]` shape.
+
+*Corrected in review:* the issue body and the first draft of this plan both called `--color-black`
+"the darkest existing neutral primitive". That is false — `primitive-colors-shades-and-tints.css`
+derives `--color-base-shade-02 … -90` as `--color-base` mixed toward absolute black, and all but
+one are marginally darker. They are *derivatives*, not alias roots, and the difference is
+sub-perceptible, so `--color-black` remains the right target; the justification, not the choice,
+was wrong.
+
+**D101.1b — `--color-surface-inverse` overlaps `--color-neutral`, deliberately.** Review flagged
+that `--color-neutral: var(--color-black)` (and `--color-dark`, one hop further) already resolve to
+the same paint. `--color-surface-inverse` is nonetheless kept: issue #101 names it explicitly, and
+the two express different intents — one names a neutral, the other names the ground an inverted
+block sits on — so they are free to diverge. Both declarations now carry a cross-reference so a
+future reader does not add a fourth alias.
 
 **D101.2 — this supersedes D14.10 of `14-bf-logo.md`'s residual list.** `bf/Logo.vue`'s white
 colourway no longer reads a primitive; the BRIEF §5 rule-2 exception recorded in gh#23 is closed.
