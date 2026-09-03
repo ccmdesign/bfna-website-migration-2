@@ -1105,3 +1105,94 @@ export interface GridProjectsProps extends GridProps {
   /** The rows to render, in order. One `<li>` each, keyed on `slug`. */
   projects: Project[]
 }
+
+/* -------------------------------------------------------------------------
+ * Search organism (issue 43 / gh#52)
+ * ------------------------------------------------------------------------- */
+
+/**
+ * Props of `bfSearchShell` — the search UI shell.
+ *
+ * Five required props and three optional ones, and **not one of them is
+ * derived inside the component**. The shell renders a query control, a facet
+ * row, a count line, a result list and an empty state; ranking, indexing,
+ * normalisation and the `/search` route belong to issue 54 (BRIEF D8). Every
+ * number it paints — including the relevance meter's width — is read from a
+ * value the page handed it.
+ *
+ * ## Why `resultCount` is a prop and not `results.length`
+ *
+ * They are different facts. The frozen `pages/wireframes/search.vue:49`
+ * renders **twenty** rows (`results.slice(0, 20)`) under a count line that
+ * reports the length of the *whole* ranked set. A shell that derived the count
+ * from the array it was given would silently report "20 results" for a query
+ * that matched four hundred, and no call site could correct it. So the page
+ * says how many there are and, separately, hands over the ones to draw.
+ *
+ * ## Why `selectedFilters` is a prop and an event, not a `v-model` on state
+ *
+ * The same reason `bfFilterBar` takes one: on `/search` the selection lives in
+ * `route.query` (issue 54's §Scope requires `/search?q=…` to deep-link), so a
+ * component holding its own copy would be a second source of truth for a value
+ * the URL already owns.
+ */
+export interface SearchShellProps extends Pick<CardWrapperProps, 'headingLevel'> {
+  /**
+   * The current query string, rendered into the search control.
+   *
+   * Controlled: the component keeps a *draft* of what has been typed so the
+   * input stays responsive between debounce windows, but the prop is what the
+   * draft is re-synchronised to whenever the page changes it (a cleared query,
+   * a restored `?q=` on navigation). See the component for the resync rule.
+   */
+  query: string
+  /**
+   * The facet vocabulary, forwarded verbatim to `bfFilterBar`'s `filters`.
+   *
+   * One flat list, not the frozen wireframe's two hand-rolled rows. The
+   * wireframe writes a programme row and a format row with the *same* markup
+   * twice over; which facets exist, and whether they are one group or two, is
+   * a page decision. This shell renders exactly the group it is given.
+   */
+  filters: Filter[]
+  /** The selected facet keys. Forwarded to `bfFilterBar`'s `model-value`. */
+  selectedFilters: string[]
+  /**
+   * The rows to draw, already ranked and already sliced by the page.
+   *
+   * Each row's `score` is expected in **0–1**, normalised by the page against
+   * its own top score (the wireframe's `r.score / topScore`). The component
+   * clamps rather than trusts — a score outside the range is a page bug that
+   * must not become a meter wider than its track — but it never re-normalises,
+   * because it cannot see the rows that were sliced away.
+   */
+  results: SearchResultRow[]
+  /**
+   * How many results the query matched **in total** — see the note above on
+   * why this is not `results.length`.
+   */
+  resultCount: number
+  /**
+   * The search control's visible label and accessible name. Defaults to the
+   * frozen wireframe's own `aria-label`, *"Semantic search"*.
+   *
+   * Visible, unlike the wireframe's, which is `aria-label` on a bare input:
+   * `bfFormField` renders a real `<label for>`, so the name a screen reader
+   * announces is the text a sighted user reads. A caller who wants it hidden
+   * hides it with CSS rather than by deleting the element.
+   */
+  label?: string
+  /** The search control's placeholder. Defaults to the wireframe's own. */
+  placeholder?: string
+  /**
+   * The debounce window in milliseconds before `update:query` is emitted.
+   * Defaults to 250.
+   *
+   * A prop rather than a constant because the emit boundary is now this
+   * component's rather than a page-local `ref`'s: the frozen wireframe filters
+   * an in-memory array on every keystroke, which is free, while issue 54's
+   * page recomputes a ranking over ~400 documents, which is not. `0` disables
+   * the timer entirely and emits synchronously.
+   */
+  debounceMs?: number
+}
