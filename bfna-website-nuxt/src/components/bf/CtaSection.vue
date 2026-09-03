@@ -107,7 +107,7 @@ interface Props {
   ctas?: Cta[]
 }
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
   label: 'CTA',
   heading: undefined,
   message: undefined,
@@ -156,7 +156,7 @@ const isPrimary = (c: Cta, idx: number): ButtonVariant =>
       does not pay a `.stack` gap for an empty element.
     -->
     <div
-      v-if="props.ctas.length"
+      v-if="ctas.length"
       class="cluster bf-cta-section__actions"
       data-gap="s"
     >
@@ -166,7 +166,7 @@ const isPrimary = (c: Cta, idx: number): ButtonVariant =>
         one band. Two identical labels in one list would be a copy bug first.
       -->
       <bfButton
-        v-for="(c, idx) in props.ctas"
+        v-for="(c, idx) in ctas"
         :key="c.label"
         :to="c.to"
         :href="c.href"
