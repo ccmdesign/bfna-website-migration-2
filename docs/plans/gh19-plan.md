@@ -93,9 +93,11 @@ null/empty:
 - **`monthYear`** — a real snapshot date → `'<Mon> <YYYY>'`; `null` → `''`;
   `''` → `''`. Asserted against a locally-computed expectation for the
   timezone-safe cases, plus a `/^[A-Z][a-z]{2} \d{4}$/` shape assertion.
-- **`paragraphs`** — multi-paragraph text → N entries; blank runs collapsed
-  (`'a\n\n\n\nb'` → `['a', '\n', 'b']` — assert the *actual* semantics, not the
-  intuitive one); single paragraph → 1 entry; `null`/`undefined`/`''` → `[]`.
+- **`paragraphs`** — multi-paragraph text → N entries; single paragraph → 1
+  entry; `null`/`undefined`/`''` → `[]`. Assert the *actual* split semantics,
+  not the intuitive one: an even run of newlines yields an empty segment that
+  `filter(Boolean)` drops (`'a\n\n\n\nb'` → `['a', 'b']`), while an odd run
+  leaves a whitespace-only segment that survives (`'a\n\n\nb'` → `['a', '\nb']`).
 
 **Behavioural parity check (acceptance activity, not committed).** A throwaway
 script imports the live `useWfContent()` closures and the new module side by
@@ -117,8 +119,11 @@ npx nuxt typecheck 2>&1 | grep -cE 'error TS'      # <= 178 (dev baseline)
 npx nuxt typecheck 2>&1 | grep -E 'error TS' \
   | grep -cE 'src/(components/bf|types|composables/bf)|content\.config'   # == 0
 npx nuxt generate                                   # exit 0
-grep -rln "from '~/utils/format'" src/components/bf/ 2>/dev/null \
-  | xargs -I{} grep -l 'plain' {} && echo FAIL || echo PASS
+# NB: the spec's own one-liner for this check is buggy — with zero matches
+# xargs runs nothing and exits 0, so `&& echo FAIL` fires on the PASS case.
+# Check it directly instead; both must be empty:
+grep -rln 'utils/format' src/components/bf/ 2>/dev/null
+grep -nE 'export (const|function) plain' src/utils/format.ts
 ```
 
 Plus the wireframe byte-identity gate from the repo root (must print nothing):
