@@ -98,15 +98,13 @@ const checks: Check[] = [
   { label: 'board + team entries (Irene counted twice)', expected: 14, actual: board.length + team.length },
 
   // --- the board list, by the stored flag ---------------------------------
+  // Asserted as the full sequence, unsorted — this is the order `/about#board`
+  // will render, and it must equal the order `useWfContent` produces from
+  // `people.json`.
   {
-    label: 'boardMembers() slugs',
+    label: 'boardMembers() slugs, in render order',
     expected: 'irene-braam,liz-mohn,stephen-f-szabo,wilhelm-friedrich-uhr',
-    actual: board.map(p => p.slug).sort().join(',')
-  },
-  {
-    label: '  …every member carries the stored flag',
-    expected: 'true',
-    actual: String(board.every(p => p.board))
+    actual: slugs(board)
   },
   {
     label: '  …wilhelm-friedrich-uhr, matched on his job title',
@@ -130,10 +128,12 @@ const checks: Check[] = [
     expected: 'true',
     actual: String(!team.some(p => p.slug === 'wilhelm-friedrich-uhr'))
   },
+  // The three the Team filter drops — asserted by name, so a normaliser change
+  // to `job_title` shows up here rather than silently resizing the list.
   {
-    label: 'teamMembers() drops only board *titles*',
-    expected: 'true',
-    actual: String(team.every(p => !/board/i.test(p.job_title ?? '')))
+    label: 'teamMembers() drops exactly the 3 board *titles*',
+    expected: 'liz-mohn,stephen-f-szabo,wilhelm-friedrich-uhr',
+    actual: people().filter(p => !team.includes(p)).map(p => p.slug).join(',')
   },
 
   // --- the acceptance: alphabetical by last name, full sequence -----------
@@ -292,7 +292,7 @@ const allPass = computed(() => checks.length > 0 && passed.value === checks.leng
 }
 
 .probe__verdict[data-state='fail'] {
-  color: var(--color-error, #b00);
+  color: var(--color-error);
 }
 
 .probe__table {
@@ -308,6 +308,6 @@ const allPass = computed(() => checks.length > 0 && passed.value === checks.leng
 }
 
 .probe__table tr[data-state='fail'] {
-  color: var(--color-error, #b00);
+  color: var(--color-error);
 }
 </style>

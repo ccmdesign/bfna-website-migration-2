@@ -132,8 +132,8 @@ issue merges; not part of this issue's own work.)
   `src/composables/data/useBf*`). In place of a vitest test the acceptance is:
   1. the probe at `src/pages/bf-probe/13-composables-people-pages-site.vue`,
      rendered by `npx nuxt generate` against the real content database —
-     **PASS 35/35**; and
-  2. `npx tsx scripts/verify-bf-people-pages-site-parity.ts` — **PASS, 36
+     **PASS 34/34**; and
+  2. `npx tsx scripts/verify-bf-people-pages-site-parity.ts` — **PASS, 43
      checks** — which runs `useWfContent`'s own predicates over
      `src/assets/wireframe-data/*.json` and the `bf-*` derivations over
      `content/bf/**`, then asserts identical slug sequences. It proves parity
@@ -148,3 +148,14 @@ issue merges; not part of this issue's own work.)
   script follows the established precedent rather than moving the file somewhere
   its siblings are not. Fixing the rule is not this issue's scope; handed off as
   a residual.
+
+- **Menu parity is asserted deep, not by label count.** Review of this PR
+  pointed out that two of the six groups — Programs and Projects — are
+  *derived* in `useWfContent.ts:161,165-167` from `PROGRAMS` and
+  `NAV_SLUGS.filter(inProjectGrid)`, so they drift with the project data
+  without anyone editing a menu, and issue 08's acceptance only counted the 6
+  top-level labels. The parity script now transcribes the whole `MENUS`
+  constant (`useWfContent.ts:153-186`), re-derives those two groups through the
+  wireframe's own predicates, applies the one rewrite the normaliser makes
+  (`/wireframes/x` → `/x`, BRIEF §7), and deep-compares every group including
+  its items. It also asserts no `/wireframes` route leaked into `menus.json`.

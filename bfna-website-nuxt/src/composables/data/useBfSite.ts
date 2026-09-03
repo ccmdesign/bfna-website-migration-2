@@ -40,9 +40,11 @@ import { menus as bfMenus } from '~/assets/bf-data/menus'
  *
  * Extracted rather than inlined because the shipped singleton **is**
  * published, so the negative branch is unreachable from real content and the
- * acceptance would otherwise have nothing to assert against. The probe and
- * `scripts/verify-bf-people-pages-site-parity.ts` call it directly with a
- * synthetic unpublished record — the vitest substitution for residual #86.
+ * acceptance would otherwise have nothing to assert against. The probe calls
+ * this export directly with synthetic unpublished records;
+ * `scripts/verify-bf-people-pages-site-parity.ts` cannot import a Nuxt module
+ * and transcribes the gate alongside its other transcribed predicates. Together
+ * they are the vitest substitution for residual #86.
  *
  * Generic in the document type so a caller keeps the collection item's own
  * fields instead of being widened to `Announcement`.

@@ -64,12 +64,16 @@ interface Menu { label: string, items?: { label: string }[] }
 let failures = 0
 
 const check = (label: string, actual: unknown, expected: unknown) => {
-  const a = JSON.stringify(actual)
-  const e = JSON.stringify(expected)
-  const ok = a === e
+  // Wrapped in an array so `undefined` serialises to `[null]` rather than to
+  // the value `undefined` — otherwise two absent operands compare equal and the
+  // check passes vacuously.
+  const ok = JSON.stringify([actual]) === JSON.stringify([expected])
   if (!ok) failures++
   console.log(`${ok ? 'pass' : 'FAIL'}  ${label}`)
-  if (!ok) console.log(`      expected ${e}\n      actual   ${a}`)
+  if (!ok) {
+    console.log(`      expected ${JSON.stringify(expected) ?? 'undefined'}`)
+    console.log(`      actual   ${JSON.stringify(actual) ?? 'undefined'}`)
+  }
 }
 
 /* ------------------------------------------------------------ predicates -- */
@@ -177,11 +181,93 @@ check('gate(null) is undefined', gate(null), undefined)
 
 const menus = readJson<Menu[]>(join(appRoot, 'src/assets/bf-data/menus.json'))
 check('menus() — a bare array, not an envelope', Array.isArray(menus), true)
+
+/*
+ * Deep menu parity. Two of the six groups — Programs and Projects — are
+ * *derived* in `useWfContent.ts:161,165-167` from `PROGRAMS` and
+ * `NAV_SLUGS.filter(inProjectGrid)`, so they can drift with the project data
+ * without anyone editing a menu. Asserting only the 6 top-level labels (issue
+ * 08's acceptance) would not catch that, and this issue is review checkpoint 1.
+ *
+ * So `MENUS` (`useWfContent.ts:153-186`) is transcribed here with those two
+ * groups re-derived from the wireframe snapshots through the wireframe's own
+ * predicates, then every `to` is rewritten `/wireframes/x` → `/x` — the one
+ * transformation the normaliser applies, since the `bf-*` site serves these
+ * routes at the root (BRIEF §7).
+ */
+interface WfProject {
+  slug: string
+  heading: string
+  kind?: string | null
+  archived?: boolean | null
+  exclude_from_grid?: boolean | null
+  external_only?: boolean | null
+  external_url?: string | null
+  parent_project?: string | null
+}
+
+const wfProjects = readJson<{ items: WfProject[] }>(join(wfDir, 'projects.json')).items
+const wfPrograms = readJson<{ items: { slug: string, heading: string }[] }>(join(wfDir, 'programs.json')).items
+
+/** `useWfContent.ts:127-128`. */
+const inProjectGrid = (p: WfProject) =>
+  !p.archived && !p.exclude_from_grid && !p.external_only && p.kind !== 'podcast'
+/** `useWfContent.ts:148`. */
+const NAV_SLUGS = [
+  'transatlantic-barometer',
+  'transatlantic-periscope',
+  'range',
+  'how-to-fix-democracy',
+  'the-bertelsmann-foundation-fellowship'
+]
+
+const expectedMenus = [
+  { label: 'About', items: [
+    { label: 'Mission', to: '/wireframes/about' },
+    { label: 'Board of Directors', to: '/wireframes/about#board' },
+    { label: 'Team', to: '/wireframes/about#team' },
+    { label: 'Bertelsmann Stiftung', href: '#', external: true },
+    { label: 'Contact', to: '/wireframes/about#contact' }
+  ] },
+  { label: 'Programs', items: wfPrograms.map(a => ({ label: a.heading, to: `/wireframes/${a.slug}` })) },
+  { label: 'Projects', items: [
+    ...NAV_SLUGS.map(s => wfProjects.find(p => p.slug === s)!).filter(Boolean).filter(inProjectGrid)
+      .map(p => ({ label: p.heading, to: `/wireframes/projects/${p.slug}` })),
+    { label: 'All Projects →', to: '/wireframes/projects', strong: true }
+  ] },
+  { label: 'Insights', items: [
+    { label: 'All Insights', to: '/wireframes/insights' },
+    { label: 'Articles', to: '/wireframes/insights?format=article' },
+    { label: 'Reports', to: '/wireframes/insights?format=report' },
+    { label: 'Videos', to: '/wireframes/insights?format=video' },
+    { label: 'Infographics', to: '/wireframes/insights?format=infographic' },
+    {
+      label: 'Transponder Magazine',
+      href: wfProjects.find(p => p.slug === 'transponder-magazine')?.external_url ?? '#transponder-magazine-url',
+      external: true
+    },
+    { label: 'Archive', to: '/wireframes/archive', strong: true }
+  ] },
+  { label: 'Podcasts', href: '#podcast-platform-url', external: true },
+  { label: 'Documentaries', href: 'https://bfnadocs.org', external: true }
+]
+
+/** The one rewrite: `/wireframes/insights?format=video` → `/insights?format=video`. */
+const deWireframe = <T extends { to?: string }>(node: T): T =>
+  (node.to ? { ...node, to: node.to.replace(/^\/wireframes/, '') } : node)
+
 check('menus() — top-level labels',
-  menus.map(m => m.label),
-  ['About', 'Programs', 'Projects', 'Insights', 'Podcasts', 'Documentaries'])
+  menus.map(m => m.label), expectedMenus.map(m => m.label))
 check('menus() — every entry is a link or a parent of items',
   menus.every(m => (m.items?.length ?? 0) > 0 || 'to' in m || 'href' in m), true)
+
+for (const [i, expected] of expectedMenus.entries()) {
+  check(`menus()[${i}] "${expected.label}" — full group, items and all`,
+    menus[i],
+    { ...deWireframe(expected), ...(expected.items ? { items: expected.items.map(deWireframe) } : {}) })
+}
+check('menus() — no /wireframes route leaked through',
+  JSON.stringify(menus).includes('/wireframes'), false)
 
 /* ---------------------------------------------------------------- verdict -- */
 
