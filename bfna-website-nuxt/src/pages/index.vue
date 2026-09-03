@@ -1,161 +1,248 @@
+<script setup lang="ts">
+/**
+ * `/` — the home page (issue 47 / gh#56). **Review checkpoint 2** (BRIEF §8).
+ *
+ * The first real template of the epic, and the file that retires the legacy
+ * home: this file used to be a legacy hero, a highlights strip and three
+ * split sections over the `workstreams` / `highlights` / `publications` /
+ * `videos` / `infographics` / `docs` composables
+ * (`02-legacy-retirement-inventory.md` §A row 1). It is **replaced**, not
+ * archived — no `index.vue.legacy` (the spec's own acceptance greps for its
+ * absence), because the git history is the archive and a second copy in the
+ * tree is a second thing to keep compiling. It is also the only legacy file
+ * this issue retires; the rest are #57's and #58's.
+ *
+ * Descends from `src/pages/wireframes/index.vue`, which is frozen (D2): read
+ * for its band order and its copy decisions, never edited, and nothing here
+ * imports from it.
+ *
+ * ## What a template is allowed to do
+ *
+ * Read data and compose components. That is the whole job, and the split is
+ * D8's: a **page** may call a composable; a `bf-*` **component** may not. So
+ * every `queryCollection` on this route happens in the five awaited calls
+ * below and in `layouts/bf-default.vue`, and every component under
+ * `<template>` receives entities as props.
+ *
+ * The imports are explicit rather than auto: Nuxt scans `composables/` at the
+ * top level and one directory deep for `index` files only, and these live at
+ * `composables/data/useBf*.ts`. The layout and the probes import them the same
+ * way.
+ *
+ * ## The four bands, in wireframe order
+ *
+ *  1. **Announcement — not here.** It is `bf-default`'s (gh#55), rendered
+ *     between the nav and `<main>` because it is site chrome rather than page
+ *     content. The wireframe put it in a `#hero` slot; the shell has no such
+ *     slot, which is why this page starts at the hero.
+ *  2. **Hero** — `homePage()`'s heading and description, and one primary CTA.
+ *  3. **Programs** — the three `bfPrograms` rows, passed **whole**.
+ *  4. **Featured projects** — the four curated flagships, with media.
+ *  5. **Insights** — the Transponder as a full-span product card, four
+ *     highlights beside it, then the six newest active insights.
+ *
+ * ## No `useHead` title
+ *
+ * Deliberate. `bf-default`'s `titleTemplate` has a branch for exactly this
+ * page: a route that sets no title renders `Bertelsmann Foundation North
+ * America` alone, rather than the site name twice.
+ */
+import type { Insight } from '~/types/bf-contracts'
+import { useBfInsights } from '~/composables/data/useBfInsights'
+import { useBfPages } from '~/composables/data/useBfPages'
+import { useBfPrograms } from '~/composables/data/useBfPrograms'
+import { useBfProjects } from '~/composables/data/useBfProjects'
+
+defineOptions({ name: 'HomePage' })
+
+definePageMeta({ layout: 'bf-default' })
+
+const { homePage } = await useBfPages()
+const { programs } = await useBfPrograms()
+const { featuredProjects, allProducts } = await useBfProjects()
+const { active, highlights } = await useBfInsights()
+
+/**
+ * Resolved once, at setup, and handed to the template as plain values.
+ *
+ * Every one of these members is already a plain array or record — the four
+ * composables unwrap `useAsyncData` for exactly this reason — and the content
+ * is build-time static, so there is nothing here to keep reactive. Reading
+ * them once also means the slice bounds below appear in one place rather than
+ * inside a template expression that re-runs on every render.
+ */
+const home = homePage()
+const programCards = programs()
+const projectCards = featuredProjects()
+const products = allProducts()
+
+/**
+ * Four, as the wireframe takes — `highlights()` returns all eight of the
+ * normaliser's `featured` records and the band is a strip beside the product
+ * card, not an index.
+ */
+const featured = highlights().slice(0, 4)
+
+/**
+ * The six newest active insights. `active` is a **getter** that spreads its
+ * private array (gh#91), so this slice cannot reach the payload.
+ */
+const latest = active.slice(0, 6)
+
+/**
+ * The programme chip shown on each insight row, ported verbatim from
+ * `pages/wireframes/index.vue`.
+ *
+ * It stays a page-level function rather than moving to the entity, because
+ * there is no field to move it to: `bfProgramSchema` (issue 09) declares
+ * `slug`, `name`, `tagline`, `intro` and `image` — no short name — and
+ * `Insight.program` is the display **name**, not a relation. Recorded as a
+ * gap in the spec's Decisions (D-47.2); deriving one here would be exactly the
+ * page-side synthesis BRIEF §5 rule 10 forbids, so the mapping is kept as the
+ * literal relabelling it is.
+ *
+ * `RE-TAG` / `PENDING` are the normaliser's placeholders for a row whose
+ * programme the client has not re-assigned (issue 07); the wireframe collapses
+ * both to one honest chip rather than printing the placeholder at a reader.
+ */
+const shortProgram = (program: string): string => {
+  if (program === 'Transatlantic Relations & Global Challenges') return 'Transatlantic Rel.'
+  if (program.startsWith('RE-TAG') || program.startsWith('PENDING')) return 'Re-tag'
+  return program
+}
+
+/**
+ * `bfGridInsights.extraChips` — per row, and `undefined` for a row with no
+ * programme, which the grid reads as "no extra chips" rather than as an empty
+ * cluster.
+ */
+const insightChips = (i: Insight): string[] | undefined =>
+  i.program ? [shortProgram(i.program)] : undefined
+</script>
+
 <template>
-  <div>
-    <LegacyMoleculesHero
-      v-if="homepageData?.hero"
-      :hero="homepageData.hero"
-      theme="default"
-      :announcement="announcement"
+  <!--
+    No wrapper element. `bf-default`'s `<main class="stack" data-gap="xl">` is
+    the page's own stack, so a `<div>` here would swallow the four bands into
+    one stack child and collapse the rhythm between them to nothing.
+  -->
+
+  <!--
+    Zone 1 — the hero. `home` is `pages.json`'s `home` row: the GGS value prop
+    and Irene's About Us opening.
+
+    The CTA is passed as slot content, unconditionally — the label and target
+    are Irene's (Aug 5): "Explore our work", pointing at the Democracy hub,
+    matching the two programme hubs. The wireframe's "Get our newsletter" was
+    removed there and is not reinstated here; no newsletter exists.
+
+    `/democracy`, not `/wireframes/democracy`: the hub route of BRIEF §7.
+  -->
+  <bfHero :heading="home?.heading" :description="home?.description">
+    <bfButton to="/democracy" variant="primary">Explore our work</bfButton>
+  </bfHero>
+
+  <!--
+    Zone 2 — Programs. GGS order: identity first.
+
+    `<ul class="switcher">` **inside** a default (`stack`) band rather than
+    `<bfSection layout="switcher">`, which is what the spec's prose asks for
+    and what D-47.1 in its Decisions explains: the band's `<h2>` shares the
+    inner box with the slot, so a `switcher` layout would lay the heading out
+    as a flex item beside the cards — and `bfCard` renders an `<li>`, which
+    needs a real list parent. This is also the frozen wireframe's own shape.
+  -->
+  <bfSection label="Programs" heading="Our Programs">
+    <ul class="switcher" data-gap="m">
+      <!--
+        The whole `Program` entity, not the `{ slug, name, short, tagline }`
+        literal the wireframe built: `tagline` is a stored field since the
+        normaliser (issue 07), so there is nothing left for a page to derive.
+
+        `headingLevel="3"` — under the band's `<h2>`, which is what keeps the
+        outline sequential (BRIEF §5 rule 9). It is also the card's default;
+        stated because the next reader should not have to know that.
+      -->
+      <bfCardProgram
+        v-for="p in programCards"
+        :key="p.slug"
+        :program="p"
+        :heading-level="3"
+      />
+    </ul>
+  </bfSection>
+
+  <!--
+    Zone 3 — Featured projects: the four curated flagships, in curated order.
+
+    Cards directly inside the grid rather than through `bfGridProjects`, which
+    mirrors the wireframe: this band is the one place project cards carry media
+    and drop their chips, and the shared grid takes neither prop.
+
+    `data-min-width="xl"` replaces the wireframe's inline two-column track
+    list (D9 — no `bf-*` file authors a column count, and the acceptance greps
+    this file to prove it). Per D-42.2's measured table a 400px track floor
+    resolves **2 tracks** at a desktop width and collapses to one below, which
+    is the pinned layout's intent plus the reflow it never had.
+  -->
+  <bfSection label="Featured projects" heading="Projects">
+    <ul class="grid" data-min-width="xl" data-gap="m">
+      <bfCardProject
+        v-for="p in projectCards"
+        :key="p.slug"
+        :project="p"
+        media
+        :chips="false"
+        :excerpt-length="160"
+        :heading-level="3"
+      />
+    </ul>
+
+    <p><NuxtLink to="/projects"><strong>All projects →</strong></NuxtLink></p>
+  </bfSection>
+
+  <!--
+    Zone 4 — Insights, with the highlights folded in as a featured strip.
+
+    The Transponder issue leads the grid as a full-width "special" card instead
+    of sitting in its own band above (Claudio, Sep 2). Nothing here says so:
+    `bfCardProduct` sets `span="full"` on its own `bfCard` root by default
+    (#26), and `bfCard`'s stylesheet resolves `[data-span="full"]` to
+    `grid-column: 1 / -1` at any resolved column count. The page passes no span
+    at all — which is the point of the wrapper owning it.
+
+    Same `data-min-width="xl"` as the band above, same reason, replacing the
+    same inline `repeat(2, 1fr)`.
+  -->
+  <bfSection label="Insights" heading="Insights">
+    <ul class="grid" data-min-width="xl" data-gap="m">
+      <bfCardProduct
+        v-for="prod in products"
+        :key="prod.slug"
+        :product="prod"
+        :heading-level="3"
+      />
+      <bfCardFeatured
+        v-for="h in featured"
+        :key="h.slug"
+        :item="h"
+        :heading-level="3"
+      />
+    </ul>
+
+    <!--
+      THE insights grid (#42) — the same component every other insights view
+      uses, so this band and `/insights` cannot drift apart in layout. Its own
+      `minWidth` default (`l`, three columns at desktop) is deliberately left
+      alone: the two-column bands above are the special cases, not this one.
+    -->
+    <bfGridInsights
+      :insights="latest"
+      :excerpt-length="160"
+      :extra-chips="insightChips"
+      :heading-level="3"
     />
 
-    <div>
-      <div v-if="highlightsData && highlightsData.length > 0" class="highlight-section">
-        <h2>Highlights</h2>
-        <div class="highlight-wrapper">
-          <div class="wrapper">
-            <div class="cards-section cards-section--updates">
-              <LegacyMoleculesHighlightCard
-                v-for="(newItem, index) in highlightsData"
-                :key="index"
-                :new-item="newItem"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div>
-      <h2 class="thematicareas-title">Thematic Areas</h2>
-      <LegacyMoleculesSplitSection
-        v-if="workstreamsData?.democracy"
-        :workstream="workstreamsData.democracy"
-      />
-      <LegacyMoleculesSplitSection
-        v-if="workstreamsData?.['politics-society']"
-        :workstream="workstreamsData['politics-society']"
-      />
-      <LegacyMoleculesSplitSection
-        v-if="workstreamsData?.['future-leadership']"
-        :workstream="workstreamsData['future-leadership']"
-      />
-      <LegacyMoleculesSplitSection
-        v-if="workstreamsData?.['digital-world']"
-        :workstream="workstreamsData['digital-world']"
-      />
-    </div>
-    
-    <div>
-      <h2 class="updates-title">Updates</h2>
-      <div class="updates-wrapper">
-        <LegacyTemplatesHomepageUpdates
-          :publications="publicationsData"
-          :videos="videosData"
-          :infographics="infographicsData"
-          :podcasts="podcastsData"
-        />
-      </div>
-
-      <div class="homepage-updates-button-section">
-        <div style="width: max-content; margin: auto;">
-          <a href="/updates" class="button more-updates--button">More Updates</a>
-        </div>
-      </div>
-    </div>
-    <div>
-      <div v-if="docsData && docsData.length > 0">
-        <h2 class="updates-title">BFNA Docs Highlights</h2>
-        <div class="wrapper">
-          <div class="docs-wrapper cards-section cards-section--updates">
-            <LegacyMoleculesDocCard
-              v-for="(card, index) in docsData"
-              :key="index"
-              :card="card"
-            />
-          </div>
-        </div>
-      </div>
-      <div class="homepage-docs-button-section">
-        <div style="width: max-content; margin: auto;">
-          <a
-            target="_blank"
-            href="https://bfnadocs.org/"
-            class="button more-docs--button"
-            >More Docs</a
-          >
-        </div>
-      </div>
-    </div>
-
-    <input id="cookie-trigger" type="checkbox" />
-    <div class="floating-message">
-      <div class="wrapper">
-        <div class="floating-message__content">
-          <p>
-            We use cookies to ensure you get the best experience on our
-            website.
-            <a class="link" href="/privacy-policy">More information</a>
-          </p>
-          <label for="cookie-trigger"
-            ><i class="material-icons">close</i></label
-          >
-        </div>
-      </div>
-    </div>
-  </div>
+    <p><NuxtLink to="/insights"><strong>All insights →</strong></NuxtLink></p>
+  </bfSection>
 </template>
-
-<script setup lang="ts">
-import { useHighlights } from '~/composables/data/useHighlights'
-import { useWorkstreams } from '~/composables/data/useWorkstreams'
-import { useHomePublications } from '~/composables/data/useHomePublications'
-import { useHomeVideos } from '~/composables/data/useHomeVideos'
-import { useHomeInfographics } from '~/composables/data/useHomeInfographics'
-import { useHomePodcasts } from '~/composables/data/useHomePodcasts'
-import { useHomeDocs } from '~/composables/data/useHomeDocs'
-import LegacyMoleculesHero from '~/components/legacy/molecules/Hero.vue'
-import LegacyMoleculesHighlightCard from '~/components/legacy/molecules/HighlightCard.vue'
-import LegacyMoleculesSplitSection from '~/components/legacy/molecules/SplitSection.vue'
-import LegacyTemplatesHomepageUpdates from '~/components/legacy/templates/HomepageUpdates.vue'
-import LegacyMoleculesDocCard from '~/components/legacy/molecules/DocCard.vue'
-import { useAnnouncement } from '~/composables/data/useAnnouncements';
-
-definePageMeta({
-  layout: 'legacy-base',
-})
-
-const announcement = useAnnouncement();
-const highlightsData = await useHighlights()
-const { data: workstreamsData } = useWorkstreams()
-const publicationsData = useHomePublications()
-const videosData = useHomeVideos()
-const infographicsData = useHomeInfographics()
-const podcastsData = useHomePodcasts()
-const docsData = useHomeDocs()
-
-// Homepage data structure - needs to be constructed from available data
-const homepageData = computed(() => {
-  return {
-    hero: {
-      heading: 'Transatlantic Perspectives on Global Challenges',
-      subheading: 'Engaging both sides of the Atlantic with ',
-      subheadingend: 'stories, resources, and ideas.',
-    },
-  }
-})
-
-// Set page meta for layout
-useHead({
-  title: 'Bertelsmann Foundation | Transatlantic Perspectives on Global Challenges',
-  meta: [
-    {
-      property: 'og:image',
-      content: '/images/bfna-og.jpg',
-    },
-    {
-      name: 'description',
-      content: homepageData.value.hero.subheading,
-    },
-  ],
-})
-
-</script>

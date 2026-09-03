@@ -18,10 +18,13 @@
  * ```
  *
  * That structure is already composition-driven, so it is kept element for
- * element and attribute for attribute. Three things change, and only three:
- * the wireframe skin's class names go, the band's own geometry moves out of
- * `public/css/wireframe.css` and into this file, and the props type moves to
- * `types/bf-contracts.ts` (BRIEF §5 rule 11).
+ * element and attribute for attribute. Four things change, and only four: the
+ * wireframe skin's class names go, the band's own geometry moves out of
+ * `public/css/wireframe.css` and into this file, the props type moves to
+ * `types/bf-contracts.ts` (BRIEF §5 rule 11), and the actions wrapper is
+ * guarded on what the slot *renders* rather than on whether one was passed —
+ * residual #162, taken at the first real consumer (gh#56) and explained on
+ * `hasRenderedContent` below.
  *
  * Presentational-only (D8): two props in, one slot, nothing out. No data
  * access, no store, no composable.
@@ -79,11 +82,81 @@
  * rule 2). No carousel: no wireframe evidence for one. No `:not()` appears in
  * the stylesheet, complex-selector or otherwise (D-20.5).
  */
+import { Comment, Fragment, Text, useSlots, type VNode } from 'vue'
 import type { HeroProps } from '~/types/bf-contracts'
 
 defineOptions({ name: 'BfHero' })
 
 defineProps<HeroProps>()
+
+const slots = useSlots()
+
+/**
+ * Does the default slot actually render something?
+ *
+ * **This is the one behavioural change from the frozen source**, and it closes
+ * residual [#162](https://github.com/ccmdesign/bfna-website-migration-2/issues/162),
+ * which asked for the decision to be taken at the first real consumer — the
+ * home page (#47 / gh#56), where this component finally serves a `/` route
+ * rather than a probe.
+ *
+ * The source guards the actions wrapper with `$slots.default`, which is truthy
+ * whenever the parent *passed* a slot — including one whose content is `v-if`'d
+ * away. A call site written
+ *
+ * ```vue
+ * <bfHero …>
+ *   <bfButton v-if="cta" :to="cta.to">{{ cta.label }}</bfButton>
+ * </bfHero>
+ * ```
+ *
+ * would then render an empty `.cluster` on every page with no CTA: a
+ * zero-height flex box that is still a `.stack` child and still takes a
+ * `data-gap="s"` gap under the copy. Probe 37 found it from its own template on
+ * the first run, which is why that probe mounts two branches rather than one
+ * `<template v-if>` inside a slot.
+ *
+ * The shape is `bfPageHeader`'s (gh#47), adopted here verbatim rather than
+ * lifted into a shared helper: two components is not yet a pattern, and the
+ * two guards can still be judged against each other while they are both in
+ * view. If a third wants it, that is the issue that extracts it.
+ *
+ * Every honest call site behaves exactly as it did on the wireframe, because a
+ * slot that renders content still renders content. A comment is what
+ * `v-if="false"` leaves behind; a fragment is what a `<template>` wrapper
+ * produces and is recursed into; a whitespace-only text node is the newline
+ * between two tags. Anything else — an element, a component, real text —
+ * counts.
+ */
+const hasRenderedContent = (nodes: VNode[] | undefined): boolean => {
+  if (!nodes) return false
+
+  return nodes.some((node) => {
+    if (node.type === Comment) return false
+    if (node.type === Text) return String(node.children ?? '').trim() !== ''
+    /*
+      A fragment is what a `<template>` wrapper produces. Its children are an
+      array in every case Vue's compiler emits, but the vnode type also admits a
+      string and a slots object, and `.some` on either would throw inside a
+      render — so the array check is the guard, not the cast.
+    */
+    if (node.type === Fragment) {
+      return Array.isArray(node.children)
+        ? hasRenderedContent(node.children as VNode[])
+        : false
+    }
+    return true
+  })
+}
+
+/**
+ * Called from the template rather than wrapped in a `computed`, on purpose: a
+ * slot's rendered content is not a reactive dependency, so a cached computed
+ * could hold a stale answer across a parent re-render that changed it. A
+ * template expression is re-evaluated on every render, which is exactly the
+ * cadence the slot itself is re-created on.
+ */
+const showActions = (): boolean => hasRenderedContent(slots.default?.())
 </script>
 
 <template>
@@ -114,14 +187,17 @@ defineProps<HeroProps>()
       </p>
 
       <!--
-        The actions wrapper exists only when the slot is filled — the wf
-        source's own guard. Rendered unconditionally it would put an empty
-        flex box, and the gap above it, under every actionless hero.
+        The actions wrapper exists only when the slot renders something —
+        `showActions()`, not `$slots.default`. That is residual #162's fix and
+        the one place this component diverges from the frozen source; the
+        reasoning is on `hasRenderedContent` above. Rendered unconditionally it
+        would put an empty flex box, and the gap above it, under every
+        actionless hero.
 
         `.cluster` rather than a second `.stack`: the buttons read as a row
         that wraps, which is what a cluster is for.
       -->
-      <div v-if="$slots.default" class="cluster bf-hero__actions" data-gap="s">
+      <div v-if="showActions()" class="cluster bf-hero__actions" data-gap="s">
         <slot />
       </div>
     </div>

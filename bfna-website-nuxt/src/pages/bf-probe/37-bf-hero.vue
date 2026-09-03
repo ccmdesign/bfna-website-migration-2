@@ -357,6 +357,33 @@ const seen = reactive({ timedOut: false })
 const hook = reactive({ overridden: '', restored: '' })
 
 /**
+ * Residual #162's case, mounted for one tick and then withdrawn.
+ *
+ * The bug: `v-if="$slots.default"` is true whenever the parent *passed* a
+ * slot, so a hero whose slot content is `v-if`'d away rendered an empty
+ * `.cluster` — a zero-height flex box that still takes the `.stack`'s
+ * `data-gap="s"` under the copy. gh#56 replaced the guard with a vnode-content
+ * check (`showActions()`), the same shape `bfPageHeader` adopted in gh#47.
+ *
+ * Mounted **transiently**, for exactly the reason the height hook above is
+ * measured by writing a property rather than by mounting a fourth hero: a
+ * fourth `<h1>` would break both the "exactly three" row and issue 37's own
+ * static `grep -c '<h1'` acceptance. `v-if` starts `false`, so the prerendered
+ * HTML holds three heroes; the walk flips it on, reads the DOM, and flips it
+ * back before `report()` counts anything.
+ */
+const emptySlot = ref(false)
+const empty = reactive({ mounted: false, hasActions: 'not measured' })
+
+/**
+ * The `v-if` inside that hero's slot. A named binding rather than a literal
+ * `v-if="false"`, so the condition is unmistakably the *caller's* — this is
+ * modelling a real call site whose CTA happens to be absent, not a switched-off
+ * bit of markup.
+ */
+const neverTrue = ref(false)
+
+/**
  * One tick — a re-render, and nothing else to wait for. Deliberately **not**
  * `requestAnimationFrame`, which is throttled to a near stop in a backgrounded
  * or embedded browser view; see the note in probe 33.
@@ -381,6 +408,17 @@ const finalise = async () => {
     subject.style.removeProperty('--_bf-hero-min-height')
     hook.restored = getComputedStyle(subject).minHeight === before ? 'restored' : 'stuck'
   }
+
+  // --- residual #162: a passed-but-empty slot, mounted and withdrawn -------
+  emptySlot.value = true
+  await settle()
+  const emptyRoot = heroFor('empty-slot')
+  empty.mounted = emptyRoot !== null
+  empty.hasActions = emptyRoot
+    ? String(emptyRoot.querySelector('.bf-hero__actions') !== null)
+    : 'not mounted'
+  emptySlot.value = false
+  await settle()
 
   report()
 }
@@ -506,6 +544,16 @@ const report = () => {
       label: '  …and neither does heading + description',
       expected: 'false',
       actual: String(snapFor('description')?.hasActions ?? 'missing')
+    },
+    {
+      /*
+       * Residual #162, closed by gh#56. The one row on this page whose subject
+       * is mounted and then withdrawn — see `emptySlot` for why a fourth
+       * permanent hero is not an option here.
+       */
+      label: '  …and neither does a hero PASSED a slot whose content is v-if\'d away (#162)',
+      expected: 'mounted/false',
+      actual: `${empty.mounted ? 'mounted' : 'not mounted'}/${empty.hasActions}`
     },
     {
       label: 'the wrapper is a .cluster with data-gap="s", and lays out as flex',
@@ -740,6 +788,28 @@ const verdict = computed(() =>
           :data-probe-case="f.key"
         />
       </template>
+
+      <!--
+        Residual #162's case, and the only hero on this page that is mounted
+        and then withdrawn inside one walk (`emptySlot`): a hero **passed** a
+        default slot whose only child is `v-if="false"`.
+
+        `v-if="false"` leaves a comment vnode behind, so `$slots.default` is a
+        function and the old guard was true; the vnode-content guard gh#56
+        installed reads the comment and renders nothing. It is not left mounted
+        because a fourth `<h1>` would break the "exactly three" row above and
+        issue 37's own static count.
+      -->
+      <bfHero
+        v-if="emptySlot"
+        class="probe__marker"
+        heading="Passed a slot that renders nothing"
+        data-probe-case="empty-slot"
+      >
+        <bfButton v-if="neverTrue" to="/wireframes/democracy" variant="primary">
+          Never rendered
+        </bfButton>
+      </bfHero>
     </div>
 
     <section class="probe__report" aria-labelledby="probe-title">
