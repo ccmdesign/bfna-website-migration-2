@@ -38,6 +38,7 @@
 
 /* Components Layer */
 @import "components/prose.css";
+@import "components/external-link.css";
 
 /* Utils Layer */
 @import "utils/color-utils-background-color.css";

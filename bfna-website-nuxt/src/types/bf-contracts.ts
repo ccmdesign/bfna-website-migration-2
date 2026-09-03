@@ -228,6 +228,29 @@ export interface TimeProps {
   format?: TimeFormat
 }
 
+/**
+ * Props of `bfSkipLink`.
+ *
+ * One prop, because the atom is one anchor. The label is the default slot, not
+ * a prop, so a caller can put an icon or a `<span>` in it without the component
+ * growing a second way to say the same thing.
+ */
+export interface SkipLinkProps {
+  /**
+   * The fragment the link jumps to. Defaults to `'#main'` — the id the site
+   * shell (issue 46/#55) puts on its `<main>` landmark.
+   *
+   * A fragment, not a route: this is an in-page jump by definition, so it is
+   * rendered on a plain `<a href>` and never on a `NuxtLink`.
+   *
+   * **The target must be focusable for focus to actually move.** A browser
+   * moves focus on fragment navigation only when the target can take it, so the
+   * landmark carries `tabindex="-1"`. That is the shell layout's job, not this
+   * component's — an atom cannot reach across the page to the element it names.
+   */
+  target?: string
+}
+
 /** One breadcrumb node. `to` omitted marks the current (non-linked) page. */
 export interface Crumb {
   label: string
