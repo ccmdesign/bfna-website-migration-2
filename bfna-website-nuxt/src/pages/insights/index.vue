@@ -228,6 +228,30 @@ const filtered = computed<Insight[]>(() => {
   )
 })
 
+/**
+ * What the empty state says.
+ *
+ * Two different situations reach it and they need different sentences: a facet
+ * combination that matched nothing (offer the way back to the unfiltered feed)
+ * and a feed that is genuinely empty (do not blame filters the reader has not
+ * set, and do not offer a link to the page they are already on). The second is
+ * unreachable with today's content and is one deploy of an empty collection
+ * away from being the first thing a visitor sees.
+ */
+const emptyState = computed(() => hasFilters.value
+  ? {
+      heading: 'No insights match those filters',
+      message: 'Clearing one of them will widen the results.',
+      backLabel: 'Clear filters',
+      backTo: '/insights'
+    }
+  : {
+      heading: 'No insights published yet',
+      message: 'There is nothing in the feed at the moment. Please check back.',
+      backLabel: undefined,
+      backTo: undefined
+    })
+
 /** The rows actually rendered, and the two counts `bfLoadMore` announces. */
 const shown = computed<Insight[]>(() => filtered.value.slice(0, visible.value))
 const remaining = computed<number>(() => Math.max(filtered.value.length - visible.value, 0))
@@ -339,10 +363,10 @@ const remaining = computed<number>(() => Math.max(filtered.value.length - visibl
     <bfEmptyState
       v-else
       :heading-level="2"
-      heading="No insights match those filters"
-      message="Clearing one of them will widen the results."
-      back-label="Clear filters"
-      back-to="/insights"
+      :heading="emptyState.heading"
+      :message="emptyState.message"
+      :back-label="emptyState.backLabel"
+      :back-to="emptyState.backTo"
     />
   </bfSection>
 </template>

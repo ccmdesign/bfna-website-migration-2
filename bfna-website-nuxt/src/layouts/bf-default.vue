@@ -138,6 +138,13 @@ const LAYER_ORDER = 'reset, defaults, tokens, themes, composition, components, u
  * (`hasRenderedContent`), so the shape is the codebase's, not a one-off.
  */
 
+/**
+ * Declared above the three helpers that read it, and above the `await` below:
+ * `useSlots()` must be called synchronously in `setup`, and a top-level `await`
+ * in a layout suspends it.
+ */
+const slots = useSlots()
+
 /** This layout's default slot, with a compiler-emitted fragment unwrapped. */
 const slotRoots = (): VNode[] => {
   const nodes = slots.default?.() ?? []
@@ -179,12 +186,6 @@ const AppChrome: FunctionalComponent = () => partitionedSlot().chrome
 
 /** The page itself — the only thing `<main>` may hold. */
 const PageBands: FunctionalComponent = () => partitionedSlot().bands
-
-/**
- * Read before the `await` below: `useSlots()` must be called synchronously in
- * `setup`, and a top-level `await` in a layout suspends it.
- */
-const slots = useSlots()
 
 const { menus, announcement } = await useBfSite()
 
@@ -295,6 +296,18 @@ useHead({
     </bfNotice>
 
     <!--
+      App-level chrome that arrived through this layout's slot — Nuxt's route
+      announcer, and nothing else today. Rendered here, outside the landmark,
+      rather than inside the page's own stack: residual #179, and the long note
+      in the script block for why this is a partition rather than a second
+      `<NuxtRouteAnnouncer />`.
+
+      It is not focusable, so it cannot come between the skip link and the tab
+      order it promises.
+    -->
+    <AppChrome />
+
+    <!--
       The landmark. `id="main"` is `bfSkipLink`'s default `target`, stated in
       both places because a skip link whose two halves disagree is worse than no
       skip link at all.
@@ -315,18 +328,6 @@ useHead({
       as its first section (#47–#56), which is a simpler contract than the
       frozen shell's named slot and one fewer place for a page to be half-filled.
     -->
-    <!--
-      App-level chrome that arrived through this layout's slot — Nuxt's route
-      announcer, and nothing else today. Rendered here, outside the landmark,
-      rather than inside the page's own stack: residual #179, and the long note
-      in the script block for why this is a partition rather than a second
-      `<NuxtRouteAnnouncer />`.
-
-      It is not focusable, so it cannot come between the skip link and the tab
-      order it promises.
-    -->
-    <AppChrome />
-
     <main
       id="main"
       class="stack"
