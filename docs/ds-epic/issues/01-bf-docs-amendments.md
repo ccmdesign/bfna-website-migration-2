@@ -86,4 +86,42 @@ test -f ../_process/scoping/design-system-approach.md && \
 
 ## Decisions
 
-_Runner appends here._
+**Runner: gh#10, 2026-09-02, branch `feature/gh10-amend-app-docs-to`.**
+
+- **D01.1 — `$EPIC_BASE_SHA` = `f757a649361993275a43282456f4746d247be37b`** (tip of `dev` at
+  issue start, `docs(plans): ds-epic plan file for lfg-ccm (BF-217)`). This is the baseline for
+  BRIEF DoD-4 and DoD-6 for the whole epic.
+- **D01.2 — amendments are additive, on the same line.** The acceptance command filters
+  line-by-line (`grep -v 'bf-\*\|--_bf-'`), so a `bf-*` counterpart stated in a separate
+  paragraph would still fail. Every `ccm` prefix / CSS-var rule line was therefore rewritten to
+  carry both contracts inline: `--_ccm-` scoped to `src/components/ds/*`, `--_bf-` for
+  `src/components/bf/*`. Nothing was deleted, so the `ds/` generation remains correctly
+  documented.
+- **D01.3 — one line beyond the spec's enumeration was amended.** `CLAUDE.md:90`
+  ("**DS components**: … each prefixed with `ccm`") is not named in the spec's Scope but *is*
+  caught by the spec's own acceptance command. It was amended to point new work at
+  `src/components/bf/`. The spec's enumeration was incomplete, not wrong; the acceptance
+  command is authoritative.
+- **D01.4 — collateral `ccm` mentions deliberately left alone.** `CLAUDE.md`'s Interdependent
+  Components examples (ccmTabs, ccmAccordion, ccmMenu, ccmFormGroup) and `AGENTS.md`'s
+  PascalCase example (`ccmButton.vue`) are *examples*, not prefix or CSS-variable **rules**;
+  the acceptance grep does not match them and rewriting them would breach this issue's
+  "do not touch existing `ccm*` components" boundary.
+- **D01.5 — `--_ccm-{component}-{property}` does not occur in `design-system-approach.md`.**
+  The spec's instruction to replace it there is a no-op. The doc's actual `ccm*` references
+  were its Workstream 2 heading/method, the Workstream 1 deliverable, the Workstream 3
+  "All built `ccm*`-first" principle and the intro's "under the `ccm*` design system" — all
+  rewritten to `bf-*`. The "13 `ccm*` components in `src/components/ds/`" line in *Current
+  state (audited)* is a statement of historical fact and was kept, with a clause added marking
+  them as the prior generation the `bf-*` epic does not touch.
+- **D01.6 — `bf-*` pipeline documented in both app docs.** The spec places it in `CLAUDE.md`'s
+  Content Workflow only; a one-line cross-referenced summary was also added to `AGENTS.md`'s
+  Content Management section, because the issue body requires *both* app docs to state the
+  current contract and item-runners may read either.
+- **D01.7 — `AGENTS.md` still advertises `npm run generate` (line 40) as the SSG command,
+  which BRIEF §5 rule 6 forbids** (it runs `contentImporter.js` and needs Directus secrets).
+  Out of this spec's enumerated scope, so not fixed here — raised as a residual issue instead.
+
+**Verification run on this branch:** `npx nuxt typecheck` exit 0 · `npx nuxt generate` exit 0 ·
+acceptance grep PASS · `design-system-approach.md` present and contains `bf-*` ·
+wireframe-source diff (`dev...HEAD`) empty · no `*.css` / `*.vue` change (DoD-6 trivially held).

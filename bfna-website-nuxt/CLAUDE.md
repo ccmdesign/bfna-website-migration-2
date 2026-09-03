@@ -31,7 +31,8 @@ npx eslint src --ext .ts,.vue    # lint application code
 ## Directory Overview
 - `src/pages/`: File-based routes; keep orchestration only, delegate UI to components
 - `src/layouts/`: Shell layouts that wrap page content
-- `src/components/ds/`: Design system components prefixed `ccm` (ccmButton, ccmCard, etc.)
+- `src/components/bf/`: Final `bf-*` design system (bfButton, bfCard, etc.) — **presentational-only: props in, events out, nav and footer included.** No `queryCollection`, no store, no data composable inside a `bf-*` component. All new components for the `/` site build go here.
+- `src/components/ds/`: the prior `ccm`-prefixed generation (ccmButton, ccmCard, etc.) — **not** touched by the `bf-*` epic; its `--_ccm-` conventions still apply to it
 - `src/components/content/`: Content primitives (ctaSignup, proseSection, Callout, etc.)
 - `src/composables/`: Composition utilities (`useContentItem`, `useContentStream`, `useSlugify`)
 - `src/content/`: Markdown sources with two collections:
@@ -67,6 +68,7 @@ npx eslint src --ext .ts,.vue    # lint application code
 - Markdown files in `src/content/<collection>/` with frontmatter for metadata
 - Schemas enforced via Zod in `content.config.ts`
 - Query content using `queryCollection('<name>')` in pages/composables
+- **`bf-*` pipeline**: `src/assets/wireframe-data/*.json` (6 snapshots, read-only) → `scripts/normalise-wireframe-data.ts` → `content/bf/**/*.json` → six `bf*` `type: 'data'` collections in `content.config.ts` → `src/composables/data/bf*.ts` (`queryCollection` only) → component props. All synthesis (renames, curation, ordering, HTML strip/decode) happens in the normaliser, never in a component.
 
 ## Testing Discipline
 - Tests live in `src/tests/` organized by feature area
@@ -87,7 +89,7 @@ When implementing features, follow the **composition-first** approach:
 4. **Never hardcode** colors, spacing, or typography values
 
 **Quick Reference:**
-- **DS components**: All available components are in [`src/components/ds/`](src/components/ds/) - each prefixed with `ccm`
+- **DS components**: new work builds `bf-*` components in [`src/components/bf/`](src/components/bf/) — each prefixed with `bf`; the earlier generation in [`src/components/ds/`](src/components/ds/) is prefixed with `ccm` and stays as-is
 - **Component demos**: Interactive demos at [`src/pages/docs/`](src/pages/docs/)
 - **Component docs**: Auto-generated JSON in [`src/public/component-docs/`](src/public/component-docs/) served via `/docs/<component>`
 - **Utility classes**: Spacing (`.padding-block\:m`), colors (`.color\:primary`), typography (`.font-size\:1`)
@@ -101,7 +103,7 @@ When implementing features, follow the **composition-first** approach:
 
 ## Component Development Standards
 
-When creating or updating components in `src/components/ds/`:
+When creating or updating components in `src/components/bf/` or `src/components/ds/`:
 
 1. **ALWAYS review** [Component Standards](src/content/docs/guidelines/component-standards.md) before starting
 2. **ALWAYS validate** against all 10 standards before completing
@@ -114,7 +116,7 @@ When creating or updating components in `src/components/ds/`:
 - Review checklist at end of standards doc must pass
 
 **Key standard highlights:**
-- Use `--_ccm-{component}-{property}` pattern for CSS variables
+- CSS variable pattern: `--_ccm-{component}-{property}` for the existing `src/components/ds/*` (unchanged); `--_bf-{component}-{property}` for every new `src/components/bf/*` component
 - Style binding via computed `cssVars` for props
 - Reference design tokens (semantic > primitive)
 - Provide `size`, `variant`, and `customColor` props where appropriate
