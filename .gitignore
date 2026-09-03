@@ -45,7 +45,6 @@ sql-backups/
 specs/
 contentful-data/*
 spec-kit
-bfna-website-nuxt/scripts/
 bfna-website-nuxt/contentful-data/
 .github/
 
