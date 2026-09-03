@@ -170,3 +170,23 @@ The component's doc comment originally contained the literal strings
 D-20.5 negation-pseudo-class scan. Reworded — the gh#115 lesson that a check run
 over an unstripped file is a check on the comments, not on the code, applied in
 the other direction: prose should not make a correct file look wrong either.
+
+### D-28.9 — review finding P2-1: the focus ring is this component's job
+
+Found in the gh#37 inline review. A crumb is a focusable link, and the CUBE
+stack declares **no `a:focus-visible` rule anywhere** — `base/forms.css` covers
+inputs, textareas and selects, and nothing else in the stack styles a focused
+link. So a keyboard user's only ring on a breadcrumb was the UA default, which
+no other focusable `bf-*` atom relies on.
+
+`.bf-breadcrumb__link:focus-visible` now carries the same two-ring treatment
+`bfButton` (:258) and `bfSkipLink` use: `--outline-focus` for the halo, plus an
+`outline` that survives forced-colors mode where `box-shadow` is dropped, drawn
+in `--_bf-breadcrumb-focus-color: var(--color-text)` rather than `currentcolor`
+(the gh#24-P2-1 finding — a ring in the link's own colour can paint light-on-
+light). Four probe rows assert it, including that the *current* crumb is
+correctly **not** focusable.
+
+Worth carrying forward: the missing global link-focus rule is not specific to
+this component. Raised as a residual rather than fixed here, since a rule in
+the shared stack is outside a single molecule's blast radius.

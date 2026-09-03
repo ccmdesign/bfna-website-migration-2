@@ -184,8 +184,8 @@ const crumbs = computed(() =>
 
   No negation pseudo-class anywhere in this file. D-20.5 (gh#29):
   `postcss-preset-env` mis-lowers a negation that contains a complex selector,
-  silently breaking the rule. The "every item after the first" set is expressed as `li + li`, which
-  needs no negation.
+  silently breaking the rule. The "every item after the first" set is expressed
+  as `li + li`, which needs no negation.
 */
 @layer components {
   .bf-breadcrumb {
@@ -213,6 +213,14 @@ const crumbs = computed(() =>
       labels because it is punctuation between facts, not a fact.
     */
     --_bf-breadcrumb-separator-color: var(--color-neutral-tint-60);
+
+    /*
+      The focus ring is drawn outside the link, on the page ground, so it is
+      `--color-text` rather than `currentcolor` — the gh#24-P2-1 finding, which
+      `bfSkipLink` records: a link whose own colour is the light one would
+      otherwise paint a white ring on a white page (WCAG 1.4.11).
+    */
+    --_bf-breadcrumb-focus-color: var(--color-text);
   }
 
   .bf-breadcrumb__list {
@@ -254,6 +262,28 @@ const crumbs = computed(() =>
   .bf-breadcrumb__item + .bf-breadcrumb__item::before {
     content: var(--_bf-breadcrumb-separator);
     color: var(--_bf-breadcrumb-separator-color);
+  }
+
+  /*
+    Review finding P2-1 (gh#37). A crumb is a focusable link, and the CUBE stack
+    declares **no** `a:focus-visible` rule anywhere — `base/forms.css` covers
+    inputs, textareas and selects, and nothing else in the stack styles a
+    focused link. So the only ring a keyboard user got here was the UA default,
+    which is not a guarantee across engines and which every other focusable
+    `bf-*` atom already declines to rely on.
+
+    The same two-ring treatment `bfButton` (:258) and `bfSkipLink` use, for the
+    same two reasons: `--outline-focus` supplies the halo, and the `outline` is
+    what survives forced-colors mode, where `box-shadow` is dropped.
+
+    `:focus-visible`, not `:focus` — unlike a skip link, a crumb has no reason
+    to reveal itself after a programmatic focus, and a ring on every mouse click
+    is noise.
+  */
+  .bf-breadcrumb__link:focus-visible {
+    outline: var(--border-width-medium) solid var(--_bf-breadcrumb-focus-color);
+    outline-offset: var(--border-width-medium);
+    box-shadow: var(--outline-focus);
   }
 }
 </style>

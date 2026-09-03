@@ -246,6 +246,11 @@ onMounted(() => {
     .map(t => items(t.key)[0])
     .filter((el): el is HTMLLIElement => el !== undefined)
 
+  /** Every linked crumb on the page — the focus rows' subject. */
+  const allLinks = Array.from(
+    gallery?.querySelectorAll<HTMLAnchorElement>('a.bf-breadcrumb__link') ?? []
+  )
+
   const results: Check[] = [
     // --- 1. the landmark ----------------------------------------------------
     {
@@ -441,7 +446,63 @@ onMounted(() => {
       })()
     },
 
-    // --- 11. presentational-only -------------------------------------------
+    // --- 11. focus (review finding P2-1) -----------------------------------
+    /*
+     * Added by the gh#37 review. The CUBE stack declares no `a:focus-visible`
+     * rule anywhere — `base/forms.css` covers inputs, textareas and selects and
+     * nothing else styles a focused link — so before the fix the only ring on a
+     * crumb was the UA default. These rows are what stops that regressing.
+     */
+    {
+      label: 'every crumb link is keyboard-focusable',
+      expected: allLinks.length,
+      actual: allLinks.filter(a => {
+        a.focus()
+        return document.activeElement === a
+      }).length
+    },
+    {
+      label: '  …and a focused crumb link resolves a visible ring (outline + halo)',
+      expected: 'true',
+      actual: (() => {
+        const a = allLinks[0]
+        if (!a) return 'missing'
+        a.focus()
+        const s = getComputedStyle(a)
+        const hasOutline = s.outlineStyle !== 'none' && parseFloat(s.outlineWidth) > 0
+        const hasHalo = s.boxShadow !== 'none' && s.boxShadow !== ''
+        return String(hasOutline && hasHalo)
+      })()
+    },
+    {
+      /*
+       * A direct equality, not a disjunction: the `bf-probe` layout paints
+       * `html { color: var(--color-text) }`, so the root's computed colour *is*
+       * the resolved token, and the ring must equal it. Written this way
+       * because `getPropertyValue('--color-text')` returns the unresolved
+       * `var()` chain, which no comparison against an `rgb()` could use.
+       */
+      label: '  …drawn in --color-text (the root colour), not currentcolor (gh#24-P2-1)',
+      expected: getComputedStyle(document.documentElement).color,
+      actual: (() => {
+        const a = allLinks[0]
+        if (!a) return 'missing'
+        a.focus()
+        return getComputedStyle(a).outlineColor
+      })()
+    },
+    {
+      label: 'the current (last) crumb is NOT focusable — it is not a control',
+      expected: 0,
+      actual: renderingTrails.filter(t => {
+        const last = items(t.key).at(-1)?.firstElementChild as HTMLElement | undefined
+        if (!last) return false
+        last.focus?.()
+        return document.activeElement === last
+      }).length
+    },
+
+    // --- 12. presentational-only -------------------------------------------
     {
       label: 'no crumb label was invented by the component (labels round-trip)',
       expected: renderingTrails.reduce((n, t) => n + t.items.length, 0),
