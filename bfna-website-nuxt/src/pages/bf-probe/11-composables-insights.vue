@@ -50,6 +50,8 @@ interface Check {
   actual: number | string
 }
 
+const bfInsights = await useBfInsights()
+
 const {
   items,
   active,
@@ -59,7 +61,24 @@ const {
   archivedCountByProgram,
   highlights,
   insightsForProject
-} = await useBfInsights()
+} = bfInsights
+
+/**
+ * gh#91 — a list member hands back a **copy**: mutating what one access
+ * returned cannot change what the next access returns.
+ *
+ * `b !== a` proves a new array came back; `b[0] === a.at(-1)` proves the second
+ * access still starts at the element the first one did, i.e. the `.reverse()`
+ * landed on the caller's copy and not on shared state (the `useAsyncData`
+ * payload, or a module singleton).
+ */
+const isCopySafe = <T>(read: () => T[]) => {
+  const a = read()
+  if (a.length < 2) return false
+  a.reverse()
+  const b = read()
+  return b !== a && b[0] === a.at(-1)
+}
 
 // Assignability check, not a cast: if the composable and the exported entity
 // type drift apart, `nuxt typecheck` fails here rather than in a page.
@@ -101,7 +120,18 @@ const checks: Check[] = [
   { label: "activeByProgram('Democracy')", expected: 13, actual: activeByProgram('Democracy').length },
   { label: "archivedCountByProgram('Democracy')", expected: 60, actual: archivedCountByProgram('Democracy') },
   { label: "insightsForProject('election-analysis')", expected: 3, actual: insightsForProject('election-analysis').length },
-  { label: "insightsForProject('not-a-real-project')", expected: 0, actual: insightsForProject('not-a-real-project').length }
+  { label: "insightsForProject('not-a-real-project')", expected: 0, actual: insightsForProject('not-a-real-project').length },
+
+  // --- gh#91: the unfiltered members hand back copies ----------------------
+  {
+    label: 'items / active / archived survive a caller reversing them (gh#91)',
+    expected: 'true',
+    actual: String(
+      isCopySafe(() => bfInsights.items) &&
+      isCopySafe(() => bfInsights.active) &&
+      isCopySafe(() => bfInsights.archived)
+    )
+  }
 ]
 
 const passed = computed(() => checks.filter(c => String(c.actual) === String(c.expected)).length)

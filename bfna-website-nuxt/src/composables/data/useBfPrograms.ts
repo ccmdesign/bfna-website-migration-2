@@ -38,7 +38,12 @@ export const useBfPrograms = async () => {
   const all: Program[] = data.value ?? []
 
   return {
-    programs: () => all,
+    /**
+     * All three, in collection order — a fresh array per call (gh#91), so a
+     * caller's in-place `.sort()` cannot reorder the `useAsyncData` payload for
+     * every other consumer in the same render.
+     */
+    programs: () => [...all],
     /** One program by slug, or `undefined` — backs the `/{program}` hub route. */
     programBySlug: (slug: string) => all.find(p => p.slug === slug)
   }

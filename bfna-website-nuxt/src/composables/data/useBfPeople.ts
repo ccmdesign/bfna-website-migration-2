@@ -70,8 +70,16 @@ export const useBfPeople = async () => {
   const all: Person[] = data.value ?? []
 
   return {
-    /** Everyone, unfiltered — `useWfContent.people()`. */
-    people: () => all,
+    /**
+     * Everyone, unfiltered — `useWfContent.people()`.
+     *
+     * A fresh array per call (gh#91): `all` **is** the `useAsyncData` payload,
+     * so returning it directly would let a caller's `people().sort()` reorder
+     * the cached value for every other consumer in the same render. The
+     * filtered members below were already safe for the reason documented on
+     * `teamMembers`.
+     */
+    people: () => [...all],
     /**
      * The Board list. Reads the stored flag; the OR that produced it ran once,
      * in the normaliser. 4 documents.

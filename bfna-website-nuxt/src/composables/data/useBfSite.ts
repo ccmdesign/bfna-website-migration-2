@@ -71,7 +71,13 @@ export const useBfSite = async () => {
     /**
      * The nav/footer menu structure, from the typed `menus.json` module. Static
      * across the whole site; the layout passes it down as a prop (D8).
+     *
+     * A fresh array per call (gh#91): `bfMenus` is a **module-level singleton**
+     * shared by every request in the process, so returning it directly would
+     * let one caller's `menus().reverse()` reorder the nav for everyone. Only
+     * the top level is copied — the entries themselves are the same frozen-in-
+     * practice objects the module exports, which is all any consumer reads.
      */
-    menus: (): Menu[] => bfMenus
+    menus: (): Menu[] => [...bfMenus]
   }
 }
