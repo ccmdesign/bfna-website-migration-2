@@ -156,13 +156,20 @@ interface Step {
   actual: string
 }
 
+/**
+ * Set while § 7 dispatches its one synthetic event, so the document-level
+ * keydown listener does not count it among the keys the harness sent.
+ */
+let ignoreKeys = false
+
 const roundTrip: Step[] = []
 const identity = reactive({
   sameArrayReturned: 'unrun',
   originalMutated: 'unrun',
   vocabularyKept: 'unrun',
   clampTabbable: 'unrun',
-  clampIndex: 'unrun'
+  clampIndex: 'unrun',
+  modifierGuard: 'unrun'
 })
 
 /* --- assertions ---------------------------------------------------------- */
@@ -250,6 +257,34 @@ const finalise = async () => {
    */
   const focusEntry = focusOrder[0] ?? 'nothing focused'
   const focusPath = focusOrder.join(',')
+
+  /* ---------------------------------------------------------------------
+   * § 7 — a modified arrow belongs to the browser, not to this component.
+   *
+   * `Cmd`+`←` is Back on macOS, `Alt`+`←` is Back elsewhere, `Ctrl`+`Home`
+   * jumps to the top of the document. A roving handler that matched on
+   * `event.key` alone would intercept all of them *and* `preventDefault` them.
+   * (Review finding gh#39-P2-1.)
+   *
+   * Dispatched rather than driven by the harness because CDP's key dispatch
+   * here carries no modifier state — and unlike § 1, nothing about this
+   * assertion needs a *trusted* event: what is under test is a branch of the
+   * component's own handler, and `dispatchEvent` returns `false` exactly when
+   * something called `preventDefault`.
+   * ------------------------------------------------------------------- */
+  const modifiedTarget = chipsOf('keyboard')[3]
+  if (modifiedTarget) {
+    ignoreKeys = true
+    const before = tabbableOf('keyboard').join(',')
+    const uncancelled = modifiedTarget.dispatchEvent(
+      new KeyboardEvent('keydown', {
+        key: 'ArrowRight', bubbles: true, cancelable: true, metaKey: true
+      })
+    )
+    await nextTick()
+    identity.modifierGuard = `${uncancelled}|${tabbableOf('keyboard').join(',') === before}`
+    ignoreKeys = false
+  }
 
   /* ---------------------------------------------------------------------
    * § 5 — the clamp. Focus the LAST chip of the dynamic bar, then throw two
@@ -435,6 +470,11 @@ const finalise = async () => {
       actual: seenKeys.notPrevented.join(',')
     },
     {
+      label: 'a modified arrow (Cmd+→) is left alone: not consumed, focus unmoved',
+      expected: 'true|true',
+      actual: identity.modifierGuard
+    },
+    {
       label: 'the keyboard never changed the selection — arrows move, they do not toggle',
       expected: 0,
       actual: keyboardModel.value.length
@@ -588,6 +628,7 @@ onMounted(async () => {
    * the right thing while the page also scrolls.
    */
   document.addEventListener('keydown', event => {
+    if (ignoreKeys) return
     seenKeys.order.push(event.key)
     if (!event.isTrusted) seenKeys.untrusted += 1
     if (event.defaultPrevented) seenKeys.prevented.push(event.key)

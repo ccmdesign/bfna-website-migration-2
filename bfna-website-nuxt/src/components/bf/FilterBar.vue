@@ -182,6 +182,16 @@ const onKeydown = (event: KeyboardEvent, index: number): void => {
   const count = props.filters.length
   if (count === 0) return
 
+  /*
+   * A modified arrow is somebody else's shortcut, not ours (review finding
+   * gh#39-P2-1). `Cmd`+`←` is Back on macOS, `Alt`+`←` is Back on Windows and
+   * Linux, and `Ctrl`+`Home`/`End` jump to the ends of the document — all of
+   * which this handler would otherwise intercept *and* `preventDefault`,
+   * silently breaking a browser-level binding in exchange for moving focus one
+   * chip. Bail before the switch, so the event reaches the page untouched.
+   */
+  if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return
+
   let target: number
   switch (event.key) {
     case 'ArrowRight':

@@ -175,6 +175,21 @@ vitest harness on `dev` is broken and pre-existing, so the substitution is:
 `npx nuxt generate` and the `role="group"` grep on the prerendered HTML ran as
 written.
 
+### D-30.9 — a modified arrow is not this component's key
+
+Applied from the inline review (finding gh#39-P2-1). `onKeydown` matched on
+`event.key` alone, so `Cmd`+`←` (Back on macOS), `Alt`+`←` (Back elsewhere) and
+`Ctrl`+`Home`/`End` (document ends) were all intercepted *and*
+`preventDefault`ed — a browser-level binding broken in exchange for moving
+focus one chip. The handler now returns before the switch when any of `alt`,
+`ctrl`, `meta` or `shift` is held.
+
+Asserted by probe row 49, which dispatches one synthetic `Cmd`+`→` and checks
+both halves: the event was not cancelled, and the tab stop did not move.
+Synthetic rather than harness-driven because CDP's key dispatch here carries no
+modifier state — and nothing about this assertion needs a trusted event, since
+what is under test is a branch of the component's own handler.
+
 ### D-30.8 — the probe harness learned six keys
 
 `scripts/check-probes.ts`'s `KEYS` map gained `ArrowLeft`, `ArrowUp`,
