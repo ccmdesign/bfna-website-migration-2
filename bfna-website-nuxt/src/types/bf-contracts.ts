@@ -953,3 +953,50 @@ export interface SectionProps {
    */
   fullWidth?: boolean
 }
+
+/**
+ * Which of the three token triplets `bfNotice` paints itself with (issue 41).
+ *
+ * A closed union rather than a `string`, unlike `SectionProps['gap']`: those
+ * degrade gracefully because the composition layer simply leaves a primitive's
+ * default in place for an unknown value, whereas an unknown `variant` here
+ * matches no `[data-variant]` rule and silently renders the `note` colourway
+ * under a `data-variant` attribute that claims otherwise.
+ */
+export type NoticeVariant = 'note' | 'info' | 'warning'
+
+/**
+ * `bfNotice` — the notice / banner box (issue 41), componentising the raw
+ * `.wf-note` used at `pages/wireframes/search.vue` (×2) and
+ * `pages/wireframes/insights/[slug].vue` (frozen, D2 — read, never edited).
+ *
+ * Content is the default slot, not a prop: two of the three call sites carry
+ * inline markup (a link in the archive banner), which a string prop could only
+ * carry as `v-html`.
+ */
+export interface NoticeProps {
+  /**
+   * The colourway. Default `note` — the neutral, which is what all three
+   * wireframe call sites render today.
+   *
+   * Every variant is drawn from semantic tokens that already exist
+   * (`--color-base-*`, `--color-info*`, `--color-warning*`); the component
+   * introduces no colour value of its own (BRIEF §5 rule 2).
+   */
+  variant?: NoticeVariant
+  /**
+   * Announce the notice to assistive technology when it appears.
+   *
+   * `true` renders `role="status"` (an implicit `aria-live="polite"` region);
+   * `false` — the default — renders no `role` attribute at all.
+   *
+   * **Opt-in, never inferred.** The distinction is behavioural, not structural:
+   * a notice that can appear at runtime in response to user action (the search
+   * "no records matched" message) must be announced, while one present at first
+   * render that never toggles (the semantic-search caveat, the insight archive
+   * banner) must not — a live region that is never updated is noise in the
+   * accessibility tree. Nothing in the markup distinguishes the two, so the
+   * caller says which it is. See the spec's Decisions section for the call.
+   */
+  announced?: boolean
+}
