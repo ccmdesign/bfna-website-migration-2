@@ -235,7 +235,7 @@ questions a skip link raises:
 
 | | |
 |---|---|
-| **Request** | `data-probe-keys`, a comma-separated sequence, on the same root that carries `data-probe-verdict`. Known names: `Tab`, `Enter`, `Escape`, `Space`. An unrecognised name **throws** — a keyboard assertion that quietly pressed nothing would report the wrong reason for its verdict. |
+| **Request** | `data-probe-keys`, a comma-separated sequence, on the same root that carries `data-probe-verdict`. Known names: `Tab`, `Enter`, `Escape`, `Space`, and — added by [gh#39](https://github.com/ccmdesign/bfna-website-migration-2/issues/39) for probe 30's roving-tabindex group — `ArrowLeft`, `ArrowUp`, `ArrowRight`, `ArrowDown`, `Home`, `End`. An unrecognised name **throws** — a keyboard assertion that quietly pressed nothing would report the wrong reason for its verdict. The map is additive: extending it changes no existing probe's sequence. |
 | **Handshake** | The attribute is bound reactively, so it appears only after the probe has mounted and its listeners are attached. The harness polls for it; its appearance is both the request and the "you may drive me now". It is absent from the prerendered HTML by construction. |
 | **Dispatch** | `Input.dispatchKeyEvent` — `rawKeyDown`, an optional `char`, then `keyUp`, the triple Chrome's own front-end sends. Preceded by `Emulation.setFocusEmulationEnabled`, because an unfocused headless document runs no sequential focus navigation and Tab would do nothing on a correct component. |
 | **Timing** | Once per page load, from outside the poll's `try` — that `catch` exists to swallow the execution-context error a navigation raises, and swallowing an unknown-key error with it would turn a typo into a mystery timeout. |
@@ -246,6 +246,31 @@ skip. Opened by hand, such a probe tells the reader which keys to press.
 
 **Additive.** A probe that declares nothing is driven exactly as before; the
 full-suite run at gh#28 (11 probes, 401 rows) is the evidence.
+
+### Where Tab starts (gh#39)
+
+A probe whose first assertion is *"Tab enters here"* is asserting something
+about the **sequential focus navigation starting point**, not about DOM order
+alone. Chrome moves that point to wherever a focused element was when it is
+blurred *or removed from the document* — so a probe that runs a scripted focus
+experiment before arming its keys can find the harness's Tab entering a section
+at the foot of the page, with nothing wrong with the component. Probe 30 hit
+exactly this: its `filters`-truncation experiment removed a focused chip near
+the bottom, and Tab then landed in the gap-reference bars.
+
+Two rules, both cheap:
+
+1. Run anything that focuses or removes a focused element **after** the key
+   sequence, not before it — probe 30 does its clamp experiment inside
+   `finalise()`.
+2. State the starting point rather than relying on it: focus and immediately
+   blur an element above the section under test (probe 30 uses its own `<h1>`,
+   given `tabindex="-1"` for the purpose) just before publishing
+   `data-probe-keys`.
+
+A probe that also reads a focus *sequence* should snapshot it before doing
+anything else focus-related, so a later experiment cannot append to a list that
+is asserted by value.
 
 ## Related: probe routes are seeded for prerender (gh#28)
 
