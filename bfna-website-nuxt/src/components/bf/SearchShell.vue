@@ -296,7 +296,13 @@ const countLabel = computed(() => (props.resultCount === 1 ? 'result' : 'results
       data-bf-search-shell="count"
       role="status"
     >
-      <strong>{{ resultCount }}</strong> {{ countLabel }} for “{{ query }}”, ranked by relevance
+      <strong>{{ resultCount }}</strong> {{ countLabel }}<!--
+        The query clause is dropped when there is no query, rather than the
+        whole line: the region must persist (#169), but “0 results for
+        “”” is a sentence nobody wrote, and it is what an unqueried shell
+        would announce on mount. The count itself stays — a consumer that
+        renders the shell unfiltered has a real number to report.
+      --><template v-if="query"> for “{{ query }}”</template>, ranked by relevance
     </p>
 
     <!--
@@ -314,13 +320,20 @@ const countLabel = computed(() => (props.resultCount === 1 ? 'result' : 'results
         D-43.1 in the block comment above for why this is the base plus its
         row modifier rather than `<bfCardRow>`.
 
+        Keyed on `to`, **not** on `slug`. A slug is unique within a collection
+        and this list is deliberately cross-collection — issue 54's ranking
+        pool merges insights, projects and people, and a person and a project
+        may honestly share one. Two rows with the same key is a Vue warning at
+        best and a row rendering another row's content at worst; `to` is the
+        route, which is unique by construction (review finding gh#52-P2-1).
+
         Heading first in the DOM (the base's rule, never reordered): heading
         navigation lands at the start of the row, and `.bf-card__chips`'s
         `order: -1` pulls the chips ahead of it visually.
       -->
       <bfCard
         v-for="(row, index) in results"
-        :key="row.slug"
+        :key="row.to"
         class="bf-card-row bf-search-shell__row"
         data-bf-search-shell="row"
       >
