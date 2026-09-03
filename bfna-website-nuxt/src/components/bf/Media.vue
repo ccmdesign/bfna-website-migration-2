@@ -158,15 +158,22 @@ if (import.meta.dev) {
      * both branches. No inline `aspect-ratio` anywhere in this file.
      */
     aspect-ratio: var(--_bf-media-ratio);
-  }
-
-  /*
-   * Only meaningful on the image branch — a `<div>` has nothing to fit — but
-   * declared on the shared class so the two branches keep identical box
-   * behaviour and a future branch inherits it. Replaces `wfMedia.vue:11`'s
-   * inline `object-fit: cover`.
-   */
-  .bf-media {
+    /*
+     * Stated rather than inherited from the reset, because the placeholder
+     * branch carries a 1px border and `aspect-ratio` applies to whichever box
+     * `box-sizing` selects. Under `content-box` the placeholder would render
+     * 2px taller and wider than its declared ratio while the image branch
+     * rendered exactly on it — a silent 0.5% divergence between the two
+     * branches, which is under the probe's measurement tolerance and would
+     * therefore not be caught.
+     */
+    box-sizing: border-box;
+    /*
+     * Only meaningful on the image branch — a `<div>` has nothing to fit — but
+     * declared on the shared class so both branches keep identical box
+     * behaviour and a future branch inherits it. Replaces `wfMedia.vue:11`'s
+     * inline `object-fit: cover`.
+     */
     object-fit: cover;
   }
 
