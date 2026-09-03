@@ -77,3 +77,71 @@ column — manual/rendered check).
 ## Decisions
 
 _Runner appends here._
+
+### Appended by the item-runner (gh#21)
+
+- **`FEATURED_SLUGS` / `NAV_SLUGS` live in `useBfProjects.ts`, as ordering keys
+  only.** The spec's "no re-derivation of the curated order" rule is written
+  against `GRID_ORDER`, which the normaliser *did* materialise (`grid_order`).
+  Curation **order** for the homepage strip and the nav was deliberately not
+  stored — issue 07's Decisions, verbatim: *"Curation order is not stored.
+  `FEATURED_SLUGS`/`NAV_SLUGS` order the homepage and nav lists today; issue
+  09's schema declares only `featured`/`nav` booleans, so the ordering
+  constants belong to the composables in issue 12."* So the two arrays are
+  re-declared here and used **only to sort**: the stored `featured` / `nav`
+  flag still selects the set, and a flagged document missing from the array is
+  appended rather than dropped. Flag a sixth project `nav` in the normaliser
+  and it appears in `navProjects()` with no edit to this file. `GRID_ORDER` is
+  not re-declared anywhere in the composable.
+
+- **The third program's grid falls back to collection order, not snapshot
+  order.** `GRID_ORDER` places only Democracy (4 slugs) and Future Leadership
+  (3). Transatlantic Relations & Global Challenges is unlisted, so all six of
+  its grid-eligible projects store `grid_order = Number.MAX_SAFE_INTEGER` and
+  the stable sort is a no-op — leaving whatever order `queryCollection` returns
+  (file-stem, i.e. alphabetical) where `useWfContent` left wireframe-snapshot
+  order. The **set** is identical; the sequence is not:
+
+  | | order |
+  |---|---|
+  | `useWfContent` | periscope, range, barometer, astropolitics, indo-pacific-nexus, critical-minerals |
+  | `useBfProjects` | astropolitics, critical-minerals, indo-pacific-nexus, range, barometer, periscope |
+
+  This is the same class of divergence gh#20's probe already recorded for
+  `publish_date` ties ("a tie resolves to input order — snapshot order in the
+  wireframe, file-stem order here"), now visible across a whole grid rather
+  than one pair. Fixing it means storing a snapshot ordinal on the document,
+  which is normaliser scope (issues 07/08) and explicitly out of scope here, so
+  it is **handed off as a residual** rather than patched with a local sort that
+  the spec forbids. The probe therefore asserts the TR&GC **set** (sorted) plus
+  an explicit assertion that the program carries no curated order at all, and
+  asserts the full ordered sequence for the two programs that do.
+
+- **Acceptance is the probe page, not vitest** (epic-wide substitution,
+  residual #86 — the harness on `dev` is broken and pre-existing). The probe at
+  `src/pages/bf-probe/12-composables-projects-programs.vue` runs 36 checks and
+  is a *parity* test: every expected value was computed offline from
+  `projects.json` / `programs.json` through `useWfContent`'s own predicates
+  (`inProjectGrid`, `gridSort` + `GRID_ORDER`, the two slug arrays, the
+  `heading`-desc child comparator) and hard-coded, so a passing row means
+  agreement with the wireframe rather than with the implementation. Verified
+  against the prerendered output of `npx nuxt generate`: **36/36 PASS**, with
+  probes 09 and 11 still green.
+
+- **The `projectsAll` / `topProjects` split is reproduced, not invented.** The
+  collection holds all 38 documents; 18 are top-level and 20 are cohort/year
+  children hanging off `parent_project`. Every *list* member (`projects`,
+  `projectsByProgram`, `gridProjectsByProgram`, `productsByProgram`,
+  `allProducts`, `projectsPendingRetag`) reads the 18; `projectBySlug` and
+  `projectChildren` read all 38 — exactly the split `useWfContent` keeps.
+
+- **`projectsPendingRetag()` is empty today and that is correct.** The only
+  `RE-TAG (was fake category: Archives)` row is `100-questions`, which is
+  archived, and the member excludes archived rows (Claudio, Aug 5). The probe
+  asserts `0` rather than skipping the member.
+
+- Gates: typecheck **178** `error TS` = the 178 baseline, **0** in the scoped
+  paths and **0** in the three new files; `npx nuxt generate` exits 0 (747
+  routes); both wireframe byte-identity diffs — `dev...HEAD` and against the
+  pre-epic base `f757a64` — print nothing, as does the wider DoD-4 set
+  (`useWfContent.ts`, `assets/wireframe-data`, `public/css/wireframe.css`).
