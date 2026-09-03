@@ -6,6 +6,180 @@ import { z } from 'zod'
 const rootDir = dirname(fileURLToPath(import.meta.url))
 const contentDir = resolve(rootDir, 'content')
 
+/*
+ * ---------------------------------------------------------------------------
+ * `bf*` entity schemas (design-system epic, issue 09 / gh#18)
+ * ---------------------------------------------------------------------------
+ * The six schemas below are the entity contracts for every `bf-*` component,
+ * composable and page. They are exported so `src/types/bf-contracts.ts` can
+ * re-export the `z.infer` types from a single place — components import the
+ * types from `~/types/bf-contracts`, never from here.
+ *
+ * They describe exactly what `scripts/normalise-wireframe-data.ts` writes into
+ * `content/bf/**` (its `InsightDoc` / `ProjectDoc` / `ProgramDoc` /
+ * `PersonDoc` / `PageDoc` / `AnnouncementDoc` interfaces), not the draft field
+ * list in the spec: `.nullable()` marks a field the normaliser emits as
+ * `T | null`, `.optional()` marks one it may omit entirely.
+ *
+ * The 14 collections above are untouched — these six are appended.
+ */
+
+/**
+ * A page's provenance pointer into the legacy Directus records. Emitted as an
+ * object (not the string the spec drafted) — see issue 08's Decisions; only
+ * `source` is ever populated in the current snapshot.
+ */
+export const bfPageLegacySchema = z.object({
+  source: z.string().nullable(),
+  type: z.string().nullable(),
+  workstream: z.string().nullable(),
+  id: z.number().nullable()
+})
+
+/**
+ * One insight. 371 documents: the 354 `items` rows plus the 8 `featured` and
+ * 9 `retired_news` highlight records, which are separate Directus rows with no
+ * slug overlap and are flattened onto boolean fields here (issue 07 Decisions).
+ * `featured` / `retired_news` are computed by the normaliser and never null;
+ * `archived` / `evergreen` pass through from the source and may be null.
+ */
+export const bfInsightSchema = z.object({
+  slug: z.string(),
+  heading: z.string().nullable(),
+  subheading: z.string().nullable(),
+  excerpt: z.string().nullable(),
+  content: z.string().nullable(),
+  image: z.string().nullable(),
+  video_url: z.string().nullable(),
+  download: z.string().nullable(),
+  external_url: z.string().nullable(),
+  publish_date: z.string().nullable(),
+  format: z.string().nullable(),
+  program: z.string().nullable(),
+  authors: z.array(z.string()),
+  projects: z.array(z.string()),
+  archived: z.boolean().nullable(),
+  evergreen: z.boolean().nullable(),
+  featured: z.boolean(),
+  retired_news: z.boolean()
+})
+
+/**
+ * One project. `featured` / `nav` / `grid_eligible` / `grid_order` are derived
+ * by the normaliser from the wireframe composable's own predicates and are
+ * never null. `pending` is present on only two documents, hence `.optional()`.
+ */
+export const bfProjectSchema = z.object({
+  slug: z.string(),
+  heading: z.string(),
+  excerpt: z.string().nullable(),
+  description: z.string().nullable(),
+  kind: z.string().nullable(),
+  program: z.string().nullable(),
+  external_url: z.string().nullable(),
+  image: z.string().nullable(),
+  parent_project: z.string().nullable(),
+  archived: z.boolean().nullable(),
+  exclude_from_grid: z.boolean().nullable(),
+  external_only: z.boolean().nullable(),
+  featured: z.boolean(),
+  nav: z.boolean(),
+  grid_eligible: z.boolean(),
+  grid_order: z.number(),
+  microsite_cta: z.string().nullable(),
+  participation: z
+    .object({
+      title: z.string(),
+      ctas: z.array(z.string())
+    })
+    .nullable(),
+  podcast: z
+    .object({
+      title: z.string(),
+      host: z.string().nullable(),
+      source_note: z.string().nullable(),
+      episodes: z.array(
+        z.object({
+          title: z.string(),
+          description: z.string().nullable()
+        })
+      )
+    })
+    .nullable(),
+  pending: z.string().optional()
+})
+
+/**
+ * One program. `tagline` is required: the normaliser derives it as the first
+ * sentence of `intro` for all three programs (issues 07 / 09 / 25 Decisions).
+ */
+export const bfProgramSchema = z.object({
+  slug: z.string(),
+  name: z.string(),
+  tagline: z.string(),
+  intro: z.string().nullable(),
+  image: z.string().nullable()
+})
+
+/**
+ * One person. `board` is the stored result of the wireframe composable's board
+ * predicate (raw flag OR /board/i on the job title) and resolves 4 of the 13
+ * documents; the Team list stays a composable-side filter (issue 08 Decisions).
+ */
+export const bfPersonSchema = z.object({
+  slug: z.string(),
+  name: z.string(),
+  job_title: z.string().nullable(),
+  bio: z.string().nullable(),
+  email: z.string().nullable(),
+  linkedin: z.string().nullable(),
+  twitter: z.string().nullable(),
+  image: z.string().nullable(),
+  board: z.boolean()
+})
+
+/**
+ * One static page. All 19 source fields are carried, `copy_source` and
+ * `legacy` included — that full passthrough is what closes the audit's
+ * "needs a real schema, 17 fields available" gap (01 §D/§F).
+ */
+export const bfPageSchema = z.object({
+  slug: z.string(),
+  heading: z.string().nullable(),
+  subheading: z.string().nullable(),
+  excerpt: z.string().nullable(),
+  description: z.string().nullable(),
+  authors: z.array(z.string()),
+  image: z.string().nullable(),
+  video_url: z.string().nullable(),
+  download: z.string().nullable(),
+  external_url: z.string().nullable(),
+  publish_date: z.string().nullable(),
+  bucket: z.string().nullable(),
+  format: z.string().nullable(),
+  kind: z.string().nullable(),
+  program: z.string().nullable(),
+  archived: z.boolean().nullable(),
+  evergreen: z.boolean().nullable(),
+  copy_source: z.string().nullable(),
+  legacy: bfPageLegacySchema.nullable()
+})
+
+/**
+ * The site-wide announcement. Exactly one document is emitted — the source is a
+ * singleton object, not an array — so this schema describes that document, not
+ * an array wrapper. `workstream` is a Directus M2O id, hence a number.
+ * The `status === 'published'` gate stays in the composable (issue 13).
+ */
+export const bfAnnouncementSchema = z.object({
+  status: z.string().nullable(),
+  url: z.string().nullable(),
+  message: z.string().nullable(),
+  heading: z.string().nullable(),
+  excerpt: z.string().nullable(),
+  workstream: z.number().nullable()
+})
+
 export default defineContentConfig({
   collections: {
     blog: defineCollection({
@@ -445,6 +619,54 @@ export default defineContentConfig({
         embedCode: z.string().optional(),
         breadcrumbs: z.array(z.any()).optional()
       })
+    }),
+    bfInsights: defineCollection({
+      type: 'data',
+      source: {
+        include: 'bf/insights/*.json',
+        cwd: contentDir
+      },
+      schema: bfInsightSchema
+    }),
+    bfProjects: defineCollection({
+      type: 'data',
+      source: {
+        include: 'bf/projects/*.json',
+        cwd: contentDir
+      },
+      schema: bfProjectSchema
+    }),
+    bfPrograms: defineCollection({
+      type: 'data',
+      source: {
+        include: 'bf/programs/*.json',
+        cwd: contentDir
+      },
+      schema: bfProgramSchema
+    }),
+    bfPeople: defineCollection({
+      type: 'data',
+      source: {
+        include: 'bf/people/*.json',
+        cwd: contentDir
+      },
+      schema: bfPersonSchema
+    }),
+    bfPages: defineCollection({
+      type: 'data',
+      source: {
+        include: 'bf/pages/*.json',
+        cwd: contentDir
+      },
+      schema: bfPageSchema
+    }),
+    bfAnnouncements: defineCollection({
+      type: 'data',
+      source: {
+        include: 'bf/announcements/*.json',
+        cwd: contentDir
+      },
+      schema: bfAnnouncementSchema
     })
   }
 })
