@@ -19,7 +19,9 @@
  *     records that live alongside them.
  *  2. Sort parity — `active` and `archived` are `publish_date` descending,
  *     asserted by first slug rather than by count alone.
- *  3. `bySlug` resolves a known real slug to a defined item.
+ *  3. `bySlug` resolves a known real slug to a defined item — including
+ *     `uncivil-war-2`, the disambiguated half of a slug collision that was
+ *     unreachable by slug before gh#151 / BF-218 F1.
  *  4. The filtered accessors reproduce the wireframe numbers for a real
  *     program name and a real project slug.
  *
@@ -90,6 +92,15 @@ const checks: Check[] = [
   { label: "bySlug('how-german-elections-work') is defined", expected: 'true', actual: String(known !== undefined) },
   { label: '  …and carries that slug', expected: 'how-german-elections-work', actual: known?.slug ?? 'undefined' },
   { label: "bySlug('not-a-real-slug') is undefined", expected: 'true', actual: String(bySlug('not-a-real-slug') === undefined) },
+
+  // gh#151 / BF-218 F1 — the disambiguated slug is now a real, resolvable key.
+  // Before the normaliser fix this document existed on disk as
+  // `uncivil-war-2.json` but carried `slug: 'uncivil-war'`, so `bySlug` had two
+  // rows under one key and silently answered with whichever came first: the
+  // second was unreachable by slug from anywhere in the app.
+  { label: "bySlug('uncivil-war-2') is defined (gh#151 F1)", expected: 'true', actual: String(bySlug('uncivil-war-2') !== undefined) },
+  { label: '  …and carries that slug', expected: 'uncivil-war-2', actual: bySlug('uncivil-war-2')?.slug ?? 'undefined' },
+  { label: "  …while bySlug('uncivil-war') still resolves the original", expected: 'uncivil-war', actual: bySlug('uncivil-war')?.slug ?? 'undefined' },
 
   // --- sort parity with useWfContent --------------------------------------
   // Asserted on `publish_date`, which is what the comparator orders by. The

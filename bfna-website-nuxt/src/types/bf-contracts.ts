@@ -20,7 +20,9 @@ import type {
   bfPersonSchema,
   bfPageSchema,
   bfAnnouncementSchema,
-  bfPageLegacySchema
+  bfPageLegacySchema,
+  bfEntityLegacySchema,
+  bfProjectAkaSchema
 } from '../../content.config'
 
 /** Grid-slot modifier shared by every card. `span: 'full'` renders as `data-span="full"`. */
@@ -631,6 +633,21 @@ export type Announcement = z.infer<typeof bfAnnouncementSchema>
 
 /** A `Page`'s provenance pointer into the legacy Directus records. */
 export type PageLegacyRef = z.infer<typeof bfPageLegacySchema>
+
+/**
+ * An `Insight`'s or `Project`'s provenance pointer into the legacy records
+ * (gh#151 / BF-218 F2) — the old-URL source issue #57's cutover redirect map
+ * is built from.
+ *
+ * Deliberately not `PageLegacyRef`: insight/project rows carry a
+ * `product_type` pages do not, and their `id` is a contentful `string` as
+ * often as a directus `number`, where every page row's is `null`. Same idea,
+ * two value domains, two types (D-151.3).
+ */
+export type EntityLegacyRef = z.infer<typeof bfEntityLegacySchema>
+
+/** One former slug of a `Project`, kept so #57 can redirect the old URL. */
+export type ProjectAka = z.infer<typeof bfProjectAkaSchema>
 
 /* -------------------------------------------------------------------------
  * Card wrappers that arrive after the entity types

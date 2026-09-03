@@ -23,5 +23,25 @@
       "Nominate a candidate"
     ]
   },
-  "podcast": null
+  "podcast": null,
+  "legacy": {
+    "source": "directus",
+    "type": "super_products",
+    "workstream": "Future Leadership",
+    "product_type": "website",
+    "id": 12
+  },
+  "aka": [
+    {
+      "slug": "editions",
+      "heading": "Editions",
+      "legacy": {
+        "source": "contentful",
+        "type": "super_product",
+        "workstream": "Future Leadership",
+        "product_type": "website",
+        "id": "2vEpUSYsrDFPYtFktz5xqR"
+      }
+    }
+  ]
 }

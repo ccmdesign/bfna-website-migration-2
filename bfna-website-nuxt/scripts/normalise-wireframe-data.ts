@@ -134,21 +134,72 @@ const resetCollection = (collection: string): void => {
  * Unique file stem per document. `insights.json` carries two cross-collection
  * duplicate slugs (`graphic-images-autocrats-and-the-use-of-power`, `uncivil-war`, both
  * flagged `duplicate_of` in the snapshot); all rows are kept, so the nth occurrence in
- * snapshot order becomes `<slug>-<n>.json`. The `slug` FIELD keeps its real value.
+ * snapshot order becomes `<slug>-<n>.json`.
+ *
+ * The `slug` FIELD now follows the stem (gh#151 / BF-218 F1). It used to keep the raw
+ * source value, which made `slug` non-unique in a collection every consumer looks rows up
+ * by: `bySlug()` silently returned whichever row the content database happened to yield
+ * first, and `/wireframes/archive` rendered 255 hrefs for 256 archived items with no
+ * error anywhere. The caller reads `.disambiguated` to learn that it happened and records
+ * the slug that was collided with as `duplicate_of`, so the migration signal survives for
+ * issue #57's redirect map instead of being inferred from a filename.
  */
+interface Stem {
+  /** The unique file stem — and, for the collections that adopt it, the `slug` field. */
+  stem: string
+  /** `true` when a collision forced a `-<n>` suffix, i.e. `stem !== slug`. */
+  disambiguated: boolean
+}
+
 const makeStemFactory = () => {
   const used = new Set<string>()
-  return (slug: string): string => {
+  return (slug: string): Stem => {
     if (!used.has(slug)) {
       used.add(slug)
-      return slug
+      return { stem: slug, disambiguated: false }
     }
     // Guard against a real slug that already looks like a disambiguated one
     // (e.g. `nord-stream-2` existing alongside a duplicated `nord-stream`).
     let n = 2
     while (used.has(`${slug}-${n}`)) n++
     used.add(`${slug}-${n}`)
-    return `${slug}-${n}`
+    return { stem: `${slug}-${n}`, disambiguated: true }
+  }
+}
+
+/**
+ * Provenance pointer into the legacy Directus / contentful records, shared by insights and
+ * projects (gh#151 / BF-218 F2). Mirrors `bfEntityLegacySchema` in `content.config.ts`:
+ * five keys, `id` a string for contentful-sourced rows and a number for directus ones.
+ *
+ * Emitted as the snapshot object rather than flattened, for the reason issue 08 gave for
+ * `bfPages.legacy`: the redirect map needs `source` + `type` + `id` together, and a
+ * flattened `legacy_source` string throws away the pair that identifies the record.
+ */
+interface RawEntityLegacy {
+  source: string | null
+  type: string | null
+  workstream: string | null
+  product_type: string | null
+  id: string | number | null
+}
+
+/**
+ * Normalises a snapshot `legacy` object to the five declared keys in a fixed order.
+ *
+ * Written key-by-key rather than spread so that a sixth key appearing in a future snapshot
+ * is dropped here — where the schema would reject it — instead of reaching
+ * `@nuxt/content` and failing the build with a zod error two steps removed from the cause.
+ * Fixed order also keeps the emitted JSON byte-stable across runs (the idempotence check).
+ */
+const toLegacy = (raw: RawEntityLegacy | null | undefined): RawEntityLegacy | null => {
+  if (!raw || typeof raw !== 'object') return null
+  return {
+    source: strOrNull(raw.source),
+    type: strOrNull(raw.type),
+    workstream: strOrNull(raw.workstream),
+    product_type: strOrNull(raw.product_type),
+    id: typeof raw.id === 'string' || typeof raw.id === 'number' ? raw.id : null
   }
 }
 
@@ -171,6 +222,8 @@ interface RawInsight {
   projects?: string[]
   archived?: boolean | null
   evergreen?: boolean | null
+  legacy?: RawEntityLegacy | null
+  slug_note?: string | null
 }
 
 interface InsightsSnapshot {
@@ -198,6 +251,11 @@ interface InsightDoc {
   evergreen: boolean
   featured: boolean
   retired_news: boolean
+  legacy: RawEntityLegacy | null
+  /** Only on a document whose slug this run disambiguated — see `toInsightDoc`. */
+  duplicate_of?: string
+  /** Only on the two snapshot rows that carry the note. */
+  slug_note?: string
 }
 
 /**
@@ -206,26 +264,43 @@ interface InsightDoc {
  * and shows nothing when empty, and BRIEF ground rule 10 requires `bf-*` to render the
  * same data as its `wf-*` counterpart.
  */
-const toInsightDoc = (raw: RawInsight, flags: { featured: boolean, retired_news: boolean }): InsightDoc => ({
-  slug: raw.slug,
-  heading: plainOrNull(raw.heading),
-  subheading: plainOrNull(raw.subheading),
-  excerpt: plainOrNull(raw.excerpt),
-  content: strOrNull(raw.content),
-  image: strOrNull(raw.image),
-  video_url: strOrNull(raw.video_url),
-  download: strOrNull(raw.download),
-  external_url: strOrNull(raw.external_url),
-  publish_date: strOrNull(raw.publish_date),
-  format: strOrNull(raw.format),
-  program: strOrNull(raw.program),
-  authors: strArray(raw.authors),
-  projects: strArray(raw.projects),
-  archived: boolFlag(raw.archived),
-  evergreen: boolFlag(raw.evergreen),
-  featured: flags.featured,
-  retired_news: flags.retired_news
-})
+const toInsightDoc = (
+  raw: RawInsight,
+  stem: Stem,
+  flags: { featured: boolean, retired_news: boolean }
+): InsightDoc => {
+  const doc: InsightDoc = {
+    // `slug` is the STEM, not `raw.slug` (gh#151 / F1). For 369 of the 371 documents those
+    // are the same string; for the two collisions the stem is what makes the field unique,
+    // and it is also what the file on disk is called, so a `bySlug()` lookup and a filename
+    // can no longer disagree.
+    slug: stem.stem,
+    heading: plainOrNull(raw.heading),
+    subheading: plainOrNull(raw.subheading),
+    excerpt: plainOrNull(raw.excerpt),
+    content: strOrNull(raw.content),
+    image: strOrNull(raw.image),
+    video_url: strOrNull(raw.video_url),
+    download: strOrNull(raw.download),
+    external_url: strOrNull(raw.external_url),
+    publish_date: strOrNull(raw.publish_date),
+    format: strOrNull(raw.format),
+    program: strOrNull(raw.program),
+    authors: strArray(raw.authors),
+    projects: strArray(raw.projects),
+    archived: boolFlag(raw.archived),
+    evergreen: boolFlag(raw.evergreen),
+    featured: flags.featured,
+    retired_news: flags.retired_news,
+    legacy: toLegacy(raw.legacy)
+  }
+  // Appended rather than declared inline so the key is ABSENT — not `null` — on the 369
+  // documents that have neither. `content.config.ts` declares both `.optional()`.
+  if (stem.disambiguated) doc.duplicate_of = raw.slug
+  const note = strOrNull(raw.slug_note)
+  if (note !== null) doc.slug_note = note
+  return doc
+}
 
 const normaliseInsights = (): number => {
   const snap = readSnapshot<InsightsSnapshot>('insights.json')
@@ -238,7 +313,8 @@ const normaliseInsights = (): number => {
 
   let written = 0
   for (const raw of snap.items) {
-    writeDoc('insights', stem(raw.slug), toInsightDoc(raw, {
+    const s = stem(raw.slug)
+    writeDoc('insights', s.stem, toInsightDoc(raw, s, {
       featured: featuredSlugs.has(raw.slug),
       retired_news: retiredSlugs.has(raw.slug)
     }))
@@ -251,12 +327,14 @@ const normaliseInsights = (): number => {
   // are emitted as additional documents carrying the boolean. See issue 07 Decisions.
   for (const raw of snap.featured) {
     if (itemSlugs.has(raw.slug)) continue
-    writeDoc('insights', stem(raw.slug), toInsightDoc(raw, { featured: true, retired_news: false }))
+    const s = stem(raw.slug)
+    writeDoc('insights', s.stem, toInsightDoc(raw, s, { featured: true, retired_news: false }))
     written++
   }
   for (const raw of snap.retired_news) {
     if (itemSlugs.has(raw.slug) || featuredSlugs.has(raw.slug)) continue
-    writeDoc('insights', stem(raw.slug), toInsightDoc(raw, { featured: false, retired_news: true }))
+    const s = stem(raw.slug)
+    writeDoc('insights', s.stem, toInsightDoc(raw, s, { featured: false, retired_news: true }))
     written++
   }
   return written
@@ -287,6 +365,19 @@ interface RawProject {
   microsite_cta?: string | null
   participation?: { title: string, ctas: string[] } | null
   podcast?: ProjectPodcast | null
+  legacy?: RawEntityLegacy | null
+  aka?: RawProjectAka[] | null
+}
+
+/**
+ * A former slug of a project, with its own provenance record (gh#151 / BF-218 F2). Seven
+ * of the 38 projects carry exactly one — a Directus record renamed at some point, whose
+ * old URL issue #57's redirect map still has to resolve. Mirrors `bfProjectAkaSchema`.
+ */
+interface RawProjectAka {
+  slug: string
+  heading?: string | null
+  legacy?: RawEntityLegacy | null
 }
 
 interface ProjectDoc {
@@ -310,6 +401,9 @@ interface ProjectDoc {
   participation: { title: string, ctas: string[] } | null
   podcast: ProjectPodcast | null
   pending?: string
+  legacy: RawEntityLegacy | null
+  /** Only on the 7 projects that were renamed; the other 31 omit the key. */
+  aka?: { slug: string, heading: string | null, legacy: RawEntityLegacy | null }[]
 }
 
 /** Copy-pending chips — `useWfContent.ts:114`, verbatim. */
@@ -383,10 +477,21 @@ const normaliseProjects = (): number => {
       grid_order: gridOrderOf(raw, index),
       microsite_cta: strOrNull(raw.microsite_cta),
       participation: raw.participation ?? null,
-      podcast: raw.podcast ?? null
+      podcast: raw.podcast ?? null,
+      legacy: toLegacy(raw.legacy)
     }
     if (PENDING[raw.slug]) doc.pending = PENDING[raw.slug]
-    writeDoc('projects', stem(raw.slug), doc)
+    // Rebuilt key-by-key for the reason `toLegacy` is: a source key the schema does not
+    // declare is dropped here rather than failing the build one step removed from its
+    // cause. `heading` gets `plainOrNull` like every other short display string (#16).
+    if (Array.isArray(raw.aka) && raw.aka.length > 0) {
+      doc.aka = raw.aka.map(a => ({
+        slug: a.slug,
+        heading: plainOrNull(a.heading),
+        legacy: toLegacy(a.legacy)
+      }))
+    }
+    writeDoc('projects', stem(raw.slug).stem, doc)
   }
   return snap.items.length
 }
@@ -443,7 +548,7 @@ const normalisePrograms = (): number => {
       intro: strOrNull(raw.intro),
       image: strOrNull(raw.image)
     }
-    writeDoc('programs', stem(raw.slug), doc)
+    writeDoc('programs', stem(raw.slug).stem, doc)
   }
   return snap.items.length
 }
@@ -517,7 +622,7 @@ const normalisePeople = (): number => {
       image: strOrNull(raw.image),
       board: isBoardMember(raw)
     }
-    writeDoc('people', stem(raw.slug), doc)
+    writeDoc('people', stem(raw.slug).stem, doc)
   }
   return snap.people.length
 }
@@ -610,7 +715,7 @@ const normalisePages = (): number => {
       copy_source: strOrNull(raw.copy_source),
       legacy: raw.legacy ?? null
     }
-    writeDoc('pages', stem(raw.slug), doc)
+    writeDoc('pages', stem(raw.slug).stem, doc)
   }
   return snap.items.length
 }

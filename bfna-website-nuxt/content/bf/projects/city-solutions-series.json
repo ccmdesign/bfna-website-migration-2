@@ -23,5 +23,12 @@
       "Read the latest"
     ]
   },
-  "podcast": null
+  "podcast": null,
+  "legacy": {
+    "source": "directus",
+    "type": "super_products",
+    "workstream": "Democracy",
+    "product_type": "website",
+    "id": 9
+  }
 }

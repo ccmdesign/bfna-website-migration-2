@@ -16,5 +16,12 @@
   "archived": false,
   "evergreen": false,
   "featured": false,
-  "retired_news": false
+  "retired_news": false,
+  "legacy": {
+    "source": "directus",
+    "type": "publications",
+    "workstream": "Politics & Society",
+    "product_type": null,
+    "id": 113
+  }
 }

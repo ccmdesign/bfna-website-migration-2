@@ -16,5 +16,12 @@
   "archived": true,
   "evergreen": false,
   "featured": false,
-  "retired_news": false
+  "retired_news": false,
+  "legacy": {
+    "source": "directus",
+    "type": "infographics",
+    "workstream": "Politics & Society",
+    "product_type": null,
+    "id": 266
+  }
 }

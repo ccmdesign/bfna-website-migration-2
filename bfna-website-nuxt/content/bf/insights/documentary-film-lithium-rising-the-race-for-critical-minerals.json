@@ -16,5 +16,12 @@
   "archived": false,
   "evergreen": false,
   "featured": false,
-  "retired_news": true
+  "retired_news": true,
+  "legacy": {
+    "source": "contentful",
+    "type": "news",
+    "workstream": null,
+    "product_type": null,
+    "id": "2oLGUj7HqgJBDVBXVbViHc"
+  }
 }

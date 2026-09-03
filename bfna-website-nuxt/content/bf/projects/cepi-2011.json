@@ -17,5 +17,12 @@
   "grid_order": 1000014,
   "microsite_cta": null,
   "participation": null,
-  "podcast": null
+  "podcast": null,
+  "legacy": {
+    "source": "directus",
+    "type": "products",
+    "workstream": "Politics & Society",
+    "product_type": "website",
+    "id": 7
+  }
 }

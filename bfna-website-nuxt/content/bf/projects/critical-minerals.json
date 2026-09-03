@@ -23,5 +23,12 @@
       "Read the latest"
     ]
   },
-  "podcast": null
+  "podcast": null,
+  "legacy": {
+    "source": "irene-docx",
+    "type": null,
+    "workstream": null,
+    "product_type": null,
+    "id": null
+  }
 }
