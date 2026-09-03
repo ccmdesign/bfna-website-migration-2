@@ -34,7 +34,11 @@
  *     share a row, and those of a band inside a 400px box do not.
  *  8. **Copy is prop-driven** — a band with all four props overridden renders
  *     every override and no wireframe literal, the `mailto:` href tracks
- *     `email`, and an empty `address` renders no paragraph at all.
+ *     `email`, and an empty `address` renders no paragraph at all. The mailto
+ *     anchor also carries **no class**, compared by resolved colour against a
+ *     bare classless reference link: `a:not([class])` is how both
+ *     `base/reset.css` and `base/typography.css` style links, so a BEM class on
+ *     it would drop the anchor to the user agent's own blue.
  *  9. **Residual #155 is neutralised locally** — the band's `<fieldset>`
  *     computes `margin-bottom: 0px` while a bare reference `<fieldset>` on the
  *     same page still carries the `@layer defaults` margin, so the row proves
@@ -260,6 +264,8 @@ interface Snapshot {
   visitHeadingText: string
   emailText: string
   emailHref: string
+  emailClass: string
+  emailColor: string
   visitParagraphs: string
   controlKinds: string
   controlNames: string
@@ -283,7 +289,14 @@ const snapshot = (key: string): Snapshot => {
   const fieldset = fieldsets[0] ?? null
   const controls = controlsOf(key)
   const visit = band?.querySelector<HTMLElement>('.bf-contact-section__visit') ?? null
-  const emailLink = band?.querySelector<HTMLAnchorElement>('a.bf-contact-section__email') ?? null
+  /*
+    Selected by its `href`, not by a class — the anchor deliberately carries no
+    class (see the component), because `a:not([class])` is how both
+    `base/reset.css` and `base/typography.css` style links.
+  */
+  const emailLink = band?.querySelector<HTMLAnchorElement>(
+    '.bf-contact-section__form a[href^="mailto:"]'
+  ) ?? null
   const submit = band?.querySelector<HTMLElement>('.bf-button') ?? null
   const textarea = controls.find(c => c.tagName.toLowerCase() === 'textarea') ?? null
 
@@ -319,6 +332,8 @@ const snapshot = (key: string): Snapshot => {
     visitHeadingText: (visit?.querySelector('h2')?.textContent ?? 'missing').trim(),
     emailText: (emailLink?.textContent ?? 'missing').trim(),
     emailHref: emailLink?.getAttribute('href') ?? 'missing',
+    emailClass: emailLink === null ? 'no link' : (emailLink.getAttribute('class') ?? 'none'),
+    emailColor: emailLink ? getComputedStyle(emailLink).color : 'no link',
     visitParagraphs: Array.from(visit?.querySelectorAll('p') ?? [])
       .map(p => (p.textContent ?? '').trim())
       .join(' / '),
@@ -455,6 +470,13 @@ const report = () => {
   const referenceMargin = referenceFieldset
     ? getComputedStyle(referenceFieldset).marginBottom
     : 'no reference'
+
+  /*
+    A bare, classless anchor outside every band — the reference the mailto
+    link's colour is compared against.
+  */
+  const referenceLink = document.querySelector<HTMLElement>('#probe-ref-link')
+  const referenceLinkColor = referenceLink ? getComputedStyle(referenceLink).color : 'no reference'
 
   const rules = contactSectionRules()
   const strayLayers = rules.filter(r => r.layer !== 'components')
@@ -611,6 +633,19 @@ const report = () => {
         : 'missing'
     },
     {
+      /*
+        The regression this row exists for: a BEM class on the anchor takes it
+        out of `a:not([class])` in BOTH `reset.css` and `typography.css`, and
+        the link silently falls back to the user agent's own blue — a colour in
+        no token. Compared against a bare classless reference anchor rather
+        than string-matched, so the row states the requirement (it looks like
+        every other link) instead of a hex value.
+      */
+      label: 'the mailto anchor carries no class, so it paints like every other link',
+      expected: `none|${referenceLinkColor}`,
+      actual: def ? `${def.emailClass}|${def.emailColor}` : 'missing'
+    },
+    {
       label: '  …and the address paragraph is the wireframe’s placeholder',
       expected: `Bertelsmann Foundation North America / ${WF.address}`,
       actual: def?.visitParagraphs ?? 'missing'
@@ -758,6 +793,16 @@ const verdict = computed(() =>
         would put a group with no controls into the accessibility tree.
       -->
       <fieldset data-probe-ref-fieldset aria-hidden="true" class="probe__ref" />
+
+      <!--
+        The classless reference anchor. `id`, not a class — a class is the very
+        thing under test, and `a:not([class])` would stop matching it. `href`
+        is this page's own route, so the reference is a real link the styling
+        applies to and not a dead one.
+      -->
+      <p class="probe__ref-line">
+        <a id="probe-ref-link" href="/bf-probe/44-bf-contact-section">reference link</a>
+      </p>
 
       <p
         class="probe__verdict"

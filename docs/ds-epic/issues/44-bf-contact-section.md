@@ -273,3 +273,29 @@ Two of the three internal refs are named `nameValue` / `emailValue` /
 `<script setup>` shadows the `email` **prop** of the same name for the whole
 template, so `{{ email }}` in the `mailto:` link would have rendered the empty
 contents of the input.
+
+### D-44.9 — the `mailto:` anchor carries no class (review finding, applied)
+
+Found in this issue's own review, before merge. The first draft gave the email
+link a BEM class, `bf-contact-section__email`. That is a real regression and not
+a naming preference: **both** `base/reset.css` (`color: currentcolor`,
+`cursor: pointer`) and `base/typography.css`
+(`color: var(--link-color, …)`, `text-decoration: none`, and the `:hover` and
+`:visited` pair) style links through `a:not([class])`. A class takes the anchor
+out of every one of those selectors, and it falls back to the user agent's own
+link blue and underline — a colour that is in no token, that DoD-6 exists to
+prevent arriving by accident, and that the wireframe's own
+`<a href="mailto:info@bfna.org">` never had.
+
+The class was removed. The probe now selects the anchor by
+`.bf-contact-section__form a[href^="mailto:"]` and asserts two things: that the
+anchor's `class` attribute is absent, and that its **resolved colour** equals a
+bare classless reference anchor's on the same page. The second is the one that
+states the requirement — *it looks like every other link* — rather than pinning
+a hex value that a theme change would have to chase.
+
+The general lesson, which every later `bf-*` component that renders prose links
+inherits: **a class on an `<a>` in this codebase is opting out of the link
+styling.** Give one only when the component is also declaring the replacement
+(`bfButton` and `bfChip` do exactly that); a link that should look like a link
+gets no class, and is selected in tests by its `href` or its container.

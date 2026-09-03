@@ -188,7 +188,19 @@ const messageValue = ref('')
     >
       <h2 class="bf-contact-section__heading">{{ heading }}</h2>
 
-      <p><a class="bf-contact-section__email" :href="`mailto:${email}`">{{ email }}</a></p>
+      <!--
+        NO class on the anchor, and that is load-bearing rather than an
+        omission. `base/reset.css` and `base/typography.css` both style links
+        through `a:not([class])` — `color: currentcolor`, then
+        `color: var(--link-color, …)` and `text-decoration: none`. Giving this
+        anchor a BEM class takes it out of both selectors, and it falls back to
+        the user agent's own link blue and underline: a colour that is in no
+        token and that the wireframe's own `<a href="mailto:info@bfna.org">`
+        never had. Probe 44 compares this anchor's resolved colour against a
+        bare classless reference anchor, so re-adding a class fails a row
+        rather than changing a colour quietly.
+      -->
+      <p><a :href="`mailto:${email}`">{{ email }}</a></p>
 
       <!--
         The group. `legend` is bound to the same `heading` prop the `<h2>`
