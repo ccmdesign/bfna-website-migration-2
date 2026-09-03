@@ -29,4 +29,16 @@
   .stack[data-space="xl"] { --_stack-space: var(--space-xl); }
   .stack[data-space="2xl"] { --_stack-space: var(--space-2xl); }
   .stack[data-space="3xl"] { --_stack-space: var(--space-3xl); }
+  
+  /* Stack spacing — `data-gap` alias (canonical name; declared last so it
+     wins over `data-space` at equal specificity if both are present) */
+  .stack[data-gap="3xs"] { --_stack-space: var(--space-3xs); }
+  .stack[data-gap="2xs"] { --_stack-space: var(--space-2xs); }
+  .stack[data-gap="xs"] { --_stack-space: var(--space-xs); }
+  .stack[data-gap="s"] { --_stack-space: var(--space-s); }
+  .stack[data-gap="m"] { --_stack-space: var(--space-m); }
+  .stack[data-gap="l"] { --_stack-space: var(--space-l); }
+  .stack[data-gap="xl"] { --_stack-space: var(--space-xl); }
+  .stack[data-gap="2xl"] { --_stack-space: var(--space-2xl); }
+  .stack[data-gap="3xl"] { --_stack-space: var(--space-3xl); }
 }

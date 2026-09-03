@@ -9,6 +9,18 @@
      Data Attribute Controls for Spacing
      ======================================== */
   
+  /* Grid gap — `data-space` alias, declared before the canonical `data-gap`
+     block so `data-gap` wins at equal specificity if both are present */
+  .grid[data-space="3xs"] { --_grid-gap: var(--space-3xs); }
+  .grid[data-space="2xs"] { --_grid-gap: var(--space-2xs); }
+  .grid[data-space="xs"] { --_grid-gap: var(--space-xs); }
+  .grid[data-space="s"] { --_grid-gap: var(--space-s); }
+  .grid[data-space="m"] { --_grid-gap: var(--space-m); }
+  .grid[data-space="l"] { --_grid-gap: var(--space-l); }
+  .grid[data-space="xl"] { --_grid-gap: var(--space-xl); }
+  .grid[data-space="2xl"] { --_grid-gap: var(--space-2xl); }
+  .grid[data-space="3xl"] { --_grid-gap: var(--space-3xl); }
+  
   /* Grid gap */
   .grid[data-gap="3xs"] { --_grid-gap: var(--space-3xs); }
   .grid[data-gap="2xs"] { --_grid-gap: var(--space-2xs); }

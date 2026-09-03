@@ -25,4 +25,16 @@
   .cluster[data-space="xl"] { --_cluster-space: var(--space-xl); }
   .cluster[data-space="2xl"] { --_cluster-space: var(--space-2xl); }
   .cluster[data-space="3xl"] { --_cluster-space: var(--space-3xl); }
+  
+  /* Cluster spacing — `data-gap` alias (canonical name; declared last so it
+     wins over `data-space` at equal specificity if both are present) */
+  .cluster[data-gap="3xs"] { --_cluster-space: var(--space-3xs); }
+  .cluster[data-gap="2xs"] { --_cluster-space: var(--space-2xs); }
+  .cluster[data-gap="xs"] { --_cluster-space: var(--space-xs); }
+  .cluster[data-gap="s"] { --_cluster-space: var(--space-s); }
+  .cluster[data-gap="m"] { --_cluster-space: var(--space-m); }
+  .cluster[data-gap="l"] { --_cluster-space: var(--space-l); }
+  .cluster[data-gap="xl"] { --_cluster-space: var(--space-xl); }
+  .cluster[data-gap="2xl"] { --_cluster-space: var(--space-2xl); }
+  .cluster[data-gap="3xl"] { --_cluster-space: var(--space-3xl); }
 }
