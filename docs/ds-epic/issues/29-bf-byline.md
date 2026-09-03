@@ -73,3 +73,113 @@ by the diff check).
 ## Decisions
 
 _Runner appends here._
+
+**D-29.1 — the `ccmByLine` naming collision is resolved by changing nothing.**
+
+`src/components/ds/organisms/ccmByLine.vue` is left **completely untouched** —
+no rename, no edit, not one byte. It is a footer credit (`© {year} CCM Design`
+plus an attribution link), used once, from `ccmFooter.vue:5`. `bfByline` is a
+net-new **article** byline. The two have no relationship beyond a coincidental
+similarity of name, and **no later issue should conflate them**: an issue that
+finds itself wanting to "reuse" or "merge" them has misread one of the two.
+
+The collision is not merely tolerated, it does not exist, and that is provable
+from Nuxt's own name resolution rather than asserted. `scanComponents` builds a
+registered name by walking the configured `prefix` against the file name and
+stopping as soon as the two agree:
+
+| file | dir config (`nuxt.config.ts:168-201`) | registered name | tag |
+|---|---|---|---|
+| `components/ds/organisms/ccmByLine.vue` | `prefix: 'ccm'`, `pathPrefix: false` | `CcmByLine` — prefix dropped, the file name already starts with it | `<ccm-by-line>` |
+| `components/bf/Byline.vue` | `prefix: 'bf'`, `pathPrefix: false` | `BfByline` | `<bf-byline>` |
+
+Two identifiers, two kebab tags, one registry. Verified three ways, all in the
+acceptance run below: both names appear in `.nuxt/components.d.ts`; the probe
+renders `<bfByline>` and `<ccm-by-line />` side by side and asserts they are two
+different elements with different tag names and non-overlapping content; and
+`git diff --stat` on the legacy file prints nothing.
+
+**D-29.2 — a missing author renders nothing, never `[author]`.**
+
+The frozen wireframe (`pages/wireframes/insights/[slug].vue:8-9`) renders
+`By [author]` when `authors` is empty. That placeholder is a data-gap marker,
+and the gap is the ordinary case, not an edge one: **268 of the 371 rows in
+`content/bf/insights/` carry an empty `authors` array** (103 carry names — one
+row carries two). Shipping `[author]` would put the literal string on 72% of
+insight pages.
+
+| `author` | `date` | renders |
+|---|---|---|
+| a name | usable | `By <name>` + `<time>` |
+| a name | absent / unusable | `By <name>` |
+| `''` or whitespace | usable | the `<time>` alone — a dateline is a real thing; `By ` with nothing after it is not |
+| `''` or whitespace | absent / unusable | **no element at all** |
+
+The last row is the load-bearing one, and it is the same decision `bfTime` (#27)
+made for an unparseable date: an empty `<p class="bf-byline">` is not invisible.
+It is a flex container inside a `.stack` or `.cluster`, so it contributes a
+phantom `gap` and pushes the copy below it down a step on three insight pages
+out of four.
+
+`bfByline` mirrors `bfTime`'s trim-parse-`NaN` guard locally (one computed)
+rather than sharing it through `utils/format.ts`, so this issue edits no
+already-merged component. The duplication is checked, not trusted: the probe
+asserts the biconditional — a `<p>` exists **iff** something rendered inside it
+— from the DOM alone, so a future drift between the two guards fails the harness
+instead of shipping.
+
+**D-29.3 — contract deviations from this spec, and why.**
+
+| Spec | As built | Why |
+|---|---|---|
+| `date?: string` | `date?: string \| null` | The value passed will be `Insight['publish_date']`, declared `z.string().nullable()` (`content.config.ts:69`), and `bfTime` types its own `date` the same way. Widening an optional prop is source-compatible; the narrow version forces `?? undefined` at every call site. |
+| `By {{ author }}` as a bare text node | `<span class="bf-byline__author">` | A bare text run in a flex container is an anonymous flex item no selector, probe or consumer stylesheet can address — and the author half has to be conditional, which needs an element anyway. The frozen wireframe uses a `<span>` here too. |
+| — | one literal space between the halves | The visible space between two flex items is `gap`, a layout property invisible to anything reading the DOM as text; without the node `textContent` reads `By Anthony T. SilberfeldFeb 2018`. A whitespace-only text run is not a flex item (Flexbox §4), so no box, gap or measurement changes. |
+| `--_bf-byline-gap` (Utopia `xs`) | `--_bf-byline-gap: var(--_cluster-space, var(--space-xs))` | A flat declaration would work and would be a trap: `@layer components` outranks `@layer composition`, so the component's own rule would beat `.cluster[data-gap]` and silently make the documented composition API inert on this component. Chaining through `--_cluster-space` keeps both routes live, and the probe measures each against reference `.cluster` elements. |
+| — | `align-items: baseline` | `bfCardRow`'s reasoning (`Card.vue`): the author run and the date run may be set at different sizes by the header around them, and centring their boxes leaves two visibly different text baselines in what should read as one phrase. |
+
+**D-29.4 — substituted acceptance commands (residual #86 / harness #109).**
+
+The vitest harness on `dev` is broken and pre-existing, so acceptance is the
+probe under `scripts/check-probes.ts`, per the #20–#28 precedent.
+
+One command in the Acceptance block above is also **malformed and was
+replaced**: `grep -Lq "ccmByLine" src/components/bf/Byline.vue` cannot express
+its intent, because `-q` overrides `-L` — as written it exits **0 when the
+pattern is present**, the opposite of what it reads as. It is replaced by
+`! grep -q "ccmByLine" src/components/bf/Byline.vue`. The component therefore
+refers to the legacy organism by path and role and never by that identifier, and
+the collision evidence lives here and on the probe instead.
+
+The acceptance run, as executed:
+
+```bash
+cd bfna-website-nuxt
+npx nuxt typecheck   # 178 errors == the dev baseline; 0 under src/components/bf|src/types|src/composables/bf|content.config
+npx nuxt generate    # exit 0, 901 routes
+test -f src/components/bf/Byline.vue
+! grep -q "ccmByLine" src/components/bf/Byline.vue
+grep -q "BfByline" .nuxt/components.d.ts && grep -q "CcmByLine" .nuxt/components.d.ts
+git diff --stat -- src/components/ds/organisms/ccmByLine.vue          # empty
+grep -q "By " .output/public/bf-probe/29-bf-byline/index.html
+npx tsx scripts/check-probes.ts --only 29                              # 68/68 rows
+npx tsx scripts/check-probes.ts                                        # 21 probes, 978 rows, 0 failures
+```
+
+**D-29.5 — issue 50 should adopt `bfByline`.**
+
+The spec's Context section asks this question, and `issues.md` scopes issue 50
+with "**Out:** … a byline unless the data carries an author". The data does carry
+one: `Insight['authors']` is populated on 103 of 371 rows. So the condition is
+met and issue 50 **should** render `bfByline` in the insight-detail page header,
+passing `insight.authors.join(', ')` and `insight.publish_date` — the exact call
+the frozen wireframe already makes by hand at `insights/[slug].vue:8-10`.
+
+D-29.2 is what makes that safe to wire in unconditionally: on the 268 rows with
+no author the component renders the date alone, and on a row with neither it
+renders nothing, so issue 50 needs no `v-if` of its own and no second copy of
+the emptiness rule. It should **not** re-derive the join, the placeholder or the
+date formatting.
+
+No other Phase 4/5 template consumes `bfByline`; `bfCardInsight` deliberately
+does not (a card shows a date, not a byline — see #21).

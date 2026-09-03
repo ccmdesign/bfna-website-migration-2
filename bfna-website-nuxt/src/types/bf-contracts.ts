@@ -289,6 +289,61 @@ export interface TimeProps {
 }
 
 /**
+ * Props of `bfByline` — the article byline.
+ *
+ * ## `author` is a string, and the caller does the joining
+ *
+ * The real field is `Insight['authors']: string[]`, and the obvious contract is
+ * therefore an array. It is deliberately not one. A byline that accepts an
+ * array has to own the join — which separator, which conjunction, an Oxford
+ * comma or not, what "et al." threshold — and every one of those is an
+ * editorial decision that belongs to the page, not to a presentational
+ * molecule. The frozen wireframe already made the call at the call site
+ * (`insights/[slug].vue:8`: `insight.authors.join(', ')`), and this contract
+ * keeps it there.
+ *
+ * ## `date` is optional *and* nullable
+ *
+ * The spec types it `string`. It is widened here to `string | null` because
+ * the value that will be passed is `Insight['publish_date']`, which
+ * `content.config.ts` declares `z.string().nullable()` — 20 of the 371 rows
+ * are `null` — and because `bfTime`, which receives it, already types its own
+ * `date` the same way. Widening an optional prop is source-compatible; the
+ * narrow version would have made every call site write `?? undefined`.
+ *
+ * ## What an empty `author` means
+ *
+ * **268 of the 371 real insight rows carry an empty `authors` array.** The
+ * empty case is the ordinary path, not an edge case, and the component's
+ * answer to it is the same one `bfTime` gives an unparseable date: an empty or
+ * whitespace-only `author` renders no `By …` text, and a byline with neither a
+ * usable author nor a usable date renders **no element at all** rather than an
+ * empty flex container that contributes a phantom `gap` to its parent. The
+ * wireframe's literal `By [author]` placeholder is a data-gap marker and is
+ * never rendered.
+ *
+ * ## No relationship to the footer credit
+ *
+ * This is the *article* byline. The similarly-named organism under
+ * `src/components/ds/organisms/` is a copyright/attribution line for the page
+ * footer, is unrelated in purpose, and is left untouched by gh#38. They do not
+ * collide: Nuxt registers them under distinct names (see
+ * `docs/ds-epic/issues/29-bf-byline.md` § Decisions).
+ */
+export interface BylineProps {
+  /**
+   * The author line, already joined. `'Anthony T. Silberfeld'`, or
+   * `'Courtney Flynn Martino, Brandon Bohrn'` — never an array.
+   */
+  author: string
+  /**
+   * ISO date string, handed straight to `bfTime`, which owns every question
+   * about parsing it and about what a `datetime` attribute may contain.
+   */
+  date?: string | null
+}
+
+/**
  * Props of `bfSkipLink`.
  *
  * One prop, because the atom is one anchor. The label is the default slot, not
