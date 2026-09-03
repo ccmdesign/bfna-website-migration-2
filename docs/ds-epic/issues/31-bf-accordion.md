@@ -212,3 +212,19 @@ Every colour is an existing semantic token: `--color-neutral-tint-60` (marker),
 `--outline-focus` (halo). The ring is `--color-text` and never `currentcolor` —
 the gh#24-P2-1 finding: it is painted outside the control on the page ground,
 where a ring in the control's own colour can go light-on-light (WCAG 1.4.11).
+
+### D-31.8 — review finding P2-1: the body gap is padding, not margin
+
+`.bf-accordion__body` first used `margin-block-start` for the gap between the
+summary row and the disclosed content. There is no border or padding between
+that margin and the body's first child, so the two collapse: the gap becomes
+`max(--_bf-accordion-body-gap, whatever the caller's first paragraph declares)`,
+and the custom property governs the spacing only for content that happens to
+carry no top margin of its own.
+
+A hook that silently stops working depending on what is slotted into it is worse
+than no hook. Both edges of the body are now padding, which does not collapse.
+
+Findings from the inline diff review of PR #149: **P1 0 · P2 1 · P3 2**, all
+three applied in `fix(review)`. Nothing was left unapplied, so no residual issues
+were opened.

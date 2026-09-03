@@ -74,7 +74,7 @@ defineProps<AccordionProps>()
   -->
   <details class="bf-accordion" :open="open">
     <!--
-      The label is text, not markup. `wfSection`'s archive block wraps the year
+      The label is text, not markup. `archive.vue`'s per-year block wraps the year
       in a `<strong>`; that is a caller's typographic choice about a composed
       string, and the spec puts the composition on the caller (issue 55) rather
       than growing a slot here before there is a second occurrence to justify
@@ -243,7 +243,7 @@ defineProps<AccordionProps>()
 
   /*
     The focus ring the stack does not otherwise declare for a `<summary>`. Same
-    two-ring treatment as `bfButton` (:258), `bfSkipLink` and `bfBreadcrumb`, for
+    two-ring treatment as `bfButton` (:259), `bfSkipLink` and `bfBreadcrumb`, for
     the same two reasons: `--outline-focus` supplies the halo, and the `outline`
     is what survives forced-colors mode, where `box-shadow` is dropped.
 
@@ -257,8 +257,18 @@ defineProps<AccordionProps>()
   }
 
   .bf-accordion__body {
+    /*
+      Review finding (gh#40 P2-1). Both of these are **padding**, not margin, and
+      that is the whole content of the fix: a `margin-block-start` here has no
+      border or padding between it and the body's first child, so the two
+      margins collapse into one and the gap becomes `max(hook, whatever the
+      caller's first paragraph declares)`. The hook would then govern the
+      spacing only for content that happens to have no top margin of its own —
+      a custom property that silently stops working depending on what is slotted
+      into it. Padding does not collapse.
+    */
+    padding-block-start: var(--_bf-accordion-body-gap);
     padding-block-end: var(--_bf-accordion-padding-block);
-    margin-block-start: var(--_bf-accordion-body-gap);
   }
 }
 </style>
