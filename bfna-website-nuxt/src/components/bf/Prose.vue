@@ -18,15 +18,18 @@
  *
  * ## What is ported verbatim, and why that is the point
  *
- * `inline()`, the legacy pre-pass, the line loop, the `Block` union and the
- * `[body copy]` fallback are the wf source's own, character for character. The
- * epic's rule 10 is that a `bf-*` component renders the same data its `wf-*`
- * counterpart renders in the matching slot; for a parser, "the same data" means
- * the same *parse*, so any improvement here — nested lists, ordered lists,
- * preserved emphasis — would be a behaviour change dressed as a port. The wf
- * source's own comment says where that work belongs ("swap for a real renderer
- * when production styling needs bold/links preserved"), and it is not this
- * issue.
+ * `inline()`, the legacy pre-pass, the line loop and the `Block` union are the
+ * wf source's own, character for character. The epic's rule 10 is that a `bf-*`
+ * component renders the same data its `wf-*` counterpart renders in the
+ * matching slot; for a parser, "the same data" means the same *parse*, so any
+ * improvement here — nested lists, ordered lists, preserved emphasis — would be
+ * a behaviour change dressed as a port. The wf source's own comment says where
+ * that work belongs ("swap for a real renderer when production styling needs
+ * bold/links preserved"), and it is not this issue.
+ *
+ * The one deliberate divergence is the **empty-body case**: the wf source
+ * prints a `[body copy]` placeholder and this component renders nothing
+ * (residual #186, taken in gh#61). Reasoning at the template below.
  *
  * ## Heading ranks start at 2, and cannot start lower
  *
@@ -136,21 +139,34 @@ const blocks = computed<Block[]>(() => {
     restates it.
   -->
   <div class="bf-prose | stack" data-gap="s">
-    <template v-if="blocks.length">
-      <template v-for="(b, i) in blocks" :key="i">
-        <h2 v-if="b.tag === 'h2'">{{ b.text }}</h2>
-        <h3 v-else-if="b.tag === 'h3'">{{ b.text }}</h3>
-        <ul v-else-if="b.tag === 'ul'">
-          <li v-for="li in b.items" :key="li">{{ li }}</li>
-        </ul>
-        <p v-else>{{ b.text }}</p>
-      </template>
+    <!--
+      No `v-if="blocks.length"` guard around the loop: an empty list renders no
+      children on its own, and the guard only existed to select between the
+      blocks and the placeholder that is now gone.
+    -->
+    <template v-for="(b, i) in blocks" :key="i">
+      <h2 v-if="b.tag === 'h2'">{{ b.text }}</h2>
+      <h3 v-else-if="b.tag === 'h3'">{{ b.text }}</h3>
+      <ul v-else-if="b.tag === 'ul'">
+        <li v-for="li in b.items" :key="li">{{ li }}</li>
+      </ul>
+      <p v-else>{{ b.text }}</p>
     </template>
     <!--
-      The empty-content fallback, ported verbatim. A visible placeholder rather
-      than nothing at all, because a body that failed to arrive is a content
-      defect a reviewer must be able to see on the page.
+      Empty content renders **nothing** — residual #186, decided here for every
+      template at once. The frozen `wfProse` writes a visible `[body copy]`
+      placeholder, and #45 ported it deliberately: in a wireframe, a body that
+      failed to arrive is a content defect a reviewer must be able to see on the
+      page. On the public site it is scaffolding shipped to a visitor — 97 of
+      the 354 `bfInsights` rows and 3 `bfProjects` rows store a null body
+      (video and infographic items, where the media *is* the body), and every
+      one of those pages was printing `[body copy]` to a reader.
+
+      So the component emits no placeholder and no empty `<p>`: the `.stack`
+      root stays, childless, and contributes no gap. The wireframe keeps its own
+      placeholder untouched (D2) — `wfProse` is not edited, and the two
+      renderers now differ here on purpose. Probe 45 asserts the new behaviour
+      by the same two rows that used to assert the old one.
     -->
-    <p v-else>[body copy]</p>
   </div>
 </template>

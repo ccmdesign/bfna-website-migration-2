@@ -1261,8 +1261,11 @@ export interface ProseProps {
    *
    * Optional, and explicitly nullable: `data`-collection fields arrive as
    * `string | null | undefined` and a body that is missing is a normal state,
-   * not a caller error. Both render the same `[body copy]` placeholder, which
-   * is the frozen wireframe's own fallback.
+   * not a caller error. Both render **nothing** — no placeholder, no empty
+   * `<p>` — since residual #186: 97 `bfInsights` rows and 3 `bfProjects` rows
+   * store a null body (video and infographic items, where the media is the
+   * body), and the frozen wireframe's `[body copy]` placeholder was reaching
+   * readers on every one of them. The wireframe keeps its own placeholder (D2).
    */
   content?: string | null
 }

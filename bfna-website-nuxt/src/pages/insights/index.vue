@@ -267,10 +267,22 @@ const remaining = computed<number>(() => Math.max(filtered.value.length - visibl
   <!--
     Zone 1 — the feed header. `heading` and `tagline` come from `pages.json`'s
     `insights` row; the fallback is the frozen page's own.
+
+    **The trail is two entries, not the frozen source's one** — residual
+    [#188](https://github.com/ccmdesign/bfna-website-migration-2/issues/188).
+    `bfBreadcrumb` (#20) treats the *last* crumb as the current page and never
+    links it, positionally, whether or not it carries a `to`. A one-entry
+    `[{ label: 'Home', to: '/' }]` trail is therefore all-last, and this page
+    was shipping `<span aria-current="page">Home</span>`: a breadcrumb telling
+    the reader they are on the homepage while they are on the feed, with the
+    `to: '/'` silently dropped and no link anywhere in it. Naming this page as
+    the final, unlinked crumb restores Home to a real `<a href="/">` and puts
+    `aria-current="page"` where it belongs — the same two-then-current shape
+    `/projects` (#51) and both detail routes already build.
   -->
   <bfPageHeader
     label="Insights feed"
-    :crumbs="[{ label: 'Home', to: '/' }]"
+    :crumbs="[{ label: 'Home', to: '/' }, { label: feedPage?.heading ?? 'Insights' }]"
     :heading="feedPage?.heading ?? 'Insights'"
     :tagline="feedPage?.description"
   />
