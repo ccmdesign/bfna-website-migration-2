@@ -1,0 +1,27 @@
+{
+  "slug": "how-to-fix-democracy",
+  "heading": "How to Fix Democracy",
+  "excerpt": "Since its origins, democracy has been a work in progress; today, many question its resilience.\nThe Bertelsmann Foundation and Humanity in Action have teamed up with Andrew Keen, author of How to Fix the Future, to launch this video and podcast series exploring practical responses to the threats facing democracies around the world.",
+  "description": "How to Fix Democracy explores the challenges facing democratic systems and the ideas, innovations, and solutions that can strengthen them. Through conversations with experts, practitioners, and leaders from around the world, the podcast examines how societies can rebuild trust, address polarization, and ensure democracy remains resilient in a changing world.\n\nHosted by author and writer Andrew Keen, How to Fix Democracy brings together leading thinkers, writers, politicians, technologists, and business leaders to explore the challenges facing democracy and examine ideas for its renewal.\n\nLaunched in 2019, the podcast explores democracy's origins, evolution, successes, and shortcomings in the 21st century. Through in-depth conversations, the series examines how democratic institutions and societies can respond to today's challenges and adapt for the future.",
+  "kind": "podcast-series",
+  "program": "Democracy",
+  "external_url": "https://www.howtofixdemocracy.org/",
+  "image": "https://bfna.simplyas.com/assets/57132cc8-5ebd-4e2c-a8c2-73ec6c1c014e",
+  "parent_project": null,
+  "archived": false,
+  "exclude_from_grid": null,
+  "external_only": null,
+  "featured": true,
+  "nav": true,
+  "grid_eligible": true,
+  "grid_order": 2,
+  "microsite_cta": "The complete experience lives on the How to Fix Democracy microsite.",
+  "participation": {
+    "title": "Use the platform",
+    "ctas": [
+      "Open How to Fix Democracy",
+      "Subscribe for updates"
+    ]
+  },
+  "podcast": null
+}

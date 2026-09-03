@@ -1,0 +1,27 @@
+{
+  "slug": "transatlantic-barometer",
+  "heading": "Transatlantic Barometer",
+  "excerpt": "The Transatlantic Barometer’s main fixture is a website that provides users with a synopsis of the policy positions and engagement of 31 key transatlantic actors: the United States, Canada, the United Kingdom, and the European Union, as well as its 27 member states.",
+  "description": "The Transatlantic Barometer is an interactive platform that tracks the policy positions and engagement of 31 key transatlantic actors, including the United States, Canada, the United Kingdom, the European Union and its member states, on issues of importance to North America and Europe. The platform provides comparative insights into how governments and institutions respond to shared challenges and shape transatlantic cooperation.",
+  "kind": "data-analysis-platform",
+  "program": "Transatlantic Relations & Global Challenges",
+  "external_url": "https://www.transatlanticbarometer.org/",
+  "image": "https://bfna.simplyas.com/assets/26e31f94-1250-45e4-a7dd-ca9c7d9d2102",
+  "parent_project": null,
+  "archived": false,
+  "exclude_from_grid": null,
+  "external_only": null,
+  "featured": true,
+  "nav": true,
+  "grid_eligible": true,
+  "grid_order": 9007199254740991,
+  "microsite_cta": "The complete experience lives on the Transatlantic Barometer microsite.",
+  "participation": {
+    "title": "Use the platform",
+    "ctas": [
+      "Open Transatlantic Barometer",
+      "Subscribe for updates"
+    ]
+  },
+  "podcast": null
+}

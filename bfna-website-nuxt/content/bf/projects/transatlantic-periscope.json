@@ -1,0 +1,27 @@
+{
+  "slug": "transatlantic-periscope",
+  "heading": "Transatlantic Periscope",
+  "excerpt": "The Transatlantic Periscope is an interactive, multimedia tool that brings together expert commentary, high-quality media coverage, official policy documents, quantitative data, social media posts, and gray literature.",
+  "description": "The Transatlantic Periscope is an interactive multimedia platform providing insights into U.S.–European relations. Curated by leading partner institutions across Europe, it brings together expert analysis, policy documents, media coverage, and data to provide a comprehensive view of issues shaping the transatlantic relationship.",
+  "kind": "interactive-multimedia-platform",
+  "program": "Transatlantic Relations & Global Challenges",
+  "external_url": "https://transatlanticperiscope.org/",
+  "image": "https://bfna.simplyas.com/assets/87879ef0-ba3c-4258-8235-08e6c62a6aa8",
+  "parent_project": null,
+  "archived": false,
+  "exclude_from_grid": null,
+  "external_only": null,
+  "featured": true,
+  "nav": true,
+  "grid_eligible": true,
+  "grid_order": 9007199254740991,
+  "microsite_cta": "The complete experience lives on the Transatlantic Periscope microsite.",
+  "participation": {
+    "title": "Use the platform",
+    "ctas": [
+      "Open Transatlantic Periscope",
+      "Subscribe for updates"
+    ]
+  },
+  "podcast": null
+}

@@ -1,0 +1,27 @@
+{
+  "slug": "the-bertelsmann-foundation-fellowship",
+  "heading": "The Bertelsmann Foundation Fellowship",
+  "excerpt": "The Bertelsmann Foundation Fellowship (BFF), formerly known as the Congressional European Parliamentary Initiative (CEPI), offers a unique transatlantic hybrid experience spanning five months, designed to foster connections, knowledge transfer, and learning. Each year, the fellowship delves into global challenges confronting the transatlantic alliance. Commencing with an in-person trip to Washington, D.C., fellows then embark on a three-month virtual program, meeting weekly with experts relevant to the year's theme. The fellowship culminates with a visit to Brussels facilitating further in-person engagement. At the program's conclusion, fellows collaborate on a final publication presenting concrete policy recommendations pertaining to the chosen topic, released as an outcome of the BFF initiative. Fellows then also become a part of a larger, active Alumni network- finding opportunities to engage with the Bertelsmann Foundation Fellowship beyond their fellowship year.",
+  "description": "Building on the legacy of the Congressional European Parliamentary Initiative (CEPI), the Bertelsmann Foundation Fellowship (BFF) is an eight-month hybrid transatlantic fellowship program that connects emerging leaders from North America and Europe to exchange perspectives, build lasting networks, and deepen their understanding of the issues shaping the transatlantic relationship.\n\nEach year, fellows explore a defining global challenge through a combination of virtual discussions with experts, policymakers, and thought leaders, as well as in-person engagements that foster dialogue, collaboration, and relationship-building across the Atlantic and beyond. The program culminates in a collaborative writing project that captures fellows' perspectives and insights on the year's theme.\n\nFollowing the program, fellows become part of a growing transatlantic alumni network, with continued opportunities to engage with the Bertelsmann Foundation, fellow participants, and future cohorts.",
+  "kind": "fellowship",
+  "program": "Future Leadership",
+  "external_url": null,
+  "image": "https://bfna.simplyas.com/assets/8e338dbf-a9be-49b8-a36f-017e3f865db2",
+  "parent_project": null,
+  "archived": null,
+  "exclude_from_grid": null,
+  "external_only": null,
+  "featured": true,
+  "nav": true,
+  "grid_eligible": true,
+  "grid_order": 0,
+  "microsite_cta": null,
+  "participation": {
+    "title": "Become a Fellow",
+    "ctas": [
+      "Apply for the next cohort",
+      "Nominate a candidate"
+    ]
+  },
+  "podcast": null
+}

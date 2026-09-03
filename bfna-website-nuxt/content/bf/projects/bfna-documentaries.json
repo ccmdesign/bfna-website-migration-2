@@ -1,0 +1,28 @@
+{
+  "slug": "bfna-documentaries",
+  "heading": "BFNA Documentaries",
+  "excerpt": "BFNA Documentaries brings the Foundation’s research and reporting to life on screen — candid, honest films that let viewers draw their own conclusions.",
+  "description": "BFNA Documentaries brings the Foundation’s research and reporting to life on screen. Believing in the power of film to tell the critical stories of our complicated times, its films present candid, honest perspectives without projecting an agenda, allowing viewers to draw their own conclusions.\n\nThe catalog spans more than 35 films, including the series Democracy in Cities, People in Evidence, and Leadership in Action, with works screened and recognized at festivals internationally.",
+  "kind": null,
+  "program": "Transatlantic Relations & Global Challenges",
+  "external_url": "https://bfnadocs.org/",
+  "image": null,
+  "parent_project": null,
+  "archived": true,
+  "exclude_from_grid": null,
+  "external_only": null,
+  "featured": false,
+  "nav": false,
+  "grid_eligible": false,
+  "grid_order": 9007199254740991,
+  "microsite_cta": "The complete experience lives on the BFNA Documentaries microsite.",
+  "participation": {
+    "title": "Use the platform",
+    "ctas": [
+      "Open BFNA Documentaries",
+      "Subscribe for updates"
+    ]
+  },
+  "podcast": null,
+  "pending": "Q7"
+}

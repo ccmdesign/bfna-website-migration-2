@@ -1,0 +1,28 @@
+{
+  "slug": "transponder-magazine",
+  "heading": "Transponder Magazine",
+  "excerpt": "The Transponder is the Bertelsmann Foundation’s biannual publication focusing on issues that impact the transatlantic relationship. The magazine features short-form and long-form articles, interviews, infographics and photo essays that explore topics related to democracy, technology, and geopolitics through a transatlantic lens. \nWant to receive Transponder updates and future issues? [Subscribe here.](https://mailchi.mp/bfna.org/transponder-sign-up)",
+  "description": null,
+  "kind": "podcast",
+  "program": "Transatlantic Relations & Global Challenges",
+  "external_url": null,
+  "image": "https://bfna.simplyas.com/assets/dd93b2fe-69cc-4c04-b301-c158c4880487",
+  "parent_project": null,
+  "archived": null,
+  "exclude_from_grid": null,
+  "external_only": true,
+  "featured": false,
+  "nav": false,
+  "grid_eligible": false,
+  "grid_order": 9007199254740991,
+  "microsite_cta": null,
+  "participation": {
+    "title": "Follow this project",
+    "ctas": [
+      "Subscribe for updates",
+      "Read the latest"
+    ]
+  },
+  "podcast": null,
+  "pending": "Q6"
+}

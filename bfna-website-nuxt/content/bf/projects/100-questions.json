@@ -1,0 +1,27 @@
+{
+  "slug": "100-questions",
+  "heading": "100 Questions",
+  "excerpt": "Recent technological advances are changing the way we do business, govern, and interact with each other. This shift is causing some concern over the future of work as technological innovations such as artificial intelligence and automation affect work. This challenge requires all members of the society to take action that will ensure technology creates a future that works and benefits everyone.",
+  "description": null,
+  "kind": null,
+  "program": "RE-TAG (was fake category: Archives)",
+  "external_url": "https://future-of-work.the100questions.org",
+  "image": "https://bfna.simplyas.com/assets/75c1a980-6412-41eb-b71c-43fc6eda1e97",
+  "parent_project": null,
+  "archived": true,
+  "exclude_from_grid": null,
+  "external_only": null,
+  "featured": false,
+  "nav": false,
+  "grid_eligible": false,
+  "grid_order": 9007199254740991,
+  "microsite_cta": "The complete experience lives on the 100 Questions  microsite.",
+  "participation": {
+    "title": "Use the platform",
+    "ctas": [
+      "Open 100 Questions ",
+      "Subscribe for updates"
+    ]
+  },
+  "podcast": null
+}

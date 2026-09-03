@@ -1,0 +1,27 @@
+{
+  "slug": "astropolitics",
+  "heading": "Astropolitics",
+  "excerpt": "Astropolitics examines how space is becoming an increasingly important arena of geopolitical competition and cooperation. Through its dedicated microsite, the project provides analysis and insights into emerging developments in space technology, strategic competition, and international governance, highlighting the challenges and opportunities shaping the future of this critical domain.",
+  "description": "Astropolitics examines how space is becoming an increasingly important arena of geopolitical competition and cooperation. Through its dedicated microsite, the project provides analysis and insights into emerging developments in space technology, strategic competition, and international governance, highlighting the challenges and opportunities shaping the future of this critical domain.",
+  "kind": "research-initiative",
+  "program": "Transatlantic Relations & Global Challenges",
+  "external_url": "#astropolitics-microsite-url",
+  "image": null,
+  "parent_project": null,
+  "archived": false,
+  "exclude_from_grid": null,
+  "external_only": null,
+  "featured": false,
+  "nav": false,
+  "grid_eligible": true,
+  "grid_order": 9007199254740991,
+  "microsite_cta": "The complete experience lives on the Astropolitics microsite.",
+  "participation": {
+    "title": "Follow this project",
+    "ctas": [
+      "Subscribe for updates",
+      "Read the latest"
+    ]
+  },
+  "podcast": null
+}
