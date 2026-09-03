@@ -78,3 +78,34 @@ test -f src/types/bf-contracts.ts
 ## Decisions
 
 _Runner appends here._
+
+### gh#11 runner decisions
+
+1. **`.gitkeep` holds `src/components/bf/` open.** The spec deletes `Probe.vue`
+   before merge and git cannot track an empty directory, so the auto-import root
+   would not exist in a fresh clone. An empty `.gitkeep` keeps it in the tree.
+   It is not a `.vue` file, so Nuxt's component scan ignores it, and
+   `npx nuxt generate` exits 0 against the empty registered directory.
+
+2. **Probe rendered at `src/pages/bf-probe/02-bf-scaffold.vue`**, matching the
+   BRIEF "Probe pages" convention (`<nn>-<slug>`), and deleted alongside
+   `Probe.vue` in the same PR. Auto-import was confirmed twice: `data-bf-probe`
+   appeared in the prerendered HTML, and the page rendered live at
+   `/bf-probe/02-bf-scaffold` with clean hydration and no console errors.
+
+3. **`Crumb.to` is widened past `WfCrumb.to`.** `WfCrumb` declares
+   `to?: string`; this spec prescribes `to?: string | Record<string, unknown>`
+   to admit route-location objects. The spec is authoritative over strict
+   `wf-*` parity here, so the widened type ships.
+
+4. **`SearchResultRow` is included.** It appears in this spec but not in the
+   GitHub issue body's interface list; per the runner rules the spec wins.
+
+5. **New array entry is last in `components:`.** Placed after the `wireframe`
+   entry rather than beside `ds/`. `bf` is a unique prefix, so ordering carries
+   no resolution risk, and appending leaves every existing entry byte-untouched.
+
+6. **Typecheck gate = no new errors.** `dev` carries 178 pre-existing
+   `error TS` lines; baseline was captured on this worktree before any edit and
+   the post-change count is identical (178), with zero errors in
+   `src/components/bf`, `src/types`, `src/composables/bf` or `content.config`.
