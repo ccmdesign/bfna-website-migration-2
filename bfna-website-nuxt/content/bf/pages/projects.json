@@ -1,0 +1,21 @@
+{
+  "slug": "projects",
+  "heading": "All Projects",
+  "subheading": null,
+  "excerpt": "Every BFNA project, grouped by program.",
+  "description": "Every BFNA project, grouped by program.",
+  "authors": [],
+  "image": null,
+  "video_url": null,
+  "download": null,
+  "external_url": null,
+  "publish_date": null,
+  "bucket": "page",
+  "format": null,
+  "kind": null,
+  "program": null,
+  "archived": false,
+  "evergreen": true,
+  "copy_source": "ccm-draft-2026-07-31 (wireframe copy, pending Irene review)",
+  "legacy": null
+}

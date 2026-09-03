@@ -1,0 +1,120 @@
+[
+  {
+    "label": "About",
+    "items": [
+      {
+        "label": "Mission",
+        "to": "/about"
+      },
+      {
+        "label": "Board of Directors",
+        "to": "/about#board"
+      },
+      {
+        "label": "Team",
+        "to": "/about#team"
+      },
+      {
+        "label": "Bertelsmann Stiftung",
+        "href": "#",
+        "external": true
+      },
+      {
+        "label": "Contact",
+        "to": "/about#contact"
+      }
+    ]
+  },
+  {
+    "label": "Programs",
+    "items": [
+      {
+        "label": "Democracy",
+        "to": "/democracy"
+      },
+      {
+        "label": "Transatlantic Relations & Global Challenges",
+        "to": "/transatlantic-relations-global-challenges"
+      },
+      {
+        "label": "Future Leadership",
+        "to": "/future-leadership"
+      }
+    ]
+  },
+  {
+    "label": "Projects",
+    "items": [
+      {
+        "label": "Transatlantic Barometer",
+        "to": "/projects/transatlantic-barometer"
+      },
+      {
+        "label": "Transatlantic Periscope",
+        "to": "/projects/transatlantic-periscope"
+      },
+      {
+        "label": "RANGE",
+        "to": "/projects/range"
+      },
+      {
+        "label": "How to Fix Democracy",
+        "to": "/projects/how-to-fix-democracy"
+      },
+      {
+        "label": "The Bertelsmann Foundation Fellowship",
+        "to": "/projects/the-bertelsmann-foundation-fellowship"
+      },
+      {
+        "label": "All Projects →",
+        "to": "/projects",
+        "strong": true
+      }
+    ]
+  },
+  {
+    "label": "Insights",
+    "items": [
+      {
+        "label": "All Insights",
+        "to": "/insights"
+      },
+      {
+        "label": "Articles",
+        "to": "/insights?format=article"
+      },
+      {
+        "label": "Reports",
+        "to": "/insights?format=report"
+      },
+      {
+        "label": "Videos",
+        "to": "/insights?format=video"
+      },
+      {
+        "label": "Infographics",
+        "to": "/insights?format=infographic"
+      },
+      {
+        "label": "Transponder Magazine",
+        "href": "#transponder-magazine-url",
+        "external": true
+      },
+      {
+        "label": "Archive",
+        "to": "/archive",
+        "strong": true
+      }
+    ]
+  },
+  {
+    "label": "Podcasts",
+    "href": "#podcast-platform-url",
+    "external": true
+  },
+  {
+    "label": "Documentaries",
+    "href": "https://bfnadocs.org",
+    "external": true
+  }
+]
