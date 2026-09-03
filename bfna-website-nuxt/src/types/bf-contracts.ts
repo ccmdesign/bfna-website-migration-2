@@ -29,6 +29,66 @@ export interface CardBaseProps {
 }
 
 /**
+ * The heading level a card wrapper renders its title at.
+ *
+ * Exactly the three levels `bfCard`'s stylesheet supports. D-20.4 widened
+ * every selector in that base — the stretched `::after`, the `:has()` hover
+ * and focus rules, the `position: static` exemption — from the frozen skin's
+ * bare `h3` to `:is(h2, h3, h4)`, and this union is the other half of that
+ * decision: the same three levels, named once, so a wrapper cannot ask for a
+ * level the base does not style.
+ *
+ * Not a `number`. `headingLevel="5"` would typecheck, render an `<h5>` the
+ * base's selectors do not match, and silently ship a card whose entire hit
+ * area and focus indicator are gone — the failure mode `TimeFormat`'s comment
+ * describes for a silently-ignored `string` prop, with a worse consequence.
+ */
+export type CardHeadingLevel = 2 | 3 | 4
+
+/**
+ * Props shared by every typed card wrapper — `bfCardInsight`,
+ * `bfCardProject`, and the four that follow (#32–#36).
+ *
+ * One member, and the reason it exists is [#128]: heading level is a function
+ * of the **page outline**, not of the component. The same card correctly holds
+ * an `h3` in a section under an `h2` and an `h4` in one under an `h3`
+ * (BRIEF §5 rule 9 — one `h1`, sequential levels). Before this the wrappers
+ * hard-coded `<h3>`, so a card placed in a subsection — which the templates in
+ * #47/#49/#50/#51/#52 do — emitted a level jump that no probe looked for.
+ *
+ * ## Why this is separate from `CardBaseProps`
+ *
+ * They look like they should merge and they must not. `span` is `bfCard`'s own
+ * prop and is deliberately **undeclared** on the wrappers (D-21.2): it falls
+ * into `$attrs`, and `v-bind`ing `$attrs` onto a component matches it against
+ * that component's declared props, so it arrives at the base as a prop without
+ * six wrappers redeclaring a one-member union. `headingLevel` cannot travel
+ * that road — `bfCard` renders no heading at all, so there is nothing on the
+ * base for it to match — and the wrapper is the only thing that can act on it.
+ * Two interfaces, two audiences.
+ *
+ * ## Why the default lives in each wrapper
+ *
+ * The type says a level is optional; `withDefaults(…, { headingLevel: 3 })` in
+ * each wrapper says which one you get. `3` is the no-change value — it is what
+ * every wrapper hard-coded and what every existing call site renders — so
+ * adopting this prop moves no pixel until a caller asks it to.
+ *
+ * [#128]: https://github.com/ccmdesign/bfna-website-migration-2/issues/128
+ */
+export interface CardWrapperProps {
+  /**
+   * The heading element the wrapper renders — `2`, `3` or `4`, as
+   * `<component :is="`h${headingLevel}`">`. Defaults to `3`.
+   *
+   * Set it from the *page*, matching the section the card group sits in. A
+   * card under an `h2` section heading takes the default; one in a subsection
+   * whose heading is an `h3` takes `4`.
+   */
+  headingLevel?: CardHeadingLevel
+}
+
+/**
  * Colourway of the `bfLogo` wordmark.
  *
  * `default` paints `--color-text`; `white` paints `--color-text-inverse` (the

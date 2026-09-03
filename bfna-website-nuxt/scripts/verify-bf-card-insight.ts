@@ -181,36 +181,84 @@ if (!existsSync(frozenPath)) {
 } else {
   const frozen = read(frozenPath)
 
-  /* Prop names, parsed out of each file's own `defineProps` type literal. */
+  /*
+   * Prop names, parsed out of each file's own props type. The `interface Props`
+   * arm accepts an `extends` clause: since gh#31 the bf-* wrapper extends the
+   * shared `CardWrapperProps` (#128), and a regex that silently failed to match
+   * would report *no* props rather than a mismatch — a check that passes by
+   * finding nothing is worse than one that fails.
+   */
   const propNames = (source: string): string[] => {
-    const block = source.match(/defineProps<\s*\{([\s\S]*?)\}\s*>|interface Props\s*\{([\s\S]*?)\n\}/)
+    const block = source.match(/defineProps<\s*\{([\s\S]*?)\}\s*>|interface Props\b[^{]*\{([\s\S]*?)\n\}/)
     const body = block?.[1] ?? block?.[2] ?? ''
     return [...body.matchAll(/^\s*(\w+)\??\s*:/gm)].map(m => m[1]!).sort()
   }
 
+  /**
+   * The props the shared card-wrapper contract contributes — added across the
+   * whole wrapper family in gh#31 (residual #128) because heading level is a
+   * function of the page outline rather than of the component.
+   *
+   * They arrive by **extending** `CardWrapperProps`, not by being written into
+   * this component's own `Props` body, which is why the parity row below still
+   * compares equal to the frozen four: the two are checked separately, so a
+   * prop declared inline here would still fail parity while the shared one is
+   * asserted at its real source.
+   */
+  const SHARED_WRAPPER_PROPS = ['headingLevel']
+
   const frozenProps = propNames(frozen)
-  check('every wf-* prop name survives, none added', propNames(componentSource), frozenProps)
+  const bfProps = propNames(componentSource)
+
+  check('every wf-* prop name survives, none added inline', bfProps, frozenProps)
   check('  …and there really were props to compare', frozenProps.length, 4)
+  check('  …which came from a props block that actually parsed',
+    bfProps.includes('insight'), true)
+
+  /*
+   * The shared half, asserted at its source rather than by counting names the
+   * `Props` body does not contain: the interface extends the shared contract,
+   * the contract is imported from the one module BRIEF §5 rule 11 allows, and
+   * the contract really declares what this file relies on.
+   */
+  check('the wrapper extends the shared CardWrapperProps (#128)',
+    /interface Props extends CardWrapperProps\b/.test(componentCode), true)
+  check('  …imported from ~/types/bf-contracts, not redeclared',
+    /import type \{[^}]*\bCardWrapperProps\b[^}]*\} from '~\/types\/bf-contracts'/.test(componentCode),
+    true)
+  check('  …and that module declares exactly the shared props it promises',
+    SHARED_WRAPPER_PROPS.filter(name =>
+      new RegExp(`interface CardWrapperProps[\\s\\S]*?\\b${name}\\?:`).test(read(contractsPath))),
+    SHARED_WRAPPER_PROPS)
+  check('  …with no shared prop redeclared inline on the wrapper',
+    bfProps.filter(name => SHARED_WRAPPER_PROPS.includes(name)), [])
 
   /*
    * Defaults, parsed out of each file's `withDefaults` call. Written to accept
    * both spellings of the props type — the frozen file passes an inline type
    * literal to `defineProps`, the bf-* one names a documented `Props`
    * interface — because the shapes must agree and the syntax need not.
+   *
+   * Run over the **comment-stripped** source (residual #115's rule, applied
+   * here too): the bf-* file documents its defaults inside the object literal,
+   * and a `word: value` pair in prose would otherwise be parsed as a default.
    */
   const defaults = (source: string): string => {
     const block = source.match(/withDefaults\(\s*defineProps<[\s\S]*?>\(\)\s*,\s*\{([\s\S]*?)\}\s*\)/)
     return [...(block?.[1] ?? '').matchAll(/(\w+)\s*:\s*([^,\n]+)/g)]
       .map(m => `${m[1]}=${m[2]!.trim()}`)
       .filter(entry => !entry.endsWith('=undefined'))
+      .filter(entry => !SHARED_WRAPPER_PROPS.some(name => entry.startsWith(`${name}=`)))
       .sort()
       .join(' ')
   }
 
   check('excerpt/excerptLength defaults match the frozen source',
-    defaults(componentSource), defaults(frozen))
+    defaults(componentCode), defaults(code(frozen)))
   check('  …and those defaults are the documented ones',
-    defaults(componentSource), 'excerpt=true excerptLength=140')
+    defaults(componentCode), 'excerpt=true excerptLength=140')
+  check('the shared headingLevel default is the no-change value, 3',
+    /headingLevel:\s*3\b/.test(componentCode), true)
 
   /* The truncation arithmetic, minus the retired `plain()` call. */
   check('the truncation arithmetic is the frozen one (slice/trimEnd/…)',
@@ -284,6 +332,20 @@ check('bfChip replaces the wireframe\'s <span class="wf-chip">',
   (componentCode.match(/<bfChip\b/g) ?? []).length, 3)
 check('the Archive chip is conditional on insight.archived',
   /<bfChip\s+v-if="insight\.archived">Archive<\/bfChip>/.test(componentCode), true)
+
+/*
+ * The two gh#31 retrofits, pinned in the source as well as in probe 21's
+ * runtime rows — a source check catches a regression that deletes the feature
+ * outright, where the probe catches one that keeps it and breaks it.
+ */
+check('the heading level comes from headingLevel, not a hard-coded <h3> (#128)',
+  /<component\s+:is="`h\$\{headingLevel\}`"/.test(componentCode), true)
+check('  …and no literal <h3> survives in the template',
+  /<h3[\s>]/.test(componentCode), false)
+check('a blank heading renders no heading element and no link (#130)',
+  /<component[^>]*\bv-if="hasHeading"/.test(componentCode), true)
+check('  …with the dev-time warning that names the defect',
+  /import\.meta\.dev/.test(componentCode) && /console\.warn/.test(componentCode), true)
 
 /* ------------------------------------------------------------------ *
  * 6. Shared types live in bf-contracts (BRIEF §5 rule 11).
