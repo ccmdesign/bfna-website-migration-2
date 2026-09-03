@@ -144,6 +144,7 @@ const seen = reactive({
   outlineStyle: '',
   outlineWidth: Number.NaN,
   outlineColor: '',
+  ownColor: '',
   boxShadow: ''
 })
 
@@ -433,6 +434,34 @@ const finalise = () => {
       return String(seen.boxShadow !== '' && seen.boxShadow !== 'none')
     })()
   })
+  results.push({
+    /*
+     * The declared-value row above says the rule *names* `--color-text`; this
+     * one says the browser *resolved* it to that colour on the page. Compared,
+     * not typed out: the `bf-probe` layout paints `html { color: var(--color-text) }`,
+     * so the root's computed `color` is what `--color-text` resolves to here,
+     * and no colour literal enters this file (epic ground rule 2).
+     */
+    label: '  …and the resolved ring colour IS --color-text (compared, not typed out)',
+    expected: getComputedStyle(document.documentElement).color,
+    actual: seen.outlineColor || 'never focused'
+  })
+  results.push({
+    /*
+     * And it is *not* the anchor's own colour. This is the gh#24-P2-1 failure
+     * made checkable: `outline-offset` puts the ring outside the element, on
+     * the page ground, so a ring in `currentcolor` can paint light-on-light.
+     * A UA link is blue and the page text is not, so the two differ here —
+     * if a future change made links inherit `--color-text` this row would go
+     * quiet rather than wrong, which is why the declared-value row exists too.
+     */
+    label: '  …and NOT the anchor\'s own currentcolor (gh#24-P2-1)',
+    expected: 'true',
+    actual: (() => {
+      if (seen.outlineStyle === '') return 'never focused'
+      return String(seen.outlineColor !== seen.ownColor)
+    })()
+  })
 
   checks.value = results
 }
@@ -455,6 +484,7 @@ onMounted(() => {
     seen.outlineStyle = cs.outlineStyle
     seen.outlineWidth = Number.parseFloat(cs.outlineWidth)
     seen.outlineColor = cs.outlineColor
+    seen.ownColor = cs.color
     seen.boxShadow = cs.boxShadow
   })
 
@@ -518,10 +548,18 @@ const verdict = computed(() =>
     :data-probe-keys="armed ? 'Tab' : undefined"
   >
     <h1>Probe 03 — composition gap API</h1>
+    <p class="probe__lede">
+      Each primitive is rendered at <code>data-gap="xs"</code>,
+      <code>data-gap="l"</code> and <code>data-gap="3xl"</code>. The three gaps
+      must be visibly distinct and strictly increasing. A fourth row uses the
+      <code>data-space</code> alias at <code>l</code> and must equal the
+      <code>data-gap="l"</code> row.
+    </p>
 
     <!--
       gh#146. The first — and only — tabbable element on the page, so one
-      trusted Tab from a fresh document lands here. Deliberately bare: no
+      trusted Tab from a fresh document lands here. It sits ahead of every
+      other section for that reason, not for emphasis. Deliberately bare: no
       `bf-*` component, no class that could carry an outline of its own (the
       scoped `.probe__item` rule below is unlayered author CSS and would
       outrank the whole cascade), nothing but an `<a href>`. If this shows a
@@ -543,14 +581,6 @@ const verdict = computed(() =>
         >a bare anchor</a>
       </p>
     </section>
-
-    <p class="probe__lede">
-      Each primitive is rendered at <code>data-gap="xs"</code>,
-      <code>data-gap="l"</code> and <code>data-gap="3xl"</code>. The three gaps
-      must be visibly distinct and strictly increasing. A fourth row uses the
-      <code>data-space</code> alias at <code>l</code> and must equal the
-      <code>data-gap="l"</code> row.
-    </p>
 
     <section
       v-for="p in primitives"
