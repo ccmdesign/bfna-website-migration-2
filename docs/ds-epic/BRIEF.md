@@ -22,7 +22,7 @@ retire the legacy stack at `/` and install the redirect map.
 | DoD-1 | Site prerenders | `cd bfna-website-nuxt && npx nuxt generate` exits 0 |
 | DoD-2 | Types clean | `cd bfna-website-nuxt && npm run typecheck` exits 0 |
 | DoD-3 | Every template reachable from nav | Each route in §7 is linked from `bfNav` or `bfFooter` (menus data), no orphans |
-| DoD-4 | `/wireframes/*` byte-identical | `git diff --stat $EPIC_BASE_SHA -- bfna-website-nuxt/src/pages/wireframes bfna-website-nuxt/src/components/wireframe bfna-website-nuxt/src/composables/useWfContent.ts bfna-website-nuxt/src/layouts/wireframe.vue bfna-website-nuxt/public/css/wireframe.css bfna-website-nuxt/src/assets/wireframe-data` → **empty** |
+| DoD-4 | `wf-*` source byte-identical | The `wf-*` **source files** — `pages/wireframes/**`, `components/wireframe/**`, `layouts/wireframe.vue`, `composables/useWfContent.ts`, `public/css/wireframe.css`, `assets/wireframe-data/**` — are byte-identical to their pre-epic state: `git diff --stat $EPIC_BASE_SHA -- bfna-website-nuxt/src/pages/wireframes bfna-website-nuxt/src/components/wireframe bfna-website-nuxt/src/composables/useWfContent.ts bfna-website-nuxt/src/layouts/wireframe.vue bfna-website-nuxt/public/css/wireframe.css bfna-website-nuxt/src/assets/wireframe-data` → **empty**. The **rendered output** of `/wireframes/*` MAY change as a side-effect of composition-layer bug fixes (issues 03–05 land in the shared composition stylesheets, which `wf-*` files consume but this gate does not cover) — that is expected, not a DoD-4 failure. |
 | DoD-5 | Legacy retired | No file under `bfna-website-nuxt/src/components/legacy/`; redirect map from `02-legacy-retirement-inventory.md` §E live |
 | DoD-6 | No new colour | `git diff $EPIC_BASE_SHA -- '*.css' '*.vue'` introduces no new colour literal or `--color-*` token |
 
@@ -68,6 +68,15 @@ retire the legacy stack at `/` and install the redirect map.
 8. **Specs live at `docs/ds-epic/issues/<NN>-<slug>.md`.** The runner writes its spec/decisions there and links them from the journal. **Never edit this brief and never edit `issues.md`.**
 9. **A11y**: WCAG 2.1 AA. One `h1` per page, sequential heading levels, visible focus, keyboard-operable nav and disclosure widgets, `alt` required on content images.
 10. **Real content, not lorem.** Components must tolerate real excerpt lengths (100–980 chars). Acceptance for every component: it renders the same data its `wf-*` counterpart renders in the matching `/wireframes/*` slot.
+11. **Shared types.** All shared TS types live in `src/types/bf-contracts.ts` (issue 02 creates it; issue 09 adds the zod-inferred entity types Insight, Project, Program, Person, Page, Announcement). Every bf-* component imports types from there and nowhere else. No component declares a shared type inline.
+
+## Probe pages
+
+Each `bf-*` component issue that needs a live render adds one route at
+`src/pages/bf-probe/<nn>-<slug>.vue`, rendering the component with
+representative sample data; that issue's acceptance check runs against it.
+Probes are dev-only and never linked from nav; the final cutover issue (59)
+deletes `src/pages/bf-probe/` before the epic closes.
 
 ## 6. Data contract (fixed names — do not invent variants)
 
@@ -98,7 +107,7 @@ Composables (`src/composables/data/bf*.ts`) only `queryCollection` + filter/sort
 | **Review checkpoint 1 — data + composable layer** (after issue 13): schemas match the canonical shape, counts are right, no synthesis left in components | Claudio | after issue 13 merges |
 | **Review checkpoint 2 — first template** (after issue 47, Home): visual parity with `/wireframes`, no new colour, a11y pass | Aline + Claudio | after issue 47 merges |
 | Resolve `bfContactSection` keep-vs-decompose and the person-modal open decision if the runner escalates them | Claudio | issues 44 / 24 |
-| Confirm program-slug parity with GGS taxonomy before the redirect map lands | Claudio | before issue 57 |
+| ~~Confirm program-slug parity with GGS taxonomy~~ — final, decided: `democracy`, `transatlantic-relations-global-challenges`, `future-leadership` | Claudio | resolved |
 
 ## 9. Epic-closing verification
 

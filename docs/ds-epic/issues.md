@@ -41,13 +41,13 @@ Every issue additionally passes `npm run typecheck` and `npx nuxt generate`; the
 | 19 | `bf-skip-link` | `bfSkipLink` + `[data-external]` marker | atom | 02 | `.wf-skip-link`, `[data-external]` | none | BF-161, BF-162 | skip link visible on focus, targets `#main`; marker documented |
 | **Phase 4 — Molecules** |
 | 20 | `bf-card` | `bfCard` base (+ `data-span="full"`) | molecule | 02, 03 | `wfCard.vue` | none | BF-190; D8 | 3 slots render; `span="full"` spans `1 / -1` in a `.grid` |
-| 21 | `bf-card-insight` | `bfCardInsight` | molecule | 20, 16, 18 | `wfCardInsight.vue` | `bfInsights` (type) | BF-192 | renders a real 980-char insight; archive chip conditional |
-| 22 | `bf-card-project` | `bfCardProject` | molecule | 20, 16, 17 | `wfCardProject.vue` | `bfProjects` (type) | BF-193 | media/chips on-off matrix; external ↗ marker present |
+| 21 | `bf-card-insight` | `bfCardInsight` | molecule | 20, 16, 18, 10 | `wfCardInsight.vue` | `bfInsights` (type) | BF-192 | renders a real 980-char insight; archive chip conditional |
+| 22 | `bf-card-project` | `bfCardProject` | molecule | 20, 16, 17, 10 | `wfCardProject.vue` | `bfProjects` (type) | BF-193 | media/chips on-off matrix; external ↗ marker present |
 | 23 | `bf-card-featured` | `bfCardFeatured` | molecule | 20, 17 | `wfCardFeatured.vue` | `bfInsights` (type) | BF-195 | 16/9 media + Featured chip render |
 | 24 | `bf-card-person` | `bfCardPerson` + modal decision | molecule | 20, 17 | `wfCardPerson.vue` | `bfPeople` (type) | BF-197, BF-174 | 1/1 portrait, `job_title` fallback `—`; decision written to spec |
 | 25 | `bf-card-program` | `bfCardProgram` | molecule | 20 | `wfCardProgram.vue` | `bfPrograms` (type) | BF-200; as-built E | prop type is the real `Program`, not an inline shape |
 | 26 | `bf-card-product` | `bfCardProduct` | molecule | 20, 17, 16 | `wfCardProduct.vue` | `bfProjects` (type) | v2 §4 E3 (no BF-id) | linked vs plain+pending branches; `span="full"` default |
-| 27 | `bf-card-row` | `bfCardRow` dense list row | molecule | 20, 16, 18 | new (6th wrapper) | `bfInsights`/`bfProjects` (types) | BF-202 | renders both entity types from one prop union |
+| 27 | `bf-card-row` | `bfCardRow` dense list row | molecule | 20, 16, 18, 10 | new (6th wrapper) | `bfInsights`/`bfProjects` (types) | BF-202 | renders both entity types from one prop union |
 | 28 | `bf-breadcrumb` | `bfBreadcrumb` | molecule | 02 | `wfBreadcrumb.vue` | none | BF-204 | linked + plain crumbs; `aria-current="page"` on last |
 | 29 | `bf-byline` | `bfByline` (+ naming-collision fix) | molecule | 02, 18 | new | none | BF-205; v2 §5 | renders author + `bfTime`; `ccmByLine` untouched |
 | 30 | `bf-filter-bar` | `bfFilterBar` | molecule | 16 | raw `.wf-chip` toggles | none | BF-209; as-built D.3 | multi-select emits; arrow-key roving focus |
@@ -64,20 +64,20 @@ Every issue additionally passes `npm run typecheck` and `npx nuxt generate`; the
 | 40 | `bf-cta-section` | `bfCtaSection` | organism | 39, 15 | `wfCtaSection.vue` | none | BF-169; D2 | CTA-buttons only; no `form` prop exists |
 | 41 | `bf-notice` | `bfNotice` | organism | 02 | `.wf-note` | none | BF-170 | variants render; `role="status"` where announced |
 | 42 | `bf-grids` | `bfGridInsights` + `bfGridProjects` | organism | 04, 21, 22 | `wfGridInsights/Projects.vue` | `bfInsights`/`bfProjects` (types) | BF-171; D9 | zero inline `grid-template-columns`; reflows via `data-min-width` |
-| 43 | `bf-search-shell` | `bfSearchShell` | organism | 30, 27 | inline `search.vue` | none | BF-172 | input + facets + results + relevance meter, all props/events |
+| 43 | `bf-search-shell` | `bfSearchShell` | organism | 30, 27, 33 | inline `search.vue` | none | BF-172 | input + facets + results + relevance meter, all props/events |
 | 44 | `bf-contact-section` | `bfContactSection` | organism | 39, 34, 15 | `wfContactSection.vue` | none | v2 §4 E4 (no BF-id) | form composed from `bfFormField`; keep-vs-decompose recorded |
-| 45 | `bf-prose` | `bfProse` | organism | 02 | `wfProse.vue` | none | v2 §1a (Insight detail); as-built A | markdown-lite and legacy-HTML paths both render |
+| 45 | `bf-prose` | `bfProse` | organism | 02, 05 | `wfProse.vue` | none | v2 §1a (Insight detail); as-built A | markdown-lite and legacy-HTML paths both render |
 | **Phase 6 — Templates** (nav order) |
 | 46 | `layout-bf-shell` | Site shell layout | template | 35, 36, 19, 41, 13 | `layouts/wireframe.vue` | `bfAnnouncements`, menus module | BF-194 | nav/footer receive props; skip link first in DOM |
-| 47 | `page-home` | Home `/` | template | 46, 37, 25, 22, 23, 26, 42 | `pages/wireframes/index.vue` | `bfPrograms`, `bfProjects`, `bfInsights`, `bfAnnouncements` | BF-196 | `/` renders 4 bands; `pages/index.vue` deleted |
+| 47 | `page-home` | Home `/` | template | 46, 37, 25, 22, 23, 26 | `pages/wireframes/index.vue` | `bfPrograms`, `bfProjects`, `bfInsights`, `bfAnnouncements` | BF-196 | `/` renders 4 bands; `pages/index.vue` deleted |
 | 48 | `page-program-hub` | Program hub `/{program}` | template | 46, 38, 42, 33, 12 | `pages/wireframes/[area].vue` | `bfPrograms`, `bfProjects`, `bfInsights` | BF-198; D10 | 3 hubs prerender; Insights band conditional |
-| 49 | `page-insights-index` | Insights list `/insights` | template | 46, 38, 42, 30, 32, 11 | `pages/wireframes/insights/index.vue` | `bfInsights` | BF-199 | filters narrow results; load-more paginates; archive link present |
-| 50 | `page-insight-detail` | Insight detail `/insights/:slug` | template | 46, 38, 45, 42, 41, 33 | `pages/wireframes/insights/[slug].vue` | `bfInsights` | BF-201 | 354 routes prerender; archive banner conditional |
+| 49 | `page-insights-index` | Insights list `/insights` | template | 46, 38, 42, 30, 32, 33, 11 | `pages/wireframes/insights/index.vue` | `bfInsights` | BF-199 | filters narrow results; load-more paginates; archive link present |
+| 50 | `page-insight-detail` | Insight detail `/insights/:slug` | template | 46, 38, 45, 42, 41, 33, 11, 13 | `pages/wireframes/insights/[slug].vue` | `bfInsights` | BF-201 | 354 routes prerender; archive banner conditional |
 | 51 | `page-projects-index` | Projects index `/projects` | template | 46, 38, 42, 12 | `pages/wireframes/projects/index.vue` | `bfProjects`, `bfPrograms` | BF-203 | one band per program + pending-retag band |
-| 52 | `page-project-detail` | Project detail `/projects/:slug` | template | 46, 38, 45, 40, 42, 16, 33 | `pages/wireframes/projects/[slug].vue` | `bfProjects`, `bfInsights` | BF-206 | external and full branches both render |
+| 52 | `page-project-detail` | Project detail `/projects/:slug` | template | 46, 38, 45, 40, 42, 16, 33, 11, 12 | `pages/wireframes/projects/[slug].vue` | `bfProjects`, `bfInsights` | BF-206 | external and full branches both render |
 | 53 | `page-about` | About `/about` | template | 46, 38, 24, 44, 39, 04 | `pages/wireframes/about.vue` | `bfPeople`, `bfPages` | BF-208 | `#team`/`#board` anchors exist; `pages/about.vue` deleted |
-| 54 | `page-search` | Search `/search` | template | 46, 38, 43, 27, 11, 12 | `pages/wireframes/search.vue` | `bfInsights`, `bfProjects`, `bfPrograms` | BF-210; D4 | query returns ranked results; `pages/search.vue` deleted |
-| 55 | `page-archive` | Archive `/archive` | template | 46, 38, 31, 16, 18, 11 | `pages/wireframes/archive.vue` | `bfInsights` | BF-212 | one accordion per year, counts match `archived` |
+| 54 | `page-search` | Search `/search` | template | 46, 38, 43, 27, 11, 12, 13 | `pages/wireframes/search.vue` | `bfInsights`, `bfProjects`, `bfPrograms` | BF-210; D4 | query returns ranked results; `pages/search.vue` deleted |
+| 55 | `page-archive` | Archive `/archive` | template | 46, 38, 31, 16, 18, 11, 27 | `pages/wireframes/archive.vue` | `bfInsights` | BF-212 | one accordion per year, counts match `archived` |
 | 56 | `error-404` | 404 / error page | template | 46, 33 | 3× duplicated block, `src/error.vue` | none | BF-214; D4 | unknown route renders `bfEmptyState`, status 404 |
 | **Phase 7 — Cutover** |
 | 57 | `cutover-redirects` | Redirect map + legacy route retirement | cutover | 47–56 | `server/middleware/redirects.ts` | none | 02 §D, §E | every row of 02 §E resolves 301/410 as specified |
@@ -100,7 +100,7 @@ Create `src/components/bf/` and register it in `nuxt.config.ts` `components:` wi
 
 ## 03 composition-gap-api
 
-Make `data-gap` work on `.stack`, `.cluster`, `.switcher` and `.grid` (today it is honoured only on `.grid`, so ~50 wireframe call sites are silent no-ops), with `data-space` accepted as an alias. Values map to the existing Utopia space scale (`3xs`…`xl`); no new spacing values. `.box`, `.frame`, `.cover`, `.reel`, `.imposter`, `.container` are explicitly unchanged. **Out:** editing any `wf-*` file or `public/css/wireframe.css` to consume the fix (D2 freezes them); the fix is additive in the composition stylesheet only. **Accept:** a probe page renders three visibly distinct gaps on all four primitives, and `/wireframes/*` output is unchanged.
+Make `data-gap` work on `.stack`, `.cluster`, `.switcher` and `.grid` (today it is honoured only on `.grid`, so ~50 wireframe call sites are silent no-ops), with `data-space` accepted as an alias. Values map to the existing Utopia space scale (`3xs`…`xl`); no new spacing values. `.box`, `.frame`, `.cover`, `.reel`, `.imposter`, `.container` are explicitly unchanged. **Out:** editing any `wf-*` file or `public/css/wireframe.css` to consume the fix (D2 freezes them); the fix is additive in the composition stylesheet only. **Accept:** a probe page renders three visibly distinct gaps on all four primitives, and the `wf-*` source files are byte-identical to their pre-epic state (DoD-4) — `/wireframes/*` rendered output may change as a side-effect.
 
 ## 04 composition-grid-min-width
 
@@ -108,7 +108,7 @@ Make `.grid[data-min-width]` deliver a real responsive contract — `repeat(auto
 
 ## 05 composition-data-measure
 
-Resolve `data-measure`: today it only applies through `.center`, leaving eight stray `<p data-measure>` call sites inert. Make it a universal rule (`[data-measure] { max-width: <value>; }` with the existing measure tokens) in the composition layer. **Out:** changing `.center`'s own behaviour; editing the eight `wf-*` call sites (D2). **Accept:** `data-measure` caps line length on a bare `<p>`, a `<div>` and an `<li>` in a probe page, `/wireframes/*` renders unchanged, and `npm run typecheck` plus `npx nuxt generate` pass.
+Resolve `data-measure`: today it only applies through `.center`, leaving eight stray `<p data-measure>` call sites inert. Make it a universal rule (`[data-measure] { max-width: <value>; }` with the existing measure tokens) in the composition layer. **Out:** changing `.center`'s own behaviour; editing the eight `wf-*` call sites (D2). **Accept:** `data-measure` caps line length on a bare `<p>`, a `<div>` and an `<li>` in a probe page, the `wf-*` source files are byte-identical to their pre-epic state (DoD-4) — `/wireframes/*` rendered output may change as a side-effect — and `npm run typecheck` plus `npx nuxt generate` pass.
 
 ## 06 token-hygiene
 
