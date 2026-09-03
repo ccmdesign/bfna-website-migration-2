@@ -134,10 +134,9 @@ const gridItems = ['1', '2', '3', '4', '5', '6']
     <section class="probe__section">
       <h2>.grid[data-min-width] — responsive contract (issue 04)</h2>
       <p class="probe__note">
-        Column count is never authored. Both grids below carry
-        <strong>no inline <code>style</code></strong>; the track list is
-        resolved from the available inline size against the
-        <code>data-min-width</code> floor.
+        Column count is never authored. None of the three grids below carries
+        an inline <code>style</code>; each track list is resolved from the
+        available inline size against the <code>data-min-width</code> floor.
       </p>
 
       <div class="probe__case">
