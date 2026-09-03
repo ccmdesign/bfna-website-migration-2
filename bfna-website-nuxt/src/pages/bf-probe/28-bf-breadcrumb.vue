@@ -251,6 +251,60 @@ onMounted(() => {
     gallery?.querySelectorAll<HTMLAnchorElement>('a.bf-breadcrumb__link') ?? []
   )
 
+  /**
+   * The `.bf-breadcrumb__link:focus-visible` rule as declared, found inside a
+   * `@layer components` block. Same stylesheet walk as
+   * `layeredBfBreadcrumbRuleFound`, returning the rule rather than a boolean so
+   * the rows below can read what it actually declares.
+   */
+  const focusRule = (): CSSStyleRule | null => {
+    const LAYER_BLOCK = globalThis.CSSLayerBlockRule
+    if (!LAYER_BLOCK) return null
+
+    const walk = (rules: CSSRuleList, insideComponents: boolean): CSSStyleRule | null => {
+      for (const rule of Array.from(rules)) {
+        const nowInside =
+          insideComponents
+          || (rule instanceof LAYER_BLOCK && (rule as CSSLayerBlockRule).name === 'components')
+
+        if (
+          nowInside
+          && rule instanceof CSSStyleRule
+          && rule.selectorText.includes('.bf-breadcrumb__link')
+          && rule.selectorText.includes(':focus-visible')
+        ) {
+          return rule
+        }
+
+        if (rule instanceof CSSImportRule) {
+          try {
+            const imported = rule.styleSheet?.cssRules
+            const hit = imported ? walk(imported, nowInside) : null
+            if (hit) return hit
+          } catch {
+            // Cross-origin import target — unreadable, not a failure.
+          }
+          continue
+        }
+
+        const nested = (rule as CSSGroupingRule).cssRules
+        const hit = nested ? walk(nested, nowInside) : null
+        if (hit) return hit
+      }
+      return null
+    }
+
+    for (const sheet of Array.from(document.styleSheets)) {
+      try {
+        const hit = walk(sheet.cssRules, false)
+        if (hit) return hit
+      } catch {
+        // Cross-origin sheet.
+      }
+    }
+    return null
+  }
+
   const results: Check[] = [
     // --- 1. the landmark ----------------------------------------------------
     {
@@ -461,34 +515,73 @@ onMounted(() => {
         return document.activeElement === a
       }).length
     },
+    /*
+     * The ring is asserted from the **declared rule**, not by focusing a link
+     * and reading its computed style. That was the first attempt and it is not
+     * a sound check: `:focus-visible` is a heuristic about the *last input
+     * modality*, so a programmatic `.focus()` matches it in a document that has
+     * seen no pointer interaction and does not match it in one that has. It
+     * therefore passed under the headless harness and failed in a browser pane
+     * on identical, correct code — the worst kind of check, since it teaches
+     * the next reader to distrust a green run.
+     *
+     * Forcing a trusted Tab is the sound alternative and the harness supports
+     * it (`data-probe-keys`, probe-harness.md Decision 4), but it makes the
+     * whole page's verdict wait on a keypress, and probe 28's other 69 rows are
+     * static-DOM questions that have no business being gated on one. Probe 19
+     * remains the epic's keyboard probe; this one asserts that the rule the
+     * review added exists, is in the right layer, and declares both rings.
+     */
     {
-      label: '  …and a focused crumb link resolves a visible ring (outline + halo)',
+      label: 'a .bf-breadcrumb__link:focus-visible rule exists in @layer components',
       expected: 'true',
+      actual: String(focusRule() !== null)
+    },
+    {
+      label: '  …and it declares BOTH an outline and the --outline-focus halo',
+      expected: 'outline+halo',
       actual: (() => {
-        const a = allLinks[0]
-        if (!a) return 'missing'
-        a.focus()
-        const s = getComputedStyle(a)
-        const hasOutline = s.outlineStyle !== 'none' && parseFloat(s.outlineWidth) > 0
-        const hasHalo = s.boxShadow !== 'none' && s.boxShadow !== ''
-        return String(hasOutline && hasHalo)
+        const r = focusRule()
+        if (!r) return 'no rule'
+        const hasOutline = r.style.outline !== '' || r.style.outlineWidth !== ''
+        const hasHalo = r.style.boxShadow !== ''
+        return `${hasOutline ? 'outline' : '-'}+${hasHalo ? 'halo' : '-'}`
       })()
     },
     {
       /*
-       * A direct equality, not a disjunction: the `bf-probe` layout paints
-       * `html { color: var(--color-text) }`, so the root's computed colour *is*
-       * the resolved token, and the ring must equal it. Written this way
-       * because `getPropertyValue('--color-text')` returns the unresolved
-       * `var()` chain, which no comparison against an `rgb()` could use.
+       * `--color-text`, not `currentcolor` — the gh#24-P2-1 finding. The ring is
+       * drawn outside the link on the page ground, so a ring in the link's own
+       * colour can paint light-on-light (WCAG 1.4.11).
        */
-      label: '  …drawn in --color-text (the root colour), not currentcolor (gh#24-P2-1)',
+      label: '  …in --_bf-breadcrumb-focus-color, never currentcolor (gh#24-P2-1)',
+      expected: 'true',
+      actual: (() => {
+        const r = focusRule()
+        if (!r) return 'no rule'
+        const decl = `${r.style.outline} ${r.style.outlineColor}`
+        return String(
+          decl.includes('--_bf-breadcrumb-focus-color') && !decl.includes('currentcolor')
+        )
+      })()
+    },
+    {
+      label: '  …and that hook resolves to the root colour (--color-text)',
       expected: getComputedStyle(document.documentElement).color,
       actual: (() => {
         const a = allLinks[0]
         if (!a) return 'missing'
-        a.focus()
-        return getComputedStyle(a).outlineColor
+        /*
+         * Resolved through a throwaway element that *does* paint the hook, so
+         * the value is read as a real colour rather than as the unresolved
+         * `var()` chain `getPropertyValue` would hand back.
+         */
+        const probe = document.createElement('span')
+        probe.style.color = 'var(--_bf-breadcrumb-focus-color)'
+        a.append(probe)
+        const resolved = getComputedStyle(probe).color
+        probe.remove()
+        return resolved
       })()
     },
     {

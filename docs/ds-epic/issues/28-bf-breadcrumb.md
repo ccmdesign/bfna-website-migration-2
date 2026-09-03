@@ -190,3 +190,38 @@ correctly **not** focusable.
 Worth carrying forward: the missing global link-focus rule is not specific to
 this component. Raised as a residual rather than fixed here, since a rule in
 the shared stack is outside a single molecule's blast radius.
+
+### D-28.10 — browser testing caught an unsound focus assertion
+
+The STEP 6 browser run disagreed with the headless harness: identical, correct
+code reported **PASS 71/71** under `check-probes.ts` and **FAIL 69/71** in a
+browser pane. Both failing rows were the ones added for D-28.9, and the cause
+was the assertion, not the component.
+
+`:focus-visible` is a heuristic about the **last input modality**. A
+programmatic `.focus()` matches it in a document that has seen no pointer
+interaction and does not match it in one that has — so a `.focus()`-then-read-
+computed-style check is a check on the environment's interaction history.
+Green in CI, red on a reviewer's screen, on code that is fine: the failure mode
+most corrosive to trusting a probe suite at all.
+
+Rewritten to assert the **declared rule** through the CSSOM — that
+`.bf-breadcrumb__link:focus-visible` exists inside `@layer components`,
+declares both an `outline` and the `--outline-focus` halo, and binds its colour
+to `--_bf-breadcrumb-focus-color` rather than `currentcolor` — plus a live
+resolution of that hook to the root colour. Environment-independent, and it
+still fails if the rule is removed.
+
+Forcing a trusted Tab via `data-probe-keys` (probe-harness.md Decision 4) is
+the stronger tool and was rejected here on proportion: it makes the whole
+page's verdict wait on a keypress, and probe 28's other 69 rows are static-DOM
+questions with no business being gated on one. Probe 19 remains the epic's
+keyboard probe.
+
+**Verified in both environments after the rewrite:** `check-probes.ts --only 28`
+→ 73/73, and the same page in a real browser → PASS 73/73, no console errors.
+Measured there directly: `::before` is `none` on the first crumb and `"/" / ""`
+on every later one (the alt-text form survives the build), each later `<li>` is
+~13px wider than its child (the separator is genuinely painted), the separator
+resolves to a muted grey against near-black labels, the crumb elements are
+`A, A, A, SPAN`, and `aria-current` is present on the last one only.
