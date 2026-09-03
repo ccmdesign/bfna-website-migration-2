@@ -137,6 +137,13 @@ instead of surfacing it. On `bfCardProject` the guard is defensive —
 form — and is kept because the wrapper family should not have two answers to
 one question.
 
+One content delta rides along and is named here rather than left to be
+noticed: the wrappers now render the **trimmed** heading (`headingText`) where
+they previously interpolated the raw field. Judging emptiness on the trimmed
+value while rendering the untrimmed one would be two different answers to the
+same question, and a leading or trailing space in a link's accessible name is
+noise either way. No real row is affected.
+
 **D-22.3 — the `[data-external]` clause is not implemented; the heading link is
 internal.** This spec's Scope paragraph asks for two things that cannot both
 hold: *"the heading ALWAYS links to `/projects/<slug>`"* and *"the link itself
