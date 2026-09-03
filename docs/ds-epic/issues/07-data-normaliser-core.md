@@ -168,3 +168,48 @@ diff /tmp/normalise-run-1.txt /tmp/normalise-run-2.txt   # empty: idempotent acr
   members, so their emitted sequences are byte-identical; 31 of the 38 project documents move
   (their `grid_order` line only), and the run stays idempotent (identical sha256 sweep across
   two runs).
+
+- **Boolean flags are never null** (gh#140, promoted residual #139, Sep 3): the helper
+  `boolOrNull()` — which preserved the `null` of an absent source flag — is replaced by
+  `boolFlag()`, `null | undefined → false`, at **every** flag emission site. The nullable
+  form was not merely cosmetic: `@nuxt/content` stores a nullable boolean column in a shape
+  its own `.where(field, '=', true)` predicate does not match, so
+  `queryCollection('bfProjects').where('external_only', '=', true).all()` returned **zero
+  rows** against a database that plainly held `transponder-magazine.json` with
+  `"external_only": true` — an empty result set and no error. Field by field, in
+  `content/bf/**`:
+
+  | collection | field | before | after |
+  |---|---|---|---|
+  | `bfInsights` | `archived` | 256 true / 95 false / **20 null** | 256 true / **115 false** |
+  | `bfInsights` | `evergreen` | 371 false (nullable in type) | 371 false |
+  | `bfProjects` | `archived` | 17 true / 14 false / **7 null** | 17 true / **21 false** |
+  | `bfProjects` | `exclude_from_grid` | 2 true / **36 null** | 2 true / **36 false** |
+  | `bfProjects` | `external_only` | 1 true / **37 null** | 1 true / **37 false** |
+  | `bfPages` | `archived` | 7 false (nullable in type) | 7 false |
+  | `bfPages` | `evergreen` | 7 true (nullable in type) | 7 true |
+
+  Untouched because they were already non-nullable: `bfInsights.featured` /
+  `retired_news`, `bfProjects.featured` / `nav` / `grid_eligible`, `bfPeople.board`.
+  The whole `content/bf/**` diff is exactly those 100 lines — 27 `archived`, 36
+  `exclude_from_grid`, 37 `external_only` — `null` → `false` and nothing else.
+
+  Collapsing the state loses no information: `archived: null` and `archived: false` mean
+  the same thing to every consumer, and every consumer already tested truthiness
+  (`!i.archived`, `p.external_only`), never `=== null`. `isGridEligible()` reads the **raw
+  snapshot** row, where `null` and `false` are equally falsy, so `grid_eligible`, `nav` and
+  the derived `src/assets/bf-data/menus.json` are provably unchanged — the `menus.json`
+  diff is empty, and probes 11/12/13 pass with their counts unmoved (22/38/35 rows).
+  The `Raw*` input interfaces keep `?: boolean | null`, since the *snapshots* really are
+  sparse; only the emitted `InsightDoc` / `ProjectDoc` / `PageDoc` narrow to `boolean`.
+
+- **`--check` mode on the normaliser** (gh#140): `npx tsx
+  scripts/normalise-wireframe-data.ts --check` reads the already-emitted `content/bf/**`
+  and exits `1` if any field in the new `BOOLEAN_FIELDS` table (13 flag columns across
+  insights / projects / people / pages) is `null`, missing, or not a JS boolean; it writes
+  nothing, so it is safe in acceptance and CI. A normal writing run ends with the *same*
+  assertion, so the writing path cannot regress while the check path stays green.
+  Verified in both directions: green on the regenerated tree, and red — `projects/
+  transponder-magazine.json: archived is null, expected a boolean`, exit 1 — on a
+  deliberately re-nulled document. Substitutes for a vitest case per the epic's broken-
+  harness rule (#86).

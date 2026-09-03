@@ -104,15 +104,19 @@ const EXTERNAL_URL = 'https://www.transponder-magazine.example/issue-7'
 const INTERNAL_URL = 'https://www.bfna.org/transponder'
 
 /*
- * `.all()` and a client-side filter, deliberately — not
- * `.where('external_only', '=', true)`. `external_only` is
- * `z.boolean().nullable()`, and the nullable column round-trips through the
- * content SQLite store in a shape that `= true` matches zero rows of (verified:
- * the query returned an empty array while the row is plainly there). `featured`
- * on `bfInsights` is a non-nullable `z.boolean()` and does match, which is why
- * probe 23 can push its filter into the query and this one cannot. Filtering in
- * the page keeps the assertion honest — it reads every project row and asserts
- * which of them are products.
+ * `.all()` and a client-side filter, deliberately.
+ *
+ * HISTORY (D-26.4 → gh#140): this used to be the only form that worked.
+ * `external_only` was `z.boolean().nullable()`, and the nullable column
+ * round-tripped through the content SQLite store in a shape that
+ * `.where('external_only', '=', true)` matched zero rows of, while the row was
+ * plainly there. gh#140 made every `bf*` boolean non-nullable, and probe 09 now
+ * asserts the `.where()` form directly.
+ *
+ * The `.all()`-and-filter is KEPT here regardless, because it is the stronger
+ * assertion for THIS probe: it reads every project row and asserts that the
+ * products are a real, non-vacuous subset of them, which a `.where()` that
+ * returned the right count could not show.
  */
 const { data: projectData } = await useAsyncData('bf-probe-26-products', () =>
   queryCollection('bfProjects').all()

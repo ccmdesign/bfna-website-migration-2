@@ -178,3 +178,41 @@ _Runner appends here._
   (vs `dev` and vs the pre-epic base `f757a64`) print nothing. Diffstat is
   3 files, +469/-0 — the 14 existing collections are untouched, unrenamed and
   unreordered.
+
+- **No `bf*` boolean is nullable** (gh#140, promoted residual #139, Sep 3): seven fields
+  lose their `.nullable()` and become bare `z.boolean()` —
+  `bfInsightSchema.archived` / `.evergreen`, `bfProjectSchema.archived` /
+  `.exclude_from_grid` / `.external_only`, `bfPageSchema.archived` / `.evergreen`.
+  `.default(false)` was considered and rejected: the normaliser now guarantees the field
+  is present on every document (`boolFlag()`), so a default would only mask a regression
+  the `--check` assertion is there to catch.
+
+  The reason is a real query-layer failure, not tidiness. A nullable boolean column does
+  not round-trip through the `@nuxt/content` SQLite store in a shape the `= true`
+  predicate matches, so `.where('external_only', '=', true)` returned an **empty array**
+  while `transponder-magazine.json` carried `"external_only": true` (D-26.4). The `= false`
+  half is equally broken, since SQL `= false` does not match `NULL` either — which would
+  have silently halved any "active items" section built as
+  `.where('archived', '=', false)`. Composables escaped it only because they all read
+  `.all()` and filter in JS; the templates from #55 on will not.
+
+  The entity types in `src/types/bf-contracts.ts` are `z.infer` re-exports and narrowed
+  automatically: `Insight['archived']`, `Project['external_only']` and friends are now
+  `boolean`, not `boolean | null`. No consumer needed a code change — every one tested
+  truthiness — and the typecheck gate confirms it: **178** `error TS` before and after
+  (the `dev` baseline), **0** of them in `src/components/bf`, `src/types`,
+  `src/composables/bf` or `content.config.ts`. Three stale doc-comments that asserted
+  "`archived` is `boolean | null`" (`bfCardRow`, `bfCardInsight`, and probe 26's
+  `.all()`-workaround rationale) were corrected — comment text only, no logic.
+
+- **Probe 09 grew the regression guard** (gh#140): six rows, 18 → **24**, each running the
+  predicate *in the query* rather than filtering afterwards —
+  `bfProjects.where('external_only','=',true)` returns 1 row and that row's slug is
+  `transponder-magazine` (the exact #139 repro), `exclude_from_grid = true` → 2,
+  `bfProjects.archived = false` → 21, `bfInsights.archived = false` → 115,
+  `bfPages.evergreen = true` → 7. Probe 26 deliberately KEEPS its `.all()`-and-filter form:
+  now that both work, the client-side filter is still the stronger assertion there, because
+  it reads every project row and shows the products are a real non-vacuous subset.
+  Acceptance: `--check` exit 0, `npx nuxt generate` exit 0 (897 routes), `check-probes.ts
+  --only 09` 24/24, full sweep **19 probes / 837 rows / 0 failures**, both wireframe
+  byte-identity diffs empty.

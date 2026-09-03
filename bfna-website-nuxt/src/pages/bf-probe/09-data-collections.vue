@@ -21,6 +21,16 @@
  *     string). Both were corrected from issue 08's Decisions.
  *  4. The JSON-column fields round-trip: `authors` / `projects` as string
  *     arrays, `participation` / `podcast` / `legacy` as nested objects.
+ *  5. (gh#140, promoted residual #139) Every boolean flag is a real
+ *     `true`/`false`, so a `.where(flag, '=', true|false)` predicate pushed
+ *     into the query matches the rows it should. This used to be false: while
+ *     `archived` / `exclude_from_grid` / `external_only` were
+ *     `z.boolean().nullable()`, `.where('external_only', '=', true)` returned
+ *     ZERO rows against a database that plainly held
+ *     `transponder-magazine.json` with `"external_only": true` — an empty
+ *     section and no error. The six rows at the end of the table are that
+ *     repro, kept as a regression guard; the `= false` halves are the other
+ *     side of it, since a null column matches neither `true` nor `false`.
  *
  * The typed locals below (`Insight`, `Page`, `Announcement`, `PageLegacyRef`
  * from `~/types/bf-contracts`) are real assignability checks, not casts: if a
@@ -88,6 +98,26 @@ const { data } = await useAsyncData('bf-probe-09', async () => {
     .where('slug', '=', 'indo-pacific-nexus')
     .first()
 
+  // gh#140 — the boolean-flag predicates, run in the QUERY rather than filtered in
+  // JS afterwards. `external_only = true` is the exact #139 repro; the `= false`
+  // counts are its complement and would BOTH under-report if the column were
+  // nullable again, because SQL `= false` does not match `NULL` either.
+  const externalOnly = await queryCollection('bfProjects')
+    .where('external_only', '=', true)
+    .all()
+  const excludedFromGrid = await queryCollection('bfProjects')
+    .where('exclude_from_grid', '=', true)
+    .count()
+  const projectsActive = await queryCollection('bfProjects')
+    .where('archived', '=', false)
+    .count()
+  const insightsActive = await queryCollection('bfInsights')
+    .where('archived', '=', false)
+    .count()
+  const pagesEvergreen = await queryCollection('bfPages')
+    .where('evergreen', '=', true)
+    .count()
+
   const samplePage: Pick<Page, 'slug' | 'copy_source'> | null = legacyPage
     ? { slug: legacyPage.slug, copy_source: legacyPage.copy_source }
     : null
@@ -111,7 +141,13 @@ const { data } = await useAsyncData('bf-probe-09', async () => {
       { label: 'bfInsights.authors is an array', expected: 'true', actual: String(Array.isArray(sampleInsight?.authors)) },
       { label: 'bfInsights.projects is an array', expected: 'true', actual: String(Array.isArray(sampleInsight?.projects)) },
       { label: 'bfProjects.podcast is an object', expected: 'object', actual: typeof withPodcast?.podcast },
-      { label: 'bfProjects.podcast.episodes is an array', expected: 'true', actual: String(Array.isArray(withPodcast?.podcast?.episodes)) }
+      { label: 'bfProjects.podcast.episodes is an array', expected: 'true', actual: String(Array.isArray(withPodcast?.podcast?.episodes)) },
+      { label: "bfProjects — .where('external_only','=',true) returns rows (gh#140)", expected: 1, actual: externalOnly.length },
+      { label: "bfProjects — that row is the Transponder (#139 repro)", expected: 'transponder-magazine', actual: externalOnly[0]?.slug ?? 'NO ROWS' },
+      { label: "bfProjects — .where('exclude_from_grid','=',true)", expected: 2, actual: excludedFromGrid },
+      { label: "bfProjects — .where('archived','=',false)", expected: 21, actual: projectsActive },
+      { label: "bfInsights — .where('archived','=',false)", expected: 115, actual: insightsActive },
+      { label: "bfPages — .where('evergreen','=',true)", expected: 7, actual: pagesEvergreen }
     ] satisfies Check[]
   }
 })

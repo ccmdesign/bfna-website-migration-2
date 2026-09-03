@@ -146,8 +146,9 @@ const to = computed(() =>
  * always returns a label — it falls back to `'Article'` — so the insight
  * branch always has at least one.
  *
- * `archived` is `boolean | null` on both schemas, hence a truthiness test
- * rather than `=== true`.
+ * `archived` is a non-nullable `boolean` on both schemas since gh#140, so the
+ * truthiness test and `=== true` now agree; the truthiness form is kept because
+ * it is the shape every other consumer uses.
  */
 const chips = computed<string[]>(() => {
   const row = props.item
