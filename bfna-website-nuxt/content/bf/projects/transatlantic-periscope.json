@@ -23,5 +23,12 @@
       "Subscribe for updates"
     ]
   },
-  "podcast": null
+  "podcast": null,
+  "legacy": {
+    "source": "directus",
+    "type": "products",
+    "workstream": "Politics & Society",
+    "product_type": "website",
+    "id": 101
+  }
 }

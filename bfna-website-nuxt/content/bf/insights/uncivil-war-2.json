@@ -1,5 +1,5 @@
 {
-  "slug": "uncivil-war",
+  "slug": "uncivil-war-2",
   "heading": "Uncivil War",
   "subheading": "U.S. Elections Under Siege",
   "excerpt": null,
@@ -18,5 +18,13 @@
   "archived": true,
   "evergreen": false,
   "featured": false,
-  "retired_news": false
+  "retired_news": false,
+  "legacy": {
+    "source": "directus",
+    "type": "videos",
+    "workstream": "Democracy",
+    "product_type": null,
+    "id": 82
+  },
+  "duplicate_of": "uncivil-war"
 }

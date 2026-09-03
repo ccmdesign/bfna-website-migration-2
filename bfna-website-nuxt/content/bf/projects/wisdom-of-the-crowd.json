@@ -23,5 +23,25 @@
       "Subscribe for updates"
     ]
   },
-  "podcast": null
+  "podcast": null,
+  "legacy": {
+    "source": "directus",
+    "type": "super_products",
+    "workstream": "Podcasts",
+    "product_type": "website",
+    "id": 14
+  },
+  "aka": [
+    {
+      "slug": "latest-episodes",
+      "heading": "Latest Episodes",
+      "legacy": {
+        "source": "contentful",
+        "type": "super_product",
+        "workstream": "Podcasts",
+        "product_type": "website",
+        "id": "5Mf717ooJkrLL8oKDaY8ac"
+      }
+    }
+  ]
 }

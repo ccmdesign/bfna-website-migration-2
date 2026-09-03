@@ -23,5 +23,25 @@
       "Read the latest"
     ]
   },
-  "podcast": null
+  "podcast": null,
+  "legacy": {
+    "source": "directus",
+    "type": "products",
+    "workstream": "Future Leadership",
+    "product_type": "website",
+    "id": 93
+  },
+  "aka": [
+    {
+      "slug": "summer-enrichment-series-ses",
+      "heading": "Summer Enrichment Series (SES)",
+      "legacy": {
+        "source": "contentful",
+        "type": "super_product",
+        "workstream": "Future Leadership",
+        "product_type": "website",
+        "id": "2BJGYdMrMmxEYKEhDUIJXR"
+      }
+    }
+  ]
 }

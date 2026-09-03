@@ -18,5 +18,12 @@
   "archived": false,
   "evergreen": false,
   "featured": false,
-  "retired_news": false
+  "retired_news": false,
+  "legacy": {
+    "source": "directus",
+    "type": "products",
+    "workstream": "Future Leadership",
+    "product_type": "video",
+    "id": 63
+  }
 }

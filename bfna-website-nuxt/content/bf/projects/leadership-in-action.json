@@ -23,5 +23,25 @@
       "Read the latest"
     ]
   },
-  "podcast": null
+  "podcast": null,
+  "legacy": {
+    "source": "directus",
+    "type": "super_products",
+    "workstream": "Future Leadership",
+    "product_type": "website",
+    "id": 11
+  },
+  "aka": [
+    {
+      "slug": "episodes",
+      "heading": "Episodes:",
+      "legacy": {
+        "source": "contentful",
+        "type": "super_product",
+        "workstream": "Future Leadership",
+        "product_type": "website",
+        "id": "4zG18SL7u84ER1Bg2Bj55u"
+      }
+    }
+  ]
 }

@@ -24,5 +24,12 @@
     ]
   },
   "podcast": null,
+  "legacy": {
+    "source": "directus",
+    "type": "super_products",
+    "workstream": "Politics & Society",
+    "product_type": "report",
+    "id": 13
+  },
   "pending": "Q6"
 }

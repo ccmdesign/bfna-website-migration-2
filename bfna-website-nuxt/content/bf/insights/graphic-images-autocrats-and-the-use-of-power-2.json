@@ -1,5 +1,5 @@
 {
-  "slug": "graphic-images-autocrats-and-the-use-of-power",
+  "slug": "graphic-images-autocrats-and-the-use-of-power-2",
   "heading": "Graphic Images: Autocrats and the Use of Power",
   "subheading": "Disrupting Democracy Volume IV",
   "excerpt": "In this fourth and final installment of our Disrupting Democracy series, Graphic Images: Autocrats and the Use of Power, we will look at how three authoritarian regimes undermine the prospects for democracy and stability in their respective regions.  Drawing from the more than 15 years of data from the Bertelsmann Transformation Index, this publication reimagines country and regional level data into infographics that shine a light on three distinct cases: Russia, Iran and China.",
@@ -20,5 +20,13 @@
   "archived": true,
   "evergreen": false,
   "featured": false,
-  "retired_news": false
+  "retired_news": false,
+  "legacy": {
+    "source": "directus",
+    "type": "publications",
+    "workstream": "Democracy",
+    "product_type": null,
+    "id": 72
+  },
+  "duplicate_of": "graphic-images-autocrats-and-the-use-of-power"
 }

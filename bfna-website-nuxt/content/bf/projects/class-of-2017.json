@@ -17,5 +17,12 @@
   "grid_order": 1000007,
   "microsite_cta": null,
   "participation": null,
-  "podcast": null
+  "podcast": null,
+  "legacy": {
+    "source": "directus",
+    "type": "products",
+    "workstream": "Future Leadership",
+    "product_type": "website",
+    "id": 15
+  }
 }

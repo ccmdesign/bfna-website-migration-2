@@ -16,5 +16,12 @@
   "archived": false,
   "evergreen": false,
   "featured": false,
-  "retired_news": false
+  "retired_news": false,
+  "legacy": {
+    "source": "contentful",
+    "type": "publication",
+    "workstream": "Politics & Society",
+    "product_type": null,
+    "id": "3RhmMN9qFftXjDW0PMDllI"
+  }
 }

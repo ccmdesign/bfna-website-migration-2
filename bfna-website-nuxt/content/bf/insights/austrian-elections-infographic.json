@@ -18,5 +18,13 @@
   "archived": true,
   "evergreen": false,
   "featured": false,
-  "retired_news": false
+  "retired_news": false,
+  "legacy": {
+    "source": "directus",
+    "type": "infographics",
+    "workstream": "Democracy",
+    "product_type": null,
+    "id": 226
+  },
+  "slug_note": "suffixed to keep slugs unique; companion piece of the same-named article"
 }

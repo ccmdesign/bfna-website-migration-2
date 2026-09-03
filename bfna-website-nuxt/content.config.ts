@@ -48,6 +48,43 @@ export const bfPageLegacySchema = z.object({
 })
 
 /**
+ * The same provenance pointer for an **insight** or a **project** (gh#151 /
+ * BF-218 F2). Deliberately a second schema rather than a widened
+ * `bfPageLegacySchema` (D-151.3): the two are one idea over different value
+ * domains, and reshaping the page schema would change `bfPages`'s contract for
+ * no consumer.
+ *
+ * Two differences from the page shape, both forced by the snapshot:
+ *
+ *  - `product_type` exists on insight and project rows and on no page row;
+ *  - `id` is a `string` for the contentful-sourced rows
+ *    (`3iyspbN51C1BpqS1H9RuxJ`) and a `number` for the directus-sourced ones,
+ *    so it is a union here where `bfPages` — whose every row carries `null` —
+ *    can stay a `number`.
+ *
+ * Nullable as a whole: `bfna-documentaries` is the one project with no legacy
+ * record at all (D-151.4). Every insight carries one.
+ */
+export const bfEntityLegacySchema = z.object({
+  source: z.string().nullable(),
+  type: z.string().nullable(),
+  workstream: z.string().nullable(),
+  product_type: z.string().nullable(),
+  id: z.union([z.string(), z.number()]).nullable()
+})
+
+/**
+ * A former slug of a project, kept so issue #57 can build the cutover redirect
+ * map. Seven projects carry exactly one each — a renamed Directus record whose
+ * old URL still has to resolve.
+ */
+export const bfProjectAkaSchema = z.object({
+  slug: z.string(),
+  heading: z.string().nullable(),
+  legacy: bfEntityLegacySchema.nullable()
+})
+
+/**
  * One insight. 371 documents: the 354 `items` rows plus the 8 `featured` and
  * 9 `retired_news` highlight records, which are separate Directus rows with no
  * slug overlap and are flattened onto boolean fields here (issue 07 Decisions).
@@ -74,7 +111,19 @@ export const bfInsightSchema = z.object({
   archived: z.boolean(),
   evergreen: z.boolean(),
   featured: z.boolean(),
-  retired_news: z.boolean()
+  retired_news: z.boolean(),
+  // gh#151 / BF-218. `legacy` is the old-URL provenance issue #57's redirect
+  // map has no other source for; it is present on all 371 rows but stays
+  // `.nullable()` so a future snapshot row without one is a null, not a build
+  // break. `duplicate_of` and `slug_note` are the migration signals the
+  // original issue-09 field list dropped: `duplicate_of` appears on exactly the
+  // two documents whose slug this normaliser had to disambiguate and holds the
+  // un-suffixed slug they collided with (D-151.1); `slug_note` is free text the
+  // snapshot carries on two already-suffixed rows. Both `.optional()` — the
+  // other 369 documents omit the key entirely rather than storing a null.
+  legacy: bfEntityLegacySchema.nullable(),
+  duplicate_of: z.string().optional(),
+  slug_note: z.string().optional()
 })
 
 /**
@@ -122,7 +171,13 @@ export const bfProjectSchema = z.object({
       )
     })
     .nullable(),
-  pending: z.string().optional()
+  pending: z.string().optional(),
+  // gh#151 / BF-218. `legacy` is `null` on exactly one row
+  // (`bfna-documentaries`, D-151.4) and populated on the other 37. `aka` holds
+  // a project's former slugs — 7 rows carry one each — and is `.optional()`
+  // because the remaining 31 omit the key rather than storing an empty array.
+  legacy: bfEntityLegacySchema.nullable(),
+  aka: z.array(bfProjectAkaSchema).optional()
 })
 
 /**

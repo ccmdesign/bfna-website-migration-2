@@ -17,5 +17,25 @@
   "grid_order": 1000019,
   "microsite_cta": null,
   "participation": null,
-  "podcast": null
+  "podcast": null,
+  "legacy": {
+    "source": "directus",
+    "type": "products",
+    "workstream": "Future Leadership",
+    "product_type": "website",
+    "id": 20
+  },
+  "aka": [
+    {
+      "slug": "2022-participants",
+      "heading": "2022 Participants",
+      "legacy": {
+        "source": "contentful",
+        "type": "product",
+        "workstream": "Future Leadership",
+        "product_type": "website",
+        "id": "4PtRkN8lNZcdis3bC2IQCN"
+      }
+    }
+  ]
 }

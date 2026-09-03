@@ -21,6 +21,18 @@
  *     string). Both were corrected from issue 08's Decisions.
  *  4. The JSON-column fields round-trip: `authors` / `projects` as string
  *     arrays, `participation` / `podcast` / `legacy` as nested objects.
+ *  6. (gh#151, BF-218 F1+F2) `bfInsights.slug` is UNIQUE — 371 documents,
+ *     371 distinct slugs — and the two documents whose slug the normaliser had
+ *     to disambiguate carry `duplicate_of` pointing at the slug they collided
+ *     with. Before this, 371 documents shared 369 slugs, `bySlug()` returned
+ *     whichever row came back first, and `/wireframes/archive` rendered 255
+ *     hrefs for 256 archived items. The same rows also now carry `legacy`, the
+ *     old-URL provenance issue #57's redirect map is built from: present on
+ *     371/371 insights and 37/38 projects — `bfna-documentaries` is the single
+ *     project with `"legacy": null` in the snapshot, pinned by its own row so
+ *     that a *second* project losing its provenance still fails this probe
+ *     (D-151.4).
+ *
  *  5. (gh#140, promoted residual #139) Every boolean flag is a real
  *     `true`/`false`, so a `.where(flag, '=', true|false)` predicate pushed
  *     into the query matches the rows it should. This used to be false: while
@@ -39,6 +51,7 @@
  */
 import type {
   Announcement,
+  EntityLegacyRef,
   Insight,
   Page,
   PageLegacyRef
@@ -118,6 +131,28 @@ const { data } = await useAsyncData('bf-probe-09', async () => {
     .where('evergreen', '=', true)
     .count()
 
+  // gh#151 / BF-218 F1+F2. Read whole rows rather than counting: `slug` uniqueness
+  // is a property of the SET, and `.count()` cannot see a duplicate.
+  const allInsights = await queryCollection('bfInsights').all()
+  const allProjects = await queryCollection('bfProjects').all()
+  const distinctInsightSlugs = new Set(allInsights.map(i => i.slug)).size
+  const insightsWithLegacySource = allInsights.filter(i => i.legacy?.source).length
+  const projectsWithLegacySource = allProjects.filter(p => p.legacy?.source).length
+  const projectsWithoutLegacy = allProjects.filter(p => !p.legacy).map(p => p.slug)
+  // Assignability check, not a cast — the widened `id` union has to survive the
+  // SQLite round trip as the type `content.config.ts` declares.
+  const insightLegacy: EntityLegacyRef | null = allInsights[0]?.legacy ?? null
+
+  // The two disambiguated documents, looked up by their NEW slug. That the lookup
+  // resolves at all is half the F1 fix; that it carries `duplicate_of` is the other.
+  const renamed = ['uncivil-war-2', 'graphic-images-autocrats-and-the-use-of-power-2']
+  const renamedDocs = renamed.map(slug => allInsights.find(i => i.slug === slug))
+  const renamedResolve = renamedDocs.filter(d => d !== undefined).length
+  const renamedDuplicateOf = renamedDocs
+    .map(d => d?.duplicate_of ?? 'MISSING')
+    .join(', ')
+  const projectsWithAka = allProjects.filter(p => (p.aka?.length ?? 0) > 0).length
+
   const samplePage: Pick<Page, 'slug' | 'copy_source'> | null = legacyPage
     ? { slug: legacyPage.slug, copy_source: legacyPage.copy_source }
     : null
@@ -147,7 +182,21 @@ const { data } = await useAsyncData('bf-probe-09', async () => {
       { label: "bfProjects — .where('exclude_from_grid','=',true)", expected: 2, actual: excludedFromGrid },
       { label: "bfProjects — .where('archived','=',false)", expected: 21, actual: projectsActive },
       { label: "bfInsights — .where('archived','=',false)", expected: 115, actual: insightsActive },
-      { label: "bfPages — .where('evergreen','=',true)", expected: 7, actual: pagesEvergreen }
+      { label: "bfPages — .where('evergreen','=',true)", expected: 7, actual: pagesEvergreen },
+
+      // --- gh#151 / BF-218 F1: slug is unique ------------------------------
+      { label: 'bfInsights — slug count === distinct slug count (gh#151 F1)', expected: 371, actual: distinctInsightSlugs },
+      { label: 'bfInsights — the two disambiguated slugs resolve', expected: 2, actual: renamedResolve },
+      { label: '  …and both carry duplicate_of', expected: 'uncivil-war, graphic-images-autocrats-and-the-use-of-power', actual: renamedDuplicateOf },
+      { label: 'bfProjects — slug count === distinct slug count', expected: 38, actual: new Set(allProjects.map(p => p.slug)).size },
+
+      // --- gh#151 / BF-218 F2: legacy + aka survive the normaliser ---------
+      { label: 'bfInsights — rows with legacy.source (gh#151 F2)', expected: 371, actual: insightsWithLegacySource },
+      { label: 'bfInsights.legacy is an object', expected: 'object', actual: insightLegacy === null ? 'null' : typeof insightLegacy },
+      { label: 'bfProjects — rows with legacy.source', expected: 37, actual: projectsWithLegacySource },
+      { label: '  …the one exception (D-151.4)', expected: 'bfna-documentaries', actual: projectsWithoutLegacy.join(', ') || 'NONE' },
+      { label: 'bfProjects — rows carrying aka', expected: 7, actual: projectsWithAka },
+      { label: 'bfProjects.aka[].legacy round-trips as an object', expected: 'object', actual: typeof allProjects.find(p => p.aka?.length)?.aka?.[0]?.legacy }
     ] satisfies Check[]
   }
 })

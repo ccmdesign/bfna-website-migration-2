@@ -23,5 +23,12 @@
       "Subscribe for updates"
     ]
   },
-  "podcast": null
+  "podcast": null,
+  "legacy": {
+    "source": "directus",
+    "type": "products",
+    "workstream": "Archives",
+    "product_type": "website",
+    "id": 1
+  }
 }
