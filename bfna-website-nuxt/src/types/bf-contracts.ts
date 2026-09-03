@@ -1000,3 +1000,108 @@ export interface NoticeProps {
    */
   announced?: boolean
 }
+
+/* -------------------------------------------------------------------------
+ * Grid organisms (issue 42 / gh#51)
+ * ------------------------------------------------------------------------- */
+
+/**
+ * A `.grid` minimum track width — the six values `composition/grid.css` maps.
+ *
+ * | value | track floor |     | value | track floor |
+ * |-------|-------------|-----|-------|-------------|
+ * | `xs`  | 160px       |     | `l`   | 300px       |
+ * | `s`   | 200px       |     | `xl`  | 400px       |
+ * | `m`   | 240px (also the unset default) | | `2xl` | 500px |
+ *
+ * **Deliberately not `string`,** which is how issue 42's spec sketches the
+ * prop. `grid.css` resolves the floor through six `[data-min-width="…"]`
+ * attribute rules and nothing else, so a value outside this set writes an
+ * attribute that matches no rule: the grid keeps the unset `240px` default and
+ * lays out at a column count the caller did not ask for, with a
+ * `data-min-width` in the DOM claiming otherwise. A union makes that a compile
+ * error instead of a layout bug nobody looks for. Recorded as D-42.1.
+ *
+ * The values are keywords rather than lengths on purpose — the mapping is the
+ * composition layer's to own (D9), so a floor can be retuned in one stylesheet
+ * without touching a call site.
+ */
+export type GridMinWidth = 'xs' | 's' | 'm' | 'l' | 'xl' | '2xl'
+
+/**
+ * Props shared by `bfGridInsights` and `bfGridProjects` (issue 42 / gh#51) —
+ * everything except the entity array and the per-row `extraChips` function.
+ *
+ * Both grids are thin data-in/cards-out organisms: a `<ul class="grid">` that
+ * `v-for`s a typed card wrapper, fetching nothing (BRIEF D8). Their whole
+ * configurable surface is this interface plus the array, which is why it is
+ * worth naming once — the two components are built together under BRIEF §5
+ * rule 5's named-bundle exception precisely because they are the same shape.
+ */
+export interface GridProps {
+  /**
+   * Column policy, as a track floor. Forwarded verbatim to the `<ul>`'s
+   * `data-min-width`; the column count is resolved from it by `auto-fill` and
+   * is **never authored** (D9 — no `bf-*` file may ship a hand-pinned
+   * `grid-template-columns`).
+   *
+   * Each grid sets its own default to approximate the frozen `wf-*` source's
+   * pinned column count at a desktop width — see D-42.2 for the arithmetic.
+   */
+  minWidth?: GridMinWidth
+  /**
+   * Character budget handed to every card's own `excerptLength`.
+   *
+   * Left unset it stays `undefined` and each card's default (`140`) applies,
+   * rather than the grid restating a number that would then drift.
+   */
+  excerptLength?: number
+  /**
+   * The heading level every card in the grid renders its title at (#128).
+   *
+   * The grid is the only thing standing between a template's section heading
+   * and the cards, so a template placing a grid inside a subsection has no
+   * other way to reach `CardWrapperProps.headingLevel`. Forwarded, never
+   * re-decided: unset here means unset on the card, where the `3` default is.
+   */
+  headingLevel?: CardHeadingLevel
+}
+
+/**
+ * Props of `bfGridInsights` — THE insights grid, wrapping `bfCardInsight`.
+ *
+ * Ports `components/wireframe/wfGridInsights.vue` (frozen, D2), whose comment
+ * records that this is the grid used *everywhere* insights are listed
+ * (Claudio, Aug 3); the homepage's featured 2-col band is deliberately a
+ * different grid and is not this component.
+ */
+export interface GridInsightsProps extends GridProps {
+  /** The rows to render, in order. One `<li>` each, keyed on `slug`. */
+  insights: Insight[]
+  /**
+   * Extra chips for one row, applied **per row by the grid**.
+   *
+   * A function here and a `string[]` on the card, which is the frozen source's
+   * split (`:extra-chips="extraChips?.(i)"`) and the right one: only the caller
+   * knows how to derive a programme or project name a row does not itself
+   * carry, and only the grid has the row to derive it from. Returning
+   * `undefined` for a row means that row gets no extra chips.
+   */
+  extraChips?: (i: Insight) => string[] | undefined
+}
+
+/**
+ * Props of `bfGridProjects` — THE projects grid, wrapping `bfCardProject`.
+ *
+ * Ports `components/wireframe/wfGridProjects.vue` (frozen, D2), whose comment
+ * records that the program pages and the all-projects index share this one
+ * grid (Claudio, Aug 5) so the two views cannot drift apart in layout.
+ *
+ * No `extraChips` counterpart: `bfCardProject` derives its chips from the row
+ * itself (`kind`, `external_url`, `pending`) and takes no extra-chip prop, so
+ * there is nothing for a grid-level function to feed.
+ */
+export interface GridProjectsProps extends GridProps {
+  /** The rows to render, in order. One `<li>` each, keyed on `slug`. */
+  projects: Project[]
+}
