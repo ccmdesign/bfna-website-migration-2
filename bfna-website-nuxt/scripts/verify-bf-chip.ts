@@ -209,17 +209,17 @@ check(
 check(
   '  …carrying aria-pressed as an explicit "true"/"false" string',
   /:aria-pressed="ariaPressed"/.test(componentSource)
-    && /pressed\.value \? 'true' : 'false'/.test(componentSource),
+    && /pressed\.value\s*\?\s*['"]true['"]\s*:\s*['"]false['"]/.test(componentSource),
   true
 )
 check(
   'it emits update:modelValue, declared as a typed emit',
-  /defineEmits<\{[\s\S]*?'update:modelValue': \[value: boolean\][\s\S]*?\}>/.test(componentSource),
+  /defineEmits<\{[\s\S]*?['"]update:modelValue['"]:\s*\[value: boolean\][\s\S]*?\}>/.test(componentSource),
   true
 )
 check(
   '  …with the negated value',
-  /emit\('update:modelValue', !props\.modelValue\)/.test(componentSource),
+  /emit\(\s*['"]update:modelValue['"]\s*,\s*!\s*props\.modelValue\s*\)/.test(componentSource),
   true
 )
 /*
@@ -296,9 +296,21 @@ if (!wfRule) {
     /--_bf-chip-font-size:\s*var\(--size/.test(componentCss),
     true
   )
+  /*
+   * The `font` **shorthand**, not `font-family` alone (review finding
+   * gh#25-P2-1): a `<button>` carries UA `line-height` and font declarations
+   * the span/link/anchor branches do not, and only the shorthand resets them
+   * all, so that the four modes render as one box. `text-align` is the other
+   * UA divergence and is stated explicitly for the same reason.
+   */
   check(
-    '  …and the face is inherited, not the wireframe’s lo-fi monospace',
-    /font-family:\s*inherit/.test(componentCss) && !/monospace/.test(componentCss),
+    '  …and the face is inherited via the `font` shorthand, not the lo-fi monospace',
+    /(^|[^-])font:\s*inherit/m.test(componentCss) && !/monospace/.test(componentCss),
+    true
+  )
+  check(
+    '  …so a <button> cannot keep its UA line-height and alignment',
+    /font:\s*inherit;[\s\S]{0,200}text-align:\s*center/.test(componentCss),
     true
   )
 }
@@ -309,7 +321,8 @@ if (!wfRule) {
 console.log('\n5. Colour')
 
 check('no colour literal in the component', colourLiterals(code(componentSource)), [])
-check('no colour literal in the probe', colourLiterals(code(read(probePath))), [])
+const probeSource = read(probePath)
+check('no colour literal in the probe', colourLiterals(code(probeSource)), [])
 
 const semanticColours = read(semanticColorsPath)
 /** The names declared in the semantic layer — anything else is a primitive. */
@@ -321,6 +334,17 @@ const componentColourTokens = tokensUsed(code(componentSource)).filter(t => t.st
 check(
   'every --color-* the component uses is a semantic token, never a primitive',
   componentColourTokens.filter(t => !semanticNames.has(t)),
+  []
+)
+/*
+ * Review finding gh#25-P2-1: the probe was scanned for literals but never for
+ * *primitives*, which is how it shipped a `--color-white` while the component's
+ * own prose called that out as forbidden. The probe is held to the same bar as
+ * the component now.
+ */
+check(
+  'every --color-* the probe uses is a semantic token, never a primitive',
+  tokensUsed(code(probeSource)).filter(t => t.startsWith('--color-') && !semanticNames.has(t)),
   []
 )
 check(
@@ -481,13 +505,13 @@ if (!existsSync(builtProbePath)) {
   const instances = [...html.matchAll(/<(?:a|button|span)\b[^>]*class="[^"]*\bbf-chip\b[^"]*"[^>]*>/g)].map(m => m[0])
   const withEl = (kind: string) => instances.filter(t => t.includes(`data-element="${kind}"`)).length
 
-  check('15 chips render (10 gallery + 2 emit + 1 keyboard + 2 $attrs)', instances.length, 15)
-  check('  …4 resolved to <span>', withEl('span'), 4)
+  check('18 chips render (10 gallery + 2 emit + 1 keyboard + 2 precedence + 3 $attrs)', instances.length, 18)
+  check('  …5 resolved to <span>', withEl('span'), 5)
   check('  …2 resolved to NuxtLink', withEl('link'), 2)
   check('  …4 resolved to <a href>', withEl('anchor'), 4)
-  check('  …5 resolved to <button> (toggle)', withEl('toggle'), 5)
+  check('  …7 resolved to <button> (toggle)', withEl('toggle'), 7)
   check('  …2 external anchors carry the [data-external] marker', instances.filter(t => t.includes('data-external')).length, 2)
-  check('  …6 render selected ([data-active])', instances.filter(t => t.includes('data-active')).length, 6)
+  check('  …7 render selected ([data-active])', instances.filter(t => t.includes('data-active')).length, 7)
 
   /*
    * `aria-pressed` must be *present* on an unpressed toggle — a toggle button
@@ -497,8 +521,8 @@ if (!existsSync(builtProbePath)) {
   check('every toggle carries aria-pressed, none of the other modes does', [
     instances.filter(t => t.includes('data-element="toggle"') && t.includes('aria-pressed')).length,
     instances.filter(t => !t.includes('data-element="toggle"') && t.includes('aria-pressed')).length
-  ], [5, 0])
-  check('  …4 unpressed render aria-pressed="false"', instances.filter(t => t.includes('aria-pressed="false"')).length, 4)
+  ], [7, 0])
+  check('  …6 unpressed render aria-pressed="false"', instances.filter(t => t.includes('aria-pressed="false"')).length, 6)
   check('  …1 pressed renders aria-pressed="true"', instances.filter(t => t.includes('aria-pressed="true"')).length, 1)
   check(
     '  …and aria-pressed="true" is exactly the toggle that is [data-active]',
@@ -515,6 +539,16 @@ if (!existsSync(builtProbePath)) {
   const styled = instances.filter(t => /\sstyle="/.test(t))
   check('exactly one chip carries a style attribute (the override demo)', styled.length, 1)
   check('  …and it is the override demo, not a selected-state hack', styled[0]?.includes('probe-16-override'), true)
+
+  /*
+   * The headline precedence rule, asserted against the shipped HTML too
+   * (review finding gh#25-P3-9): the instance carrying `to`, `href` AND
+   * `toggle` must reach the page as a <button> with no href at all.
+   */
+  const precedence = instances.find(t => t.includes('probe-16-precedence')) ?? ''
+  check('`toggle` + `to` + `href` prerenders as a <button>', /^<button\b/.test(precedence), true)
+  check('  …carrying no href', /\shref=/.test(precedence), false)
+  check('  …and marked data-element="toggle"', precedence.includes('data-element="toggle"'), true)
 
   check('the wireframe reference chip prerenders for the metrics check', html.includes('probe-16-wf-chip'), true)
 

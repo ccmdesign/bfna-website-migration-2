@@ -104,6 +104,15 @@ const galleryOn = ref(true)
 const clickModel = ref(false)
 const clickEmits = ref(0)
 const clickPayloads = ref<boolean[]>([])
+/**
+ * A caller's own `click` listener on the same instance (review finding
+ * gh#25-P3-10). `mergeProps` concatenates same-named handlers into an array, so
+ * this must run *as well as* the component's internal one, not instead of it —
+ * previously only the manual keyboard panel depended on that, and nothing
+ * asserted it.
+ */
+const clickCallerHandlerRuns = ref(0)
+const onClickCaller = () => { clickCallerHandlerRuns.value += 1 }
 const onClickEmit = (value: boolean) => {
   clickEmits.value += 1
   clickPayloads.value.push(value)
@@ -279,6 +288,51 @@ onMounted(async () => {
    * `[data-v-…]` attribute to the compound selector, and where it lands
    * relative to the pseudo-class is an implementation detail.
    */
+  /**
+   * Every `.bf-chip` style rule reachable from the document, paired with
+   * whether it sits inside a `@layer components` block.
+   *
+   * Review finding gh#25-P2-5. `layeredRule()` only ever *returns* rules found
+   * inside a components layer, so it can prove that at least one is layered and
+   * nothing more — a `.bf-chip` rule that leaked out of the layer, which is
+   * precisely the gh#101 regression, would sail past it. This collects all of
+   * them so the check can be "none escaped" rather than "one was found".
+   */
+  const allChipRules = (() => {
+    const LAYER_BLOCK = globalThis.CSSLayerBlockRule
+    const found: { selector: string, layered: boolean }[] = []
+
+    const walk = (rules: CSSRuleList, insideComponents: boolean) => {
+      for (const rule of Array.from(rules)) {
+        const nowInside =
+          insideComponents
+          || (!!LAYER_BLOCK && rule instanceof LAYER_BLOCK && (rule as CSSLayerBlockRule).name === 'components')
+
+        if (rule instanceof CSSStyleRule) {
+          if (/\.bf-chip(?![\w-])/.test(rule.selectorText)) {
+            found.push({ selector: rule.selectorText, layered: nowInside })
+          }
+        }
+
+        if (rule instanceof CSSImportRule) {
+          try {
+            const imported = rule.styleSheet?.cssRules
+            if (imported) walk(imported, nowInside)
+          } catch { /* cross-origin import target */ }
+          continue
+        }
+
+        const nested = (rule as CSSGroupingRule).cssRules
+        if (nested) walk(nested, nowInside)
+      }
+    }
+
+    for (const sheet of Array.from(document.styleSheets)) {
+      try { walk(sheet.cssRules, false) } catch { /* cross-origin sheet */ }
+    }
+    return found
+  })()
+
   const focusRule = layeredRule(/\.bf-chip(?![\w-])[^,{]*:focus-visible/)
   const focusCss = focusRule?.cssText ?? ''
 
@@ -375,6 +429,9 @@ onMounted(async () => {
   const activeSpan = modes.find(el => el.dataset.element === 'span' && el.hasAttribute('data-active'))
   const attrsProbe = document.querySelector<HTMLElement>('[data-testid="probe-16-attrs"]')
   const overrideProbe = document.querySelector<HTMLElement>('[data-testid="probe-16-override"]')
+  const ruleOverrideProbe = document.querySelector<HTMLElement>('[data-testid="probe-16-rule-override"]')
+  const precedenceProbe = document.querySelector<HTMLElement>('[data-testid="probe-16-precedence"]')
+  const toggleActiveProbe = document.querySelector<HTMLElement>('[data-testid="probe-16-toggle-active"]')
 
   /* --- the interactive sequence, run before the table is built ----------- */
 
@@ -434,7 +491,7 @@ onMounted(async () => {
     {
       label: 'every toggle on the page is a native <button type="button">',
       expected: 'true',
-      actual: String(toggles.length === 5 && toggles.every(el => el.tagName === 'BUTTON' && el.getAttribute('type') === 'button'))
+      actual: String(toggles.length === 7 && toggles.every(el => el.tagName === 'BUTTON' && el.getAttribute('type') === 'button'))
     },
     {
       label: '[data-external] marks the external anchors only',
@@ -487,23 +544,76 @@ onMounted(async () => {
       actual: all.filter(el => el !== overrideProbe && el.hasAttribute('style')).length
     },
     {
-      label: 'the selected chips are styled all the same, whatever the element',
+      label: 'the selected chips are painted all the same, whatever the element',
       expected: 'true',
       actual: (() => {
         const selected = modes.filter(el => el.hasAttribute('data-active'))
         if (selected.length !== 5) return 'false'
         const paints = new Set(selected.map(el => {
           const s = getComputedStyle(el)
-          return `${s.backgroundColor}|${s.color}`
+          return `${s.backgroundColor}|${s.color}|${s.borderTopColor}`
         }))
         return String(paints.size === 1)
+      })()
+    },
+    {
+      /*
+       * Review finding gh#25-P2-2. Comparing only the paint was not enough to
+       * make the four modes interchangeable, and the gap let a real bug
+       * through: a `<button>` carries UA `line-height` and `text-align`
+       * declarations the other branches do not, so before gh#25-P2-1 the
+       * toggle rendered 5px shorter and centre-aligned than every other mode.
+       *
+       * `bfFilterBar` (issue 30) lays toggle chips out in a row beside link
+       * chips, so "the same height and the same type" is part of this atom's
+       * contract, not a cosmetic detail. Height is measured rather than
+       * inferred: it is the value that actually breaks a row.
+       */
+      label: 'every mode renders the same box and the same type (font-weight excepted — see comment)',
+      expected: 'true',
+      actual: (() => {
+        const resting = modes.filter(el => !el.hasAttribute('data-active'))
+        if (resting.length !== 5) return 'false'
+        const boxes = new Set(resting.map(el => {
+          const s = getComputedStyle(el)
+          /*
+           * `fontWeight` is deliberately **not** compared, and the omission is
+           * a known gap rather than a convenience. The site ships an
+           * **unlayered** rule — `p, li, input, button, a { font-weight: 100 }`
+           * — and unlayered author styles outrank every cascade layer, so
+           * `.bf-chip { font: inherit }` in `@layer components` wins on the
+           * span branch (which that selector does not match) and loses on the
+           * link, anchor and toggle branches: 400 against 100, measured.
+           *
+           * Nothing this component can declare inside its layer changes that;
+           * only `!important` or moving the legacy rule into a layer would,
+           * and both reach far beyond one atom — the same rule shadows
+           * `bfButton` and will shadow every remaining `bf-*` component.
+           * Filed as a residual rather than improvised here. Everything below
+           * IS in the component's control, and every value is uniform.
+           */
+          return [
+            el.getBoundingClientRect().height.toFixed(2),
+            s.fontFamily, s.fontSize, s.fontStyle,
+            s.lineHeight, s.textAlign, s.letterSpacing, s.textTransform
+          ].join('|')
+        }))
+        return String(boxes.size === 1)
+      })()
+    },
+    {
+      label: '  …and selecting one does not change its height either',
+      expected: 'true',
+      actual: (() => {
+        const h = (el: HTMLElement | undefined) => el?.getBoundingClientRect().height.toFixed(2) ?? ''
+        return String(!!plainSpan && !!activeSpan && h(plainSpan) === h(activeSpan))
       })()
     },
 
     // --- 5. keyboard reachability -----------------------------------------
     {
-      label: 'every interactive chip takes focus (5 toggles, 2 links, 4 anchors)',
-      expected: 11,
+      label: 'every interactive chip takes focus (7 toggles, 2 links, 4 anchors)',
+      expected: 13,
       actual: all.filter(el => el.dataset.element !== 'span').filter(takesFocus).length
     },
     {
@@ -626,9 +736,19 @@ onMounted(async () => {
 
     // --- 9. @layer survived the build (gh#101 / residual #98) -------------
     {
-      label: '.bf-chip rules are inside @layer components in the live CSSOM',
+      label: 'at least one .bf-chip rule reached the live CSSOM',
       expected: 'true',
-      actual: String(!!layeredRule(/\.bf-chip(?![\w-])/))
+      actual: String(allChipRules.length > 0)
+    },
+    {
+      /*
+       * The gh#101 guard proper: not "one of them is layered" but "none of them
+       * escaped". A flattened rule outranks every layer, so a single leak is
+       * the whole regression.
+       */
+      label: '  …and NO .bf-chip rule sits outside @layer components',
+      expected: 0,
+      actual: allChipRules.filter(r => !r.layered).length
     },
 
     // --- 10. $attrs fallthrough, and the consumer override ----------------
@@ -641,6 +761,56 @@ onMounted(async () => {
       label: "a caller's own `style` outranks the [data-active] rule’s hooks",
       expected: resolveToken('--color-text'),
       actual: overrideProbe ? getComputedStyle(overrideProbe).color : ''
+    },
+    {
+      /*
+       * The route the docblock actually claims, which the inline style above
+       * does not exercise (review finding gh#25-P2-4): a real rule, in a later
+       * layer, re-pointing a hook on a selected chip.
+       */
+      label: "  …and so does a caller's rule in a later @layer",
+      expected: resolveToken('--color-text'),
+      actual: ruleOverrideProbe ? getComputedStyle(ruleOverrideProbe).color : ''
+    },
+
+    // --- 11. prop precedence: the headline rule, finally asserted ----------
+    {
+      /*
+       * Review finding gh#25-P3-9: `toggle` outranking `to`/`href` is the
+       * component's headline rule and had no instance at all until now.
+       */
+      label: '`toggle` beats `to` and `href`: a real <button>, never a link',
+      expected: 'BUTTON|toggle|no-href',
+      actual: precedenceProbe
+        ? [
+            precedenceProbe.tagName,
+            precedenceProbe.dataset.element,
+            precedenceProbe.hasAttribute('href') ? 'has-href' : 'no-href'
+          ].join('|')
+        : ''
+    },
+    {
+      label: '  …and it is keyboard-operable, not a disguised link',
+      expected: 'true',
+      actual: String(!!precedenceProbe && precedenceProbe.getAttribute('type') === 'button' && takesFocus(precedenceProbe))
+    },
+    {
+      label: '`active` is ignored in toggle mode — modelValue owns the state',
+      expected: 'false|false',
+      actual: toggleActiveProbe
+        ? `${toggleActiveProbe.getAttribute('aria-pressed')}|${toggleActiveProbe.hasAttribute('data-active')}`
+        : ''
+    },
+    {
+      /*
+       * Review finding gh#25-P3-10. The docblock promises a caller's own click
+       * listener runs *as well as* the internal one. Two pointer activations
+       * happened above, so the caller's handler must have run twice — and the
+       * emit count proves the internal handler ran too.
+       */
+      label: "a caller's @click ran alongside the component's own, not instead of it",
+      expected: '2|2',
+      actual: `${clickCallerHandlerRuns.value}|${clickEmits.value}`
     }
   ]
 
@@ -736,6 +906,7 @@ const verdict = computed(() =>
           toggle
           :model-value="clickModel"
           data-testid="probe-16-click"
+          @click="onClickCaller"
           @update:model-value="onClickEmit"
         >
           pointer activation
@@ -785,6 +956,31 @@ const verdict = computed(() =>
       </p>
     </section>
 
+    <section class="probe__precedence" aria-labelledby="precedence-heading">
+      <h2 id="precedence-heading">
+        Prop precedence — the rule with no test until now
+      </h2>
+      <p>
+        <code>toggle</code> outranks <code>to</code> and <code>href</code>
+        outright, and <code>active</code> is ignored in toggle mode. Both are
+        stated in the component's contract; neither had an instance until
+        review finding gh#25-P3-9.
+      </p>
+      <div class="probe__chips">
+        <bfChip
+          to="/bf-probe/16-bf-chip"
+          href="https://example.org/"
+          toggle
+          data-testid="probe-16-precedence"
+        >
+          toggle beats to + href
+        </bfChip>
+        <bfChip toggle active data-testid="probe-16-toggle-active">
+          active is ignored in toggle mode
+        </bfChip>
+      </div>
+    </section>
+
     <section class="probe__attrs" aria-labelledby="attrs-heading">
       <h2 id="attrs-heading"><code>$attrs</code> fallthrough and consumer override</h2>
       <div class="probe__chips">
@@ -802,6 +998,17 @@ const verdict = computed(() =>
           :style="{ '--_bf-chip-color': 'var(--color-text)' }"
         >
           caller style wins
+        </bfChip>
+        <!--
+          Review finding gh#25-P2-4. The inline style above proves the easy
+          route. This one is overridden by a real **rule**, in `@layer
+          overrides` — a later layer than the component's — which is the route
+          the docblock actually claims. A rule in `@layer components` would
+          lose, because the component's scoped selector is (0,3,0) and comes
+          later; that is the claim being pinned down here.
+        -->
+        <bfChip active data-testid="probe-16-rule-override">
+          caller rule wins
         </bfChip>
       </div>
     </section>
@@ -857,7 +1064,13 @@ const verdict = computed(() =>
 */
 :global(html) {
   color-scheme: light;
-  background-color: var(--color-white);
+  /*
+    Review finding gh#25-P2-1. Was `--color-white`, a colour **primitive** --
+    exactly what BRIEF §5 rule 2 forbids and what gh#101 removed from `bfLogo`.
+    `--color-text-inverse` is the semantic alias added for this, and resolves to
+    the same paint, so every contrast measurement below is unchanged.
+  */
+  background-color: var(--color-text-inverse);
   color: var(--color-text);
 }
 
@@ -870,9 +1083,22 @@ const verdict = computed(() =>
   max-inline-size: 75ch;
 }
 
+/*
+  The `@layer overrides` route from the docblock, exercised for real. This
+  stylesheet is scoped too, so the selector picks up this page's `[data-v-...]`
+  — which the chip's root element carries, because Vue puts the parent's scope
+  id on a child component's root. Being in a later layer is what makes it win.
+*/
+@layer overrides {
+  [data-testid='probe-16-rule-override'] {
+    --_bf-chip-color: var(--color-text);
+  }
+}
+
 .probe__row,
 .probe__interactive,
 .probe__keyboard,
+.probe__precedence,
 .probe__attrs {
   padding: var(--space-s, 1rem);
   margin-block-end: var(--space-s, 1rem);

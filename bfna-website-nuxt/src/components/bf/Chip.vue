@@ -50,8 +50,11 @@
  * every such re-implementation is a chance to get the key list, the repeat
  * behaviour or the focus order wrong.
  *
- * Because `$attrs` is bound after the handler, a caller's own `click`
- * listener is merged with it rather than replacing it: both run.
+ * A caller's own `click` listener is merged with the internal one rather than
+ * replacing it, so both run. That holds whichever order the two appear in:
+ * `mergeProps` concatenates same-named handlers into an array. (Review finding
+ * gh#25-P3-10 — the conclusion was right, the mechanism as first written was
+ * not; the probe now asserts both handlers fire on one activation.)
  *
  * ## Why there is no style binding here
  *
@@ -71,6 +74,15 @@
  *
  * The escape hatch survives regardless: `$attrs` falls through to whichever
  * element rendered, so a consumer can still set any hook per instance.
+ *
+ * Be precise about what "overridable" means here (review finding gh#25-P2-4).
+ * This stylesheet is `scoped`, so the emitted selector carries a `[data-v-...]`
+ * attribute and the selected rule lands at specificity (0,3,0) inside
+ * `@layer components`. A consumer rule written in that same layer therefore
+ * loses on both specificity and source order. What does win: a **later layer**
+ * (`utils`, `overrides`), an unlayered rule, or a `style` attribute through
+ * `$attrs`. The probe exercises two of those routes -- an inline style and a
+ * real `@layer overrides` rule -- rather than only the easy one.
  *
  * ## Colour
  *
@@ -93,6 +105,19 @@
  * selected ground is the semantic layer's own instruction — it names "the
  * ground an inverted block sits on", which is exactly what a selected chip
  * is. `--color-text-inverse` on it is ≈21:1.
+ *
+ * ## What the passive `active` state does not do
+ *
+ * On the span, link and anchor branches `active` is **presentational only**:
+ * it changes the paint and emits no accessible state, so on those branches the
+ * selection is conveyed by colour alone (WCAG 1.4.1 / 1.3.1). The frozen
+ * component has the same gap, and this atom does not close it, because the
+ * right announcement depends on what the chip means in its container --
+ * `aria-current` reads as navigation, `aria-pressed` needs a button, and a
+ * filter facet is neither until `bfFilterBar` (issue 30) gives it a role. The
+ * **toggle** branch, which is the one this epic actually uses for filters, is
+ * fully announced through `aria-pressed`. Filed as a residual against issue 30
+ * rather than guessed at here (review finding gh#25-P2-3).
  *
  * ## Box metrics
  *
@@ -264,13 +289,28 @@ const onToggle = () => {
     color: var(--_bf-chip-color);
 
     /*
-      The face is inherited; only the step, the casing and the tracking are the
-      chip's own. Setting `font-family` rather than the `font` shorthand keeps
-      the size declaration below from being reset by it.
+      `font: inherit`, then the step — the order `bfButton` uses, and it has to
+      be the shorthand rather than `font-family` alone.
+
+      Review finding gh#25-P2-1. A `<button>` carries UA declarations no other
+      branch does: `line-height: normal` and a font of its own. With only
+      `font-family` reset, the toggle rendered 18.25px tall against 23.25px for
+      the span, link and anchor branches, and at a different weight — four
+      modes of one atom that do not line up. `bfFilterBar` (issue 30) puts
+      toggle chips in a row beside link chips, so that is a visible break, and
+      it is exactly the class of inconsistency a shared atom exists to prevent.
+      The shorthand resets family, weight, style and line-height together;
+      `font-size` on the next line then re-applies the step, because a later
+      declaration wins.
+
+      `text-align` is the other UA difference (`center` on a button, inherited
+      elsewhere), so it is stated once here for every branch. The casing and
+      the tracking are untouched by the shorthand and stay the chip's own.
     */
-    font-family: inherit;
+    font: inherit;
     font-size: var(--_bf-chip-font-size);
     letter-spacing: 0.05em;
+    text-align: center;
     text-transform: uppercase;
     text-decoration: none;
   }
