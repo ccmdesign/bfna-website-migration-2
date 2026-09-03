@@ -71,4 +71,157 @@ Fails today (no `bf/Breadcrumb.vue`), passes once done.
 
 ## Decisions
 
-_Runner appends here._
+_Appended by the gh#37 item-runner._
+
+### D-28.1 — the last crumb is never a link
+
+The issue body ("linked crumbs via `NuxtLink` and the final crumb plain"), this
+spec's §Scope ("`aria-current="page"` marks the final crumb regardless of
+whether it happens to carry a `to`") and the acceptance ("the last crumb is not
+a link") all say the same thing, but the orchestrator brief's shorthand — *"links
+for every item that has `to`"* — reads as contradicting them for a trail whose
+final node carries a route. Resolved in favour of the spec and the stated
+acceptance:
+
+| position | has `to` | renders |
+|---|---|---|
+| last | yes **or** no | `<span aria-current="page">` |
+| not last | yes | `<NuxtLink>` |
+| not last | no | `<span>`, **no** `aria-current` |
+
+A link to the page you are on is a link to nowhere, and a trail has one current
+page, not several. `wfBreadcrumb` conflates the two questions by answering both
+with `v-if="c.to"`, so a trail whose last node carries a route renders there
+with no current item at all. Probe 28's `last-linked` and `middle-unlinked`
+trails assert both halves.
+
+### D-28.2 — the separator carries empty alternative text
+
+Moving the slash out of the DOM is **not** sufficient on its own. Generated
+content is concatenated into the accessible-name computation in Chrome, so
+`content: "/"` on a `::before` reproduces the exact defect this component
+exists to fix, somewhere a reviewer is far less likely to look.
+
+The declaration is therefore `content: "/" / ""` — the alt-text form: the
+string to paint, then the alternative text to expose, which is none. Exposed as
+`--_bf-breadcrumb-separator` so the two halves travel together and an
+overriding consumer sees that they must.
+
+Probe 28 asserts the resolved value from the **live CSSOM**
+(`getComputedStyle(li, '::before').content === '"/" / ""'`, whitespace
+stripped), not from the source, so a build step that drops the alt half fails
+the run instead of silently shipping a slash into every screen reader.
+
+### D-28.3 — a local `interface Props`, not a `BreadcrumbProps` in contracts
+
+A deliberate divergence from the `XProps`-in-`bf-contracts.ts` shape of the
+fourteen atoms before this one. BRIEF §5 rule 11 forbids a component declaring a
+**shared** type inline; the shared type here is `Crumb`, which is imported from
+contracts rather than redeclared — precisely what `wfBreadcrumb` gets wrong.
+`Props` is unexported and unimportable, so it is shared with nobody, and this
+spec both designs the props that way and greps this file for `Crumb[]`.
+
+`src/types/bf-contracts.ts` is therefore **not edited by this issue** — `Crumb`
+(line 315) already had the right shape from issue 02 / gh#11.
+
+### D-28.4 — an empty trail renders nothing
+
+`items: []` produces no element at all, not an empty `<nav aria-label="Breadcrumb">`.
+A landmark is announced by its name before its contents are read, so an empty
+one costs a screen-reader user an announcement and a navigation to discover
+there was nothing there. Same reasoning as `bfTime`'s absent-date branch
+(gh#27).
+
+### D-28.5 — `role="list"` on the `<ol>`
+
+`list-style: none` strips list semantics in Safari/VoiceOver, which would lose
+the "list, 4 items" announcement that is the whole reason for upgrading the
+wireframe's bare inline nodes to a list. Redundant in every other engine,
+harmless everywhere.
+
+### D-28.6 — separator colour token
+
+`--_bf-breadcrumb-separator-color: var(--color-neutral-tint-60)`, an existing
+semantic shade token from `tokens/semantic-colors-shades-and-tints.css`. No new
+colour, no literal, and not a primitive (BRIEF §5 rule 2). `--color-light` was
+rejected: it resolves to `--color-base-tint-02`, 2% base on white, which is
+invisible.
+
+### D-28.7 — acceptance substituted for the named `npm run typecheck`
+
+Two substitutions, both per standing orchestrator decisions:
+
+1. **`npm run typecheck` → the no-new-errors gate.** `dev` carries 178
+   pre-existing `error TS` (residual #71), so a green run is impossible.
+   Measured before and after: **178 → 178**, with **0** errors matching
+   `src/(components/bf|types|composables/bf)|content\.config`.
+2. **The spec's `.output/public` greps → the gh#109 probe harness.** Both greps
+   still pass (1 hit each), but the load-bearing assertions run on mount and a
+   prerendered-HTML grep cannot see them. Acceptance is
+   `npx tsx scripts/check-probes.ts --only 28` (**67/67 rows**) plus the full
+   suite (**20 probes, 904 rows, 0 failures**). The vitest harness on `dev` is
+   broken and pre-existing (residual #86) and was not touched.
+
+### D-28.8 — comment prose kept clear of the epic's own mechanical scans
+
+The component's doc comment originally contained the literal strings
+`interface WfCrumb` and `:not()` while describing what it deliberately does
+*not* do. Both would false-positive this spec's `interface.*Crumb` check and the
+D-20.5 negation-pseudo-class scan. Reworded — the gh#115 lesson that a check run
+over an unstripped file is a check on the comments, not on the code, applied in
+the other direction: prose should not make a correct file look wrong either.
+
+### D-28.9 — review finding P2-1: the focus ring is this component's job
+
+Found in the gh#37 inline review. A crumb is a focusable link, and the CUBE
+stack declares **no `a:focus-visible` rule anywhere** — `base/forms.css` covers
+inputs, textareas and selects, and nothing else in the stack styles a focused
+link. So a keyboard user's only ring on a breadcrumb was the UA default, which
+no other focusable `bf-*` atom relies on.
+
+`.bf-breadcrumb__link:focus-visible` now carries the same two-ring treatment
+`bfButton` (:258) and `bfSkipLink` use: `--outline-focus` for the halo, plus an
+`outline` that survives forced-colors mode where `box-shadow` is dropped, drawn
+in `--_bf-breadcrumb-focus-color: var(--color-text)` rather than `currentcolor`
+(the gh#24-P2-1 finding — a ring in the link's own colour can paint light-on-
+light). Four probe rows assert it, including that the *current* crumb is
+correctly **not** focusable.
+
+Worth carrying forward: the missing global link-focus rule is not specific to
+this component. Raised as a residual rather than fixed here, since a rule in
+the shared stack is outside a single molecule's blast radius.
+
+### D-28.10 — browser testing caught an unsound focus assertion
+
+The STEP 6 browser run disagreed with the headless harness: identical, correct
+code reported **PASS 71/71** under `check-probes.ts` and **FAIL 69/71** in a
+browser pane. Both failing rows were the ones added for D-28.9, and the cause
+was the assertion, not the component.
+
+`:focus-visible` is a heuristic about the **last input modality**. A
+programmatic `.focus()` matches it in a document that has seen no pointer
+interaction and does not match it in one that has — so a `.focus()`-then-read-
+computed-style check is a check on the environment's interaction history.
+Green in CI, red on a reviewer's screen, on code that is fine: the failure mode
+most corrosive to trusting a probe suite at all.
+
+Rewritten to assert the **declared rule** through the CSSOM — that
+`.bf-breadcrumb__link:focus-visible` exists inside `@layer components`,
+declares both an `outline` and the `--outline-focus` halo, and binds its colour
+to `--_bf-breadcrumb-focus-color` rather than `currentcolor` — plus a live
+resolution of that hook to the root colour. Environment-independent, and it
+still fails if the rule is removed.
+
+Forcing a trusted Tab via `data-probe-keys` (probe-harness.md Decision 4) is
+the stronger tool and was rejected here on proportion: it makes the whole
+page's verdict wait on a keypress, and probe 28's other 69 rows are static-DOM
+questions with no business being gated on one. Probe 19 remains the epic's
+keyboard probe.
+
+**Verified in both environments after the rewrite:** `check-probes.ts --only 28`
+→ 73/73, and the same page in a real browser → PASS 73/73, no console errors.
+Measured there directly: `::before` is `none` on the first crumb and `"/" / ""`
+on every later one (the alt-text form survives the build), each later `<li>` is
+~13px wider than its child (the separator is genuinely painted), the separator
+resolves to a muted grey against near-black labels, the crumb elements are
+`A, A, A, SPAN`, and `aria-current` is present on the last one only.
