@@ -1,0 +1,81 @@
+/*
+  The stack's focus indicator — gh#146 (promoted residual #145, found in #37).
+
+  ## Why this file exists
+
+  Before it, grepping the whole CUBE stack for `focus` returned exactly one
+  rule set: `base/forms.css:34-38`, covering `input`, `textarea` and `select`.
+  Nothing styled a focused link, a focused `<summary>`, or anything else. So
+  every `bf-*` atom that renders a focusable control declared its own ring —
+  `bfButton`, `bfChip`, `bfSkipLink`, `bfBreadcrumb`, `bfAccordion`,
+  `bfFormField`, six independent copies of the same three declarations — and
+  every plain `<a>` outside one of those components got the UA default, which
+  is not a guarantee across engines and disappears against some grounds.
+
+  This is the floor those six were each substituting for: a stated focus
+  appearance for the design system's most common interactive element (WCAG
+  2.4.7; BRIEF §5 rule 9).
+
+  ## Why `@layer defaults`
+
+  `styles.css` declares
+
+      reset, defaults, tokens, themes, composition, components, utils, overrides
+
+  so `defaults` sits **under** `components`. That is the whole point of putting
+  the rule here rather than anywhere else: it is a floor, not a ceiling. Every
+  `bf-*` atom's own `:focus-visible` rule lives in `@layer components` and wins
+  outright, so the `--_bf-*-focus-color` hooks those rules read keep working as
+  overrides without needing a single point of extra specificity.
+
+  ## Why the bare `:focus-visible`
+
+  #145 suggested `a:focus-visible`, because a breadcrumb crumb is what surfaced
+  it. The gap is wider than links: `bfAccordion` (#40) hit the same hole for
+  `<summary>` and said so in its own comment, and the page templates in phases
+  5–6 emit focusable elements of several kinds directly. One selector at
+  specificity (0,1,0) — the lowest a pseudo-class rule can have — in the
+  weakest paint-carrying layer covers all of them and is outranked by
+  everything above it.
+
+  ## Two rings, not one
+
+  The treatment all six atoms converged on independently, kept:
+
+  - `--outline-focus` is the existing semantic focus token (a `box-shadow`
+    triple) and supplies the halo;
+  - the real `outline` is what survives forced-colors mode, where `box-shadow`
+    is dropped and an outline is repainted in a system colour.
+
+  `--color-text`, never `currentcolor` (the gh#24-P2-1 finding, and the value
+  every `--_bf-*-focus-color` hook already defaults to). `outline-offset` draws
+  the ring **outside** the element, on the page ground, so the colour that has
+  to contrast is the ground's — not the element's fill. An element whose own
+  colour is the light one would otherwise paint a light ring on a light page
+  (WCAG 1.4.11).
+
+  Existing tokens only; no new colour and no new token name (DoD-6).
+
+  ## Two things this deliberately does not fix
+
+  1. **Text inputs.** `base/forms.css`'s `input:not(…):focus, textarea:focus,
+     select:focus` is specificity (0,1,1) and sits in this *same* layer, so it
+     beats the rule below and keeps writing `outline: none`. Only a
+     `@layer components` rule can win there, which is exactly what
+     `bfFormField` declares. Left alone rather than fought: rewriting
+     `base/forms.css` is a change to the form baseline of every legacy route
+     and belongs in its own issue.
+  2. **Unlayered author CSS (#116).** Unlayered styles beat *every* cascade
+     layer, so a scoped SFC `<style>` block or one of the three legacy sheets
+     `layouts/legacy-base.vue` links can still override this. Under the
+     `bf-probe` layout — the sole stylesheet injector for probe routes, and the
+     shape the real shell (#55) must reproduce — `/css/styles.css` is the only
+     sheet on the page, so the rule applies with nothing above it.
+*/
+@layer defaults {
+  :focus-visible {
+    outline: var(--border-width-medium) solid var(--color-text);
+    outline-offset: var(--border-width-medium);
+    box-shadow: var(--outline-focus);
+  }
+}

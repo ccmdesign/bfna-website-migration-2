@@ -155,17 +155,22 @@ withDefaults(defineProps<SkipLinkProps>(), {
   }
 
   /*
-    The same two-ring treatment as `bfButton`: `--outline-focus` supplies the
-    halo, and the `outline` is what survives forced-colors mode, where
-    `box-shadow` is dropped. `--color-text` rather than `currentcolor`, because
-    the ring is drawn outside the link on the page ground and the label colour
-    here is the light one — `currentcolor` would paint a white ring on a white
-    page (WCAG 1.4.11; the gh#24-P2-1 finding, avoided rather than repeated).
+    No `.bf-skip-link:focus-visible` rule here any more — gh#146.
+
+    This component used to declare the same two-ring treatment as `bfButton`,
+    hard-coded to `--color-text`. `base/focus.css` now states exactly those
+    three declarations once, globally, in `@layer defaults`, and
+    `.bf-skip-link` is always an `<a>`, so the rule that stood here was a
+    byte-for-byte duplicate of the floor.
+
+    It is the only one of the seven local workarounds gh#146 removed. The other
+    six each read a `--_bf-*-focus-color` hook, which is their component's
+    documented override surface — deleting those rules would orphan the hook.
+    This one exposed none, so there was nothing to keep.
+
+    The `:focus` rule above is a different thing entirely and stays: it moves
+    the link on-screen, which is the skip link's whole behaviour and has to
+    happen on a programmatic focus too.
   */
-  .bf-skip-link:focus-visible {
-    outline: var(--border-width-medium) solid var(--color-text);
-    outline-offset: var(--border-width-medium);
-    box-shadow: var(--outline-focus);
-  }
 }
 </style>
