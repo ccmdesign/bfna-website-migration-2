@@ -12,6 +12,17 @@
  * names, no `Wf` prefix. Types only: this module ships no runtime code.
  */
 
+import type { z } from 'zod'
+import type {
+  bfInsightSchema,
+  bfProjectSchema,
+  bfProgramSchema,
+  bfPersonSchema,
+  bfPageSchema,
+  bfAnnouncementSchema,
+  bfPageLegacySchema
+} from '../../content.config'
+
 /** Grid-slot modifier shared by every card. `span: 'full'` renders as `data-span="full"`. */
 export interface CardBaseProps {
   span?: 'full'
@@ -66,3 +77,35 @@ export interface SearchResultRow {
   date?: string
   score: number
 }
+
+/* -------------------------------------------------------------------------
+ * Entity types — inferred from the `bf*` collection schemas (issue 09 / gh#18)
+ * -------------------------------------------------------------------------
+ * The zod schemas live in `content.config.ts`, next to the collections they
+ * validate. They are re-exported here as inferred types so every `bf-*`
+ * component, composable and page has exactly one import site for entity
+ * shapes: `import type { Insight } from '~/types/bf-contracts'`.
+ *
+ * The import below is type-only, so this module still ships no runtime code
+ * and no `@nuxt/content` runtime reaches the client bundle.
+ */
+/** One insight document, as stored in the `bfInsights` collection (371 rows). */
+export type Insight = z.infer<typeof bfInsightSchema>
+
+/** One project document, as stored in the `bfProjects` collection (38 rows). */
+export type Project = z.infer<typeof bfProjectSchema>
+
+/** One program document, as stored in the `bfPrograms` collection (3 rows). */
+export type Program = z.infer<typeof bfProgramSchema>
+
+/** One person document, as stored in the `bfPeople` collection (13 rows). */
+export type Person = z.infer<typeof bfPersonSchema>
+
+/** One static-page document, as stored in the `bfPages` collection (7 rows). */
+export type Page = z.infer<typeof bfPageSchema>
+
+/** The site-wide announcement — `bfAnnouncements` holds exactly one document. */
+export type Announcement = z.infer<typeof bfAnnouncementSchema>
+
+/** A `Page`'s provenance pointer into the legacy Directus records. */
+export type PageLegacyRef = z.infer<typeof bfPageLegacySchema>

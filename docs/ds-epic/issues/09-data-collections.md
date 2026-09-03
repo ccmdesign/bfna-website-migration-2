@@ -109,3 +109,72 @@ build-time-queried value, not grep-able statically).
   25 (`bfCardProgram`).
 
 _Runner appends here._
+
+### Appended by the item-runner (gh#18)
+
+- **The schemas are derived from what the normaliser emits, not from this
+  spec's draft field list.** Ground truth was, in order: the emitted
+  interfaces in `scripts/normalise-wireframe-data.ts` (`InsightDoc`,
+  `ProjectDoc`, `ProgramDoc`, `PersonDoc`, `PageDoc`, `AnnouncementDoc`,
+  `ProjectPodcast`, `RawPageLegacy`), a key/type sweep over all 433 files in
+  `content/bf/**`, and the Decisions of issues 07 and 08. Thirteen downstream
+  issues consume these types, so a schema that merely *validated* would still
+  hand them the wrong shape.
+
+- **Three spec corrections applied** (all pre-flagged by 07/08):
+  - `bfPages.legacy` is an **object**, `z.object({ source, type, workstream:
+    string|null, id: number|null }).nullable()` — not `z.string().nullable()`.
+    Exported as `PageLegacyRef` alongside `Page`.
+  - `bfAnnouncements.workstream` is `z.number().nullable()` — the singleton
+    carries the Directus M2O id `12`.
+  - `bfAnnouncements.status` and `.message` are `z.string().nullable()`, not
+    required strings: `AnnouncementDoc` declares them `string | null`. The
+    `status === 'published'` gate stays in the composable (issue 13).
+
+- **Which booleans are nullable is not uniform, and the split is load-bearing.**
+  Fields the normaliser *computes* are non-null (`insights.featured`,
+  `insights.retired_news`, `projects.featured`, `projects.nav`,
+  `projects.grid_eligible`, `people.board`); fields that *pass through* from
+  the snapshot keep their `| null` (`archived`, `evergreen`,
+  `exclude_from_grid`, `external_only`). Declaring the computed ones nullable
+  would force every consumer into a pointless null check. `projects.pending`
+  is `.optional()` (absent from 36 of 38 documents), not `.nullable()`.
+
+- **Probe asserts 371, not 354** — per 07's Decisions, `featured` (8) and
+  `retired_news` (9) are separate highlight records with no slug overlap with
+  the 354 `items`. The probe asserts all four numbers (371 total / 354 with
+  neither flag / 8 / 9) so a future regression that *merged* the sets instead
+  of appending them would still fail, which a bare 371 would not catch.
+
+- **Type-export site: schemas in `content.config.ts`, types re-exported from
+  `src/types/bf-contracts.ts`.** The 14 existing collections export no types,
+  so there was no house pattern to match. The schemas stay next to the
+  collections they validate (this spec's own `schema: z.object({…})` shape),
+  and `bf-contracts.ts` re-exports `z.infer<…>` as `Insight`, `Project`,
+  `Program`, `Person`, `Page`, `Announcement` (+ `PageLegacyRef`) so
+  components have exactly one import site (BRIEF §5 rule 11). The import is
+  **type-only** (`import type … from '../../content.config'`): it was measured
+  to add zero typecheck errors (178 → 178 with a scratch file), and it pulls
+  no `@nuxt/content` runtime into the client bundle, so `bf-contracts.ts`
+  still ships no runtime code.
+
+- **`.nullable()` was verified supported before use.** All 14 existing
+  collections use only `.optional()`.
+  `@nuxt/content@3.16.0`'s `runtime/internal/schema.js` `describeProperty()`
+  handles `anyOf` / `oneOf` / `type: [T, 'null']` and emits `NULL` column
+  constraints, and `isJSONProperty()` routes nested objects and arrays through
+  a JSON column. The probe reads one of each back (`legacy`, `podcast`,
+  `podcast.episodes`, `authors`, `projects`) to prove the round trip rather
+  than trusting the reading.
+
+- **Verification.** Probe `/bf-probe/09-data-collections` renders **PASS —
+  18/18** in the prerendered HTML (371 / 354 / 8 / 9 insights, 38 projects,
+  3 programs, 13 people, 4 board, 7 pages, 1 announcement, plus the six
+  round-trip shape checks). Typecheck 178/178 (baseline, no new errors; 0 in
+  the scoped paths, 0 mentioning any new file). `npx nuxt generate` exits 0 —
+  799 routes vs 791 on the untouched worktree, the delta being the new probe
+  route; the `no such column: "path"` warnings are pre-existing noise from the
+  unrelated legacy `docs` collection. Both wireframe byte-identity diffs
+  (vs `dev` and vs the pre-epic base `f757a64`) print nothing. Diffstat is
+  3 files, +469/-0 — the 14 existing collections are untouched, unrenamed and
+  unreordered.
