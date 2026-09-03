@@ -31,9 +31,11 @@ npx eslint src --ext .ts,.vue    # lint application code
 ## Directory Overview
 - `src/pages/`: File-based routes; keep orchestration only, delegate UI to components
 - `src/layouts/`: Shell layouts that wrap page content
-- `src/components/ds/`: Design system components prefixed `ccm` (ccmButton, ccmCard, etc.)
+- `src/components/bf/`: Final `bf-*` design system (bfButton, bfCard, etc.) — **presentational-only: props in, events out, nav and footer included.** No `queryCollection`, no store, no data composable inside a `bf-*` component. All new components for the `/` site build go here.
+- `src/components/ds/`: the prior `ccm`-prefixed generation (ccmButton, ccmCard, etc.) — **not** touched by the `bf-*` epic; its `--_ccm-` conventions still apply to it
 - `src/components/content/`: Content primitives (ctaSignup, proseSection, Callout, etc.)
 - `src/composables/`: Composition utilities (`useContentItem`, `useContentStream`, `useSlugify`)
+- `src/types/`: Shared TypeScript contracts — `bf-contracts.ts` is the single source for every `bf-*` type
 - `src/content/`: Markdown sources with two collections:
   - `blog/`: Blog posts
   - `docs/`: Documentation (including component specs)
@@ -67,6 +69,9 @@ npx eslint src --ext .ts,.vue    # lint application code
 - Markdown files in `src/content/<collection>/` with frontmatter for metadata
 - Schemas enforced via Zod in `content.config.ts`
 - Query content using `queryCollection('<name>')` in pages/composables
+- **`bf-*` pipeline**: `src/assets/wireframe-data/*.json` (6 snapshots, read-only) → `scripts/normalise-wireframe-data.ts` → `content/bf/**/*.json` → six `bf*` `type: 'data'` collections in `content.config.ts` → `src/composables/data/bf*.ts` (`queryCollection` only) → component props. All synthesis (renames, curation, ordering, HTML strip/decode) happens in the normaliser, never in a component.
+- **Site chrome is not a seventh collection**: the same normaliser emits `src/assets/bf-data/menus.json`, read by the layout and passed to `bfNav`/`bfFooter` as props.
+- **Shared `bf-*` TypeScript types live in `src/types/bf-contracts.ts` and nowhere else.** No `bf-*` component declares a shared type inline.
 
 ## Testing Discipline
 - Tests live in `src/tests/` organized by feature area
@@ -81,13 +86,13 @@ npx eslint src --ext .ts,.vue    # lint application code
 
 When implementing features, follow the **composition-first** approach:
 
-1. **ALWAYS review** [General Implementation Guidelines](src/content/docs/guidelines/general-implementation-guidelines.md) first
+1. **ALWAYS review** [Implementation Playbook](_process/docs-deprecated/guidelines/implementation-playbook.md) first
 2. **Follow the decision tree**: DS Components → Utility Classes → Design Tokens → Custom CSS
 3. **Never write custom CSS** when existing components, utilities, or tokens can be used
 4. **Never hardcode** colors, spacing, or typography values
 
 **Quick Reference:**
-- **DS components**: All available components are in [`src/components/ds/`](src/components/ds/) - each prefixed with `ccm`
+- **DS components**: new work builds `bf-*` components in [`src/components/bf/`](src/components/bf/) — each prefixed with `bf`; the earlier generation in [`src/components/ds/`](src/components/ds/) is prefixed with `ccm` and stays as-is
 - **Component demos**: Interactive demos at [`src/pages/docs/`](src/pages/docs/)
 - **Component docs**: Auto-generated JSON in [`src/public/component-docs/`](src/public/component-docs/) served via `/docs/<component>`
 - **Utility classes**: Spacing (`.padding-block\:m`), colors (`.color\:primary`), typography (`.font-size\:1`)
@@ -95,17 +100,17 @@ When implementing features, follow the **composition-first** approach:
 - **Composables**: `useContentStream()`, `useContentItem()`, `useSlugify()`
 
 **Required reading:**
-- [General Implementation Guidelines](src/content/docs/guidelines/general-implementation-guidelines.md) - How to build features
-- [Component Standards](src/content/docs/guidelines/component-standards.md) - If creating DS components
-- [Component Design Decisions](src/content/docs/guidelines/component-design-decisions.md) - Design rationale
+- [Implementation Playbook](_process/docs-deprecated/guidelines/implementation-playbook.md) - How to build features
+- [Component Standards](_process/docs-deprecated/guidelines/component-standards.md) - If creating DS components
+- [Component Design Decisions](_process/docs-deprecated/guidelines/component-design-decisions.md) - Design rationale
 
 ## Component Development Standards
 
-When creating or updating components in `src/components/ds/`:
+When creating or updating components in `src/components/bf/` or `src/components/ds/`:
 
-1. **ALWAYS review** [Component Standards](src/content/docs/guidelines/component-standards.md) before starting
+1. **ALWAYS review** [Component Standards](_process/docs-deprecated/guidelines/component-standards.md) before starting
 2. **ALWAYS validate** against all 10 standards before completing
-3. Reference [Component Design Decisions](src/content/docs/guidelines/component-design-decisions.md) for context
+3. Reference [Component Design Decisions](_process/docs-deprecated/guidelines/component-design-decisions.md) for context
 4. For systematic migrations, consult `_process/spec-drafts/component-migration-checklist.md`
 
 **Non-negotiable requirements:**
@@ -114,7 +119,7 @@ When creating or updating components in `src/components/ds/`:
 - Review checklist at end of standards doc must pass
 
 **Key standard highlights:**
-- Use `--_ccm-{component}-{property}` pattern for CSS variables
+- CSS variable pattern: `--_ccm-{component}-{property}` for the existing `src/components/ds/*` (unchanged); `--_bf-{component}-{property}` for every new `src/components/bf/*` component
 - Style binding via computed `cssVars` for props
 - Reference design tokens (semantic > primitive)
 - Provide `size`, `variant`, and `customColor` props where appropriate
@@ -136,7 +141,7 @@ When creating or updating components in `src/components/ds/`:
 4. Fix integration issues before finalizing documentation
 5. Demo page must include complete, realistic examples (not isolated components)
 
-**See**: [Demo Page Blueprint - Interdependent Components](src/content/docs/guidelines/demo-page-blueprint.md#0-interdependent-components---critical) for detailed guidance
+**See**: [Demo Playbook](_process/docs-deprecated/guidelines/demo-playbook.md) for detailed guidance
 
 ## Project Management
 - Active specs and planning docs: `_process/spec-drafts/`
@@ -149,12 +154,11 @@ When creating or updating components in `src/components/ds/`:
 This project includes comprehensive documentation and guidelines:
 
 **Essential Reading:**
-- [Component Standards](src/content/docs/guidelines/component-standards.md) - Component development standards
-- [General Implementation Guidelines](src/content/docs/guidelines/general-implementation-guidelines.md) - How to build features
-- [Component Design Decisions](src/content/docs/guidelines/component-design-decisions.md) - Design rationale
-- [CUBE CSS Guidelines](src/content/docs/guidelines/cube-css.md) - CUBE CSS methodology and design tokens
-- [Documentation Governance](src/content/docs/guidelines/documentation-governance.md) - Documentation standards
-- [Demo Page Blueprint](src/content/docs/guidelines/demo-page-blueprint.md) - Demo page creation guide
+- [Component Standards](_process/docs-deprecated/guidelines/component-standards.md) - Component development standards
+- [Implementation Playbook](_process/docs-deprecated/guidelines/implementation-playbook.md) - How to build features
+- [Component Design Decisions](_process/docs-deprecated/guidelines/component-design-decisions.md) - Design rationale
+- [Documentation Governance](_process/docs-deprecated/guidelines/documentation-governance.md) - Documentation standards
+- [Demo Playbook](_process/docs-deprecated/guidelines/demo-playbook.md) - Demo page creation guide
 
 **Agent-Specific Directories:**
 - [`.claude/`](.claude/) - Claude Code commands and skills
@@ -204,7 +208,7 @@ Generate comprehensive demo pages:
 4. Run `npm run lint:css` for CSS/style validation
 5. If touching tokens, run `npm run validate:tokens` to ensure consistency
 6. For production verification: `npm run build` followed by `npm run preview`
-7. Document architectural decisions or follow-up actions in `src/content/docs/guidelines/`
+7. Document architectural decisions or follow-up actions in `_process/docs-deprecated/guidelines/`
 
 ## Known Gaps
 - Content collections defined in `content.config.ts` (casestudies, services, uilibrary) have no corresponding directories in `src/content/`

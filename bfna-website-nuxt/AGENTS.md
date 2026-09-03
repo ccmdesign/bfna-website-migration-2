@@ -16,7 +16,8 @@ src/
 ├── pages/          # File-based routing (keep lean, delegate to components)
 ├── layouts/        # Frame-level templates
 ├── components/
-│   ├── ds/         # Design system components (ccm-prefixed)
+│   ├── bf/         # Final bf-* design system (presentational-only)
+│   ├── ds/         # Prior generation, ccm-prefixed — not touched by the bf-* epic
 │   └── content/    # Content-specific components
 ├── composables/    # Reusable Vue composition functions
 ├── content/        # Markdown collections (blog, docs)
@@ -38,7 +39,7 @@ Root-level:
 ```bash
 npm run dev         # Start dev server with HMR
 npm run build       # Production build → .output/
-npm run generate    # Static site generation → dist/
+npm run generate    # ⚠ runs contentImporter.js (needs Directus secrets) — for bf-* work use `npx nuxt generate`
 npm run preview     # Serve production build
 npm run postinstall # Regenerate types (nuxt prepare)
 npm run typecheck   # TypeScript type checking
@@ -60,8 +61,8 @@ npm run validate:ai-instructions # Validate AI agent instructions
 
 **Vue Components:**
 - Use `<script setup lang="ts">` composition API
-- Name components in PascalCase (`ccmButton.vue`)
-- Design system components use `ccm` prefix
+- Name component files in their design system's camelCase form (`ccmButton.vue`, `bfCard.vue`) — not PascalCase
+- Design system components under `src/components/ds/` use the `ccm` prefix; components under `src/components/bf/` use the `bf-*` prefix instead — presentational-only (props in, events out, nav and footer included), no data-layer access
 - Keep page components lean; delegate UI to `src/components/`
 
 **TypeScript:**
@@ -72,9 +73,9 @@ npm run validate:ai-instructions # Validate AI agent instructions
 
 **CSS Architecture (CUBE CSS):**
 - Layer order: reset → defaults → tokens → themes → components → utils → overrides
-- Component variables: `--_ccm-{component}-{property}`
+- Component variables: `--_ccm-{component}-{property}` for `src/components/ds/*`; `bf-*` components use `--_bf-{component}-{property}`
 - Reference semantic tokens over primitives
-- See [Component Standards](src/content/docs/guidelines/component-standards.md)
+- See [Component Standards](_process/docs-deprecated/guidelines/component-standards.md)
 
 ## Testing
 
@@ -91,6 +92,9 @@ Content powered by `@nuxt/content`:
 - Active: `blog/` and `docs/`
 - Markdown with frontmatter schemas (Zod validated)
 - Query via `queryCollection('<name>')`
+- `bf-*` data pipeline: `src/assets/wireframe-data/*.json` (6 read-only snapshots) → `scripts/normalise-wireframe-data.ts` → `content/bf/**/*.json` → six `bf*` `type: 'data'` collections → `src/composables/data/bf*.ts` → component props. Components never query; see [CLAUDE.md](CLAUDE.md#content-workflow).
+- Site chrome (nav/footer menus) is **not** a seventh collection: the same normaliser emits `src/assets/bf-data/menus.json`, which the layout reads and passes to `bfNav`/`bfFooter` as props.
+- Shared TypeScript types for `bf-*` live in `src/types/bf-contracts.ts` and nowhere else; no `bf-*` component declares a shared type inline.
 
 ## Commit Guidelines
 
