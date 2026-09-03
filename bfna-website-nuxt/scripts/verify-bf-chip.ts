@@ -526,7 +526,7 @@ if (!existsSync(builtProbePath)) {
   check('every rendered chip resolved into exactly one mode', classified, instances.length)
   check('  …and all four modes render', Object.values(modes).every(n => n >= 1), true)
   check(
-    `  …the four modes (span/link/anchor/toggle: ${modes.span}/${modes.link}/${modes.anchor}/${modes.toggle})`,
+    `  …and the gallery still renders in bulk — ${instances.length} chips (span/link/anchor/toggle: ${modes.span}/${modes.link}/${modes.anchor}/${modes.toggle}), floor 10`,
     instances.length >= 10,
     true
   )

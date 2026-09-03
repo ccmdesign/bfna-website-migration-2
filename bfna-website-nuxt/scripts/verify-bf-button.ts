@@ -27,8 +27,11 @@
  *     (the gh#101 / residual #98 guard; the probe checks the live CSSOM).
  *  5. The spec's own literal `test`/`grep` acceptance expressions, run as
  *     written.
- *  6. The prerendered probe really carries the 24-instance matrix, the three
- *     disabled buttons, and no disabled *link*.
+ *  6. The prerendered probe really carries the matrix in bulk, with every
+ *     element-resolver branch represented, every instance classified into
+ *     exactly one of them, and no disabled *link*. Stated as bounds and set
+ *     equalities rather than pinned totals (residual #115), so adding an
+ *     instance to the probe cannot fail a correct component.
  *
  * Sections 4 and 6 read `.output/`. Run `npx nuxt generate` first.
  *
@@ -361,7 +364,7 @@ if (!existsSync(builtProbePath)) {
   check('every rendered button resolved into exactly one mode', modes.link + modes.anchor + modes.button, instances.length)
   check('  …and all three modes render', Object.values(modes).every(n => n >= 1), true)
   check(
-    `  …the three modes (link/anchor/button: ${modes.link}/${modes.anchor}/${modes.button})`,
+    `  …and the matrix still renders in bulk — ${instances.length} instances (link/anchor/button: ${modes.link}/${modes.anchor}/${modes.button}), floor 20`,
     instances.length >= 20,
     true
   )

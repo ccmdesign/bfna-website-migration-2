@@ -82,9 +82,19 @@ const flag = (name: string): string | undefined => {
   return value
 }
 
+const num = (raw: string | undefined, fallback: number): number => {
+  if (raw === undefined) return fallback
+  const value = Number(raw)
+  if (!Number.isFinite(value) || value < 0) {
+    console.error(`expected a number, got "${raw}"`)
+    process.exit(2)
+  }
+  return value
+}
+
 const only = flag('only')
-const timeoutMs = Number(flag('timeout') ?? 20_000)
-const pinnedPort = Number(flag('port') ?? 0)
+const timeoutMs = num(flag('timeout'), 20_000)
+const pinnedPort = num(flag('port'), 0)
 const verbose = argv.includes('--verbose')
 
 /* ------------------------------------------------------------------ *
@@ -284,8 +294,12 @@ class Cdp {
   private readonly socket: WebSocket
   private nextId = 1
   private readonly pending = new Map<number, Pending>()
-  /** Page-level exceptions, so a probe that dies on load says why. */
-  readonly exceptions: string[] = []
+  /**
+   * Page-level exceptions, so a probe that dies on load says why. Cleared
+   * between probes — a note quoting the *previous* page's exception is worse
+   * than no note at all.
+   */
+  exceptions: string[] = []
 
   private constructor(socket: WebSocket) {
     this.socket = socket
@@ -320,12 +334,24 @@ class Cdp {
     })
   }
 
+  /**
+   * Every call is bounded. Without this a Chrome that dies mid-run leaves the
+   * promise pending forever and the harness hangs instead of failing — the one
+   * outcome a verification script must never have.
+   */
   send<T = Record<string, unknown>>(method: string, params: Record<string, unknown> = {}, sessionId?: string): Promise<T> {
     const id = this.nextId++
     const frame: Record<string, unknown> = { id, method, params }
     if (sessionId) frame.sessionId = sessionId
     return new Promise<T>((ok, fail) => {
-      this.pending.set(id, { ok: ok as (value: unknown) => void, fail })
+      const timer = setTimeout(() => {
+        this.pending.delete(id)
+        fail(new Error(`${method} did not answer within 30s — the browser is probably gone`))
+      }, 30_000)
+      this.pending.set(id, {
+        ok: value => { clearTimeout(timer); (ok as (v: unknown) => void)(value) },
+        fail: reason => { clearTimeout(timer); fail(reason) }
+      })
       this.socket.send(JSON.stringify(frame))
     })
   }
@@ -344,9 +370,17 @@ class Cdp {
  * than crash the harness.
  */
 const READ_VERDICT = `(() => {
+  const loaded = document.readyState === 'complete'
   const root = document.querySelector('[data-probe-verdict]')
   if (!root) {
-    return { conforms: false, ready: true, verdict: 'MISSING', probe: null, rows: [] }
+    /*
+      Ready only once the document finished loading. The first poll can land on
+      about:blank before Page.navigate has committed, and reporting a
+      conforming probe as MISSING because of that would be a flake, not a
+      verdict. Every probe root ships in the prerendered HTML, so once the
+      document is complete a missing root is conclusive.
+    */
+    return { conforms: false, ready: loaded, verdict: 'MISSING', probe: null, rows: [] }
   }
   const verdict = (root.getAttribute('data-probe-verdict') || '').toUpperCase()
   const rows = Array.from(document.querySelectorAll('[data-probe-row]')).map(el => {
@@ -367,6 +401,9 @@ const READ_VERDICT = `(() => {
     rows
   }
 })()`
+
+/** The two-digit number a probe route starts with, e.g. `16-bf-chip` -> `16`. */
+const numberOf = (slug: string): string => slug.split('-')[0] ?? ''
 
 type Row = { label: string, ok: boolean, detail: string }
 type Verdict = { conforms: boolean, ready: boolean, verdict: string, probe: string | null, rows: Row[] }
@@ -409,6 +446,7 @@ const run = async (): Promise<void> => {
       let note: string | undefined
 
       try {
+        cdp.exceptions = []
         await cdp.send('Runtime.enable', {}, sessionId)
         await cdp.send('Page.enable', {}, sessionId)
         await cdp.send('Page.navigate', { url }, sessionId)
@@ -433,6 +471,10 @@ const run = async (): Promise<void> => {
 
         if (!verdict.conforms) {
           note = 'page has no [data-probe-verdict] root — probe does not follow the harness convention'
+        } else if (verdict.probe !== numberOf(slug)) {
+          /* A copy-pasted probe that kept the number it was copied from would
+             name the wrong page in every failure message it ever produces. */
+          note = `root says data-probe="${verdict.probe}" but the route is ${slug}`
         } else if (!verdict.ready) {
           note = `verdict still PENDING after ${timeoutMs}ms`
             + (cdp.exceptions.length > 0 ? ` — page exception: ${cdp.exceptions[cdp.exceptions.length - 1]}` : '')
