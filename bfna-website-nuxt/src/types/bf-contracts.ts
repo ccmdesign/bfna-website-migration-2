@@ -697,3 +697,114 @@ export interface CardRowProps extends CardWrapperProps {
   /** Presentation hint, rendered as `data-variant`. Styles nothing by itself. */
   variant?: string
 }
+
+/**
+ * Props of `bfFormField` — one labelled control, and nothing else.
+ *
+ * Builds from the three hand-rolled idioms in `wfContactSection.vue:8-10`:
+ *
+ * ```html
+ * <label class="stack" data-gap="2xs">Name<input type="text"></label>
+ * <label class="stack" data-gap="2xs">Email<input type="email"></label>
+ * <label class="stack" data-gap="2xs">Message<textarea rows="4" /></label>
+ * ```
+ *
+ * Three near-identical blocks whose association is *implicit* — the control is
+ * a descendant of the label, which is valid HTML and is also the arrangement
+ * that quietly stops working the moment anything is added between them, and
+ * that gives the hint and the error text nowhere to attach. This contract
+ * replaces it with an explicit `for`/`id` pair plus the two ARIA references a
+ * described, invalid control needs.
+ *
+ * **No validation and no submission.** `hint` and `error` are caller-supplied
+ * strings; nothing here computes whether a value is valid, and there is no
+ * `form` element and no `@submit` (spec § Out of scope — that is issue 44's).
+ */
+export interface FormFieldProps {
+  /**
+   * The visible label text, and the control's accessible name.
+   *
+   * A string rather than a slot. The three wireframe occurrences are bare text
+   * nodes (`Name`, `Email`, `Message`), so there is no second, richer case to
+   * generalise from — and a slot here would put arbitrary markup inside the
+   * element whose text content *is* the accessible name, which is the failure
+   * `bfAccordion` avoided at `::marker` and `bfBreadcrumb` at its separator.
+   */
+  label: string
+  /**
+   * The control's value. Paired with `update:modelValue`, so `v-model` works.
+   *
+   * Required, not optional-with-a-default: a text control's value is `''` when
+   * empty, and a component that accepted `undefined` would be choosing between
+   * an uncontrolled input and a controlled one on a per-render basis. The
+   * caller owns the state; this component never holds it.
+   */
+  modelValue: string
+  /**
+   * The control to render. `'textarea'` renders a `<textarea>`; anything else
+   * becomes `<input :type="type">`. Defaults to `'text'`.
+   *
+   * Deliberately an open `string`, exactly as the spec types it — the same
+   * call as `CardRowProps.variant` and for the same reason. The HTML input
+   * type list is the platform's, not this design system's, and a union
+   * invented here would reject `'tel'` or `'url'` with a compile error on
+   * behalf of a rule nobody wrote. An unrecognised value degrades the way the
+   * platform already degrades it: an unknown `type` renders as `text`.
+   *
+   * `'checkbox'` and `'radio'` are **not** in scope. Their value is a
+   * `checked` boolean, not a string, so they do not fit this contract and
+   * would need their own; the wireframe contains neither.
+   */
+  type?: string
+  /**
+   * Marks the control `required`.
+   *
+   * The **attribute** is what reaches the accessibility tree; the visual `*`
+   * the component renders alongside the label is `aria-hidden`, so it is not
+   * read out as punctuation inside the accessible name.
+   */
+  required?: boolean
+  /**
+   * Supporting text, referenced from the control's `aria-describedby`.
+   *
+   * A hint is not an error and does not become one: both may be present at
+   * once, and when they are, **both** ids appear in `aria-describedby`,
+   * space-separated per the ARIA spec, hint first.
+   */
+  hint?: string
+  /**
+   * An error message, referenced from `aria-describedby` and accompanied by
+   * `aria-invalid="true"` on the control.
+   *
+   * Caller-supplied. Setting it is the *only* thing that puts the control in
+   * its invalid state — this component runs no validation and reads no
+   * `:invalid` pseudo-class, so a caller that has not decided a field is wrong
+   * never gets a red control for free.
+   */
+  error?: string
+}
+
+/**
+ * Props of `bfFormGroup` — a `<fieldset>`/`<legend>` around a set of fields.
+ *
+ * One prop, one slot. The group exists because a set of related controls needs
+ * a *group* name in the accessibility tree, and `<fieldset>`/`<legend>` is the
+ * only native construct that provides one; every ARIA re-implementation of it
+ * (`role="group"` + `aria-labelledby`) is a strictly worse copy of what the
+ * two elements already do.
+ *
+ * Spacing is the composition layer's, through `data-gap` on the root — not a
+ * prop. See the gap hook in `FormGroup.vue` for why a components-layer value
+ * would make that documented API inert.
+ */
+export interface FormGroupProps {
+  /**
+   * The group's name, rendered as the `<legend>`.
+   *
+   * Required and a string, for the same reason `label` is on the field: a
+   * `<fieldset>` with no `<legend>` is a group with no accessible name, which
+   * is worse than no group at all — it adds a boundary that a screen reader
+   * announces and cannot describe.
+   */
+  legend: string
+}
