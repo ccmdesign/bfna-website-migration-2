@@ -405,6 +405,41 @@ export interface SkipLinkProps {
   target?: string
 }
 
+/**
+ * Props of `bfAccordion`.
+ *
+ * Two props, and neither of them is state. The component is a *skin* over a
+ * native `<details>`/`<summary>`, so the open/closed question is answered by
+ * the DOM element itself, exactly as it is on a page with no JavaScript at all
+ * — which is why there is no `modelValue`, no `expanded`, and no `update:open`
+ * event here to keep in sync with it.
+ */
+export interface AccordionProps {
+  /**
+   * The summary text — a plain string, not a slot.
+   *
+   * The wireframe's archive page writes `<summary><strong>{{ y.year }}</strong>
+   * ({{ y.items.length }})</summary>`, and the caller (issue 55) composes that
+   * `'2024 (17)'` string before passing it in. A richer summary — a count as a
+   * real badge with its own markup — would be a `summary` slot, added as a
+   * **second** occurrence under the rule of three, not speculatively now.
+   */
+  label: string
+  /**
+   * The **initial** open state, mapped straight onto the `open` content
+   * attribute. Not a two-way binding and not tracked afterwards: once the
+   * browser has toggled the element the DOM property and this prop disagree,
+   * and that is correct — the user's interaction is the source of truth, and
+   * nothing re-renders the node to overwrite it.
+   *
+   * A caller wanting *controlled* disclosure wants a different component; this
+   * one deliberately declines to grow one, because the value of native
+   * `<details>` is that its keyboard contract and its tab-order behaviour are
+   * the browser's job rather than ours.
+   */
+  open?: boolean
+}
+
 /** One breadcrumb node. `to` omitted marks the current (non-linked) page. */
 export interface Crumb {
   label: string
