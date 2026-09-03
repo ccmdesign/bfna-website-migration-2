@@ -68,8 +68,18 @@
  * where `wfCardInsight.vue:22` points at `/wireframes/insights/${slug}`. That
  * is the single deliberate divergence in this file, named by the spec, and the
  * probe asserts the rendered `href` does not contain `/wireframes/`.
+ *
+ * ## Two contract additions, retrofitted in gh#31
+ *
+ * Both were raised as residuals against this file's own review and both were
+ * settled once for the whole wrapper family rather than six times:
+ *
+ * - **`headingLevel`** (#128), from the shared `CardWrapperProps`. `bfCard`
+ *   styles `:is(h2, h3, h4)` (D-20.4) because heading level belongs to the
+ *   page outline; this is how a wrapper reaches the other two.
+ * - **A blank heading renders no link** (#130). See `hasHeading` below.
  */
-import type { Insight } from '~/types/bf-contracts'
+import type { CardWrapperProps, Insight } from '~/types/bf-contracts'
 import { formatLabel } from '~/utils/format'
 
 defineOptions({
@@ -78,7 +88,7 @@ defineOptions({
   inheritAttrs: false
 })
 
-interface Props {
+interface Props extends CardWrapperProps {
   /** One `bfInsights` row. Passed whole; this component fetches nothing. */
   insight: Insight
   /**
@@ -98,10 +108,61 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  /*
+   * `3` is the no-change value — it is the level this file hard-coded before
+   * #128 and the level every existing call site renders — so adopting the prop
+   * moved no pixel. See `CardWrapperProps` for why the default lives here and
+   * not in the type.
+   */
+  headingLevel: 3,
   extraChips: undefined,
   excerpt: true,
   excerptLength: 140
 })
+
+/**
+ * The heading text, trimmed — and the guard behind #130.
+ *
+ * `bfInsightSchema` types `heading` as `z.string().nullable()`. Rendered
+ * straight into the link, a null one produces an anchor with **no accessible
+ * name**, and because `bfCard` stretches that anchor's `::after` over the whole
+ * card the result is a card-sized link a screen-reader user cannot identify
+ * (WCAG 2.4.4 / 4.1.2) and a sighted user cannot see the label of. Latent
+ * today — 0 of the 371 real rows are affected — and permitted by the type,
+ * which is the definition of a trap.
+ *
+ * So a blank heading renders **no heading element and no link at all**: the
+ * card keeps its excerpt, chips and date and simply is not a navigation
+ * target. The two alternatives were both rejected for the same reason — the
+ * slug (`'dual-vocational-training'`) and a literal `'Untitled'` each invent
+ * user-visible content the data does not carry, which BRIEF §5 rule 10
+ * forbids, and each *hides* the defect behind a plausible-looking card instead
+ * of surfacing it.
+ *
+ * `''` is treated as `null`: a heading of one space is no more nameable than a
+ * missing one, and `.trim()` is what tells them apart from a real title.
+ */
+const headingText = computed(() => (props.insight.heading ?? '').trim())
+
+const hasHeading = computed(() => headingText.value !== '')
+
+/**
+ * …and the defect is announced rather than swallowed. Same shape as `bfMedia`'s
+ * missing-`alt` warning (gh#26) and `bfCard`'s outside-a-list warning (gh#29):
+ * a dev-time `console.warn`, never a thrown error, with `import.meta.dev`
+ * keeping it out of the production bundle.
+ */
+if (import.meta.dev) {
+  watchEffect(() => {
+    if (!hasHeading.value) {
+      console.warn(
+        '[bfCardInsight] `insight.heading` is empty, so the card renders no '
+        + 'heading and no link — a stretched link with no accessible name is '
+        + `the alternative. slug: ${props.insight.slug}`
+      )
+    }
+  })
+}
 
 /**
  * The excerpt, truncated. Same arithmetic as `wfCardInsight.vue:21-24` minus
@@ -131,9 +192,15 @@ const excerptText = computed(() => {
     the markup to change the picture.
   -->
   <bfCard v-bind="$attrs">
-    <h3>
-      <NuxtLink :to="`/insights/${insight.slug}`">{{ insight.heading }}</NuxtLink>
-    </h3>
+    <!--
+      `h2` / `h3` / `h4` from `headingLevel` (#128) — the three levels
+      `bfCard`'s stylesheet matches. `v-if="hasHeading"` is #130: no heading
+      text means no element and no anchor, rather than a card-sized link with
+      nothing to announce.
+    -->
+    <component :is="`h${headingLevel}`" v-if="hasHeading">
+      <NuxtLink :to="`/insights/${insight.slug}`">{{ headingText }}</NuxtLink>
+    </component>
 
     <p v-if="excerpt && excerptText">{{ excerptText }}</p>
 

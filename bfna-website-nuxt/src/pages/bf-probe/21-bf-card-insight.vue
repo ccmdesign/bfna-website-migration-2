@@ -22,9 +22,29 @@
  * | `archived` | `there-and-back-again` | `archived: true`, so the conditional `Archive` chip has something to fire on, and `extraChips` can be asserted for *position* between the format chip and it |
  * | `video` | `episode-6-…` | `format: 'video'`, so the format chip is asserted against a second mapping rather than one; not archived, so the Archive chip's **absence** is asserted on two documents rather than one |
  *
- * Five cards, because three of those rows are rendered in more than one
- * configuration: default truncation, `excerpt: false`, the long-text case, and
- * the `$attrs` case.
+ * Eight cards, because those rows are rendered in more than one configuration:
+ * default truncation, `excerpt: false`, the long-text case, the `$attrs` case,
+ * and — added by gh#31 — the two extra heading levels and the blank-heading
+ * guard.
+ *
+ * ## The gh#31 retrofit rows
+ *
+ * Two residuals against this component were settled once for the whole wrapper
+ * family and are asserted here:
+ *
+ * - **#128 / `headingLevel`.** `bfCard` styles `:is(h2, h3, h4)` (D-20.4)
+ *   because heading level belongs to the page outline, and the wrappers could
+ *   reach only `h3`. The `level2` and `level4` cards assert the rendered tag
+ *   *and* — the part a source grep cannot reach — that the base's stretched
+ *   link, its `position: static` exemption and its focus/hover rules still
+ *   bite at those levels. `elementFromPoint` on empty card space, the same
+ *   proof probe 20 uses.
+ * - **#130 / a blank heading.** `heading` is `z.string().nullable()`, and the
+ *   heading is the entire text of an anchor whose `::after` is stretched over
+ *   the card — so a null one used to render a card-sized link with no
+ *   accessible name. The `noheading` card feeds a real row with `heading:
+ *   null` and asserts the card renders no heading element and **no anchor at
+ *   all**, while keeping its chips and its date.
  *
  * ## The 980-character case
  *
@@ -131,6 +151,17 @@ const longArticle = computed<Insight | null>(() => {
   return { ...row, excerpt: (row.content ?? '').slice(0, LONG_LENGTH) }
 })
 
+/**
+ * The same real document with its `heading` removed — the #130 case. The type
+ * permits it (`z.string().nullable()`) and 0 of the 371 real rows carry it, so
+ * the only honest way to render the case is to null the field on a real row,
+ * the substitution D-21.3 already established for the 980-character card.
+ */
+const noHeadingArticle = computed<Insight | null>(() => {
+  const row = article.value
+  return row ? { ...row, heading: null } : null
+})
+
 /** Extras on the archived card, so their *position* among the chips is testable. */
 const EXTRA_CHIPS = ['Fellowship', 'Europe']
 
@@ -153,8 +184,24 @@ onMounted(() => {
   const timeOf = (el: HTMLElement | null) =>
     el?.querySelector<HTMLTimeElement>(':scope > time') ?? null
 
+  /*
+   * `:is(h2, h3, h4)` rather than a bare `h3` since gh#31: the wrapper renders
+   * whichever level `headingLevel` names, and these are the three the base
+   * styles. Never `:not()` — D-20.5's ban is about CSS, but keeping the probe's
+   * selectors to the same vocabulary is what makes them readable next to the
+   * stylesheet they are checking.
+   */
+  const headingEl = (el: HTMLElement | null) =>
+    el?.querySelector<HTMLElement>(':scope > :is(h2, h3, h4)') ?? null
+
   const headingLink = (el: HTMLElement | null) =>
-    el?.querySelector<HTMLAnchorElement>(':scope > h3 > a') ?? null
+    el?.querySelector<HTMLAnchorElement>(':scope > :is(h2, h3, h4) > a') ?? null
+
+  /** Is this element's first child the card's heading? */
+  const headingIsFirst = (el: HTMLElement) => {
+    const first = el.children[0]
+    return !!first && first === headingEl(el)
+  }
 
   /** Rounded, so a sub-pixel layout width cannot decide a verdict. */
   const fits = (el: HTMLElement) =>
@@ -165,6 +212,43 @@ onMounted(() => {
   const vid = card('video')
   const long = card('long')
   const spanned = card('spanned')
+  const level2 = card('level2')
+  const level4 = card('level4')
+  const noheading = card('noheading')
+
+  /*
+   * The stretched link, hit-tested at each of the three heading levels — the
+   * gh#128 question a source grep cannot answer. Six pixels in from the card's
+   * bottom-right corner is inside the border, clear of the heading text and
+   * over nothing but the card's own padding, so the element at that point must
+   * be the heading anchor: that *is* the stretched `::after`. (Probe 20's
+   * technique, applied across levels rather than to one card.)
+   */
+  const hitTestHeadingLink = (el: HTMLElement | null) => {
+    if (!el) return 'missing card'
+    const link = headingLink(el)
+    if (!link) return 'no heading link'
+    /*
+     * `elementFromPoint` takes **viewport** coordinates and returns `null` for
+     * a point outside the viewport, so the card is brought into view first —
+     * most of the cards on this page start below the fold, and a `null` there
+     * would read as "the stretched link is broken" when the truth is "the
+     * harness was looking at the wrong part of the document".
+     *
+     * `block: 'end'` rather than `'center'`, and the coordinates are clamped
+     * afterwards, because a card can be **taller than the viewport** (the
+     * 980-character card stretches its whole grid row), and centring such a
+     * card puts both of its edges off-screen. Clamped, the probe point stays
+     * in the card's right-hand padding strip either way — which is what the
+     * stretched `::after` covers and the excerpt text does not.
+     */
+    el.scrollIntoView({ block: 'end' })
+    const rect = el.getBoundingClientRect()
+    const x = Math.min(Math.max(rect.right - 6, 1), window.innerWidth - 1)
+    const y = Math.min(Math.max(rect.bottom - 6, 1), window.innerHeight - 1)
+    const hit = document.elementFromPoint(x, y)
+    return hit === link ? 'the heading link' : `${hit?.tagName ?? 'null'}`
+  }
 
   /*
    * The set equality behind check 2. The archived *documents* are `archived`
@@ -195,10 +279,10 @@ onMounted(() => {
   checks.value = [
     // --- 0. the group is real, and the wrapper owns no DOM -----------------
     { label: 'the card group is a <ul>', expected: 'UL', actual: grid.tagName },
-    { label: 'five insight cards rendered', expected: 5, actual: cardEls.length },
+    { label: 'eight insight cards rendered', expected: 8, actual: cardEls.length },
     {
       label: 'the wrapper\'s root IS bfCard\'s <li class="bf-card">',
-      expected: 5,
+      expected: 8,
       actual: cardEls.filter(el => el.tagName === 'LI').length
     },
     {
@@ -207,9 +291,20 @@ onMounted(() => {
       actual: document.querySelectorAll('[class*="card-insight" i], [class*="cardInsight"]').length
     },
     {
-      label: 'heading-first DOM order survives the wrapper',
-      expected: 5,
-      actual: cardEls.filter(el => el.children[0]?.tagName === 'H3').length
+      /*
+       * Seven, not eight: the `noheading` card deliberately renders no heading
+       * at all (#130). Asserted as "every card that has one puts it first"
+       * rather than as a pinned total, so the row keeps its meaning if a later
+       * issue adds a card.
+       */
+      label: 'heading-first DOM order survives the wrapper, on every card that has one',
+      expected: cardEls.filter(el => headingEl(el)).length,
+      actual: cardEls.filter(el => headingIsFirst(el)).length
+    },
+    {
+      label: '  …and exactly one card has no heading (so the row is not vacuous)',
+      expected: 1,
+      actual: cardEls.filter(el => !headingEl(el)).length
     },
     {
       label: 'no card carries an inline style attribute',
@@ -312,7 +407,7 @@ onMounted(() => {
     },
     {
       label: 'every card with a publish_date rendered a bfTime',
-      expected: 5,
+      expected: 8,
       actual: cardEls.filter(el => timeOf(el)).length
     },
 
@@ -402,7 +497,7 @@ onMounted(() => {
     // --- 8. $attrs reach the base through the wrapper ---------------------
     {
       label: '$attrs: data-probe-card reached every base <li>',
-      expected: 5,
+      expected: 8,
       actual: cardEls.filter(el => el.dataset.probeCard).length
     },
     {
@@ -440,6 +535,83 @@ onMounted(() => {
       label: 'an ordinary insight card carries no data-span',
       expected: 0,
       actual: cardEls.filter(el => el.dataset.probeCard !== 'spanned' && el.hasAttribute('data-span')).length
+    },
+
+    // --- 9. headingLevel — the shared wrapper contract (gh#31 / #128) ------
+    {
+      label: 'the default headingLevel renders an <h3>',
+      expected: 'H3',
+      actual: headingEl(first)?.tagName ?? 'missing'
+    },
+    {
+      label: 'headingLevel=2 renders an <h2>',
+      expected: 'H2',
+      actual: headingEl(level2)?.tagName ?? 'missing'
+    },
+    {
+      label: 'headingLevel=4 renders an <h4>',
+      expected: 'H4',
+      actual: headingEl(level4)?.tagName ?? 'missing'
+    },
+    {
+      /*
+       * The half that matters. `bfCard`'s selectors are `:is(h2, h3, h4)`
+       * (D-20.4); a wrapper that emitted an `h5` — or a base that lost one of
+       * the three — would still render a heading and silently lose the
+       * card-sized hit area. Hit-tested, not grepped.
+       */
+      label: '  …and the stretched link still covers the card at all three levels',
+      expected: 'the heading link,the heading link,the heading link',
+      actual: [first, level2, level4].map(hitTestHeadingLink).join(',')
+    },
+    {
+      label: '  …with the heading anchor itself left unpositioned at each level',
+      expected: 'static,static,static',
+      actual: [first, level2, level4]
+        .map(el => {
+          const link = headingLink(el)
+          return link ? getComputedStyle(link).position : 'missing'
+        })
+        .join(',')
+    },
+    {
+      label: '  …and the heading text is unchanged by the level',
+      expected: `${article.value?.heading ?? 'missing row'}|${article.value?.heading ?? 'missing row'}`,
+      actual: `${(headingLink(level2)?.textContent ?? '').trim()}|${(headingLink(first)?.textContent ?? '').trim()}`
+    },
+
+    // --- 10. a blank heading renders no unnamed link (gh#31 / #130) --------
+    {
+      label: 'a null heading renders no heading element at all',
+      expected: 0,
+      actual: noheading ? (headingEl(noheading) ? 1 : 0) : -1
+    },
+    {
+      label: '  …and therefore no anchor, rather than a card-sized unnamed link',
+      expected: 0,
+      actual: noheading ? noheading.querySelectorAll('a').length : -1
+    },
+    {
+      label: '  …while the rest of the card still renders (chips and date)',
+      expected: 'true',
+      actual: String(!!noheading && chipsOf(noheading).length > 0 && !!timeOf(noheading))
+    },
+    {
+      /*
+       * The general form of the same rule, over every card on the page: no
+       * anchor may be left without an accessible name. Text content is the
+       * name here — none of these links carries an `aria-label` or an image.
+       */
+      label: 'no card anywhere renders an anchor with an empty accessible name',
+      expected: 0,
+      actual: Array.from(document.querySelectorAll<HTMLAnchorElement>('.probe__cards a'))
+        .filter(a => (a.textContent ?? '').trim() === '' && !a.getAttribute('aria-label'))
+        .length
+    },
+    {
+      label: '  …and there really are anchors on the page to have checked',
+      expected: 7,
+      actual: document.querySelectorAll('.probe__cards a').length
     }
   ]
 })
@@ -545,6 +717,40 @@ const verdict = computed(() =>
           class="probe__tinted"
           data-probe-card="spanned"
           :data-probe-archived="String(!!archived.archived)"
+        />
+
+        <!--
+          gh#31 / #128: the two heading levels the base styles but no wrapper
+          could reach. The level is a *page-outline* decision, so it is passed
+          from here — the page — and not derived inside the component.
+        -->
+        <bfCardInsight
+          v-if="article"
+          :insight="article"
+          :heading-level="2"
+          data-probe-card="level2"
+          :data-probe-archived="String(!!article.archived)"
+        />
+
+        <bfCardInsight
+          v-if="article"
+          :insight="article"
+          :heading-level="4"
+          data-probe-card="level4"
+          :data-probe-archived="String(!!article.archived)"
+        />
+
+        <!--
+          gh#31 / #130: a real row with its `heading` nulled — which the schema
+          permits and no real row exercises. The card must render no heading
+          and no link at all, rather than an anchor stretched over the whole
+          card with nothing to announce.
+        -->
+        <bfCardInsight
+          v-if="noHeadingArticle"
+          :insight="noHeadingArticle"
+          data-probe-card="noheading"
+          :data-probe-archived="String(!!noHeadingArticle.archived)"
         />
       </ul>
     </section>
