@@ -96,21 +96,34 @@ const checks: Check[] = [
     expected: 'the-bertelsmann-foundation-fellowship,summer-enrichment-series,leadership-in-action',
     actual: slugs(gridProjectsByProgram(FUTURE_LEADERSHIP))
   },
-  // TR&GC is the unlisted third program: the client placed no order, so every
-  // one of its grid rows stores `grid_order = MAX_SAFE_INTEGER` and the sort is
-  // a no-op that leaves dataset order standing. The *set* is therefore what
-  // carries parity, and it is asserted sorted — the fallback sequence itself is
-  // collection order here where it was snapshot order in the wireframe (spec
-  // Decisions; same class as the `publish_date` tie gh#20 recorded).
+  // TR&GC is the unlisted third program: the client placed no order for it, so
+  // `gridSort` returned the wireframe's list untouched — i.e. snapshot order.
+  // Since gh#89 the normaliser materialises that as a real ordinal
+  // (`1_000_000 + <snapshot index>`) instead of a `MAX_SAFE_INTEGER` sentinel
+  // that tied, so this row asserts the **full ordered sequence** rather than the
+  // sorted set it used to. The expected value below is `useWfContent`'s own
+  // `gridProjectsByProgram(TRGC)` output, computed offline from
+  // `src/assets/wireframe-data/projects.json` — snapshot indices 16, 17, 18, 33,
+  // 34, 35. If the fallback ordinal ever stops carrying snapshot order across
+  // the move to per-file documents, this renders FAIL.
   {
-    label: `gridProjectsByProgram('${TRGC}') — set, sorted`,
-    expected: 'astropolitics,critical-minerals,indo-pacific-nexus,range,transatlantic-barometer,transatlantic-periscope',
-    actual: trgcGrid.map(p => p.slug).sort().join(',')
+    label: `gridProjectsByProgram('${TRGC}') — full order`,
+    expected: 'transatlantic-periscope,range,transatlantic-barometer,astropolitics,indo-pacific-nexus,critical-minerals',
+    actual: slugs(trgcGrid)
   },
   {
-    label: '  …and it carries no curated order (all grid_order are MAX)',
+    label: '  …carried by fallback ordinals, strictly ascending (gh#89)',
     expected: 'true',
-    actual: String(trgcGrid.every(p => p.grid_order === Number.MAX_SAFE_INTEGER))
+    actual: String(
+      trgcGrid.every(p => p.grid_order >= 1_000_000 && p.grid_order < Number.MAX_SAFE_INTEGER)
+      && trgcGrid.every((p, n) => n === 0 || trgcGrid[n - 1]!.grid_order < p.grid_order)
+    )
+  },
+  {
+    // The point of gh#89: no project anywhere still carries the sentinel.
+    label: '  …and no project keeps the MAX_SAFE_INTEGER sentinel',
+    expected: 0,
+    actual: projects().filter(p => p.grid_order === Number.MAX_SAFE_INTEGER).length
   },
   {
     label: 'grid rows are all grid_eligible',

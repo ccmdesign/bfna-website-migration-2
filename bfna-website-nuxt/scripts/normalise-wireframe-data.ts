@@ -14,7 +14,8 @@
  *   - `plain()`                 (l.272-277) — HTML strip + entity decode
  *   - `PENDING`                 (l.114)     → `pending: 'Q6' | 'Q7'`
  *   - `inProjectGrid`           (l.127-128) → `grid_eligible: boolean`
- *   - `GRID_ORDER` + `gridSort` (l.132-141) → `grid_order: number`
+ *   - `GRID_ORDER` + `gridSort` (l.132-141) → `grid_order: number` (snapshot index as the
+ *                                                fallback ordinal — gh#89)
  *   - `FEATURED_SLUGS`          (l.144)     → `featured: boolean`
  *   - `NAV_SLUGS`               (l.148)     → `nav: boolean`
  *   - programs `heading → name` (l.109-110), `legacy_workstreams` dropped
@@ -306,16 +307,32 @@ const isGridEligible = (p: RawProject): boolean =>
   !p.archived && !p.exclude_from_grid && !p.external_only && p.kind !== 'podcast'
 
 /**
- * `gridSort` rank — `useWfContent.ts:136-141`. Unlisted slugs (and every slug in a
- * program with no declared order) get `Number.MAX_SAFE_INTEGER` so a stable sort by
- * `grid_order` reproduces the composable exactly: ranked slugs first in declared order,
- * everything else after in snapshot order.
+ * Offset for projects the client did not place. Larger than any conceivable
+ * `GRID_ORDER` list, so every declared rank sorts ahead of every fallback.
  */
-const gridOrderOf = (p: RawProject): number => {
+const GRID_ORDER_FALLBACK = 1_000_000
+
+/**
+ * `gridSort` rank — `useWfContent.ts:136-141`.
+ *
+ * Placed slugs get their declared rank. Everything else — an unlisted slug inside a
+ * placed program, or *any* slug in a program with no declared order at all — gets
+ * `GRID_ORDER_FALLBACK + <index in the snapshot's items array>`.
+ *
+ * The ordinal matters (gh#89, promoted residual of gh#21). `gridSort` leaned on a
+ * *stable* sort: unlisted slugs all took `rank = order.length`, and unlisted programs
+ * were returned untouched, so in both cases the ties resolved to the composable's own
+ * input order — snapshot order. Per-file documents lose that: `queryCollection` hands
+ * the composable file-stem (alphabetical) order, so a sentinel that ties would render
+ * Transatlantic Relations & Global Challenges alphabetically where the wireframe
+ * rendered it in snapshot order. Materialising the snapshot index as a real ordinal
+ * carries the input order across the move, and needs nothing of the consumer —
+ * `useBfProjects` still just sorts ascending on `grid_order`.
+ */
+const gridOrderOf = (p: RawProject, index: number): number => {
   const order = p.program ? GRID_ORDER[p.program] : undefined
-  if (!order) return Number.MAX_SAFE_INTEGER
-  const i = order.indexOf(p.slug)
-  return i === -1 ? Number.MAX_SAFE_INTEGER : i
+  const i = order ? order.indexOf(p.slug) : -1
+  return i === -1 ? GRID_ORDER_FALLBACK + index : i
 }
 
 const normaliseProjects = (): number => {
@@ -323,7 +340,7 @@ const normaliseProjects = (): number => {
   resetCollection('projects')
   const stem = makeStemFactory()
 
-  for (const raw of snap.items) {
+  for (const [index, raw] of snap.items.entries()) {
     const doc: ProjectDoc = {
       slug: raw.slug,
       heading: plainOrNull(raw.heading) ?? '',
@@ -340,7 +357,7 @@ const normaliseProjects = (): number => {
       featured: FEATURED_SLUGS.includes(raw.slug),
       nav: NAV_SLUGS.includes(raw.slug),
       grid_eligible: isGridEligible(raw),
-      grid_order: gridOrderOf(raw),
+      grid_order: gridOrderOf(raw, index),
       microsite_cta: strOrNull(raw.microsite_cta),
       participation: raw.participation ?? null,
       podcast: raw.podcast ?? null

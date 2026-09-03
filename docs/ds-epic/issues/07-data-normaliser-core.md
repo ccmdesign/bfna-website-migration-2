@@ -150,3 +150,21 @@ diff /tmp/normalise-run-1.txt /tmp/normalise-run-2.txt   # empty: idempotent acr
   errors, 0 in scoped paths); `npx nuxt generate` exits 0; both wireframe byte-identity diffs
   print nothing.
 
+
+- **`grid_order` is emitted for every project, with the snapshot index as the fallback
+  ordinal** (gh#89, promoted residual of gh#21). The original port returned
+  `Number.MAX_SAFE_INTEGER` for any slug the client had not placed, mirroring `gridSort`'s
+  reliance on a *stable* sort: unlisted slugs took `rank = order.length` and unlisted
+  programs were returned untouched, so both ties resolved to the composable's input order —
+  snapshot order. Per-file documents lose that guarantee, because `queryCollection` hands the
+  consumer file-stem (alphabetical) order; the sentinel therefore rendered Transatlantic
+  Relations & Global Challenges alphabetically where the wireframe rendered it
+  `transatlantic-periscope, range, transatlantic-barometer, astropolitics,
+  indo-pacific-nexus, critical-minerals`. `gridOrderOf` now takes the item's index in the
+  snapshot's `items` array and returns `GRID_ORDER_FALLBACK (1_000_000) + index` for
+  everything the client did not place, so placed slugs still sort first in the declared order
+  and the rest follow in snapshot order. No consumer changed — `useBfProjects` already sorts
+  ascending on the field. Democracy and Future Leadership have no unlisted grid-eligible
+  members, so their emitted sequences are byte-identical; 31 of the 38 project documents move
+  (their `grid_order` line only), and the run stays idempotent (identical sha256 sweep across
+  two runs).
