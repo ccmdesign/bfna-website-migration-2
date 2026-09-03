@@ -552,6 +552,45 @@ export interface EmptyStateProps {
   backTo?: string
 }
 
+/**
+ * Props of `bfHero` — the homepage hero band.
+ *
+ * Two optional strings and a default slot, which is the whole contract: the
+ * copy is data (`pages.json`'s `home` row supplies both) and the actions vary
+ * per call site, so they arrive as slot content rather than as a prop-shaped
+ * list of links.
+ *
+ * Both props are `string | null` rather than `string | undefined`, because
+ * that is what the caller has: the home page passes `home?.heading` straight
+ * out of a content record whose absent fields are `null`, and a contract that
+ * only accepted `undefined` would push a `?? undefined` onto every call site
+ * for no gain.
+ *
+ * There is deliberately **no heading-rank prop**. `bfHero` renders the page's
+ * `<h1>`, unconditionally and un-negotiably — the same reasoning as
+ * `bfEmptyState` (gh#42) and the opposite of the card wrappers (#128), which
+ * take one precisely because several appear on one page. A hero appears once,
+ * at the top, and is what the page is about; a caller that wants this shape
+ * lower down wants `bfPageHeader` (issue 38) or a section heading, not a
+ * second `h1`. BRIEF §5 rule 9 is then satisfied by construction rather than
+ * by every caller remembering.
+ */
+export interface HeroProps {
+  /**
+   * The page heading, rendered as the one `<h1>`. Optional and nullable to
+   * match the data, but the `<h1>` element itself is **not** conditional: a
+   * hero with no heading is a caller bug, and an empty `<h1>` is the honest
+   * render of it. Dropping the element instead would leave the page silently
+   * without a top-rank heading, which is the worse failure of the two.
+   */
+  heading?: string | null
+  /**
+   * A standfirst under the heading, capped at the `normal` measure. Absent or
+   * `null` renders no `<p>` at all — not an empty one.
+   */
+  description?: string | null
+}
+
 /** One breadcrumb node. `to` omitted marks the current (non-linked) page. */
 export interface Crumb {
   label: string
