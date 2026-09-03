@@ -125,7 +125,9 @@ export const useBfProjects = async () => {
      * `gridSort` did. Nothing is re-derived; this is a filter and a sort.
      */
     gridProjectsByProgram: (program: string) =>
-      [...top.filter(p => p.program === program && p.grid_eligible)]
+      // `.filter()` already returns a fresh array, so sorting it in place
+      // cannot reach `top`.
+      top.filter(p => p.program === program && p.grid_eligible)
         .sort((a, b) => a.grid_order - b.grid_order),
     /**
      * External-only "products" inside a program (The Transponder today):
