@@ -31,7 +31,7 @@ protection (spec § Out of scope).
 | File | Change |
 |---|---|
 | `bfna-website-nuxt/src/components/bf/ContactSection.vue` | **new** — the component |
-| `bfna-website-nuxt/src/types/bf-contracts.ts` | **new interface** `ContactSectionProps` (BRIEF §5 rule 11 — shared types live only here) |
+| `bfna-website-nuxt/src/types/bf-contracts.ts` | **unchanged** — `Props` is declared in the component, the `bfCtaSection`/`bfPageHeader`/card-wrapper precedent, because nothing outside the file names the shape (BRIEF §5 rule 11 governs *shared* types). See D-44.8. |
 | `bfna-website-nuxt/src/pages/bf-probe/44-bf-contact-section.vue` | **new** — the probe, `layout: 'bf-probe'`, harness DOM convention |
 | `docs/ds-epic/issues/44-bf-contact-section.md` | Decisions section appended |
 | `docs/plans/gh53-plan.md` | this file |
@@ -43,7 +43,7 @@ risk below.
 ## Props
 
 ```ts
-interface ContactSectionProps {
+interface Props {
   email?: string         // default 'info@bfna.org'
   heading?: string       // default 'Contact'
   visitHeading?: string  // default 'Visit us'
@@ -80,11 +80,14 @@ Probe rows, from props alone:
 5. **typing into a field updates its value** — a real `input` event on each control, then
    the control's own `value` read back after a tick (the round trip through
    `update:modelValue` and back down through `:model-value`);
-6. **submit does not navigate** — a real click on the submit button, then the document's
-   URL and a `beforeunload`/`submit`-default sentinel are unchanged;
-7. **two columns at 1200px, one at 400px** — the `.switcher` children's `offsetTop`
-   compared in an isolated same-origin iframe at each width (the harness has one viewport,
-   so the two widths are measured in frames rather than by resizing the page);
+6. **submit does not navigate** — a real click on the submit button; the document's URL is
+   unchanged and the `submit` event reached `document` (bubble phase, so after the form's
+   own listener) already `defaultPrevented`;
+7. **two columns at 1200px, one at 400px** — the `.switcher` children's measured rect
+   tops compared, for a band inside a 1200px box and a band inside a 400px box. The
+   harness runs one viewport per page, and `.switcher`'s threshold resolves against its
+   own flex container's inline size, so constraining the **container** asks the primitive
+   exactly the question the spec asks — no iframe and no page resize needed;
 8. copy is prop-driven: a second instance with all four props overridden renders the
    overridden strings and no wf literal;
 9. cascade hygiene — every `.bf-contact-section` rule is inside `@layer components`, and
@@ -109,5 +112,6 @@ gap is recorded in the spec's Decisions rather than papered over.
    `flex-basis: calc((threshold - 100%) * 999)` with a 768px default threshold, so the
    break happens between 768px and the container width — the probe measures rather than
    pins a breakpoint.
-4. **No new CSS variable** beyond the one `--_bf-contact-section-*` hook the fieldset
-   neutralisation needs, and no new colour (DoD-6): the component paints nothing.
+4. **No new CSS variable at all** — the fieldset neutralisation declares a literal `0`,
+   and a hook whose only sensible value is zero is a variable nobody would set — and no
+   new colour (DoD-6): the component paints nothing.
