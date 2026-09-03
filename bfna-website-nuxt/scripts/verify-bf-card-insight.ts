@@ -270,9 +270,13 @@ console.log('\n5. The wrapper contract')
 check('inheritAttrs: false', /inheritAttrs:\s*false/.test(componentCode), true)
 check('  …paired with an explicit v-bind="$attrs" on the base',
   /<bfCard\s+v-bind="\$attrs"/.test(componentCode), true)
-check('the root component is bfCard, not a div of its own',
-  /<template>\s*<bfCard\b/.test(componentCode.replace(/\n\s*/g, m => m.includes('\n') ? '\n' : m)) || /<bfCard\s+v-bind="\$attrs">/.test(componentCode),
-  true)
+/*
+ * The first tag inside `<template>` is `<bfCard>` — the wrapper renders the
+ * base as its own root rather than nesting it in a `<div>` of its own, which
+ * is what makes a caller's `class` land on the `<li>` a grid actually lays out.
+ */
+check('the root element of the template is bfCard, not a div of its own',
+  componentCode.match(/<template>\s*(<[\w-]+)/)?.[1], '<bfCard')
 check('the base it wraps exists', existsSync(basePath), true)
 check('bfTime replaces the wireframe\'s attribute-less <time>',
   /<bfTime\s+:date="insight\.publish_date"/.test(componentCode), true)
