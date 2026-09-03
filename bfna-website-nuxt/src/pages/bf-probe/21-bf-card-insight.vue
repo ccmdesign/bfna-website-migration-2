@@ -478,9 +478,9 @@ const verdict = computed(() =>
       (<code>insight</code>, the zod-inferred type) plus three presentation
       switches, <code>inheritAttrs: false</code>, and a root of
       <code>&lt;bfCard v-bind="$attrs"&gt;</code> so the wrapper owns no DOM of
-      its own. Every card below is fed a <strong>real</strong>
-      <code>bfInsights</code> row queried by this page — the component fetches
-      nothing.
+      its own. Every card below is fed a <code>bfInsights</code> row
+      <strong>queried by this page</strong> from the real collection — the
+      component fetches nothing.
     </p>
 
     <!--
