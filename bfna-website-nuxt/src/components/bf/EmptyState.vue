@@ -17,7 +17,7 @@
  * character apart from the two strings. That is the whole case for this
  * component.
  *
- * Presentational-only (BRIEF D8): four props in, one slot, nothing out. No
+ * Presentational-only (BRIEF D8): five props in, one slot, nothing out. No
  * data access, no store, no composable — and, specifically, **no knowledge of
  * why the page is empty**. Whether the route 404'd, the filter matched nothing
  * or the collection is genuinely empty is the caller's question; this renders
@@ -32,18 +32,25 @@
  * issue list names both. It is not a variant and has no props of its own; see
  * the file for why an alias rather than a wrapper.
  *
- * ## Exactly one `<h1>`, always
+ * ## One heading, `h1` unless the caller says otherwise
  *
- * There is one `<h1>` in the template, it is unconditional, and there is no
- * `headingLevel` prop — deliberately, and unlike the card wrappers (#128),
- * which take one precisely *because* several of them appear on a page.
+ * The heading is unconditional and its rank defaults to **1**, because this
+ * block is what a page shows **instead of** its content: it *is* the page's
+ * heading, and BRIEF §5 rule 9 (one `h1` per page) is satisfied by
+ * construction rather than by every caller remembering.
  *
- * This block is the opposite case: it is what a page shows **instead of** its
- * content, so it is the page's heading, and BRIEF §5 rule 9 (one `h1` per
- * page) is satisfied by construction rather than by every caller remembering.
- * A consumer that wants this shape *inside* a populated page — an empty band
- * on an otherwise full hub — wants a different component, and should say so
- * rather than being handed a second `h1` by default.
+ * `headingLevel` (residual #173) is the exception that keeps that true in the
+ * case the default cannot cover: a block shown *inside* a populated page whose
+ * own header already owns the `h1` — the empty-results band on
+ * `pages/insights/index.vue`, `bfSearchShell`'s no-matches branch. Without it
+ * those pages ship two `h1`s, which is a WCAG 1.3.1 defect that renders
+ * perfectly. The default is `1` and not the card wrappers' `3` precisely so
+ * that every call site written before #173 is unchanged; a caller that lowers
+ * the rank is asserting something about its page that only it can know.
+ *
+ * Rank is all that changes. There is no size or weight variant riding on the
+ * prop — type scale belongs to `@layer defaults`, and a caller who wants a
+ * visually smaller block wants a different component.
  *
  * ## The back link renders only when it can work
  *
@@ -77,15 +84,26 @@
  * — this block paints nothing. No `:not()` appears below, complex-selector or
  * otherwise (D-20.5).
  */
-import type { EmptyStateProps } from '~/types/bf-contracts'
+import type { EmptyStateHeadingLevel, EmptyStateProps } from '~/types/bf-contracts'
 
 defineOptions({ name: 'BfEmptyState' })
 
 const props = withDefaults(defineProps<EmptyStateProps>(), {
   message: undefined,
   backLabel: undefined,
-  backTo: undefined
+  backTo: undefined,
+  headingLevel: 1
 })
+
+/**
+ * The heading element, as a tag name for `<component :is>` — the same shape
+ * the card wrappers use for `CardWrapperProps.headingLevel` (#128).
+ *
+ * A template literal over a closed numeric union, so the only strings this can
+ * produce are `h1`…`h4`; the type is what makes that true, not a runtime
+ * guard.
+ */
+const headingTag = computed<`h${EmptyStateHeadingLevel}`>(() => `h${props.headingLevel}`)
 
 /**
  * Both halves of the pair, or no link.
@@ -108,7 +126,12 @@ const hasBackLink = computed<boolean>(() =>
     `class` therefore merges with, rather than replaces, `center | stack`.
   -->
   <div class="center | stack bf-empty-state" data-gap="s">
-    <h1 class="bf-empty-state__heading">{{ heading }}</h1>
+    <!--
+      `<component :is>` over a computed tag name, not a chain of `v-if`s: the
+      rank is a prop, the union is closed, and four near-identical elements
+      would be four places for the class to drift.
+    -->
+    <component :is="headingTag" class="bf-empty-state__heading">{{ heading }}</component>
 
     <p v-if="message" class="bf-empty-state__message">{{ message }}</p>
 

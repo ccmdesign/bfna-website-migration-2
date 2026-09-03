@@ -509,15 +509,27 @@ export interface LoadMoreProps {
 }
 
 /**
+ * The rank `bfEmptyState` renders its heading at (residual #173).
+ *
+ * Includes `1`, unlike {@link CardHeadingLevel}, because `1` is the **default**
+ * and the whole existing contract: an empty state is what a page shows
+ * *instead of* its content, so its heading is the page's `<h1>`. The other
+ * three exist for the case #173 found — a block shown *inside* a populated
+ * page whose header already owns the `h1`, where a second one is a WCAG
+ * violation rather than a style choice.
+ */
+export type EmptyStateHeadingLevel = 1 | 2 | 3 | 4
+
+/**
  * Props of `bfEmptyState` — and therefore of `bfNotFound`, which is the same
  * component under a second auto-import name, not a second contract.
  *
- * Four props and a default slot, for a block whose whole job is to be the
+ * Five props and a default slot, for a block whose whole job is to be the
  * *only* thing on a page: a 404, a hub with nothing published in it yet, a
  * search that matched nothing. It is deliberately not a general-purpose
- * message panel — the `h1` is the tell. A component that renders an `h1` can
- * be used once per page (BRIEF §5 rule 9), which is exactly the constraint an
- * empty *state* wants and exactly the wrong one for an inline notice.
+ * message panel — the heading is the tell. At its default rank this component
+ * can be used once per page (BRIEF §5 rule 9), which is exactly the constraint
+ * an empty *state* wants and exactly the wrong one for an inline notice.
  */
 export interface EmptyStateProps {
   /**
@@ -550,6 +562,21 @@ export interface EmptyStateProps {
   backLabel?: string
   /** @see {@link EmptyStateProps.backLabel} — both or neither. */
   backTo?: string
+  /**
+   * The heading's rank. Defaults to `1` (residual #173).
+   *
+   * The default is what every call site written before #173 relies on, so it
+   * is `1` rather than the card wrappers' `3`: this component's contract is
+   * "the page's heading", and only a caller that knows its page already has an
+   * `h1` — an empty *results* band under a `bfPageHeader`, `bfSearchShell`'s
+   * no-matches branch — may lower it.
+   *
+   * Lowering the rank changes the element and nothing else. There is no
+   * corresponding size change: the type scale is `@layer defaults`' business,
+   * and a caller that wants a smaller heading is asking for a different
+   * component.
+   */
+  headingLevel?: EmptyStateHeadingLevel
 }
 
 /**
