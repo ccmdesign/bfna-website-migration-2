@@ -231,3 +231,34 @@ than fixed in place.
 `src/components/bf`, `src/types`, `src/composables/bf`, `content.config` (and
 0 in `src/pages/bf-probe`). `npx nuxt generate` exits 0 over 917 routes.
 `npm run generate` was never used (it invokes the Directus importer).
+
+**D-34.12 — the focus-ring assertion is gated on `document.hasFocus()`, and the
+CSSOM rows carry it when the measurement cannot run.** Found by opening the
+prerendered probe in a background browser pane during STEP 6, where it reported
+`FAIL — 35/37`. Both failing rows were about the focus ring, and neither was a
+statement about the component: **no focus pseudo-class matches while
+`document.hasFocus()` is false**, however the element was focused. The element
+stays `document.activeElement`, `:focus` and `:focus-visible` both stop
+matching, and `getComputedStyle` therefore reports the resting `outline: none`
+that `base/forms.css` declares. A probe that fails in a background tab and
+passes in the harness is the environment-dependence class
+`docs/decisions/probe-harness.md` already records for `requestAnimationFrame`
+and for zero-width viewports — caught here in a third guise.
+
+The fix keeps the strong evidence and adds a floor under it. Three rows now:
+the `:focus-visible` rule exists in `@layer components` in the live CSSOM; its
+**emitted** declarations carry a real `outline`, an `outline-offset`, the
+`box-shadow` halo and no `currentcolor` (the gh#24-P2-1 point, now asserted
+rather than only commented); and the ring is **measured** on a focused control
+*when this context has focus*, the row reading `skipped —
+document.hasFocus() was false` on both sides otherwise. The harness runs the
+page focused, so the measurement is what gates the PR; a human in a background
+pane now reads PASS truthfully instead of FAIL falsely.
+
+One implementation detail worth writing down, because it cost a build: Vue's
+scoped-CSS transform writes the scope attribute **before** any pseudo-class —
+`.bf-form-field__control[data-v-…]:focus-visible`, never
+`…:focus-visible[data-v-…]`. The first version of the selector regex assumed
+the class and the pseudo-class were adjacent, found nothing, and reported a
+missing focus rule for a component that had one. The regex now allows anything
+but a `,` or `{` between them.

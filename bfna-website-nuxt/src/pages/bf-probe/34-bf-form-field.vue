@@ -47,8 +47,12 @@
  *  7. **The control shows a visible focus ring.** The global `:focus-visible`
  *     rule for form controls (#146) has not landed on `dev`, and
  *     `base/forms.css`'s `:focus` rule writes `outline: none`; the component
- *     declares its own. Measured as a resolved `outline-style`/`outline-width`
- *     on a focused control, not read off the source.
+ *     declares its own. Checked three ways: the rule exists in
+ *     `@layer components` in the live CSSOM, its *emitted* declarations carry
+ *     a real outline, an offset, the halo and no `currentcolor`, and — when
+ *     this browsing context has focus — the ring is **measured** on a focused
+ *     control. The measurement is gated because no focus pseudo-class matches
+ *     while `document.hasFocus()` is false; see `typed.focusChecked`.
  *  8. **The gap hook works from both directions**: `data-gap` flows through
  *     `@layer composition` into `--_bf-form-group-gap`, and a call-site
  *     `--_bf-form-group-gap` overrides it. Measured against reference
@@ -356,6 +360,23 @@ const typed = reactive({
   focusVisible: false,
   outlineStyle: '',
   outlineWidth: '',
+  /**
+   * Did this browsing context have focus when the ring was measured?
+   *
+   * `:focus` — and therefore `:focus-visible` — does not match anything while
+   * `document.hasFocus()` is false, however the element was focused: the
+   * element stays `document.activeElement`, but no focus pseudo-class applies,
+   * so `getComputedStyle` reports the resting `outline: none` that
+   * `base/forms.css` declares. That is a true statement about an unfocused
+   * window and a false one about the component.
+   *
+   * Found by opening this page in a background browser pane during gh#43 —
+   * the same class of environment-dependence
+   * `docs/decisions/probe-harness.md` records for rAF and for zero-width
+   * viewports, and the reason the measured row below is gated on this flag
+   * while the CSSOM rows next to it are not.
+   */
+  focusChecked: false,
   /** The measured gap between two fields, at each of the three settings. */
   gapDefault: '',
   gapLarge: '',
@@ -399,6 +420,7 @@ const finalise = async () => {
   if (focusTarget) {
     focusTarget.focus()
     await settle()
+    typed.focusChecked = document.hasFocus()
     typed.focusVisible = focusTarget.matches(':focus-visible')
     const style = getComputedStyle(focusTarget)
     typed.outlineStyle = style.outlineStyle
@@ -460,6 +482,16 @@ const report = () => {
   // --- the two component rules ---------------------------------------------
   const fieldRule = layeredRule(s => /\.bf-form-field(?![\w-])/.test(s))
   const groupRule = layeredRule(s => /\.bf-form-group(?![\w-])/.test(s))
+  /*
+   * `[^,{]*` between the class and the pseudo-class, not a bare concatenation:
+   * `FormField.vue`'s block is `scoped`, and Vue's scoped-CSS transform writes
+   * the scope attribute BEFORE any pseudo-class — `.bf-form-field__control`
+   * `[data-v-…]:focus-visible`, never `…:focus-visible[data-v-…]`. A selector
+   * regex that assumed the two were adjacent found nothing and reported a
+   * missing focus rule for a component that had one.
+   */
+  const focusRule = layeredRule(s => /\.bf-form-field__control[^,{]*:focus-visible/.test(s))
+  const focusText = focusRule?.style.cssText ?? ''
   const badNots = complexNotSelectors()
 
   const hintError = controlOf('text-hint-error')
@@ -669,15 +701,41 @@ const report = () => {
     },
 
     // --- 7. the focus ring --------------------------------------------------
+    /*
+     * Two CSSOM rows and one measured row, in that order and deliberately.
+     *
+     * The measured row is the stronger evidence and it is the one that cannot
+     * run everywhere: no focus pseudo-class matches while
+     * `document.hasFocus()` is false, so a page opened in a background pane
+     * would report the resting `outline: none` and fail a component that is
+     * correct. It is therefore gated, and the two rows above it — read off the
+     * *emitted* CSS, not the source — carry the check in the contexts where
+     * the measurement cannot. The harness runs the page focused, so the
+     * measurement is what gates the PR.
+     */
     {
-      label: 'a focused control matches :focus-visible',
+      label: 'a :focus-visible rule for the control exists in @layer components',
       expected: 'true',
-      actual: String(typed.focusVisible)
+      actual: String(focusRule !== null)
     },
     {
-      label: '  …and paints a real outline (not the `outline: none` base/forms.css declares)',
-      expected: 'solid/2px',
-      actual: `${typed.outlineStyle}/${typed.outlineWidth}`
+      label: '  …declaring a real outline + offset + halo, and NOT currentcolor (gh#24-P2-1)',
+      expected: 'outline/offset/shadow/not-currentcolor',
+      actual: [
+        /(^|;|\s)outline\s*:/.test(focusText) && !/outline\s*:\s*none/.test(focusText) ? 'outline' : 'no-outline',
+        /outline-offset/.test(focusText) ? 'offset' : 'no-offset',
+        /box-shadow/.test(focusText) ? 'shadow' : 'no-shadow',
+        /currentcolor/i.test(focusText) ? 'currentcolor' : 'not-currentcolor'
+      ].join('/')
+    },
+    {
+      label: 'a focused control matches :focus-visible and paints a solid 2px ring (measured)',
+      expected: typed.focusChecked
+        ? 'true/solid/2px'
+        : 'skipped — document.hasFocus() was false, no focus pseudo-class can match',
+      actual: typed.focusChecked
+        ? `${typed.focusVisible}/${typed.outlineStyle}/${typed.outlineWidth}`
+        : 'skipped — document.hasFocus() was false, no focus pseudo-class can match'
     },
 
     // --- 8. the gap hook, from both directions ------------------------------
