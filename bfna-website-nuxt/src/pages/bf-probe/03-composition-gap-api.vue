@@ -128,8 +128,20 @@ const items = ['A', 'B', 'C']
   Presentation is intentionally colourless: outlines use `currentColor` so the
   probe introduces no colour literal and no new token (epic ground rule 2).
 */
+/*
+  `layout: false` means nothing paints a ground, so the probe would inherit the
+  host's colour scheme and render dark-on-dark. Pin it to the existing
+  `--color-white` / `--color-text` tokens — no new colour, no new token.
+*/
+:global(html) {
+  color-scheme: light;
+  background-color: var(--color-white);
+  color: var(--color-text);
+}
+
 .probe {
   padding-block: var(--space-l);
+  min-block-size: 100dvh;
 }
 
 .probe__lede,
