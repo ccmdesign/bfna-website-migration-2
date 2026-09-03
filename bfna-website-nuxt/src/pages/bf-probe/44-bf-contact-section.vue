@@ -773,6 +773,15 @@ const verdict = computed(() =>
         (`docs/decisions/probe-harness.md`), and `.switcher`'s threshold is
         resolved against its own flex container's inline size, so constraining
         the container asks the primitive exactly the question the spec asks.
+
+        The widths are inline and absolute, with **no** `max-inline-size: 100%`
+        anywhere to clamp them. A clamp would make the measurement a function of
+        the window: in a narrow one — or in an embedded browser pane reporting a
+        zero-width viewport, the case the harness decision records probe 16
+        hitting — the 1200px box would collapse and the "two columns share a
+        row" row would report FAIL on a build that is fine. The box is a real
+        1200px whatever the window is, and `.probe`'s `overflow-x: clip` takes
+        the overflow rather than a horizontal scrollbar.
       -->
       <div class="probe__box" style="inline-size: 1200px;">
         <bfContactSection data-probe-case="wide" />
@@ -874,17 +883,6 @@ const verdict = computed(() =>
 .probe__box > .bf-section {
   outline: 1px dashed currentcolor;
   outline-offset: -1px;
-}
-
-/*
-  The width boxes. `max-inline-size: 100%` so a viewport narrower than 1200px
-  cannot push the page into a horizontal scroll — the harness runs at 1280px,
-  where the 1200px box fits, and a human opening this page on a laptop still
-  gets a readable report rather than a sideways one. The measurement degrades
-  honestly if it ever does clamp: the row would fail rather than silently pass.
-*/
-.probe__box {
-  max-inline-size: 100%;
 }
 
 .probe__ref {

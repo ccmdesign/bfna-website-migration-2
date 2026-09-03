@@ -299,3 +299,25 @@ inherits: **a class on an `<a>` in this codebase is opting out of the link
 styling.** Give one only when the component is also declaring the replacement
 (`bfButton` and `bfChip` do exactly that); a link that should look like a link
 gets no class, and is selected in tests by its `href` or its container.
+
+### D-44.10 — the probe's width boxes must not be clamped to the viewport
+
+Found while running the probe in an embedded browser pane during this issue's
+browser-test step. The two-columns-at-1200px / one-at-400px rows measure the
+`.switcher`'s **container**, precisely so the answer does not depend on the
+window — and the first draft then put `max-inline-size: 100%` on the boxes "so a
+narrow window cannot scroll sideways". That clamp reintroduced the dependency it
+was meant to avoid: in a pane reporting a **zero-width viewport** — the case
+`docs/decisions/probe-harness.md` records probe 16 hitting — the 1200px box
+collapsed and the row reported FAIL on a build the harness passed at 1280px.
+
+The clamp was removed. The boxes are a real 1200px and 400px whatever the window
+is, and `.probe`'s existing `overflow-x: clip` takes the overflow rather than a
+horizontal scrollbar. Verified both ways afterwards: `check-probes` PASS 34/34 at
+1280×1024, and PASS 34/34 in a pane whose `window.innerWidth` reads `0`, with
+`document.documentElement.scrollWidth === clientWidth`.
+
+**For every later probe that measures a container:** size the container
+absolutely and let the page clip. A `%`-based cap on a measurement fixture makes
+the fixture a function of the viewport, which is the thing the fixture exists to
+remove.
