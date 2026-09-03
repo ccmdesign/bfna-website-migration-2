@@ -183,6 +183,51 @@ export interface MediaProps {
   ratio?: string
 }
 
+/**
+ * Which formatter `bfTime` uses for its visible label.
+ *
+ * A one-member union today, not a bare `string`. The spec reserves a `format`
+ * prop for a future non-default formatter and builds only the `monthYear`
+ * path — and a `string` prop that is silently ignored is a trap: `format="long"`
+ * would typecheck, render `monthYear` anyway, and tell nobody. As a union the
+ * reservation is kept (the prop exists, a later issue adds a member) while a
+ * value that does not exist yet is a compile error instead of silence.
+ *
+ * Widening a union is source-compatible, so adding `'day'` or `'full'` later
+ * breaks no existing call site.
+ */
+export type TimeFormat = 'monthYear'
+
+/**
+ * Props of `bfTime`.
+ *
+ * The atom's whole contract is a split between two audiences: the text node is
+ * for a human, the `datetime` attribute is for a machine, and the machine one
+ * is never allowed to be wrong. So `datetime` is **rebuilt from the parsed
+ * date**, never echoed from `date` — a caller handing over `'March 5, 2022'`
+ * (which `Date` parses and HTML does not accept) gets a normalised ISO value,
+ * not an invalid attribute.
+ *
+ * `date` is **required but nullable**. Required because a date component with
+ * no date is a call-site mistake worth catching; nullable because 20 of the 371
+ * real insight rows carry `publish_date: null` and the spec's own null clause
+ * demands the component take it. `null`, `undefined`, `''` and anything
+ * `new Date()` cannot parse all render **nothing at all** — no element, rather
+ * than a `<time>` reading `Invalid Date`.
+ */
+export interface TimeProps {
+  /**
+   * The date to render. An ISO date-only string (`'2014-12-17'`) or any string
+   * `Date` can parse. `null`, `''` and unparseable input render no element.
+   */
+  date: string | null
+  /**
+   * Which label formatter to use. Only `'monthYear'` exists today, and it is
+   * the default; the prop is the reservation for a second one.
+   */
+  format?: TimeFormat
+}
+
 /** One breadcrumb node. `to` omitted marks the current (non-linked) page. */
 export interface Crumb {
   label: string
