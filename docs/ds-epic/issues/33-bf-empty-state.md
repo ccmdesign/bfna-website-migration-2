@@ -210,3 +210,38 @@ change, 178 after, and 0 in
 `src/(components/bf|types|composables/bf)|content.config` both before and after.
 `npx nuxt generate` exits 0 (915 routes).
 
+
+### D-33.7 — a probe must not await a frame (found in STEP 6, fixed in this issue)
+
+The first cut of probe 33 settled each step of its case walk with
+`await nextTick()` **plus** `requestAnimationFrame`. It passed the headless
+harness (28/28) and then **wedged** when the same generated build was driven in
+an embedded browser pane: rAF is throttled there — to roughly one frame per
+second, and in a backgrounded view potentially to a stop — so the walk crawled,
+the verdict stayed `PENDING`, and the safety net could not rescue it because its
+guard flag had already been set by the walk it was meant to rescue. The harness
+would have reported *"still PENDING at timeout"*: a true statement about the
+page and a false one about the component.
+
+Two changes, both worth copying into any probe that steps through states:
+
+1. **`settle()` is `nextTick()` and nothing else.** No frame is needed for these
+   measurements — `getComputedStyle` forces style recalculation on demand — so
+   the whole walk now completes within microtasks, in any context. This is the
+   same family of defect the harness decision records for zero-width viewports
+   (`docs/decisions/probe-harness.md`, Decision 2): the browser *context* silently
+   deciding a verdict about the component.
+2. **The walk guard and the publish guard are separate**, and the safety net
+   publishes rows rather than returning early. A wedged walk now fails **loudly**
+   with two named rows — *"the case walk completed, rather than being rescued by
+   the timeout"* and *"…visiting every case"* — instead of timing out silently.
+   Probe 32's `timedOut` row is the precedent; this generalises it.
+
+No other probe uses `requestAnimationFrame` (checked across
+`src/pages/bf-probe/*.vue` and `scripts/*.ts`), so there is nothing to hand off
+and no residual issue was opened. Row count after the fix: **30**; full suite
+**25 probes / 1139 rows / 0 failures**.
+
+This is also the answer to *"what did STEP 6 catch that the harness did not"*:
+the harness runs one browser in one configuration, and a probe that only works
+in that configuration is a probe that will mislead the next reader who opens it.

@@ -311,11 +311,22 @@ const describe = (el: Element): string => {
   return cls ? `${tag}.${cls.replace('bf-empty-state__', '')}` : tag
 }
 
-/** One tick plus one frame — enough for a re-render AND for layout to settle. */
-const settle = async () => {
-  await nextTick()
-  await new Promise<void>(resolve => { requestAnimationFrame(() => resolve()) })
-}
+/**
+ * One tick — a re-render, and nothing else to wait for.
+ *
+ * Deliberately **not** `requestAnimationFrame`. rAF is throttled — sometimes
+ * to a near stop — in a backgrounded or embedded browser view, and a walk that
+ * awaits a frame which never arrives leaves the verdict `PENDING` for ever;
+ * the harness then reports a timeout, which is a true statement about the page
+ * and a false one about the component. (Found by driving this page in an
+ * embedded pane during gh#42 — the same class of defect
+ * `docs/decisions/probe-harness.md` records for zero-width viewports.)
+ *
+ * No frame is needed anyway: `getComputedStyle` forces style recalculation on
+ * demand, so every measurement below is correct as soon as Vue has patched the
+ * DOM. The whole walk therefore completes within microtasks, in any context.
+ */
+const settle = (): Promise<void> => nextTick()
 
 const snapshot = (c: Case): Snapshot => {
   const root = document.querySelector<HTMLElement>('.bf-empty-state')
@@ -381,11 +392,22 @@ const across = (read: (s: Snapshot) => string | number | boolean): string =>
 const expectAcross = (read: (c: Case) => string | number | boolean): string =>
   CASES.map(c => String(read(c))).join(',')
 
-let finalised = false
+/** Has the case walk been started? */
+let walking = false
+/** Have the rows been published? Either path may do it, whichever gets there. */
+let reported = false
+
+/**
+ * Set when the safety net published the rows instead of the walk — a real
+ * failure, and one that must be *visible*. A probe that simply stayed
+ * `PENDING` would be reported by the harness as a timeout with no rows at all,
+ * which says nothing about which step wedged.
+ */
+const seen = reactive({ timedOut: false })
 
 const finalise = async () => {
-  if (finalised) return
-  finalised = true
+  if (walking) return
+  walking = true
 
   // --- walk every case, reading the live DOM at each ------------------------
   for (const c of CASES) {
@@ -400,6 +422,18 @@ const finalise = async () => {
    */
   form.value = 'slot'
   await settle()
+
+  report()
+}
+
+/**
+ * Turn the snapshots into rows. Called by the walk when it finishes, and by
+ * the safety net if the walk has not — so a wedged walk fails loudly, naming
+ * the step it reached, rather than timing out silently.
+ */
+const report = () => {
+  if (reported) return
+  reported = true
 
   // --- the reference lengths ------------------------------------------------
   const ref = document.querySelector<HTMLElement>('[data-probe-ref]')
@@ -428,6 +462,18 @@ const finalise = async () => {
   const padded = snapFor('padded')
 
   checks.value = [
+    // --- 0. did the walk actually run? -------------------------------------
+    {
+      label: 'the case walk completed, rather than being rescued by the timeout',
+      expected: 'false',
+      actual: String(seen.timedOut)
+    },
+    {
+      label: '  …visiting every case',
+      expected: CASES.length,
+      actual: snaps.length
+    },
+
     // --- 1. exactly one h1, always -----------------------------------------
     {
       label: 'exactly one <h1> in the document, in EVERY configuration',
@@ -600,7 +646,11 @@ onMounted(() => {
    * Safety net. A probe that stays PENDING reports a timeout and nothing else;
    * a probe that finalises reports *which* row failed.
    */
-  setTimeout(() => { void finalise() }, 6000)
+  setTimeout(() => {
+    if (reported) return
+    seen.timedOut = true
+    report()
+  }, 6000)
 })
 
 const passed = computed(() =>
