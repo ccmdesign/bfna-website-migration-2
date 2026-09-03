@@ -60,6 +60,8 @@
  * sets it because the `wf-*` routes are a review prototype; this one serves the
  * public site, and carrying that meta across would deindex bfna.org.
  */
+import { Fragment } from 'vue'
+import type { FunctionalComponent, VNode } from 'vue'
 import { useBfSite } from '~/composables/data/useBfSite'
 import { isExternal } from '~/utils/link'
 
@@ -71,6 +73,118 @@ defineOptions({ name: 'BfDefaultLayout' })
  * the browser actually resolved this order on a route using this layout.
  */
 const LAYER_ORDER = 'reset, defaults, tokens, themes, composition, components, utils, overrides'
+
+/*
+ * ## The route announcer is not page content (residual #179)
+ *
+ * With no `src/app.vue` in the repo, Nuxt renders
+ * `nuxt/dist/pages/runtime/app.vue`:
+ *
+ * ```vue
+ * <NuxtLayout>
+ *   <NuxtRouteAnnouncer />
+ *   <NuxtPage />
+ * </NuxtLayout>
+ * ```
+ *
+ * — so on every route using a layout the announcer arrives as the **first root
+ * vnode of this layout's default slot**, and lands inside `<main class="stack">`
+ * as its first child. `composition/stack.css` spaces with `> * + *`, so the
+ * page's first real band becomes child 2 and takes a `--space-xl`
+ * margin-block-start that nothing asked for: 42px above the hero on `/` at a
+ * desktop width, from an element that is `position: absolute` and occupies no
+ * space at all. Routes on the frozen `wf-*` shell never had it — those pages
+ * render their own `<NuxtLayout>`, so the announcer stays a child of `#__nuxt`,
+ * which is where it belongs.
+ *
+ * The fix is to put it back there: the slot's roots are partitioned below and
+ * everything that is not the page outlet is rendered as a **sibling before
+ * `<main>`**, leaving the landmark's stack to hold page bands and nothing else.
+ *
+ * ## Why the partition names the page and not the announcer
+ *
+ * Because the announcer is not the same component on both sides of hydration.
+ * Nuxt registers `NuxtRouteAnnouncer` as a **client-only** component, so the
+ * server renders Nuxt's `ServerPlaceholder` — the literal `<div></div>` in the
+ * prerendered HTML — and the client renders the announcer itself. A filter
+ * keyed on `NuxtRouteAnnouncer` therefore matches on the client and *not* on
+ * the server, which would hoist the node after hydration only: the 42px would
+ * vanish mid-load and the structure would differ between the two renders. That
+ * was tried first, and the prerendered HTML said so.
+ *
+ * `NuxtPage` is `NuxtPage` in both renders, so the page outlet is the stable
+ * half of the pair and the one worth matching. Everything else in this slot is
+ * app-level chrome by definition — it came from the app template, not from a
+ * page.
+ *
+ * Two properties worth stating, because both are what makes this safe:
+ *
+ * - It **degrades to today's behaviour**. A slot with no `NuxtPage` in it —
+ *   this layout used by hand, or an app template that stops using an outlet —
+ *   renders every root inside `<main>`, exactly as before. Nothing is hoisted
+ *   on a guess, nothing throws, nothing disappears.
+ * - It renders each vnode **once**, in one place. Rendering a second
+ *   `<NuxtRouteAnnouncer />` here instead would leave the slot's copy where it
+ *   is and put two `role="status"` live regions on every page, announcing each
+ *   route change twice — a worse defect than the margin.
+ *
+ * What this does **not** fix is #179's second half, the `<div>`→`<span>` tag
+ * change across hydration: that is Nuxt's own client-only-component placeholder
+ * and is unreachable from a layout. It is silent, it is by design, and it is
+ * now recorded in the spec's Decisions rather than left looking like a bug this
+ * file could have solved.
+ *
+ * `components/bf/PageHeader.vue` already inspects slot vnodes this way
+ * (`hasRenderedContent`), so the shape is the codebase's, not a one-off.
+ */
+
+/** This layout's default slot, with a compiler-emitted fragment unwrapped. */
+const slotRoots = (): VNode[] => {
+  const nodes = slots.default?.() ?? []
+  const only = nodes.length === 1 ? nodes[0] : undefined
+  return only && only.type === Fragment && Array.isArray(only.children)
+    ? (only.children as VNode[])
+    : nodes
+}
+
+/**
+ * Is this vnode the router outlet?
+ *
+ * Matched on the component's own `name`, which `defineComponent` sets and which
+ * survives minification, rather than on identity with an import: the app
+ * template resolves the component through the global registry, and an identity
+ * test would stop matching if that ever resolved a second module instance —
+ * the failure mode that is invisible in review.
+ */
+const isPageOutlet = (node: VNode): boolean =>
+  typeof node.type === 'object'
+  && node.type !== null
+  && (node.type as { name?: string }).name === 'NuxtPage'
+
+/**
+ * The two halves, computed together so the fallback is stated once: with no
+ * page outlet in the slot, everything is page content and nothing is hoisted.
+ */
+const partitionedSlot = (): { chrome: VNode[], bands: VNode[] } => {
+  const roots = slotRoots()
+  const bands = roots.filter(isPageOutlet)
+
+  return bands.length > 0
+    ? { chrome: roots.filter(node => !isPageOutlet(node)), bands }
+    : { chrome: [], bands: roots }
+}
+
+/** App-level chrome, hoisted out of the landmark. One node today; often none. */
+const AppChrome: FunctionalComponent = () => partitionedSlot().chrome
+
+/** The page itself — the only thing `<main>` may hold. */
+const PageBands: FunctionalComponent = () => partitionedSlot().bands
+
+/**
+ * Read before the `await` below: `useSlots()` must be called synchronously in
+ * `setup`, and a top-level `await` in a layout suspends it.
+ */
+const slots = useSlots()
 
 const { menus, announcement } = await useBfSite()
 
@@ -201,13 +315,25 @@ useHead({
       as its first section (#47–#56), which is a simpler contract than the
       frozen shell's named slot and one fewer place for a page to be half-filled.
     -->
+    <!--
+      App-level chrome that arrived through this layout's slot — Nuxt's route
+      announcer, and nothing else today. Rendered here, outside the landmark,
+      rather than inside the page's own stack: residual #179, and the long note
+      in the script block for why this is a partition rather than a second
+      `<NuxtRouteAnnouncer />`.
+
+      It is not focusable, so it cannot come between the skip link and the tab
+      order it promises.
+    -->
+    <AppChrome />
+
     <main
       id="main"
       class="stack"
       data-gap="xl"
       tabindex="-1"
     >
-      <slot />
+      <PageBands />
     </main>
 
     <bfFooter :menus="siteMenus" />

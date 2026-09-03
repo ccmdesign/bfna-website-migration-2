@@ -456,6 +456,14 @@ const report = () => {
 
   const badNots = complexNotSelectors()
 
+    /*
+   * The heading element of one mounted instance, by selector — `'none'` rather
+   * than `''` when the instance or its heading is missing, so a broken row
+   * reads as a fact rather than as an empty cell.
+   */
+  const headingTagOf = (selector: string): string =>
+    document.querySelector(selector)?.querySelector('.bf-empty-state__heading')?.tagName ?? 'none'
+
   const link = snapFor('link')
   const slot = snapFor('slot')
   const alias = snapFor('alias')
@@ -635,6 +643,19 @@ const report = () => {
       label: 'no bf-* rule uses :not() with a complex selector (D-20.5)',
       expected: 0,
       actual: badNots.length === 0 ? 0 : badNots.join(' ; ')
+    },
+    /*
+     * Residual #173. The staged instance takes the default and must still be
+     * the page's `h1`; the second instance below it asks for `2` and must be an
+     * `h2` — which is also why every `h1Count` row above still reads `1` with
+     * two components mounted at once. Both halves in one row: the default and
+     * the override are the same claim, and splitting them would let a component
+     * that ignored the prop pass half of it.
+     */
+    {
+      label: 'headingLevel sets the rank — default h1, h2 when asked (#173)',
+      expected: 'H1/H2',
+      actual: `${headingTagOf('[data-probe-stage] .bf-empty-state')}/${headingTagOf('[data-probe-heading-level]')}`
     }
   ]
 }
@@ -720,6 +741,21 @@ const verdict = computed(() =>
           Slot content — a caller’s own block.
         </p>
       </bfNotFound>
+
+      <!--
+        Residual #173 — the `headingLevel` override, mounted permanently and
+        AFTER the staged instance so that `document.querySelector('.bf-empty-state')`
+        still resolves to the case under test. It renders an `<h2>`, so the
+        "exactly one `<h1>`" rows above stay true with two instances on the page
+        — which is the property the prop exists to give the insights and search
+        templates.
+      -->
+      <bfEmptyState
+        data-probe-heading-level
+        heading="No insights match those filters"
+        message="Clearing one of them will widen the results."
+        :heading-level="2"
+      />
     </div>
 
     <section class="probe__report" aria-labelledby="probe-title">
@@ -732,6 +768,14 @@ const verdict = computed(() =>
         eight would put eight <code>&lt;h1&gt;</code>s on a page, breaking the
         rule the component exists to keep. The assertions below cycled the
         mount point through all eight cases and read the live DOM at each.
+      </p>
+
+      <p class="probe__lede">
+        A ninth instance is mounted permanently under the stage with
+        <code>:heading-level="2"</code> (residual #173). It is the proof that
+        the prop changes the rank and nothing else — and, because it renders an
+        <code>&lt;h2&gt;</code>, that two of these can share a page without
+        breaking the one-<code>&lt;h1&gt;</code> rule.
       </p>
 
       <fieldset class="probe__cases">
