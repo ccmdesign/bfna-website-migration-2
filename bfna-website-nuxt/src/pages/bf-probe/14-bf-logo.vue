@@ -109,6 +109,44 @@ onMounted(() => {
   /** Root font size, so the rem→px expectations hold under a fluid type scale. */
   const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16
 
+  /**
+   * Walk every reachable stylesheet looking for a `.bf-logo` style rule whose
+   * ancestry includes a `@layer components` block. Cross-origin sheets throw
+   * on `cssRules`; they are skipped, not failed.
+   */
+  const layeredBfLogoRuleFound = (): boolean => {
+    const LAYER_BLOCK = globalThis.CSSLayerBlockRule
+    if (!LAYER_BLOCK) return false
+
+    const walk = (rules: CSSRuleList, insideComponents: boolean): boolean => {
+      for (const rule of Array.from(rules)) {
+        const nowInside =
+          insideComponents
+          || (rule instanceof LAYER_BLOCK && (rule as CSSLayerBlockRule).name === 'components')
+
+        if (
+          nowInside
+          && rule instanceof CSSStyleRule
+          && rule.selectorText.includes('.bf-logo')
+        ) {
+          return true
+        }
+
+        const nested = (rule as CSSGroupingRule).cssRules
+        if (nested && walk(nested, nowInside)) return true
+      }
+      return false
+    }
+
+    return Array.from(document.styleSheets).some(sheet => {
+      try {
+        return walk(sheet.cssRules, false)
+      } catch {
+        return false
+      }
+    })
+  }
+
   const defaults = marks.filter(m => m.dataset.variant === 'default')
   const whites = marks.filter(m => m.dataset.variant === 'white')
 
@@ -191,15 +229,44 @@ onMounted(() => {
       expected: resolveToken('--color-text'),
       actual: paintedColour(defaults[0])
     },
+    /*
+     * gh#101 / residual #99: the white colourway reads the **semantic**
+     * `--color-text-inverse`, not the `--color-white` primitive. The computed
+     * colour is the assertion — a mistyped or undefined custom property is
+     * invalid at computed-value time and falls back to the inherited colour,
+     * so this fails loudly if the alias is missing from the token layer.
+     */
     {
-      label: 'white variant resolves to --color-white',
-      expected: resolveToken('--color-white'),
+      label: 'white variant resolves to --color-text-inverse',
+      expected: resolveToken('--color-text-inverse'),
       actual: paintedColour(whites[0])
+    },
+    {
+      label: '  …and that alias resolves to the same paint as --color-white',
+      expected: resolveToken('--color-white'),
+      actual: resolveToken('--color-text-inverse')
+    },
+    {
+      label: '  …--color-surface-inverse likewise aliases --color-black',
+      expected: resolveToken('--color-black'),
+      actual: resolveToken('--color-surface-inverse')
     },
     {
       label: '  …and the two variants differ',
       expected: 'true',
       actual: String(paintedColour(defaults[0]) !== paintedColour(whites[0]))
+    },
+
+    /*
+     * gh#101 / residual #98: `@layer components` is in this component's
+     * source, and now survives the build. Read it back out of the live CSSOM
+     * rather than the source — `document.styleSheets` exposes a
+     * `CSSLayerBlockRule` only when the wrapper actually reached the browser.
+     */
+    {
+      label: '.bf-logo rules are inside @layer components in the live CSSOM',
+      expected: 'true',
+      actual: String(layeredBfLogoRuleFound())
     }
   ]
 
@@ -342,9 +409,14 @@ const verdict = computed(() =>
   border: 1px solid currentcolor;
 }
 
+/*
+  gh#101: the dark panel is the first consumer of the new semantic pair, so the
+  tokens are exercised at runtime rather than only asserted as strings. Both
+  alias existing primitives — the rendered colours are unchanged.
+*/
 .probe__row--inverted {
-  background-color: var(--color-text);
-  color: var(--color-white);
+  background-color: var(--color-surface-inverse);
+  color: var(--color-text-inverse);
 }
 
 .probe__marks {

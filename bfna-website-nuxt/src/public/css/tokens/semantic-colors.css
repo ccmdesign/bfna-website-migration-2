@@ -27,6 +27,19 @@
       --color-light: var(--color-base-tint-02);
       --color-text: var(--color-base);
       --color-neutral: var(--color-black);
+      /*
+       * Inverted colourways — text on a dark ground, and the dark ground
+       * itself. Added by gh#101 to resolve residual #99: `bf-*` components
+       * were reaching straight for the `--color-white` primitive because the
+       * semantic layer had no name for it, which BRIEF §5 rule 2 forbids.
+       *
+       * Both are aliases of primitives that already exist in
+       * `primitive-colors.css` — no new colour value is introduced here, only
+       * a semantic name for one already in the file's var() graph.
+       * `--color-black` is the darkest existing neutral.
+       */
+      --color-text-inverse: var(--color-white);
+      --color-surface-inverse: var(--color-black);
       --color-link: var(--color-blue);
       --color-link-visited: var(--color-navy);
   
