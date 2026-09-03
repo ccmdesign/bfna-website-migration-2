@@ -81,6 +81,7 @@
  * class means something. This is the `bfButton`/`bfLoadMore` split, applied to
  * a component whose interesting element is not its root.
  */
+import type { StyleValue } from 'vue'
 import type { FormFieldProps } from '~/types/bf-contracts'
 
 defineOptions({
@@ -154,8 +155,6 @@ const invalid = computed(() => (props.error ? 'true' : undefined))
 /** One branch, read once in the template and once by the probe. */
 const isTextarea = computed(() => props.type === 'textarea')
 
-const attrs = useAttrs()
-
 /**
  * Everything a caller passed **except** `class` and `style`, for the control.
  *
@@ -165,18 +164,32 @@ const attrs = useAttrs()
  * also be applied to the `<input>`, where a `.stack` or a margin utility does
  * something visibly wrong. Removed here, once, rather than guarded at each of
  * the two call sites.
+ *
+ * A **plain function taking `$attrs`**, deliberately, rather than a `computed`
+ * over `useAttrs()`. `useAttrs()` returns the instance's `attrs` object, whose
+ * property reads are only tracked as a reactive dependency in development; a
+ * `computed` over it can therefore serve a stale cached value in a production
+ * build when a caller changes an attribute. The template's own `$attrs` is
+ * always current at render time, so passing it in and recomputing per render
+ * is both correct and cheaper to reason about than the caching would have
+ * saved.
  */
-const controlAttrs = computed(() => {
+const controlAttrs = (attrs: Record<string, unknown>): Record<string, unknown> => {
   const { class: _class, style: _style, ...rest } = attrs
   return rest
-})
+}
 
 /**
- * Widen the event's target to the two elements that can fire it here. Both
- * carry `value: string`, so one handler serves both branches without a cast
- * per call site.
+ * The control's value, off the event.
+ *
+ * Widens the target to the two elements that can fire `input` here; both carry
+ * `value: string`, so one reader serves both branches without a cast per call
+ * site. Named `readValue` rather than the obvious `valueOf`, which is a method
+ * on every object and would shadow `Object.prototype.valueOf` inside the
+ * template's scope — it resolves correctly, and it would still be a name that
+ * makes a reader stop.
  */
-const valueOf = (event: Event): string =>
+const readValue = (event: Event): string =>
   (event.target as HTMLInputElement | HTMLTextAreaElement).value
 </script>
 
@@ -196,7 +209,7 @@ const valueOf = (event: Event): string =>
     class="bf-form-field | stack"
     data-gap="2xs"
     :class="$attrs.class"
-    :style="($attrs.style as string | undefined)"
+    :style="($attrs.style as StyleValue)"
   >
     <label class="bf-form-field__label" :for="id">
       {{ label }}<!--
@@ -226,25 +239,25 @@ const valueOf = (event: Event): string =>
     <textarea
       v-if="isTextarea"
       :id="id"
-      v-bind="controlAttrs"
+      v-bind="controlAttrs($attrs)"
       class="bf-form-field__control"
       :value="modelValue"
       :required="required"
       :aria-describedby="describedBy"
       :aria-invalid="invalid"
-      @input="$emit('update:modelValue', valueOf($event))"
+      @input="$emit('update:modelValue', readValue($event))"
     />
     <input
       v-else
       :id="id"
-      v-bind="controlAttrs"
+      v-bind="controlAttrs($attrs)"
       class="bf-form-field__control"
       :type="type"
       :value="modelValue"
       :required="required"
       :aria-describedby="describedBy"
       :aria-invalid="invalid"
-      @input="$emit('update:modelValue', valueOf($event))"
+      @input="$emit('update:modelValue', readValue($event))"
     >
 
     <!--
