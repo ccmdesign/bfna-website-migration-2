@@ -145,3 +145,20 @@ _Runner appends here._
   routes); both wireframe byte-identity diffs — `dev...HEAD` and against the
   pre-epic base `f757a64` — print nothing, as does the wider DoD-4 set
   (`useWfContent.ts`, `assets/wireframe-data`, `public/css/wireframe.css`).
+
+- **The TR&GC ordering divergence recorded above is fixed upstream, not here** (gh#89).
+  This spec put re-deriving curated order out of scope for the composable — "that logic lives
+  in the normaliser (issue 07) only" — so `useBfProjects` is unchanged; the normaliser now
+  emits `GRID_ORDER_FALLBACK (1_000_000) + <snapshot index>` in place of the
+  `Number.MAX_SAFE_INTEGER` sentinel (issue 07 Decisions). Probe 12's TR&GC row is
+  correspondingly tightened from a sorted-**set** assertion to the full **ordered sequence** —
+  `transatlantic-periscope, range, transatlantic-barometer, astropolitics, indo-pacific-nexus,
+  critical-minerals`, i.e. `useWfContent`'s own `gridProjectsByProgram(TRGC)` output — plus two
+  supporting checks: the TR&GC ordinals are strictly ascending fallbacks, and no project
+  anywhere still carries the sentinel. Acceptance stays the probe rendered by a real
+  `npx nuxt generate` (vitest harness broken, residual #86): **37/37 PASS**, with probes 09,
+  11 and 13 still green at 18/18, 21/21 and 34/34.
+
+- **`useBfProjects.ts:117-124`'s doc comment still describes the removed
+  `Number.MAX_SAFE_INTEGER` sentinel.** gh#89's brief forbids touching the composable, so the
+  comment is left stale deliberately and raised as a residual rather than edited in passing.
