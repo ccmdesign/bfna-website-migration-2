@@ -366,7 +366,12 @@ onMounted(() => {
     ...cases.map(c => ({
       label: `  …case ${c.key} <time>`,
       expected: c.showsDate ? 1 : 0,
-      actual: slot(c.key)?.querySelectorAll('.bf-byline time.bf-time').length ?? -1
+      // Selected on BOTH classes: `bf-time` is the atom's own, `bf-byline__date`
+      // is this component's fallthrough hook. Requiring the pair asserts that
+      // Vue merged the two rather than one replacing the other — which is what
+      // makes `.bf-byline__date` a real seam a consumer can style, rather than
+      // a class that happens to be typed in a template.
+      actual: slot(c.key)?.querySelectorAll('.bf-byline time.bf-time.bf-byline__date').length ?? -1
     })),
     ...cases
       .filter(c => c.text !== null)
