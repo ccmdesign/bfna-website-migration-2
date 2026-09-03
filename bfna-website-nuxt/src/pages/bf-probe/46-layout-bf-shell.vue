@@ -52,6 +52,7 @@
  */
 import { useBfSite } from '~/composables/data/useBfSite'
 import { menus as bfMenus } from '~/assets/bf-data/menus'
+import { isExternal } from '~/utils/link'
 
 defineOptions({ name: 'BfProbe46LayoutBfShell' })
 
@@ -68,7 +69,17 @@ useHead({
  * D8 does not reach it (probe 13 sets the precedent).
  */
 const { announcement } = await useBfSite()
-const banner = announcement()
+
+/**
+ * The expectation, derived independently of the layout: the shell shows a band
+ * only for a published document that actually has a message, because `message`
+ * is `z.string().nullable()` and an empty band — or a link with no accessible
+ * name — is not a thing to ship. Stated here rather than imported from the
+ * layout, so the row compares two derivations rather than one value with
+ * itself.
+ */
+const doc = announcement()
+const banner = doc?.message ? doc : undefined
 
 /**
  * One asserted value: what it is, what it must be, what it actually is.
@@ -185,7 +196,12 @@ const finalise = () => {
   const main = document.querySelector<HTMLElement>('main#main')
   const navBar = document.querySelector<HTMLElement>('.bf-nav__bar')
   const footerMenus = document.querySelectorAll('.bf-footer__menus > li')
-  const notices = document.querySelectorAll<HTMLElement>('.bf-notice[data-variant="info"]')
+  /*
+   * A **direct child of the shell**, not any info notice in the document: a
+   * page whose own content used one would otherwise make this row a statement
+   * about the document rather than about the shell.
+   */
+  const notices = document.querySelectorAll<HTMLElement>('.bf-shell > .bf-notice[data-variant="info"]')
   const noticeLink = notices[0]?.querySelector<HTMLAnchorElement>('a')
   const robots = document.querySelector<HTMLMetaElement>('meta[name="robots"]')
 
@@ -294,6 +310,13 @@ const finalise = () => {
       label: '  …linked to the announcement url',
       expected: banner?.url ?? 'no banner',
       actual: banner ? (noticeLink?.getAttribute('href') ?? 'no link') : 'no banner'
+    },
+    {
+      label: '  …and the link is marked external iff isExternal() says so',
+      expected: banner?.url ? (isExternal(banner.url) ? 'marked' : 'unmarked') : 'no banner',
+      actual: banner?.url
+        ? (noticeLink?.hasAttribute('data-external') ? 'marked' : 'unmarked')
+        : 'no banner'
     },
     {
       label: '  …and it sits outside <main>: chrome, not page content',

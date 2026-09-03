@@ -61,6 +61,7 @@
  * public site, and carrying that meta across would deindex bfna.org.
  */
 import { useBfSite } from '~/composables/data/useBfSite'
+import { isExternal } from '~/utils/link'
 
 defineOptions({ name: 'BfDefaultLayout' })
 
@@ -82,11 +83,21 @@ const { menus, announcement } = await useBfSite()
 const siteMenus = menus()
 
 /**
- * The banner, or `undefined`. The `status === 'published'` gate lives in
- * `useBfSite` (BRIEF §6 / D3) and is deliberately **not** re-checked here: two
- * copies of a publish rule is how the two drift.
+ * The banner, or `undefined`.
+ *
+ * The `status === 'published'` gate lives in `useBfSite` (BRIEF §6 / D3) and is
+ * deliberately **not** re-checked here: two copies of a publish rule is how the
+ * two drift.
+ *
+ * The `message` test is a different question and does belong here. Both
+ * `message` and `url` are `z.string().nullable()` in `bfAnnouncementSchema`, so
+ * a published record with no message is a shape the schema permits — and it
+ * would render an empty `bfNotice`, or worse, with a `url` alongside it, an
+ * anchor with **no accessible name** (the #130 failure mode). A band with
+ * nothing to say is not a band.
  */
-const banner = announcement()
+const doc = announcement()
+const banner = doc?.message ? doc : undefined
 
 useHead({
   htmlAttrs: { lang: 'en' },
@@ -142,6 +153,15 @@ useHead({
       would be a second, less useful accessible name. `url` is nullable in the
       schema, so a document with a message and no link degrades to plain text.
 
+      `data-external` comes from `isExternal()` — `src/utils/link.ts` is the
+      epic's one rule for that decision (gh#28) and `bfNav` and `bfFooter`
+      already gate on it. Today's announcement points at `www.bfna.org`, which
+      is this site and correctly unmarked; the gate is here so that an off-site
+      announcement is marked without anyone remembering to. `|| undefined`
+      rather than `|| false`: an attribute bound to `false` is removed, but one
+      bound to the *string* `"false"` is not, and `[data-external]` matches on
+      presence.
+
       `.center` gives the band the same measure and inline padding as the nav
       bar and every page section, so the announcement lines up with the content
       instead of running full-bleed. `|` is a real class token in this CUBE
@@ -152,7 +172,11 @@ useHead({
       class="bf-shell__announcement | center"
       variant="info"
     >
-      <a v-if="banner.url" :href="banner.url">{{ banner.message }}</a>
+      <a
+        v-if="banner.url"
+        :href="banner.url"
+        :data-external="isExternal(banner.url) || undefined"
+      >{{ banner.message }}</a>
       <template v-else>{{ banner.message }}</template>
     </bfNotice>
 

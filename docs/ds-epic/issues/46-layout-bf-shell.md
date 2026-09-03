@@ -96,6 +96,18 @@ call to action ("APPLY NOW | …"), so a trailing "read more" would be a second,
 accessible name for the same destination. `url` is nullable in `bfAnnouncementSchema`, so
 the band degrades to plain text when there is no link.
 
+**D-46.4b — the band is gated on `message`, not only on the document.** Both `message` and
+`url` are `z.string().nullable()`, so a published record with no message is a shape the
+schema permits; the layout resolves `const banner = doc?.message ? doc : undefined` so it
+can never ship an empty band, or — with a `url` alongside it — an anchor with no accessible
+name (#130's failure mode). The `status === 'published'` half of the gate stays in the
+composable; this half is a different question and belongs where the markup is.
+
+**D-46.4c — the announcement link is marked with `isExternal()`.** `src/utils/link.ts` is
+the epic's one rule for that decision (gh#28) and `bfNav`/`bfFooter` already gate on it.
+Today's announcement points at `www.bfna.org` — this site, correctly unmarked — so the gate
+is there for the off-site announcement nobody will remember to mark by hand.
+
 **D-46.5 — the band sits outside `<main>`.** It is site chrome, not page content: a
 template's `.stack` rhythm must not have to know whether an announcement is running this
 week. Probe 46 asserts it (`main.contains(band) === false`).
@@ -195,6 +207,6 @@ probes use, because several rows here assert a predicate and the comparison is
 `String(a) === String(b)` anyway.
 
 **Vitest (residual #86):** no vitest test was added — the harness on `dev` is broken and
-pre-existing. The substitution is probe 46's 27 runtime rows plus the one added to probe 39,
+pre-existing. The substitution is probe 46's 28 runtime rows plus the one added to probe 39,
 all run by `npx tsx scripts/check-probes.ts`, which exits 0 only when every probe reports
 PASS with zero failing rows.
