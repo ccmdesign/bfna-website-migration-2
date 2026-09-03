@@ -37,15 +37,24 @@
  *     ring contrasts with the ground it is painted on — in **both** states
  *     (the gh#24-P2-1 defect, checked before it can recur here).
  *  7. **The box metrics equal the wireframe chip's**, measured rather than
- *     asserted. The padding is compared **em-normalised**, because the frozen
- *     rule pins its own font size and this component takes a token step: the
- *     check is about the declaration, not about the inherited size.
+ *     asserted — against a reference painted by the frozen `/css/wireframe.css`
+ *     in an isolated frame of its own (gh#116). The padding is compared
+ *     **em-normalised**, because the frozen rule pins its own font size and
+ *     this component takes a token step: the check is about the declaration,
+ *     not about the inherited size.
  *  8. Colour comes from the existing semantic tokens, and the default chip
  *     paints no ground at all.
  *  9. `@layer components` survived into the live CSSOM (the gh#101 guard).
  * 10. `$attrs` reaches whichever element rendered, and a caller's own `style`
  *     outranks the component's hooks — the escape hatch that replaces the
  *     style binding this component deliberately does not have.
+ * 11. **The page's own CSS-loading contract** (gh#116, the § 12 rows): the
+ *     `@layer` order statement reached the page *and* declares the full order,
+ *     and every stylesheet on it belongs to the CUBE stack. Those rows are
+ *     about the page rather than the chip, and they are what makes every
+ *     measurement above worth reading — an unlayered rule outside the stack
+ *     outranks every layer, which is exactly how `font-weight` used to differ
+ *     between the span and the link branches of this component.
  *
  * ## The keyboard lab
  *
@@ -74,8 +83,8 @@ useHead({
 
 /*
  * The frozen wireframe reference this page measures against is rendered in an
- * isolated `srcdoc` iframe (see the template, and `wfMetrics` below) rather
- * than as an off-screen box in this document. gh#116: the `bf-probe` layout
+ * isolated `srcdoc` iframe (`readWireframeReference` below, and the template)
+ * rather than as an off-screen box in this document. gh#116: the `bf-probe` layout
  * loads the CUBE stack and only the CUBE stack, and `/css/wireframe.css` is
  * not part of it — it is the Front-2 skin, loaded nowhere but
  * `layouts/wireframe.vue`. Keeping the link here would have left the probe
@@ -115,12 +124,21 @@ const readWireframeReference = async (selector: string): Promise<{ el: HTMLEleme
 
   if (frame.contentDocument?.readyState !== 'complete') {
     await new Promise<void>(ok => {
-      const done = () => ok()
+      /*
+       * Bounded. A frame that never fires `load` would otherwise leave this
+       * promise pending forever, the assertion table unbuilt and the verdict
+       * stuck on `pending` — which `scripts/check-probes.ts` reports as a
+       * timeout rather than as the failing row it really is. On expiry the
+       * lookup below simply finds nothing and the "present and measurable" row
+       * goes red, which is the honest outcome.
+       */
+      const timer = setTimeout(() => ok(), 5_000)
+      const done = () => { clearTimeout(timer); ok() }
       frame.addEventListener('load', done, { once: true })
       // The frame may have finished between the check and this listener.
       if (frame.contentDocument?.readyState === 'complete') {
         frame.removeEventListener('load', done)
-        ok()
+        done()
       }
     })
   }
@@ -1304,14 +1322,11 @@ const verdict = computed(() =>
 }
 
 /*
-  Off-screen, not `display: none`: a `display: none` element has no used
-  padding to compare against.
-*/
-/*
-  The reference frame needs a real viewport — a 1px-wide one would wrap the
-  reference and every measured box with it — so it is moved off-screen at full
-  size rather than collapsed. `border: 0` keeps the UA's default frame border
-  out of the layout.
+  Off-screen, not `display: none`: a `display: none` frame lays nothing out, so
+  there would be no used padding to compare against. It also needs a real
+  viewport — a 1px-wide one, which is what the box this replaced could get away
+  with, would wrap the reference and every measurement with it. `border: 0`
+  keeps the UA's default frame border out of the layout.
 */
 .probe__reference-frame {
   position: absolute;

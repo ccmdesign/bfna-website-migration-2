@@ -27,10 +27,11 @@
  *     out of the live CSSOM with a real outline and the existing
  *     `--outline-focus` halo.
  *  5. **The box metrics equal the wireframe's**, measured rather than
- *     asserted: `/css/wireframe.css` is loaded and a real hidden wireframe
- *     button is compared against a rendered `bf-button` for computed padding
- *     and border width. This is the "read the computed values, don't guess"
- *     check; it fails if either side drifts.
+ *     asserted: a real wireframe button, painted by the frozen
+ *     `/css/wireframe.css` in an isolated frame of its own (gh#116), is
+ *     compared against a rendered `bf-button` for computed padding and border
+ *     width. This is the "read the computed values, don't guess" check; it
+ *     fails if either side drifts.
  *  6. Colour comes from the existing semantic tokens, the two variants
  *     differ, and the default variant paints no ground at all.
  *  7. `@layer components` survived into the live CSSOM (the gh#101 guard,
@@ -52,8 +53,8 @@ useHead({
 
 /*
  * The frozen wireframe reference this page measures against is rendered in an
- * isolated `srcdoc` iframe (see the template, and `wfMetrics` below) rather
- * than as an off-screen box in this document. gh#116: the `bf-probe` layout
+ * isolated `srcdoc` iframe (`readWireframeReference` below, and the template)
+ * rather than as an off-screen box in this document. gh#116: the `bf-probe` layout
  * loads the CUBE stack and only the CUBE stack, and `/css/wireframe.css` is
  * not part of it — it is the Front-2 skin, loaded nowhere but
  * `layouts/wireframe.vue`. Keeping the link here would have left the probe
@@ -93,12 +94,21 @@ const readWireframeReference = async (selector: string): Promise<{ el: HTMLEleme
 
   if (frame.contentDocument?.readyState !== 'complete') {
     await new Promise<void>(ok => {
-      const done = () => ok()
+      /*
+       * Bounded. A frame that never fires `load` would otherwise leave this
+       * promise pending forever, the assertion table unbuilt and the verdict
+       * stuck on `pending` — which `scripts/check-probes.ts` reports as a
+       * timeout rather than as the failing row it really is. On expiry the
+       * lookup below simply finds nothing and the "present and measurable" row
+       * goes red, which is the honest outcome.
+       */
+      const timer = setTimeout(() => ok(), 5_000)
+      const done = () => { clearTimeout(timer); ok() }
       frame.addEventListener('load', done, { once: true })
       // The frame may have finished between the check and this listener.
       if (frame.contentDocument?.readyState === 'complete') {
         frame.removeEventListener('load', done)
-        ok()
+        done()
       }
     })
   }
@@ -739,14 +749,11 @@ const verdict = computed(() =>
 }
 
 /*
-  Off-screen, not `display: none`: a `display: none` element has no used
-  padding to compare against.
-*/
-/*
-  The reference frame needs a real viewport — a 1px-wide one would wrap the
-  reference and every measured box with it — so it is moved off-screen at full
-  size rather than collapsed. `border: 0` keeps the UA's default frame border
-  out of the layout.
+  Off-screen, not `display: none`: a `display: none` frame lays nothing out, so
+  there would be no used padding to compare against. It also needs a real
+  viewport — a 1px-wide one, which is what the box this replaced could get away
+  with, would wrap the reference and every measurement with it. `border: 0`
+  keeps the UA's default frame border out of the layout.
 */
 .probe__reference-frame {
   position: absolute;
