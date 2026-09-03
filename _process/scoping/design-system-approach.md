@@ -1,6 +1,10 @@
 # Front 3 — Design System approach (v2, 2026-07-31)
 
-> Amended 2026-09-02 per `docs/ds-epic/BRIEF.md` D1 — `bf-*` supersedes `ccm*`-first.
+> **Amended 2026-09-02 per `docs/ds-epic/BRIEF.md` D1 — `bf-*` supersedes `ccm*`-first.**
+> Prefix amendment only; this remains a 2026-07-31 scoping record, not a current plan.
+> Where it conflicts with the BRIEF, **the BRIEF governs** — in particular: no new colour
+> literals or `--color-*` tokens (§5.2 / DoD-6), no art direction or rebrand (D5), and
+> legacy retirement happens in phase 7 / issues 57–59, not per-tier (D2).
 
 How we build the design system: decisions, workstreams, sequencing. Brownfield: evolve existing BFNA visual identity under the `bf-*` design system, no rebrand. Companion to `fronts/03-design-system.md`.
 

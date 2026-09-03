@@ -97,11 +97,15 @@ test -f ../_process/scoping/design-system-approach.md && \
   carry both contracts inline: `--_ccm-` scoped to `src/components/ds/*`, `--_bf-` for
   `src/components/bf/*`. Nothing was deleted, so the `ds/` generation remains correctly
   documented.
-- **D01.3 — one line beyond the spec's enumeration was amended.** `CLAUDE.md:90`
+- **D01.3 — three lines beyond the spec's enumeration were amended.** (a) `CLAUDE.md:90`
   ("**DS components**: … each prefixed with `ccm`") is not named in the spec's Scope but *is*
-  caught by the spec's own acceptance command. It was amended to point new work at
-  `src/components/bf/`. The spec's enumeration was incomplete, not wrong; the acceptance
-  command is authoritative.
+  caught by the spec's own acceptance command, so it was amended to point new work at
+  `src/components/bf/` — the spec's enumeration was incomplete, not wrong, and the acceptance
+  command is authoritative. (b) `CLAUDE.md`'s *Component Development Standards* heading line was
+  widened from `src/components/ds/` to `src/components/bf/` or `src/components/ds/`, or the
+  standards would have read as not applying to `bf-*` at all. (c) `AGENTS.md`'s `ds/` tree
+  comment was reworded (the spec instructed only *adding* a `bf/` line) so the two sibling
+  lines describe the two generations symmetrically.
 - **D01.4 — collateral `ccm` mentions deliberately left alone.** `CLAUDE.md`'s Interdependent
   Components examples (ccmTabs, ccmAccordion, ccmMenu, ccmFormGroup) and `AGENTS.md`'s
   PascalCase example (`ccmButton.vue`) are *examples*, not prefix or CSS-variable **rules**;
@@ -118,9 +122,31 @@ test -f ../_process/scoping/design-system-approach.md && \
   Content Workflow only; a one-line cross-referenced summary was also added to `AGENTS.md`'s
   Content Management section, because the issue body requires *both* app docs to state the
   current contract and item-runners may read either.
-- **D01.7 — `AGENTS.md` still advertises `npm run generate` (line 40) as the SSG command,
-  which BRIEF §5 rule 6 forbids** (it runs `contentImporter.js` and needs Directus secrets).
-  Out of this spec's enumerated scope, so not fixed here — raised as a residual issue instead.
+- **D01.7 — `npm run generate` warning added after review.** `AGENTS.md` advertised
+  `npm run generate` as *the* SSG command, which BRIEF §5 rule 6 forbids (it runs
+  `contentImporter.js` and needs Directus secrets not in the checkout). Initially deferred as
+  out-of-scope; applied after review, because it is exactly the line a runner acts on wrongly
+  and it lives in the file this issue exists to correct.
+- **D01.8 — the guideline links in both app docs were repointed.** `src/content/` **does not
+  exist** in this checkout, so all 14 `src/content/docs/guidelines/*` links — including the two
+  "**ALWAYS review** …" mandates that gate every one of the ~46 component issues — resolved to
+  nothing. They now point at `_process/docs-deprecated/guidelines/`, the only surviving copies,
+  with three renames applied (`general-implementation-guidelines.md` → `implementation-playbook.md`,
+  `demo-page-blueprint.md` → `demo-playbook.md`, `cube-css.md` → no successor, so the duplicate
+  "CUBE CSS Guidelines" entry was dropped) and one dead anchor
+  (`#0-interdependent-components---critical`) removed. Every guideline link now resolves.
+- **D01.9 — three BRIEF contracts absent from both app docs were added**: shared types live only
+  in `src/types/bf-contracts.ts` (§5 rule 11), site chrome is emitted as
+  `src/assets/bf-data/menus.json` rather than a seventh collection (§6), and component **files**
+  are named in camelCase (`bfCard.vue`) — `AGENTS.md` previously said "PascalCase", which would
+  have produced `BfCard.vue` across 46 new files.
+- **D01.10 — the amended `design-system-approach.md` banner scope-limits rather than blesses.**
+  A mechanical `ccm`→`bf` substitution silently transferred three pre-epic plans onto `bf-*`
+  that the BRIEF forbids (evolve BFNA identity / no rebrand vs D5 "deliberately unbranded, no
+  art direction"; "formalize the BFNA palette as hsl tokens … `--color-primary`" vs §5 rule 2
+  "no new `--color-*` token"; per-tier "delete the legacy file" vs D2 "legacy retired in the
+  final issues 57–59"). The banner now states that the doc is a 2026-07-31 scoping record,
+  amended for prefix only, and that the BRIEF governs on conflict.
 
 **Verification run on this branch:** `npx nuxt typecheck` exit 0 · `npx nuxt generate` exit 0 ·
 acceptance grep PASS · `design-system-approach.md` present and contains `bf-*` ·

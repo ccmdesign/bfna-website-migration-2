@@ -49,14 +49,19 @@ Run from `bfna-website-nuxt/`:
    ```
    Every surviving `ccm` prefix/CSS-var rule line must carry its `bf-*` counterpart on the
    same line, so the third `grep -v` drops it.
-4. DoD-4 guard (must print nothing):
+4. DoD-4 guard — BRIEF §9's path list **verbatim** (must print nothing):
    ```bash
    git diff --stat dev...HEAD -- \
      bfna-website-nuxt/src/pages/wireframes \
      bfna-website-nuxt/src/components/wireframe \
+     bfna-website-nuxt/src/composables/useWfContent.ts \
      bfna-website-nuxt/src/layouts/wireframe.vue \
-     bfna-website-nuxt/src/public/css/wireframe.css
+     bfna-website-nuxt/public/css/wireframe.css \
+     bfna-website-nuxt/src/assets/wireframe-data
    ```
+   **Note for later runners:** `public/css/wireframe.css` and `src/public/css/wireframe.css`
+   both exist as separate files in this repo. BRIEF §9 names the former; a guard that lists
+   only the latter watches the wrong file and cannot fail. Check both.
 5. DoD-6 sanity: `git diff dev...HEAD -- '*.css' '*.vue'` is empty (docs-only issue).
 
 ## Risks
