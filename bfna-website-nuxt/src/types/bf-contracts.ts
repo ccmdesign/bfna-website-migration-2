@@ -506,6 +506,50 @@ export interface LoadMoreProps {
   totalCount?: number
 }
 
+/**
+ * Props of `bfEmptyState` — and therefore of `bfNotFound`, which is the same
+ * component under a second auto-import name, not a second contract.
+ *
+ * Four props and a default slot, for a block whose whole job is to be the
+ * *only* thing on a page: a 404, a hub with nothing published in it yet, a
+ * search that matched nothing. It is deliberately not a general-purpose
+ * message panel — the `h1` is the tell. A component that renders an `h1` can
+ * be used once per page (BRIEF §5 rule 9), which is exactly the constraint an
+ * empty *state* wants and exactly the wrong one for an inline notice.
+ */
+export interface EmptyStateProps {
+  /**
+   * The page heading, rendered as the one `<h1>`. Required, and there is no
+   * default: *"Unknown program"*, *"Insight not found in content.json"* and
+   * *"Unknown project"* are three different sentences at the three call sites
+   * this replaces, and a component that invented a fourth generic one would
+   * make every caller worse.
+   */
+  heading: string
+  /**
+   * An optional sentence under the heading. Absent by default — none of the
+   * three wireframe call sites writes one; it exists for the 404 route
+   * (issue 56) and the empty-results states (48/50/52), which have something
+   * more to say than the heading alone.
+   */
+  message?: string
+  /**
+   * The back link's visible text and destination. **Both or neither.** With
+   * one of the two supplied the link is not rendered at all, rather than
+   * emitting an anchor with no accessible name (`backLabel` missing) or a
+   * label that goes nowhere (`backTo` missing) — the same failure #130 named
+   * for the card wrappers, at a smaller scale.
+   *
+   * `backTo` is a router destination, handed to `NuxtLink`'s `to`. The link is
+   * a plain `NuxtLink`, not a `bfButton`: the wireframe block writes a bare
+   * link with no `.wf-button`, and a way back out of a dead end is navigation,
+   * not a primary call to action.
+   */
+  backLabel?: string
+  /** @see {@link EmptyStateProps.backLabel} — both or neither. */
+  backTo?: string
+}
+
 /** One breadcrumb node. `to` omitted marks the current (non-linked) page. */
 export interface Crumb {
   label: string
