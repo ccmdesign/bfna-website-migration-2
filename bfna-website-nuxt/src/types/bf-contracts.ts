@@ -201,6 +201,45 @@ export interface ChipProps {
 }
 
 /**
+ * Props of `bfFilterBar` (issue 30 / gh#39).
+ *
+ * A multi-select facet row: one `bfChip[toggle]` per entry in `filters`, with
+ * `modelValue` holding the **`key`s** of the selected ones.
+ *
+ * `Filter['key']`, not a bare `string`, on purpose. The spec's prose says the
+ * component toggles "its `value`" in and out of the array; the `Filter`
+ * contract above — which the spec itself points at, and which is older than
+ * that sentence — names the field `key`. The alias makes the relationship
+ * checkable rather than conventional: rename `Filter.key` and every consumer
+ * of this array is re-typed with it. It is still assignable from `string`, so
+ * a page reading its facets out of a route query needs no cast.
+ *
+ * The array is **replaced, never mutated** — the component emits a new one on
+ * every toggle, so a consumer holding the old array (a history stack, a
+ * `watch` on identity) sees a real change.
+ */
+export interface FilterBarProps {
+  /** The facets to render, in display order. One toggle chip each. */
+  filters: Filter[]
+  /**
+   * The selected `Filter['key']`s. A key not present in `filters` renders no
+   * chip but survives every round trip untouched — pages own their filter
+   * vocabulary, and this component must not silently drop part of it.
+   */
+  modelValue: Array<Filter['key']>
+  /**
+   * The group's accessible name (`aria-label` on `role="group"`).
+   *
+   * Defaults to the generic `"Filters"`, which is the spec's instruction and
+   * is only ever right for a bar that is alone on its page. Two bars sharing
+   * one page — the search template's Program and Format facets, which is the
+   * call site this component exists for — must each pass their own name, or
+   * a screen-reader user hears the same group twice.
+   */
+  label?: string
+}
+
+/**
  * Props of `bfMedia`.
  *
  * The two branches are decided by `src` alone, exactly as `wfMedia.vue`
