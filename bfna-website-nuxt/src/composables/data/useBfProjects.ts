@@ -105,8 +105,15 @@ export const useBfProjects = async () => {
   const top = all.filter(p => !p.parent_project)
 
   return {
-    /** Top-level projects only; children reach the site through their parent. */
-    projects: () => top,
+    /**
+     * Top-level projects only; children reach the site through their parent.
+     *
+     * A fresh array per call (gh#91): `top` backs every other list member, so
+     * handing it out directly would let one caller's `.sort()` reorder what the
+     * next consumer sees. The filtered members were already safe — `.filter()`
+     * allocates before `.sort()` runs.
+     */
+    projects: () => [...top],
     /**
      * Top-level projects in one program. `program` is the display **name**
      * (`'Democracy'`), not a slug — the same value `useWfContent` takes. The
@@ -119,10 +126,15 @@ export const useBfProjects = async () => {
      * Both halves are stored. `grid_eligible` is the normaliser's copy of
      * `inProjectGrid` (drops archived tiers, `exclude_from_grid` rows, external
      * -only products and leftover `kind: 'podcast'` rows). `grid_order` is its
-     * copy of the `GRID_ORDER` rank, with `Number.MAX_SAFE_INTEGER` for any
-     * slug the client did not place — so a stable sort puts ranked slugs first
-     * in the declared order and leaves the rest behind them, which is what
-     * `gridSort` did. Nothing is re-derived; this is a filter and a sort.
+     * copy of the `GRID_ORDER` rank, with `GRID_ORDER_FALLBACK (1_000_000) +
+     * <index in the snapshot's items array>` for any slug the client did not
+     * place — so ascending order puts ranked slugs first in the declared order
+     * and the rest behind them in snapshot order, which is what `gridSort` did.
+     * That fallback is a real ordinal, not a sentinel: gh#89 replaced the
+     * `Number.MAX_SAFE_INTEGER` tie this comment used to describe, because
+     * `queryCollection` returns file-stem order and a tie would have rendered
+     * unplaced programs alphabetically. Nothing is re-derived here; this is
+     * still a filter and a sort.
      */
     gridProjectsByProgram: (program: string) =>
       // `.filter()` already returns a fresh array, so sorting it in place

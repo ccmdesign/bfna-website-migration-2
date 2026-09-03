@@ -52,6 +52,22 @@ interface Check {
   actual: number | string
 }
 
+/**
+ * gh#91 — a list member hands back a **copy**: mutating what one call returned
+ * cannot change what the next call returns.
+ *
+ * `b !== a` proves a new array came back; `b[0] === a.at(-1)` proves the second
+ * call still starts at the element the first one did, i.e. the `.reverse()`
+ * landed on the caller's copy and not on shared state.
+ */
+const isCopySafe = <T>(read: () => T[]) => {
+  const a = read()
+  if (a.length < 2) return false
+  a.reverse()
+  const b = read()
+  return b !== a && b[0] === a.at(-1)
+}
+
 const {
   projects,
   projectsByProgram,
@@ -234,7 +250,14 @@ const checks: Check[] = [
     expected: 'true',
     actual: String(programs().every(p => p.tagline.length > 0))
   },
-  { label: "programBySlug('not-a-program') is undefined", expected: 'true', actual: String(programBySlug('not-a-program') === undefined) }
+  { label: "programBySlug('not-a-program') is undefined", expected: 'true', actual: String(programBySlug('not-a-program') === undefined) },
+
+  // --- gh#91: the unfiltered members hand back copies ----------------------
+  {
+    label: 'projects() / programs() survive a caller reversing them (gh#91)',
+    expected: 'true',
+    actual: String(isCopySafe(projects) && isCopySafe(programs))
+  }
 ]
 
 const passed = computed(() => checks.filter(c => String(c.actual) === String(c.expected)).length)

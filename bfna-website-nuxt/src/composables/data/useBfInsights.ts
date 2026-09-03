@@ -38,6 +38,20 @@
  * Formatting (`formatLabel`, `kindLabel`, `monthYear`, `paragraphs`) is not
  * re-derived here — it lives in `~/utils/format` (issue 10) and is called by
  * pages.
+ *
+ * ## Every list member hands back a copy
+ *
+ * `items`, `active` and `archived` are exposed as **getters** that spread the
+ * private arrays, so a caller doing `active.sort()` or `items.reverse()`
+ * mutates its own copy and cannot reach the `useAsyncData` payload, the other
+ * members, or another consumer in the same render (gh#91, promoted residual of
+ * gh#22). Getters rather than a single `[...]` at the return site because these
+ * three are exposed as **values**, not functions — that is the `useWfContent`
+ * shape pages destructure — so the copy has to be made per access. The private
+ * consts stay closed over by `bySlug`, `activeByProgram`,
+ * `archivedCountByProgram` and `insightsForProject`, which therefore always
+ * read the un-mutated lists. The filtered members were already safe:
+ * `.filter()` allocates before `.sort()` runs.
  */
 import type { Insight } from '~/types/bf-contracts'
 
@@ -79,9 +93,18 @@ export const useBfInsights = async () => {
   const bySlug = (slug: string) => items.find(i => i.slug === slug)
 
   return {
-    items,
-    active,
-    archived,
+    // A fresh array per access (gh#91). Inside each getter the identifier
+    // resolves to the private const above — an object literal's property names
+    // create no binding — so this is a spread, not a recursive read.
+    get items() {
+      return [...items]
+    },
+    get active() {
+      return [...active]
+    },
+    get archived() {
+      return [...archived]
+    },
     bySlug,
     /**
      * Active items in one program. `program` is the display **name**

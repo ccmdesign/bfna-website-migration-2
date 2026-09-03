@@ -68,6 +68,24 @@ const { announcement, menus } = await useBfSite()
 
 const slugs = (list: Person[]) => list.map(p => p.slug).join(',')
 
+/**
+ * gh#91 — a list member hands back a **copy**: mutating what one call returned
+ * cannot change what the next call returns.
+ *
+ * `b !== a` proves a new array came back; `b[0] === a.at(-1)` proves the second
+ * call still starts at the element the first one did, i.e. the `.reverse()`
+ * landed on the caller's copy and not on shared state — here the
+ * `useAsyncData` payload behind `people()` and the module singleton behind
+ * `menus()`, the two the review of gh#22 named.
+ */
+const isCopySafe = <T>(read: () => T[]) => {
+  const a = read()
+  if (a.length < 2) return false
+  a.reverse()
+  const b = read()
+  return b !== a && b[0] === a.at(-1)
+}
+
 // Assignability checks, not casts: if a composable and the exported entity
 // types drift apart, `nuxt typecheck` fails here rather than in a page.
 const about: Page | undefined = aboutPage()
@@ -225,6 +243,13 @@ const checks: Check[] = [
     label: '  …every entry is a link or a parent of items',
     expected: 'true',
     actual: String(menus().every(m => (m.items?.length ?? 0) > 0 || Boolean(m.to) || Boolean(m.href)))
+  },
+
+  // --- gh#91: the unfiltered members hand back copies ----------------------
+  {
+    label: 'people() / menus() survive a caller reversing them (gh#91)',
+    expected: 'true',
+    actual: String(isCopySafe(people) && isCopySafe(menus))
   }
 ]
 
