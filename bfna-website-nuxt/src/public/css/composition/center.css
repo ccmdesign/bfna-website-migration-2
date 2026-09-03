@@ -1,4 +1,52 @@
+/* ============================================================
+   `data-measure` — line-length cap, universal.
+
+   Two independent mechanisms share one attribute name:
+
+   1. `[data-measure]` (below)     — caps ANY element via `--_measure`.
+   2. `.center[data-measure="…"]`  — caps `.center` via `--_center-measure`,
+                                     which also carries `.center`'s own
+                                     `1100px` default and its padding model.
+
+   Both map the same 4-step scale, so an element that is both a `.center`
+   and carries the attribute resolves the same length either way.
+
+   | value    | measure |
+   |----------|---------|
+   | narrow   | 60ch    |
+   | (unset)  | 75ch    |
+   | normal   | 75ch    |
+   | wide     | 90ch    |
+   | full     | 100%    |
+
+   RULE ORDER MATTERS — do not move the `[data-measure]` block below
+   `.center`. `.center { max-inline-size: … }` and
+   `[data-measure] { max-inline-size: … }` are both specificity (0,1,0), and
+   the `.center[data-measure="…"]` rules only write a variable, so they cannot
+   break the tie on that property. Source order does. Declared first, `.center`
+   keeps authority over its own `max-inline-size` for every value — including
+   any value outside the scale, where `.center` must fall back to its `1100px`
+   default rather than to `75ch`.
+   ============================================================ */
+
 @layer composition {
+  /* Universal measure. Applies to a bare `<p>`, `<div>`, `<li>`, … — any
+     element, not only `.center`. */
+  [data-measure] {
+    /* Declared, not merely a `var()` fallback: `--_measure` is an inherited
+       custom property, so a `[data-measure]` nested inside another one would
+       otherwise pick up its ancestor's measure. The value rules below are
+       (0,2,0) and override this on the element itself. */
+    --_measure: 75ch;
+
+    max-inline-size: var(--_measure, 75ch);
+  }
+
+  [data-measure="narrow"] { --_measure: 60ch; }
+  [data-measure="normal"] { --_measure: 75ch; }
+  [data-measure="wide"] { --_measure: 90ch; }
+  [data-measure="full"] { --_measure: 100%; }
+
   .center {
     --_center-measure: var(--theme-center-measure, 1100px);
     --_center-padding: var(--theme-center-padding, var(--space-s));
@@ -13,7 +61,9 @@
      Data Attribute Controls for Spacing
      ======================================== */
   
-  /* Center measure (width) */
+  /* Center measure (width). Writes `--_center-measure`, NOT `--_measure` —
+     see the header comment: this is the `.center`-specific half of the pair
+     and it keeps `.center`'s content-box padding model. */
   .center[data-measure="narrow"] { --_center-measure: 60ch; }
   .center[data-measure="normal"] { --_center-measure: 75ch; }
   .center[data-measure="wide"] { --_center-measure: 90ch; }
