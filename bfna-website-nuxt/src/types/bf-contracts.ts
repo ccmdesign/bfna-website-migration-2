@@ -28,6 +28,27 @@ export interface CardBaseProps {
   span?: 'full'
 }
 
+/**
+ * Colourway of the `bfLogo` wordmark.
+ *
+ * `default` paints `--color-text`; `white` paints `--color-white` and is for
+ * dark grounds only — the lower band of the mark is an inverted shape, so on a
+ * light ground the white variant is invisible (inherited from `LogoWhite.vue`).
+ */
+export type LogoVariant = 'default' | 'white'
+
+/**
+ * Props of `bfLogo`.
+ *
+ * Size is deliberately **not** a prop: it is the CSS custom property
+ * `--_bf-logo-size` (block-size, default `1.25rem`), set by the consumer
+ * through `style` / a parent rule, so a caller can size the mark responsively
+ * without a prop per breakpoint.
+ */
+export interface LogoProps {
+  variant?: LogoVariant
+}
+
 /** One breadcrumb node. `to` omitted marks the current (non-linked) page. */
 export interface Crumb {
   label: string

@@ -72,3 +72,95 @@ page (per the issues.md `verify` column — manual/rendered check).
 ## Decisions
 
 _Runner appends here._
+
+### gh#23 — first `bf-*` component; these choices are the epic's precedent
+
+**D14.1 — the legacy fill is `#222`, not "the SVG default".** The spec's premise
+that `.st0` is unstyled is correct (`grep -rn '\.st0' src/public src/assets
+public` → 0 hits), but the mark was never rendering at the SVG default black:
+`src/public/css-legacy/global.css:1305-1315` paints the **root `<svg>`** —
+`.bfna-logo { width: 100%; fill: #222 }` and `.bfna-logo--white { fill: #fff }` —
+and the unstyled `class="st0"` children inherit it. So the like-for-like swap is
+`#222 → var(--color-text)` (`--color-text` → `--color-base` → `hsl(0 0% 3%)`,
+the nearest existing semantic token) and `#fff → var(--color-white)`. Still no
+new colour and no new token, and the component now contains zero colour
+literals of any form (asserted, not grepped by eye — see D14.6).
+
+**D14.2 — `--_bf-logo-size` means block-size, default `1.25rem`, read from the
+wireframe.** The spec says to read the default from `.wf-nav__logo` rather than
+guess one. Read: `public/css/wireframe.css:170` is
+`.wireframe .wf-nav__logo { font-size: 1.25rem; text-decoration: none; color:
+inherit; margin-inline-end: auto }` — and `wfNav.vue:6-8` shows why there is no
+width or height to read: the wireframe logo is **text**
+(`<NuxtLink class="wf-nav__logo"><strong>BFNA</strong></NuxtLink>`), not an SVG.
+Its only size is that `1.25rem` type size. So `--_bf-logo-size` is mapped to
+**`block-size`**, defaulting to `1.25rem`, with the inline size following from
+`aspect-ratio: 695.1 / 266.6`; the mark then occupies the same vertical band the
+wireframe reserved for its logo. **Later `bf-*` components inherit this reading:
+a `--_bf-<component>-size` hook is a block-size unless its own spec says
+otherwise.**
+
+**D14.3 — size is a CSS variable, not a prop.** The spec's prop contract is
+`variant` alone, so `bfLogo` ships exactly one prop. Consumers set
+`--_bf-logo-size` through `style` (or a parent rule) and it reaches the root
+`<svg>` via `$attrs` fallthrough — which is also how the probe renders three
+sizes. Consequence for the epic: a component gets the BRIEF §5.4 `cssVars`
+computed only when a **prop** maps to a custom property; a consumer-set hook
+with no backing prop does not need one, and an empty `cssVars` is noise.
+
+**D14.4 — accessible name is `aria-labelledby`, not a bare `<title>`.** The spec
+asks for `role="img"` + `<title>`. Shipped as `role="img"` **plus**
+`:aria-labelledby="titleId"` pointing at `<title :id="titleId">`, because
+`role="img"` with an unreferenced child `<title>` is announced inconsistently
+across AT while an explicit label reference is not. `useId()` supplies the id so
+the prerendered and hydrated markup agree; `focusable="false"` keeps the mark
+out of the tab order in legacy engines. The copy — `Bertelsmann Foundation North
+America` — is not invented: both legacy call sites
+(`legacy/organisms/Header.vue:4`, `legacy/organisms/MainNav.vue:4`) render a
+bare `<svg>` with **no accessible name at all** (an a11y defect this issue
+fixes), and the string already exists verbatim at `wfFooter.vue:10` and
+`wfContactSection.vue:15`.
+
+**D14.5 — element count: 16, not 13.** The spec says "13 `<path>`/`<polygon>`/
+`<rect>` elements". 13 is the `<path>` count; the artwork is **13 `<path>` +
+2 `<polygon>` + 1 `<rect>` = 16** drawables (15 of which carry a `d`/`points`
+string — `<rect>` carries neither). Recorded so a later reader does not
+"fix" the count. The `d`/`points` strings are byte-identical to
+`legacy/atoms/Logo.vue`, in document order; only the inert attributes were
+dropped (`class="st0"`, `version`, `xmlns:xlink`, `x`/`y`, `xml:space`,
+`style="enable-background:…"`).
+
+**D14.6 — acceptance substitutes for vitest (residual #86).** The harness on
+`dev` is broken and pre-existing, so per the gh#20/gh#21/gh#22 precedent this
+issue's acceptance is:
+
+- `npx tsx bfna-website-nuxt/scripts/verify-bf-logo.ts` — 38 checks, exit 0.
+  It runs the spec's own literal `grep` expressions, and adds the assertions
+  that actually carry weight: every `d`/`points` value compared **byte-for-byte
+  against the legacy file**; `LogoWhite.vue` proven to differ from `Logo.vue`
+  by nothing but the `bfna-logo--white` class (so one component with a `variant`
+  prop is a faithful merge); zero colour literals in component *and* probe under
+  a wider net than the spec's (`#hex`, `hsl/rgb/oklch/lab/lch/color-mix(`, and
+  any `fill=` that is not `currentColor`/`none`); the legacy files proven
+  untouched against the merge-base (deleting them is issue 58); and, when
+  `.output/` exists, the six prerendered marks with their `aria-labelledby` →
+  `<title>` wiring and `--_bf-logo-size` values. Source-level checks run on a
+  comment-stripped copy, so the doc comments may quote the `#222` they replaced.
+- Probe page `/bf-probe/14-bf-logo` — committed and kept. Six live marks
+  (2 variants × 3 sizes) plus 17 runtime DOM assertions behind
+  `data-testid="probe-14-verdict"`, including the two colourways resolving to
+  the *computed* values of `--color-text` / `--color-white`.
+
+**D14.7 — `variant="white"` is legible only on a dark ground.** The lower band
+of the mark is an inverted shape: one path fills the `0,122.5 → 695.1×144.1`
+rectangle with the letterforms knocked out. `variant="white"` therefore paints
+a white slab with transparent counters — correct on a dark ground, invisible on
+a light one. This is exactly how `LogoWhite.vue` behaved, so it is inherited,
+not introduced; the probe renders that variant on a dark panel for this reason,
+and the constraint is documented on `LogoVariant` in `bf-contracts.ts`.
+
+**D14.8 — gates.** Typecheck **178 → 178** `error TS` (baseline held), with
+**0** in `src/components/bf|types|composables/bf|content.config`.
+`npx nuxt generate` exit 0, 753 routes. Wireframe-source diff against the
+pre-epic base `f757a64` — empty, over the full DoD-4 path list.
+
