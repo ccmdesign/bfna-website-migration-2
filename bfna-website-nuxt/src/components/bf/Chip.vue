@@ -106,18 +106,39 @@
  * ground an inverted block sits on", which is exactly what a selected chip
  * is. `--color-text-inverse` on it is ≈21:1.
  *
- * ## What the passive `active` state does not do
+ * ## What the passive `active` state does
  *
- * On the span, link and anchor branches `active` is **presentational only**:
- * it changes the paint and emits no accessible state, so on those branches the
- * selection is conveyed by colour alone (WCAG 1.4.1 / 1.3.1). The frozen
- * component has the same gap, and this atom does not close it, because the
- * right announcement depends on what the chip means in its container --
- * `aria-current` reads as navigation, `aria-pressed` needs a button, and a
- * filter facet is neither until `bfFilterBar` (issue 30) gives it a role. The
- * **toggle** branch, which is the one this epic actually uses for filters, is
- * fully announced through `aria-pressed`. Filed as a residual against issue 30
- * rather than guessed at here (review finding gh#25-P2-3).
+ * It used to do one thing: change the paint. On the span, link and anchor
+ * branches the selection was therefore conveyed by colour alone (WCAG 1.4.1),
+ * and announced not at all (WCAG 1.3.1) — residual #112, closed here by
+ * gh#117. Two separate answers, because they are two separate failures:
+ *
+ * **The cue** (1.4.1) is `text-decoration: underline`, re-pointed through
+ * `--_bf-chip-text-decoration` by the same `[data-active]` rule that re-points
+ * the paint, so it reaches every branch including the toggle and cannot drift
+ * from the fill. Underline rather than a `::before` check glyph, for three
+ * reasons: it is **layout-neutral** — a leading glyph widens the chip, and
+ * "selecting changes no metric" is a contract this component states and probe
+ * 16 measures; it **survives forced-colors mode**, where the system repaints
+ * the fill but keeps text decoration, which is the mode where a colour-only
+ * state fails hardest; and it puts **no generated text** into the
+ * accessibility tree, which a `content` glyph does in Chrome and Safari. It
+ * costs no colour: the decoration paints in `currentcolor`, and the base rule
+ * sets `text-decoration: none` on all four branches, so within this component
+ * an underline is unambiguous — it means selected.
+ *
+ * **The announcement** (1.3.1) is `aria-current="true"` on the link and anchor
+ * branches — the interactive ones — via `currentAttrs` below. The toggle
+ * branch keeps `aria-pressed` and gets no `aria-current`: a control that
+ * announces two states is worse than one that announces one. The `<span>`
+ * branch gets neither, and that is deliberate rather than an oversight: it is
+ * not interactive, not focusable and not in the accessibility tree as a
+ * control, so `aria-current` on it would be a state on a non-widget. A
+ * consumer who needs a passive selection *announced* is describing a control,
+ * and should render `toggle` or `to`/`href`. The visual cue reaches it
+ * regardless, which is what 1.4.1 asks for.
+ *
+ * The frozen component still has both gaps; it is not edited (BRIEF D2).
  *
  * ## Box metrics
  *
@@ -153,7 +174,14 @@ const props = withDefaults(defineProps<ChipProps>(), {
   external: undefined,
   active: false,
   toggle: false,
-  modelValue: false
+  /*
+   * `undefined`, not `false` — the signal that nothing is bound (#111). A
+   * Boolean-typed prop with **no** default is cast to `false` when absent, and
+   * that cast runs only when the prop is absent *and* carries no default; so
+   * declaring the default explicitly is what keeps "unbound" distinguishable
+   * from "bound to false". `toggleState` below is what reads it.
+   */
+  modelValue: undefined
 })
 
 const emit = defineEmits<{
@@ -173,14 +201,43 @@ const element = computed<'toggle' | 'link' | 'anchor' | 'span'>(() => {
 })
 
 /**
+ * The state an **uncontrolled** toggle keeps for itself.
+ *
+ * Residual #111, promoted as gh#117. `modelValue` is optional and toggle mode
+ * used to be fully controlled with no fallback, so `<bfChip toggle>` — or the
+ * plausible mistake `<bfChip toggle active>`, since `active` is ignored in
+ * toggle mode — rendered a button that announced `aria-pressed="false"` for
+ * ever and never changed on activation. It still *emitted*, so nothing that
+ * watched the emit contract could see it: only a consumer who forgot
+ * `v-model` was affected, and it failed silently (WCAG 4.1.2).
+ *
+ * This is the first of the two options the residual weighed — an internal ref,
+ * read **only** while the prop is unbound. The objection to it, that a
+ * stateful atom can desync from a parent which deliberately vetoes a change,
+ * does not apply: the moment `modelValue` is bound this ref is never read
+ * again, `toggleState` returns the prop, and a parent that declines to update
+ * it still wins exactly as before. The rejected alternative was a
+ * discriminated union making `toggle` require `modelValue` — free at runtime,
+ * but it re-types a contract the spec deliberately declares optional and would
+ * make `bfFilterBar` (issue 30) the only legal caller shape.
+ */
+const uncontrolled = ref(false)
+
+/** Is the state the caller's? See the `modelValue` default above. */
+const controlled = computed<boolean>(() => props.modelValue !== undefined)
+
+/** The toggle's state, from whichever side owns it. */
+const toggleState = computed<boolean>(() => (controlled.value ? !!props.modelValue : uncontrolled.value))
+
+/**
  * The selected state, from whichever prop owns it in this mode.
  *
- * Toggle mode reads `modelValue` (and ignores `active`); the three passive
- * modes read `active` (and ignore `modelValue`). One boolean drives both
- * `aria-pressed` and the `[data-active]` styling hook, so the accessible
- * state and the visible state cannot drift apart.
+ * Toggle mode reads `toggleState` (and ignores `active`); the three passive
+ * modes read `active` (and ignore `modelValue`). One boolean drives
+ * `aria-pressed`, `aria-current` and the `[data-active]` styling hook, so the
+ * accessible state and the visible state cannot drift apart.
  */
-const pressed = computed<boolean>(() => (props.toggle ? !!props.modelValue : !!props.active))
+const pressed = computed<boolean>(() => (props.toggle ? toggleState.value : !!props.active))
 
 /**
  * `aria-pressed` is written as an explicit string rather than left to the
@@ -191,8 +248,46 @@ const pressed = computed<boolean>(() => (props.toggle ? !!props.modelValue : !!p
  */
 const ariaPressed = computed(() => (pressed.value ? 'true' : 'false'))
 
+/**
+ * `aria-current` for the two passive branches that are actually interactive
+ * (residual #112, promoted as gh#117).
+ *
+ * A link or anchor chip that is `active` is the current item of a set, and
+ * `aria-current="true"` is the ARIA idiom for exactly that. The toggle branch
+ * is excluded because `aria-pressed` already owns its state and a control must
+ * not announce two; the `<span>` branch is excluded because it is not
+ * interactive at all — see the docblock section above for why no role is
+ * invented for it.
+ *
+ * Emitted as an **object with the key omitted** when unselected, rather than
+ * as `:aria-current="pressed || undefined"`. A bound `undefined` is still a
+ * key in the fallthrough props, and `mergeProps` lets a later key win even
+ * when its value is `undefined` — which would erase the `aria-current="page"`
+ * `NuxtLink` sets by itself on a link whose route matches. Omitting the key
+ * leaves that untouched.
+ *
+ * Spread **before** `$attrs` — one `v-bind` carrying both, because two
+ * `v-bind` object bindings on one element are a compile error — so a consumer
+ * whose chip means something more specific can still say so with
+ * `aria-current="page"` (or `"step"`). That is the opposite of `aria-pressed`,
+ * which is bound after `$attrs` (residual #115), because there is no honest
+ * reason to set *that* one from outside.
+ */
+const currentAttrs = computed(
+  (): Record<string, string> => (!props.toggle && pressed.value ? { 'aria-current': 'true' } : {})
+)
+
 const onToggle = () => {
-  emit('update:modelValue', !props.modelValue)
+  /*
+   * The negation of the **effective** state, not of the raw prop: for an
+   * uncontrolled chip `props.modelValue` is `undefined`, so `!props.modelValue`
+   * was `true` on every activation — the payload never alternated either.
+   * The emit is unconditional in both modes, so a consumer that only listens
+   * (and never binds) still sees every change.
+   */
+  const next = !toggleState.value
+  if (!controlled.value) uncontrolled.value = next
+  emit('update:modelValue', next)
 }
 </script>
 
@@ -204,7 +299,11 @@ const onToggle = () => {
     absent — not `"false"` — when the chip is not selected, which is what lets
     the stylesheet select on its bare presence.
 
-    `aria-pressed` is bound AFTER `$attrs` (residual #115): unlike `type`,
+    `aria-current` is spread BEFORE `$attrs` on the two interactive passive
+    branches (residual #112) — in one `v-bind`, since two object bindings on an
+    element are a compile error — so a consumer whose chip means something more
+    specific can override it with `"page"` or `"step"`. `aria-pressed` is bound
+    AFTER `$attrs` (residual #115): unlike `type`,
     which a caller may legitimately want to change, there is no honest reason
     to set `aria-pressed` from outside, and a caller who did would desync it
     from `[data-active]` — the very invariant probe 16 asserts. Everything else
@@ -230,7 +329,7 @@ const onToggle = () => {
     class="bf-chip"
     data-element="link"
     :data-active="pressed || undefined"
-    v-bind="$attrs"
+    v-bind="{ ...currentAttrs, ...$attrs }"
   >
     <slot />
   </NuxtLink>
@@ -242,7 +341,7 @@ const onToggle = () => {
     data-element="anchor"
     :data-external="external || undefined"
     :data-active="pressed || undefined"
-    v-bind="$attrs"
+    v-bind="{ ...currentAttrs, ...$attrs }"
   >
     <slot />
   </a>
@@ -281,6 +380,12 @@ const onToggle = () => {
     --_bf-chip-radius: var(--radius-pill);
     --_bf-chip-font-size: var(--size--2);
     --_bf-chip-focus-color: currentcolor;
+    /*
+      The non-colour cue for the selected state (residual #112). `none` here,
+      `underline` on `[data-active]` below — a hook rather than a literal so a
+      consumer can re-point it like every other paint on this component.
+    */
+    --_bf-chip-text-decoration: none;
 
     display: inline-block;
     inline-size: fit-content;
@@ -319,7 +424,17 @@ const onToggle = () => {
     letter-spacing: 0.05em;
     text-align: center;
     text-transform: uppercase;
-    text-decoration: none;
+
+    /*
+      The shorthand first, then the two longhands it would otherwise reset:
+      `text-decoration-thickness` is part of `text-decoration`, so stating it
+      afterwards is what makes the selected underline the same weight as the
+      chip's own border rather than the UA's `auto`. Neither longhand paints
+      anything while the hook is `none`.
+    */
+    text-decoration: var(--_bf-chip-text-decoration);
+    text-decoration-thickness: var(--border-width-thin);
+    text-underline-offset: 0.2em;
   }
 
   /*
@@ -338,6 +453,15 @@ const onToggle = () => {
     --_bf-chip-bg: var(--color-surface-inverse);
     --_bf-chip-color: var(--color-text-inverse);
     --_bf-chip-border: var(--border-width-thin) solid var(--color-surface-inverse);
+
+    /*
+      Residual #112: the selected state must not be conveyed by colour alone
+      (WCAG 1.4.1). An underline is the cue — layout-neutral, so it does not
+      break the "selecting changes no metric" promise the border re-point makes
+      just above, and it survives forced-colors mode, where the fill does not.
+      It paints in `currentcolor`, so it adds no colour (BRIEF §5 rule 2).
+    */
+    --_bf-chip-text-decoration: underline;
 
     /*
       Review finding gh#24-P2-1, applied here before it can recur. The focus

@@ -48,7 +48,14 @@
  * 10. `$attrs` reaches whichever element rendered, and a caller's own `style`
  *     outranks the component's hooks — the escape hatch that replaces the
  *     style binding this component deliberately does not have.
- * 11. **The page's own CSS-loading contract** (gh#116, the § 12 rows): the
+ * 11. **An uncontrolled toggle** — one with no `v-model` at all — flips its
+ *     own `aria-pressed` and `[data-active]` on activation and still emits
+ *     (gh#117 / residual #111); and **the passive selected state is not
+ *     conveyed by colour alone** — every selected chip carries a
+ *     `text-decoration` cue, and the two interactive passive branches
+ *     announce `aria-current` while a consumer's own value still wins
+ *     (gh#117 / residual #112).
+ * 12. **The page's own CSS-loading contract** (gh#116, the § 14 rows): the
  *     `@layer` order statement reached the page *and* declares the full order,
  *     and every stylesheet on it belongs to the CUBE stack. Those rows are
  *     about the page rather than the chip, and they are what makes every
@@ -185,6 +192,19 @@ const onClickEmit = (value: boolean) => {
   clickEmits.value += 1
   clickPayloads.value.push(value)
   clickModel.value = value
+}
+
+/**
+ * The uncontrolled toggle (gh#117 / residual #111): **no** `model-value` is
+ * bound at all, only the listener, so the component has to keep the state
+ * itself. The listener records what it sent without ever feeding it back —
+ * feeding it back would make the chip controlled and prove nothing.
+ */
+const uncontrolledEmits = ref(0)
+const uncontrolledPayloads = ref<boolean[]>([])
+const onUncontrolledEmit = (value: boolean) => {
+  uncontrolledEmits.value += 1
+  uncontrolledPayloads.value.push(value)
 }
 
 const synthModel = ref(false)
@@ -507,6 +527,7 @@ onMounted(async () => {
   const ruleOverrideProbe = document.querySelector<HTMLElement>('[data-testid="probe-16-rule-override"]')
   const precedenceProbe = document.querySelector<HTMLElement>('[data-testid="probe-16-precedence"]')
   const toggleActiveProbe = document.querySelector<HTMLElement>('[data-testid="probe-16-toggle-active"]')
+  const currentOverride = document.querySelector<HTMLElement>('[data-testid="probe-16-aria-current-override"]')
 
   /* --- the interactive sequence, run before the table is built ----------- */
 
@@ -538,6 +559,43 @@ onMounted(async () => {
   synthChip?.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, detail: 0 }))
   await nextTick()
   const synthAfter = synthChip?.getAttribute('aria-pressed') ?? ''
+
+  /*
+   * gh#117 / residual #111. The chip below binds no `model-value`, so before
+   * the fix `props.modelValue` was `false` whatever happened, `aria-pressed`
+   * was pinned to `"false"`, and the payload was `true` on every activation.
+   * Two activations, so both directions are observed.
+   */
+  const uncontrolledChip = document.querySelector<HTMLElement>('[data-testid="probe-16-uncontrolled"]')
+  const uncontrolledPressedBefore = uncontrolledChip?.getAttribute('aria-pressed') ?? ''
+  const uncontrolledActiveBefore = uncontrolledChip?.hasAttribute('data-active') ?? false
+
+  uncontrolledChip?.click()
+  await nextTick()
+  const uncontrolledPressedAfter = uncontrolledChip?.getAttribute('aria-pressed') ?? ''
+  const uncontrolledActiveAfter = uncontrolledChip?.hasAttribute('data-active') ?? false
+  const uncontrolledPayloadOne = uncontrolledPayloads.value[0]
+  // Read *here*, not when the table is built: a second activation follows.
+  const uncontrolledEmitsAfterOne = uncontrolledEmits.value
+
+  uncontrolledChip?.click()
+  await nextTick()
+  const uncontrolledPressedRestored = uncontrolledChip?.getAttribute('aria-pressed') ?? ''
+  const uncontrolledActiveRestored = uncontrolledChip?.hasAttribute('data-active') ?? false
+  const uncontrolledPayloadTwo = uncontrolledPayloads.value[1]
+
+  /*
+   * gh#117 / residual #112. The cue is read as a computed property that is not
+   * a colour, on instances that already exist in the mode gallery — the point
+   * is that it reaches every branch, so the gallery is the right sample.
+   */
+  const decorationOf = (el: HTMLElement) => getComputedStyle(el).textDecorationLine
+  const selectedModes = modes.filter(el => el.hasAttribute('data-active'))
+  const restingModes = modes.filter(el => !el.hasAttribute('data-active'))
+  const selectedLink = modes.find(el => el.dataset.element === 'link' && el.hasAttribute('data-active'))
+  const restingLink = modes.find(el => el.dataset.element === 'link' && !el.hasAttribute('data-active'))
+  const selectedAnchors = modes.filter(el => el.dataset.element === 'anchor' && el.hasAttribute('data-active'))
+  const restingAnchors = modes.filter(el => el.dataset.element === 'anchor' && !el.hasAttribute('data-active'))
 
   const toggles = all.filter(el => el.dataset.element === 'toggle')
 
@@ -638,7 +696,7 @@ onMounted(async () => {
     {
       label: 'every toggle on the page is a native <button type="button">',
       expected: 'true',
-      actual: String(toggles.length === 7 && toggles.every(el => el.tagName === 'BUTTON' && el.getAttribute('type') === 'button'))
+      actual: String(toggles.length === 8 && toggles.every(el => el.tagName === 'BUTTON' && el.getAttribute('type') === 'button'))
     },
     {
       label: '[data-external] marks the external anchors only',
@@ -757,8 +815,8 @@ onMounted(async () => {
 
     // --- 5. keyboard reachability -----------------------------------------
     {
-      label: 'every interactive chip takes focus (7 toggles, 2 links, 4 anchors)',
-      expected: 13,
+      label: 'every interactive chip takes focus (8 toggles, 2 links, 5 anchors)',
+      expected: 15,
       actual: all.filter(el => el.dataset.element !== 'span').filter(takesFocus).length
     },
     {
@@ -958,7 +1016,120 @@ onMounted(async () => {
       actual: `${clickCallerHandlerRuns.value}|${clickEmits.value}`
     },
 
-    /* --- 12. the CSS-loading contract of the `bf-probe` layout (gh#116) ----
+    /* --- 12. the uncontrolled toggle (gh#117 / residual #111) --------------
+     *
+     * `<bfChip toggle>` with no `v-model` at all. Before gh#117 every row in
+     * this block failed silently: the button announced `aria-pressed="false"`
+     * for ever, never gained `[data-active]`, and emitted `true` twice. */
+    {
+      label: 'an uncontrolled toggle (no v-model) starts at aria-pressed="false"',
+      expected: 'false',
+      actual: uncontrolledPressedBefore
+    },
+    {
+      label: '  …and carries no [data-active]',
+      expected: 'false',
+      actual: String(uncontrolledActiveBefore)
+    },
+    {
+      label: 'activating it flips aria-pressed to "true" — it keeps its own state',
+      expected: 'true',
+      actual: uncontrolledPressedAfter
+    },
+    {
+      label: '  …and adds [data-active], so the cue follows the announcement',
+      expected: 'true',
+      actual: String(uncontrolledActiveAfter)
+    },
+    {
+      label: '  …while still emitting update:modelValue with the new value',
+      expected: '1|true',
+      actual: `${uncontrolledEmitsAfterOne}|${String(uncontrolledPayloadOne)}`
+    },
+    {
+      label: 'activating again returns it to "false", payload and hook together',
+      expected: 'false|false|false',
+      actual: [uncontrolledPressedRestored, String(uncontrolledActiveRestored), String(uncontrolledPayloadTwo)].join('|')
+    },
+    {
+      label: '  …for two activations and exactly two emissions, never a repeat',
+      expected: '2|true,false',
+      actual: `${uncontrolledEmits.value}|${uncontrolledPayloads.value.join(',')}`
+    },
+
+    /* --- 13. the passive selected state is not colour alone (#112) ---------
+     *
+     * Two failures, two answers: a non-colour cue on every branch (WCAG 1.4.1)
+     * and an announced state on the branches that are interactive (1.3.1). */
+    {
+      label: 'every selected chip carries a non-colour cue, whatever the element',
+      expected: 'true',
+      actual: String(selectedModes.length === 5 && selectedModes.every(el => decorationOf(el) === 'underline'))
+    },
+    {
+      label: '  …and no resting chip does — the cue is the state, not decoration',
+      expected: 'true',
+      actual: String(restingModes.length === 5 && restingModes.every(el => decorationOf(el) === 'none'))
+    },
+    {
+      /*
+       * The cue must not be generated content: a `::before` glyph would widen
+       * the chip, and "selecting a chip changes no metric" is a contract this
+       * component states and the § 7 rows measure.
+       */
+      label: '  …drawn as text-decoration, not a generated box that would widen it',
+      expected: 'none|none',
+      actual: activeSpan
+        ? `${getComputedStyle(activeSpan, '::before').content}|${getComputedStyle(activeSpan, '::after').content}`
+        : ''
+    },
+    {
+      label: 'a selected link chip announces aria-current',
+      expected: 'true',
+      actual: selectedLink?.getAttribute('aria-current') ?? ''
+    },
+    {
+      label: '  …and so does every selected anchor chip',
+      expected: 'true',
+      actual: String(selectedAnchors.length === 2 && selectedAnchors.every(el => el.getAttribute('aria-current') === 'true'))
+    },
+    {
+      label: '  …while a resting anchor announces none at all',
+      expected: 'true',
+      actual: String(restingAnchors.length === 2 && restingAnchors.every(el => !el.hasAttribute('aria-current')))
+    },
+    {
+      /*
+       * The binding sits before `v-bind="$attrs"`, so a consumer whose chip
+       * means something more specific still wins the merge.
+       */
+      label: "  …and a consumer's own aria-current outranks the component's",
+      expected: 'page',
+      actual: currentOverride?.getAttribute('aria-current') ?? ''
+    },
+    {
+      /*
+       * The reason the binding is an object with the key *omitted* when
+       * unselected rather than `:aria-current="pressed || undefined"`: a bound
+       * `undefined` still merges, and would erase the `aria-current="page"`
+       * NuxtLink sets by itself on a link whose route is the current one.
+       */
+      label: "  …and NuxtLink's own aria-current on the current route survives",
+      expected: 'page',
+      actual: restingLink?.getAttribute('aria-current') ?? ''
+    },
+    {
+      label: 'no toggle carries aria-current — aria-pressed owns that state',
+      expected: 0,
+      actual: toggles.filter(el => el.hasAttribute('aria-current')).length
+    },
+    {
+      label: 'no span chip carries aria-current either — it is not a control',
+      expected: 0,
+      actual: byElement(all, 'span').filter(el => el.hasAttribute('aria-current')).length
+    },
+
+    /* --- 14. the CSS-loading contract of the `bf-probe` layout (gh#116) ----
      *
      * These three rows are gh#116's own acceptance, asserted here because this
      * is the page the issue names. They are about the *page*, not the chip, and
@@ -1131,6 +1302,56 @@ const verdict = computed(() =>
         emissions: <code>{{ clickEmits }}</code> · payloads:
         <code>{{ clickPayloads.join(', ') || 'none' }}</code>
       </p>
+    </section>
+
+    <section class="probe__uncontrolled" aria-labelledby="uncontrolled-heading">
+      <h2 id="uncontrolled-heading">
+        Uncontrolled — a toggle with no <code>v-model</code> (residual 111)
+      </h2>
+      <p>
+        Only the listener is bound, and it never feeds the value back. The chip
+        therefore has to keep the state itself: before the fix this button
+        announced <code>aria-pressed="false"</code> for ever, gained no
+        <code>[data-active]</code>, and emitted <code>true</code> on every
+        activation.
+      </p>
+      <div class="probe__chips">
+        <bfChip
+          toggle
+          data-testid="probe-16-uncontrolled"
+          @update:model-value="onUncontrolledEmit"
+        >
+          no v-model
+        </bfChip>
+      </div>
+      <p>
+        emissions: <code>{{ uncontrolledEmits }}</code> · payloads:
+        <code>{{ uncontrolledPayloads.join(', ') || 'none' }}</code>
+      </p>
+    </section>
+
+    <section class="probe__cue" aria-labelledby="cue-heading">
+      <h2 id="cue-heading">
+        The passive selected state, announced and cued (residual 112)
+      </h2>
+      <p>
+        Every selected chip in the gallery above carries a
+        <code>text-decoration</code> cue, so the state is not conveyed by
+        colour alone (WCAG 1.4.1); the two interactive passive branches also
+        announce <code>aria-current</code> (1.3.1). The binding sits before
+        <code>v-bind="$attrs"</code>, so the chip below — which asks for
+        <code>page</code> — keeps it.
+      </p>
+      <div class="probe__chips">
+        <bfChip
+          href="https://example.org/"
+          active
+          aria-current="page"
+          data-testid="probe-16-aria-current-override"
+        >
+          consumer aria-current wins
+        </bfChip>
+      </div>
     </section>
 
     <section class="probe__keyboard" aria-labelledby="keyboard-heading">
@@ -1306,6 +1527,8 @@ const verdict = computed(() =>
 
 .probe__row,
 .probe__interactive,
+.probe__uncontrolled,
+.probe__cue,
 .probe__keyboard,
 .probe__precedence,
 .probe__attrs {

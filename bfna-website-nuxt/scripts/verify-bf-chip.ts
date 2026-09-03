@@ -224,9 +224,34 @@ check(
   /defineEmits<\{[\s\S]*?['"]update:modelValue['"]:\s*\[value: boolean\][\s\S]*?\}>/.test(componentSource),
   true
 )
+/*
+ * gh#117 / residual #111. This used to pin `emit('update:modelValue',
+ * !props.modelValue)` verbatim, which was the bug: for a chip with no
+ * `v-model` the prop is `undefined`, so the payload was `true` on every
+ * activation and `aria-pressed` never moved. The contract asserted here is the
+ * stronger one — the negation of the *effective* state, an internal fallback
+ * read only while the prop is unbound, and an emit that happens either way.
+ */
 check(
-  '  …with the negated value',
-  /emit\(\s*['"]update:modelValue['"]\s*,\s*!\s*props\.modelValue\s*\)/.test(componentSource),
+  '  …with the negation of the effective state, not of the raw prop',
+  /const next = !toggleState\.value/.test(componentSource)
+    && /emit\(\s*['"]update:modelValue['"]\s*,\s*next\s*\)/.test(componentSource),
+  true
+)
+check(
+  'modelValue defaults to undefined, so “unbound” stays distinguishable (#111)',
+  /modelValue:\s*undefined/.test(code(componentSource)),
+  true
+)
+check(
+  '  …and an unbound toggle keeps its own state',
+  /const uncontrolled = ref\(false\)/.test(code(componentSource))
+    && /controlled\.value \? !!props\.modelValue : uncontrolled\.value/.test(code(componentSource)),
+  true
+)
+check(
+  '  …while a bound one never reads it, so a parent can still veto',
+  /if \(!controlled\.value\) uncontrolled\.value = next/.test(code(componentSource)),
   true
 )
 /*
@@ -244,6 +269,69 @@ check(
   /tabindex|role="button"/.test(code(componentSource)),
   false
 )
+
+/* ------------------------------------------------------------------ *
+ * 3b. The passive selected state is not colour alone (gh#117 / #112).
+ * ------------------------------------------------------------------ */
+console.log('\n3b. The passive selected state (residual #112)')
+
+check(
+  'the selected state carries a non-colour cue, declared as a hook',
+  /--_bf-chip-text-decoration:\s*none/.test(componentCss)
+    && /\.bf-chip\[data-active\]\s*\{[^}]*--_bf-chip-text-decoration:\s*underline/.test(componentCss),
+  true
+)
+check(
+  '  …read through the hook on every branch, so no mode is left out',
+  /text-decoration:\s*var\(--_bf-chip-text-decoration\)/.test(componentCss),
+  true
+)
+check(
+  '  …and it is not generated content, which would widen the selected box',
+  /content:/.test(componentCss),
+  false
+)
+/*
+ * `text-decoration-thickness` is part of the `text-decoration` shorthand, so a
+ * declaration placed *before* it would be reset to `auto`. Order is the check.
+ */
+check(
+  '  …with a thickness that survives the shorthand — stated after it',
+  componentCss.indexOf('text-decoration: var(--_bf-chip-text-decoration)')
+    < componentCss.indexOf('text-decoration-thickness:')
+  && /text-decoration-thickness:\s*var\(--border-width-thin\)/.test(componentCss),
+  true
+)
+check(
+  'the two interactive passive branches announce aria-current',
+  /'aria-current': 'true'/.test(code(componentSource)),
+  true
+)
+/*
+ * Bound as an object whose key is *absent* when unselected, not as
+ * `:aria-current="pressed || undefined"`: a bound `undefined` still merges and
+ * would erase the `aria-current="page"` `NuxtLink` sets on a matching route.
+ */
+check(
+  '  …only while selected, and never on the toggle branch',
+  /!props\.toggle && pressed\.value \? \{ 'aria-current': 'true' \} : \{\}/.test(code(componentSource)),
+  true
+)
+/*
+ * Bound BEFORE `$attrs` on both branches — the opposite of `aria-pressed`
+ * (residual #115) — so a consumer can still say `aria-current="page"`.
+ */
+{
+  const template = code(componentSource).slice(code(componentSource).indexOf('<template>'))
+  const branches = [...template.matchAll(/<(?:NuxtLink|a)\b[^>]*>/g)].map(m => m[0])
+    .filter(b => b.includes('currentAttrs'))
+  check(
+    '  …spread before $attrs on both of them, so a consumer can override it',
+    branches.length === 2
+      && branches.every(b => b.includes('v-bind="{ ...currentAttrs, ...$attrs }"')),
+    true
+  )
+}
 
 /* ------------------------------------------------------------------ *
  * 4. Box metrics: parsed out of the frozen stylesheet, not typed twice.
@@ -559,6 +647,24 @@ if (!existsSync(builtProbePath)) {
       instances.filter(t => t.includes('data-element="toggle"') && t.includes('data-active')).every(t => t.includes('aria-pressed="true"'))
     ],
     [true, true]
+  )
+
+  /*
+   * gh#117 / residual #112, against the shipped HTML: `aria-current` reaches
+   * the link and anchor branches and nothing else. The `<span>` branch is not
+   * interactive and the toggle branch already announces `aria-pressed`; a
+   * control that announces two states is worse than one that announces one.
+   */
+  check('aria-current reaches no span and no toggle chip', [
+    instances.filter(t => t.includes('aria-current') && t.includes('data-element="span"')).length,
+    instances.filter(t => t.includes('aria-current') && t.includes('data-element="toggle"')).length
+  ], [0, 0])
+  check(
+    '  …and every selected link/anchor chip carries it',
+    instances
+      .filter(t => t.includes('data-active') && /data-element="(?:link|anchor)"/.test(t))
+      .every(t => t.includes('aria-current')),
+    true
   )
 
   /*

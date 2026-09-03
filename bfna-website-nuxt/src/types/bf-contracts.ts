@@ -124,11 +124,19 @@ export interface ChipProps {
   href?: string
   /** Marks an `href` as leaving the site: renders the `[data-external]` hook. */
   external?: boolean
-  /** Selected styling for the span/link/anchor modes. Visual only — no emit. */
+  /**
+   * Selected styling for the span/link/anchor modes. No emit — but not visual
+   * only: it also carries a non-colour cue and, on the two interactive
+   * branches, `aria-current` (gh#117 / #112).
+   */
   active?: boolean
   /** Renders `<button type="button" aria-pressed>`, whatever `to`/`href` say. */
   toggle?: boolean
-  /** The `v-model` half of toggle mode. Drives `aria-pressed` and the selected styling. */
+  /**
+   * The `v-model` half of toggle mode. Drives `aria-pressed` and the selected
+   * styling. Optional on purpose: left unbound the chip owns the state itself
+   * and still emits on every activation (gh#117 / #111).
+   */
   modelValue?: boolean
 }
 
