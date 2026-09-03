@@ -60,7 +60,16 @@ defineProps<{ label: string, items: MenuItem[] }>()
 function closeSiblings(e: Event) {
   const self = e.target as HTMLDetailsElement
   if (!self.open) return
-  for (const d of self.parentElement?.querySelectorAll('details[open]') ?? []) {
+  /*
+   * `:scope > details[open]` rather than the wireframe's bare
+   * `details[open]` — review finding (gh#44 P2-2). The bare selector is a
+   * **descendant** query, so it would reach a `<details>` nested inside a
+   * sibling's panel and close it as if it were a peer. Nothing puts one there
+   * today; the point is that the selector should say what the word "siblings"
+   * in this function's name says, rather than being correct by accident of what
+   * the panels currently contain.
+   */
+  for (const d of self.parentElement?.querySelectorAll(':scope > details[open]') ?? []) {
     if (d !== self) (d as HTMLDetailsElement).open = false
   }
 }
@@ -83,7 +92,9 @@ function closeOnEsc(e: KeyboardEvent) {
   const self = e.currentTarget as HTMLDetailsElement
   if (!self.open) return
   self.open = false
-  self.querySelector('summary')?.focus()
+  // `:scope >` for the same reason as `closeSiblings` (gh#44 P2-2): the trigger
+  // is *this* element's own summary, not the first one found beneath it.
+  self.querySelector<HTMLElement>(':scope > summary')?.focus()
 }
 </script>
 
@@ -94,7 +105,16 @@ function closeOnEsc(e: KeyboardEvent) {
     @keydown.esc="closeOnEsc"
   >
     <summary class="bf-nav__summary">{{ label }}</summary>
-    <ul class="bf-nav__panel">
+    <!--
+      `role="list"` is not redundant — review finding (gh#44 P2-1). The panel's
+      `list-style: none` below is what removes the UA bullets, and WebKit treats
+      that declaration as a signal that the author no longer means a list:
+      VoiceOver stops announcing "list, 3 items" and stops offering list
+      navigation. Restating the implicit role puts the semantics back without
+      putting the bullets back. The frozen skin has the same `list-style: none`
+      and does not restate it; that is the bug being fixed rather than copied.
+    -->
+    <ul class="bf-nav__panel" role="list">
       <li v-for="i in items" :key="i.label">
         <MenuLink :item="i" />
       </li>

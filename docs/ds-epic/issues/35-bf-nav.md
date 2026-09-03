@@ -216,3 +216,47 @@ otherwise, which is the `bfBreadcrumb` separator lesson (gh#37) at a different
 pseudo-element. The probe asserts both halves in one row: the marker renders
 (`::after` content contains the glyph) **and** `summary.textContent` is exactly
 `Programs`.
+
+### D-35.8 — review findings (inline review of `dev...HEAD`, gh#44)
+
+Two P2s applied, three P3s recorded and deliberately not acted on. No P1s.
+
+**P2-1 — `list-style: none` strips list semantics in WebKit.** The dropdown
+panel is a `<ul>` whose bullets are removed in CSS, and WebKit reads that
+declaration as the author no longer meaning a list: VoiceOver stops announcing
+"list, 3 items" and stops offering list navigation. `role="list"` now restates
+the implicit role on `.bf-nav__panel`. The frozen skin has the identical
+`list-style: none` and does not restate it — that is the bug being fixed rather
+than copied, which is what the `bf-*` layer is for (D2 forbids fixing it in
+place). Probe row asserts the pair: every panel carries the role **and** its
+computed `list-style-type` is `none`, so a `role="list"` on something the CSS
+never unstyled would read as the redundant version of the fix rather than the
+necessary one.
+
+**P2-2 — two descendant queries where child queries were meant.**
+`closeSiblings` walked `parentElement.querySelectorAll('details[open]')` (the
+wireframe's own selector, ported verbatim) and `closeOnEsc` walked
+`self.querySelector('summary')`. Both are descendant queries: the first would
+reach a `<details>` nested inside a sibling's panel and close it as a peer, the
+second would focus the first summary found anywhere beneath. Nothing puts either
+there today — the point is that a function called `closeSiblings` should say
+"siblings" in its selector rather than be correct by accident of what the panels
+currently contain. Both are now `:scope > …`. No behaviour change on the
+present DOM; the full probe suite is unchanged at 0 failures.
+
+**P3, recorded only:**
+
+1. On the `to` branch the anchor carries both `.bf-nav__item` (from `MenuLink`)
+   and `.bf-nav__link` (from `bfNav`), and both declare `color` and
+   `text-decoration`. Identical values, so nothing conflicts, and the two
+   classes are not merge-able: `.bf-nav__link` also carries the bar-row padding
+   that a panel item must not have, and `.bf-nav__item` must stand alone in the
+   footer (#45), where there is no bar.
+2. `--_bf-nav-height` is a `min-block-size` on `.bf-nav__bar`, which is
+   `.center` and therefore `box-sizing: content-box` — so the painted band is
+   that value plus `padding-block`. The variable is a floor on the row, not the
+   header's outer height, and its comment says so.
+3. The probe renders three `<nav aria-label="Main">` on one page, which is a
+   duplicate-landmark-name smell. It exists only in the probe — production
+   mounts exactly one `bfNav`, in the layout (#46) — and separating them would
+   mean giving the component a `label` prop that no consumer wants.

@@ -431,6 +431,25 @@ const finalise = async () => {
       actual: document.querySelectorAll('header.bf-nav button').length
     },
     {
+      /*
+       * Review finding gh#44 P2-1. `list-style: none` makes WebKit drop the
+       * list semantics — VoiceOver stops saying "list, 3 items" — so the
+       * implicit role is restated. Asserted as a pair, because a `role="list"`
+       * on something the CSS never unstyled would be the redundant version of
+       * this fix rather than the necessary one.
+       */
+      label: 'every panel restates role="list" against its own list-style: none',
+      expected: `${expectedDropdowns}|none`,
+      actual: (() => {
+        const panels = Array.from(
+          gallery?.querySelectorAll<HTMLElement>('.bf-nav__panel') ?? []
+        )
+        const withRole = panels.filter(p => p.getAttribute('role') === 'list').length
+        const style = panels[0] ? getComputedStyle(panels[0]).listStyleType : 'missing'
+        return `${withRole}|${style}`
+      })()
+    },
+    {
       label: 'the bar is a <nav> with an accessible name',
       expected: 'nav|Main',
       actual: `${bar?.tagName.toLowerCase() ?? 'missing'}|${bar?.getAttribute('aria-label') ?? 'missing'}`
