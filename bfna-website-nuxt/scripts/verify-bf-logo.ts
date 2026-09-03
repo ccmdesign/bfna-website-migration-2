@@ -53,6 +53,7 @@ const legacyLogoPath = join(appRoot, 'src/components/legacy/atoms/Logo.vue')
 const legacyWhitePath = join(appRoot, 'src/components/legacy/atoms/LogoWhite.vue')
 const probePath = join(appRoot, 'src/pages/bf-probe/14-bf-logo.vue')
 const contractsPath = join(appRoot, 'src/types/bf-contracts.ts')
+const semanticColorsPath = join(appRoot, 'src/public/css/tokens/semantic-colors.css')
 const builtProbePath = join(appRoot, '.output/public/bf-probe/14-bf-logo/index.html')
 const builtCssDir = join(appRoot, '.output/public/_nuxt')
 
@@ -188,9 +189,36 @@ check('no colour literal of any form in the component', colourLiterals(bfLogo), 
 check('no colour literal of any form in the probe page', colourLiterals(probe), [])
 check('the component defines no new --color-* token', /--color-[a-z-]+\s*:/.test(bfLogo), false)
 check('the probe page defines no new --color-* token', /--color-[a-z-]+\s*:/.test(probe), false)
-check('default colourway reads --color-text', /--_bf-logo-color:\s*var\(--color-text\)/.test(bfLogo), true)
-check('white colourway reads --color-white', /--_bf-logo-color:\s*var\(--color-white\)/.test(bfLogo), true)
+check('default colourway reads --color-text', /--_bf-logo-color:\s*var\(--color-text\)\s*;/.test(bfLogo), true)
+/*
+ * gh#101 (residual #99): the white colourway used to read `--color-white`, a
+ * *primitive*, which BRIEF §5 rule 2 forbids. `semantic-colors.css` now carries
+ * `--color-text-inverse` as an alias of that same primitive, so the component
+ * reads the semantic name. Both halves are asserted — the component must use
+ * the alias, and it must no longer reach past it to the primitive.
+ */
+check('white colourway reads --color-text-inverse', /--_bf-logo-color:\s*var\(--color-text-inverse\)/.test(bfLogo), true)
+check('  …and no longer reaches for the --color-white primitive', /var\(--color-white\)/.test(bfLogo), false)
 check('the artwork paints currentColor', /<g fill="currentColor">/.test(bfLogo), true)
+
+/*
+ * The aliases themselves: defined in the semantic layer, and defined as
+ * `var()` references to existing primitives — never as a literal. A future
+ * edit that gives either one a colour value of its own fails here, which is
+ * what keeps DoD-6 ("no new colour") true of the token layer and not just of
+ * this component.
+ */
+const semanticTokens = read(semanticColorsPath)
+for (const [alias, primitive] of [
+  ['--color-text-inverse', '--color-white'],
+  ['--color-surface-inverse', '--color-black']
+] as const) {
+  check(
+    `${alias} is a var() alias of ${primitive}, not a new value`,
+    new RegExp(`${alias}:\\s*var\\(${primitive}\\)\\s*;`).test(semanticTokens),
+    true
+  )
+}
 
 /* ----------------------------------------- 5. CSS-variable + a11y contract -- */
 
@@ -262,22 +290,108 @@ if (existsSync(builtProbePath)) {
   )
 
   /*
-   * Not a check — a disclosure. `@layer components` is present in the SFC
-   * source (asserted in section 5) but `postcss-preset-env` at `stage: 1`
-   * runs its cascade-layers polyfill over every Vite-compiled stylesheet and
-   * flattens the wrapper away, so the shipped rule is unlayered. That is a
-   * repo-wide build-config issue, not a defect in this component (unlayered
-   * CSS still paints correctly), and it is filed as a residual. Reported
-   * here so the next `bf-*` author sees the real state of the artifact
-   * instead of trusting section 5's source-text match.
+   * gh#101 (residual #98): this used to be an `info` disclosure, because
+   * `postcss-preset-env` at `stage: 1` ran its cascade-layers polyfill over
+   * every Vite-compiled stylesheet and flattened the wrapper away, so section
+   * 5's source-text match was true of the source and false of the artifact.
+   * `nuxt.config.ts` now sets `features: { 'cascade-layers': false }`, so it
+   * is a hard check: a future config change that re-enables the polyfill
+   * fails here instead of silently unlayering every `bf-*` component.
+   *
+   * Co-occurrence in a file is not the assertion — `.bf-logo` must sit
+   * *inside* the `@layer components` block, so the block is brace-matched and
+   * the rule looked for within it.
    */
-  const builtCss = readdirSync(builtCssDir)
-    .filter(f => f.endsWith('.css'))
+  /**
+   * Replace the *contents* of CSS strings and comments with `x`, preserving
+   * length and the delimiters. Braces inside `content: "}"` or inside a
+   * comment are not structural, and counting them shifts the extracted body
+   * silently — a brace-counter that reads raw text can pass or fail against
+   * the wrong slice of CSS with no error.
+   */
+  const maskLiterals = (css: string): string => {
+    let out = ''
+    let i = 0
+    while (i < css.length) {
+      const ch = css[i]!
+      if (ch === '"' || ch === "'") {
+        out += ch
+        i += 1
+        while (i < css.length && css[i] !== ch) {
+          // A backslash escapes the next character, quote included.
+          if (css[i] === '\\' && i + 1 < css.length) {
+            out += 'xx'
+            i += 2
+            continue
+          }
+          out += 'x'
+          i += 1
+        }
+        if (i < css.length) { out += ch; i += 1 }
+        continue
+      }
+      if (ch === '/' && css[i + 1] === '*') {
+        const end = css.indexOf('*/', i + 2)
+        const stop = end === -1 ? css.length : end + 2
+        out += '/*' + 'x'.repeat(Math.max(0, stop - i - 4)) + (end === -1 ? '' : '*/')
+        i = stop
+        continue
+      }
+      out += ch
+      i += 1
+    }
+    return out
+  }
+
+  const layerComponentsBody = (raw: string): string => {
+    const css = maskLiterals(raw)
+    const opener = /@layer\s+components\s*\{/g
+    let match: RegExpExecArray | null
+    const bodies: string[] = []
+    while ((match = opener.exec(css)) !== null) {
+      let depth = 1
+      let i = match.index + match[0].length
+      const start = i
+      while (i < css.length && depth > 0) {
+        if (css[i] === '{') depth += 1
+        else if (css[i] === '}') depth -= 1
+        i += 1
+      }
+      // An unbalanced tail means the block never closed — not a body.
+      if (depth === 0) bodies.push(css.slice(start, i - 1))
+    }
+    return bodies.join('\n')
+  }
+
+  /*
+   * The class token exactly — `\b` would also fire on a future `.bf-logo-mark`
+   * (the boundary sits at the letter→hyphen), so the real `.bf-logo` rule
+   * could be renamed away while an unrelated sibling kept these checks green.
+   */
+  const BF_LOGO_SELECTOR = /\.bf-logo(?![\w-])/
+
+  const cssFiles = readdirSync(builtCssDir).filter(f => f.endsWith('.css'))
+  const bfLogoSheets = cssFiles
     .map(f => read(join(builtCssDir, f)))
-    .join('\n')
-  const layerSurvived = /@layer\s+components/.test(builtCss) || /@layer\s+components/.test(html)
-  console.log(
-    `  info  @layer components in the compiled CSS: ${layerSurvived ? 'present' : 'ABSENT — flattened by the postcss-preset-env cascade-layers polyfill (see residual)'}`
+    .filter(css => BF_LOGO_SELECTOR.test(css))
+
+  check('a compiled stylesheet carries the .bf-logo rules', bfLogoSheets.length > 0, true)
+  check(
+    '@layer survived the build (postcss cascade-layers polyfill is off)',
+    bfLogoSheets.some(css => /@layer\s+components\s*\{/.test(css)),
+    true
+  )
+  check(
+    '  …and the .bf-logo rules sit *inside* @layer components',
+    bfLogoSheets.some(css => BF_LOGO_SELECTOR.test(layerComponentsBody(css))),
+    true
+  )
+  check(
+    '  …including the white colourway, reading the semantic alias',
+    bfLogoSheets.some(css =>
+      /--_bf-logo-color:\s*var\(--color-text-inverse\)/.test(layerComponentsBody(css))
+    ),
+    true
   )
 } else {
   skip('prerendered markup', 'run `npx nuxt generate` first')

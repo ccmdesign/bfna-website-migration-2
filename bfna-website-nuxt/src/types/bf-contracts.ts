@@ -31,9 +31,11 @@ export interface CardBaseProps {
 /**
  * Colourway of the `bfLogo` wordmark.
  *
- * `default` paints `--color-text`; `white` paints `--color-white` and is for
- * dark grounds only — the lower band of the mark is an inverted shape, so on a
- * light ground the white variant is invisible (inherited from `LogoWhite.vue`).
+ * `default` paints `--color-text`; `white` paints `--color-text-inverse` (the
+ * semantic alias added in gh#101; it was the `--color-white` primitive until
+ * then) and is for dark grounds only — the lower band of the mark is an
+ * inverted shape, so on a light ground the white variant is invisible
+ * (inherited from `LogoWhite.vue`). Pair it with `--color-surface-inverse`.
  */
 export type LogoVariant = 'default' | 'white'
 

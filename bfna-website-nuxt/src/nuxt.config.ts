@@ -90,7 +90,26 @@ export default defineNuxtConfig({
       'postcss-preset-env': {
         stage: 1,
         features: {
-          'nesting-rules': true
+          'nesting-rules': true,
+          /*
+           * Off deliberately (gh#101, residual #98). `stage: 1` enables the
+           * cascade-layers polyfill, which rewrites each SFC stylesheet in
+           * isolation: it cannot see the layer-order statement in
+           * `public/css/styles.css` (`@layer reset, defaults, tokens, themes,
+           * composition, components, utils, overrides;`), so it flattened the
+           * `@layer components { … }` wrapper every `bf-*` component ships
+           * into unlayered rules. Unlayered CSS outranks every layer, which is
+           * backwards — a `utils` or `overrides` rule could never outrank a
+           * component. Native `@layer` is supported across the target
+           * browsers, so no polyfill is wanted.
+           *
+           * `public/css/**` is served through `<link>` and never passes
+           * through Vite/PostCSS, so this changes nothing there — the
+           * wireframe stylesheet included.
+           *
+           * Guarded by `scripts/verify-bf-logo.ts` §7.
+           */
+          'cascade-layers': false
         }
       }
     }

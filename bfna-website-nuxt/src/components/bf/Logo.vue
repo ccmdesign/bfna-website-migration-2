@@ -13,14 +13,14 @@
  * which set a near-black `fill` on `.bfna-logo` and a white one on
  * `.bfna-logo--white` — on the root `<svg>`, which the unstyled children
  * inherited. Those two values map onto the existing tokens `--color-text` and
- * `--color-white`, so this is a like-for-like swap: no new colour, no new
- * token, and no colour literal anywhere in this file — not even in this
- * comment, so the spec's verbatim `grep` acceptance expression returns 0.
- * (`--color-white` is a *primitive*, and BRIEF §5 rule 2 prefers semantic
- * tokens — but the token layer has no semantic white, and adding one would be
- * a new `--color-*` token, which the same rule forbids. The issue-14 spec
- * names `--color-white` explicitly, so this follows it; the conflict is filed
- * for a human ruling as issue #99.)
+ * `--color-text-inverse`, so this is a like-for-like swap: no new colour, no
+ * new colour value, and no colour literal anywhere in this file — not even in
+ * this comment, so the spec's verbatim `grep` acceptance expression returns 0.
+ * (gh#23 shipped the white variant on the `--color-white` *primitive*, which
+ * BRIEF §5 rule 2 forbids, because the semantic layer had no name for white.
+ * That was filed as issue #99 and ruled on in gh#101: `semantic-colors.css`
+ * now carries `--color-text-inverse` as an alias of that same primitive, and
+ * this component reads the semantic name.)
  *
  * Size: `--_bf-logo-size` sets the **block-size**; the inline size follows
  * from the viewBox aspect ratio. The default `1.25rem` is the computed size of
@@ -168,7 +168,7 @@ const titleId = useId()
   }
 
   .bf-logo[data-variant='white'] {
-    --_bf-logo-color: var(--color-white);
+    --_bf-logo-color: var(--color-text-inverse);
   }
 }
 </style>
