@@ -200,3 +200,25 @@ Multi-word queries would lose a space at every debounce boundary.
 
 So `onQuery` writes the value verbatim (dropping only an empty one) and the
 trimming happens where it always did: `hasQuery` and the scorer.
+
+### D-54.8 — `bfSearchShell` now passes `:heading-level="2"` to its empty state (browser finding)
+
+Found by the STEP 6 browser pass, not by any static check: at zero results
+`/search` rendered **two `<h1>`s** — `bfPageHeader`'s "Search" and
+`bfEmptyState`'s "No results" — because `EmptyStateProps.headingLevel` defaults
+to `1` and `bfSearchShell` (gh#52) never lowered it. BRIEF §5 rule 9 is one
+`h1` per page, and this issue's acceptance names the empty state as an `h2`.
+
+It cannot be fixed from the page: `SearchShellProps.headingLevel` is the
+*rows'* rank and is not forwarded to the empty state. So the fix is one
+attribute inside the shell — which is exactly what that prop's own contract
+note prescribes: *"only a caller that knows its page already has an `h1` — an
+empty results band under a `bfPageHeader`, `bfSearchShell`'s no-matches branch
+— may lower it"* (residual #173). A literal `2` rather than `headingLevel`: the
+rows' rank is the caller's choice, but this heading is the band's own, one
+level under the page title, whatever the rows are.
+
+Probe 43 § 6 asserted the text through a `querySelector('h1')`, so it moves to
+the published `.bf-empty-state__heading` class and gains one row asserting the
+element is an `H2`. Two files, three lines, no contract change, and the probe
+now checks the property rather than a selector that happened to match.

@@ -394,7 +394,15 @@ const finalise = async (): Promise<void> => {
     /* § 6 — the empty state */
     { label: '§6 no empty state while there are results', expected: 'false', actual: String(labEmpty !== null) },
     { label: '§6 the empty state is visible at zero results', expected: 'true', actual: String(visible(emptyEmpty)) },
-    { label: '§6 and it reads "No results"', expected: 'No results', actual: emptyEmpty?.querySelector('h1')?.textContent?.trim() ?? 'missing' },
+    { label: '§6 and it reads "No results"', expected: 'No results', actual: emptyEmpty?.querySelector('.bf-empty-state__heading')?.textContent?.trim() ?? 'missing' },
+    /*
+      gh#63. `bfEmptyState`'s heading defaults to `h1` and this branch now
+      lowers it to `h2` — the page above it already owns the one `h1`
+      (`bfPageHeader`), and `EmptyStateProps.headingLevel` names this exact
+      caller as the one allowed to lower it. Asserted as the element, not the
+      text, because the text passes either way.
+    */
+    { label: '§6 …as an h2, one level under the page heading', expected: 'H2', actual: emptyEmpty?.querySelector('.bf-empty-state__heading')?.tagName ?? 'missing' },
     { label: '§6 no results list rendered at zero results', expected: 0, actual: rowsOf('empty').length },
 
     /* § 7 — the live region (#169) */

@@ -386,12 +386,27 @@ const countLabel = computed(() => (props.resultCount === 1 ? 'result' : 'results
       announcement is noise. Its copy is the frozen source's own sentence
       (`search.vue:47`), verbatim.
     -->
+    <!--
+      `:heading-level="2"`, added by issue 54 (gh#63) — the first page to mount
+      this shell, and the finding that surfaced it. `EmptyStateProps.
+      headingLevel` defaults to `1` and its contract note names the caller
+      allowed to lower it in as many words: *"only a caller that knows its page
+      already has an `h1` — an empty results band under a `bfPageHeader`,
+      `bfSearchShell`'s no-matches branch — may lower it"* (residual #173).
+      This is that branch, and it never said so, so `/search` rendered a second
+      `<h1>` under `bfPageHeader`'s (BRIEF §5 rule 9: one `h1` per page).
+
+      `2`, not `headingLevel`: the rows' rank is a caller's choice, but this
+      heading is the band's own, one level under the page title, whatever the
+      rows are. Probe 43 § 6 asserts the element, not just the text.
+    -->
     <bfEmptyState
       v-else
       class="bf-search-shell__empty"
       data-bf-search-shell="empty"
       heading="No results"
       message="No records matched — try fewer or different words."
+      :heading-level="2"
     />
   </div>
 </template>
