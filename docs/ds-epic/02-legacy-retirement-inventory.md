@@ -142,6 +142,9 @@ independent of the flip): `server/api/test.get.ts`, `server/api/contact.post.ts`
 | `/search` | `/search` (from `wireframes/search.vue`) | direct, but backed by a different data source (see D) |
 | `/docs`, `/docs/*` | unchanged — **no redirect** | out of scope for the flip; internal DS docs tool stays at `/docs` |
 | `/test`, `/test-base-layout` | **410/none** | dev scaffolding, delete |
+| `/people` | `/about#team` | **added gh#66**, from residual [#182](https://github.com/ccmdesign/bfna-website-migration-2/issues/182). Absorbed by the About page's Team section (BRIEF §7); no epic issue builds a `/people` route, and `pages/[program].vue`'s `validate` turned its former hollow 200 into a 404 |
+| `/bertelsmann-stiftung` | `/about` | **added gh#66**, from residual [#182](https://github.com/ccmdesign/bfna-website-migration-2/issues/182). Linked by `components/legacy/organisms/MainNav.vue:121` and resolved by the legacy catch-all with no page file of its own (Section A); the Stiftung relationship now renders on `/about` via `useBfPages().stiftungPage` |
+| `/careers` | **410/none** | **added gh#66**, from residual [#182](https://github.com/ccmdesign/bfna-website-migration-2/issues/182). Nothing was ever authored here: a repo-wide `grep -rni careers` (excluding `node_modules`) returns no page file, no nav entry, no `menus` row and no content document — only the word inside four insight bodies, a comment in `pages/[program].vue` and sample data in `pages/bf-probe/36-bf-footer.vue`. No content to point at, so 410 rather than a guessed 301 |
 
 ---
 
