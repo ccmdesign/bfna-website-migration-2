@@ -63,7 +63,7 @@
  * program hub's `#projects` and `/about#board` are working in-page links, and a
  * report that cried wolf about them would be one nobody read.
  *
- * ## The three gates that are not per-route
+ * ## The gates that are not per-route
  *
  * **DoD-3 — every §7 route is reachable from the menus.** BRIEF §2 requires
  * each route in §7 to be linked from `bfNav` or `bfFooter`, with no orphans.
@@ -95,6 +95,14 @@
  * that happened to set it. It now lives in `nuxt.config.ts` `app.head`, and this
  * gate is what stops it drifting back out.
  *
+ * **DoD-A8 — the reduced-motion floor** (a11y epic, gh#218). The served
+ * `.output/public/css/base/reset.css` must carry a `prefers-reduced-motion:
+ * reduce` block that sets `@view-transition { navigation: none }` and caps
+ * `transition-duration` and `animation-duration`. Read from the build output
+ * rather than the source tree for the same reason as the cascade-layer gate:
+ * `public/css` reaches the output through a copy step and a symlink, and a
+ * source-tree grep would stay green through a build that shipped none of it.
+ *
  * ## Known limit, stated rather than rediscovered
  *
  * Vue hydrates a `createStaticVNode` subtree by advancing the node pointer
@@ -109,8 +117,9 @@
  *
  * `0` only when every route hydrated, carried exactly one `h1`, had no dangling
  * `/_ipx/` URL and logged no console error; when every §7 route is reachable
- * from the menus; when no compiled stylesheet lost its `@layer` wrapper; and
- * when every prerendered page carries a non-empty `lang`.
+ * from the menus; when no compiled stylesheet lost its `@layer` wrapper; when
+ * every prerendered page carries a non-empty `lang`; and when the served
+ * reset stylesheet carries the reduced-motion floor.
  * Placeholder anchors are reported and do not affect the exit code. A route
  * that could not be evaluated is a **failure**, never a skip — a verification
  * that quietly downgrades itself to "PASS (1 skipped)" is exactly how a broken
@@ -754,12 +763,20 @@ const maskLiterals = (raw: string): string => {
   return out
 }
 
-/** The concatenated bodies of every `@layer components { … }` block in `raw`. */
-const layerComponentsBody = (raw: string): string => {
+/**
+ * The concatenated bodies of every block in `raw` whose opening `… {` matches
+ * `opener` — brace-matched over the masked text, sliced out of the original.
+ *
+ * `opener` must be a `/g/` regex ending at the `{`. Nested blocks are kept
+ * whole, which is what both callers want: the cascade-layer gate needs the
+ * rules inside `@layer components`, and the DoD-A8 gate below needs the
+ * `@view-transition` *and* the `*` rule inside one `@media` block.
+ */
+const blockBodies = (raw: string, opener: RegExp): string[] => {
   const css = maskLiterals(raw)
-  const opener = /@layer\s+components\s*\{/g
   const bodies: string[] = []
   let match: RegExpExecArray | null
+  opener.lastIndex = 0
   while ((match = opener.exec(css)) !== null) {
     let depth = 1
     let i = match.index + match[0].length
@@ -771,8 +788,12 @@ const layerComponentsBody = (raw: string): string => {
     }
     bodies.push(raw.slice(start, depth === 0 ? i - 1 : css.length))
   }
-  return bodies.join('\n')
+  return bodies
 }
+
+/** The concatenated bodies of every `@layer components { … }` block in `raw`. */
+const layerComponentsBody = (raw: string): string =>
+  blockBodies(raw, /@layer\s+components\s*\{/g).join('\n')
 
 /** A `bf-*` component class, with the letter→hyphen boundary respected. */
 const BF_RULE = /\.bf-[a-z][\w-]*/
@@ -925,6 +946,96 @@ const langRows = (): Row[] => {
         + `${offenders.slice(0, 5).join(', ')}${offenders.length > 5 ? ', …' : ''}`
         + ' — set it once in nuxt.config.ts app.head.htmlAttrs, not per layout (gh#217)'
   }]
+}
+
+/* ------------------------------------------------------------------ *
+ * DoD-A8 — the reduced-motion floor (a11y epic, gh#218)
+ * ------------------------------------------------------------------ */
+/**
+ * DoD-A8: `public/css/**` carries a `prefers-reduced-motion: reduce` block that
+ * turns the view transition off and caps transition and animation duration.
+ *
+ * Read from the **served** stylesheet under `.output/public`, not from the
+ * source tree. The source is not what a visitor gets: `public/css` reaches the
+ * output through a copy step (and through a symlink at
+ * `bfna-website-nuxt/public/css`), and a gate that greps the file it can see on
+ * disk would stay green through a build that shipped none of it. This is the
+ * same reason `cascadeLayerRows()` reads `.output/public/_nuxt` rather than the
+ * SFCs.
+ *
+ * Four assertions, not one, because the acceptance has four separable halves
+ * and a single "does the string appear" row cannot say which one broke:
+ * the file shipped, it has the block, the block neutralises `@view-transition`,
+ * and the block caps both durations.
+ *
+ * Deliberately silent about *how* the durations are capped. `0.01ms` is what
+ * `reset.css` writes and why is argued there; a later `1ms`, or a `transition:
+ * none`, would satisfy DoD-A8 just as well, and a gate that pinned the exact
+ * value would be asserting the implementation rather than the requirement.
+ */
+const REDUCED_MOTION_OPENER = /@media[^{]*\bprefers-reduced-motion\s*:\s*reduce[^{]*\{/g
+
+const reducedMotionRows = (): Row[] => {
+  const served = join(publicDir, 'css/base/reset.css')
+
+  if (!existsSync(served)) {
+    return [{
+      label: 'DoD-A8 — the reset stylesheet shipped to .output/public',
+      ok: false,
+      detail: `expected ${served.slice(publicDir.length + 1)} in the build · actual missing`
+        + ' — run `npx nuxt generate` first; if the build ran, the public/ copy step is broken'
+    }]
+  }
+
+  const css = readFileSync(served, 'utf8')
+  const guards = blockBodies(css, REDUCED_MOTION_OPENER)
+  const body = guards.join('\n')
+
+  const rows: Row[] = [{
+    label: 'DoD-A8 — public/css/base/reset.css has a prefers-reduced-motion: reduce block',
+    ok: guards.length > 0,
+    detail: guards.length > 0
+      ? `expected >= 1 · actual ${guards.length}`
+      : 'expected >= 1 · actual 0 — the reduced-motion floor is the one thing a visitor'
+        + ' with a vestibular disorder cannot add for themselves (WCAG 2.3.3)'
+  }]
+
+  if (guards.length === 0) return rows
+
+  /* `navigation: none`, `navigation:none`, and the same inside a nested
+     `@view-transition { … }` — the descriptor is what matters, not the shape
+     of the whitespace around it. */
+  const viewTransitionOff = /@view-transition\s*\{[^}]*\bnavigation\s*:\s*none\b/.test(body)
+  rows.push({
+    label: 'DoD-A8 — that block turns the view transition off',
+    ok: viewTransitionOff,
+    detail: viewTransitionOff
+      ? 'expected @view-transition { navigation: none } · actual present'
+      : 'expected @view-transition { navigation: none } inside the guard · actual absent'
+        + ' — reset.css declares navigation: auto unguarded, so every navigation cross-fades'
+  })
+
+  /* The longhand is the requirement; the shorthands are the two other ways of
+     meeting it (`transition: none` sets `transition-duration` to `0s`, and
+     `animation: none` sets `animation-duration`). Each property accepts only
+     the shorthand that actually resets it. */
+  const caps = [
+    { property: 'transition-duration', shorthand: /\btransition\s*:\s*none\b/ },
+    { property: 'animation-duration', shorthand: /\banimation\s*:\s*none\b/ }
+  ] as const
+
+  for (const { property, shorthand } of caps) {
+    const capped = new RegExp(`\\b${property}\\s*:`).test(body) || shorthand.test(body)
+    rows.push({
+      label: `DoD-A8 — that block caps ${property}`,
+      ok: capped,
+      detail: capped
+        ? `expected ${property} to be set inside the guard · actual it is`
+        : `expected ${property} (or the shorthand that resets it) inside the guard · actual absent`
+    })
+  }
+
+  return rows
 }
 
 /* ------------------------------------------------------------------ *
@@ -1164,7 +1275,7 @@ const run = async (): Promise<void> => {
     }
 
     /* ---------------------------------------------------------------- *
-     * The two whole-build gates
+     * The whole-build gates
      * ---------------------------------------------------------------- */
     if (only === undefined) {
       console.log('\nbuild gates\n')
@@ -1188,6 +1299,16 @@ const run = async (): Promise<void> => {
       )
       for (const row of langFailing) console.log(`      ✗ ${row.label} — ${row.detail}`)
       if (verbose) for (const row of langGate.filter(r => r.ok)) console.log(`      · ${row.label}`)
+
+      const motionGate = reducedMotionRows()
+      const motionFailing = motionGate.filter(r => !r.ok)
+      results.push({ slug: 'reduced motion (DoD-A8)', rows: motionGate, failing: motionFailing })
+      console.log(
+        `${motionFailing.length === 0 ? '  ✓ PASS' : '  ✗ FAIL'}  `
+        + `${'reduced motion (DoD-A8)'.padEnd(44)} ${motionGate.length - motionFailing.length}/${motionGate.length} rows`
+      )
+      for (const row of motionFailing) console.log(`      ✗ ${row.label} — ${row.detail}`)
+      if (verbose) for (const row of motionGate.filter(r => r.ok)) console.log(`      · ${row.label}`)
 
       const navRows = homeLinks === undefined
         ? [{ label: 'DoD-3 — the home page rendered', ok: false, detail: 'expected / to hydrate · actual it did not, so reachability cannot be judged' }]
