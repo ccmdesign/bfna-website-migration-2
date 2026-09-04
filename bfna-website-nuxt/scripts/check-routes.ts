@@ -1055,16 +1055,19 @@ const reducedMotionRows = (): Row[] => {
  * `display: none` or a `visibility: hidden` sneaking into it would take the
  * element out of the accessibility tree on every one of them at once — which
  * is the exact defect #233 exists to fix on `/search`, arrived at from the
- * other direction (D29). Four separable halves, four rows, so a failure says
- * which one broke: the rule exists, it is in `@layer utils`, it clips, and it
- * does not hide.
+ * other direction (D29). Five separable halves, five rows, so a failure says
+ * which one broke: the rule exists, it is in `@layer utils`, it clips, it does
+ * not hide, and `bfLoadMore` still carries the class.
  *
- * Deliberately silent about the clip *value*. `inset(50%)` is what the utility
- * writes; a later `inset(100%)`, or `rect(0 0 0 0)` alone, would meet the
- * requirement just as well, and a gate pinning the exact value would be
- * asserting the implementation rather than the requirement. The one value it
- * does insist on is a non-zero box: a zero-sized element is not rendered, and
- * an unrendered element is not in the tree either.
+ * Deliberately silent about the clip *value* and about the box size.
+ * `inset(50%)` on a 1×1 box is what the utility writes; a later `inset(100%)`,
+ * or `rect(0 0 0 0)` alone, or a 2px box, would meet the requirement just as
+ * well, and a gate pinning either would be asserting the implementation rather
+ * than the requirement. The reason the utility's box is 1px and not zero — a
+ * zero-sized element is not rendered, and an unrendered element is not in the
+ * accessibility tree either — is argued at the rule itself, in
+ * `public/css/utils/utils.css`, where the next person to change the value will
+ * be standing.
  */
 const VISUALLY_HIDDEN_OPENER = /(?:^|[},;/])\s*\.visually-hidden\s*\{/g
 
