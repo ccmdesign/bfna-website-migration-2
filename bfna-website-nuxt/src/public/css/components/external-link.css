@@ -59,6 +59,34 @@
   that originates it, but its own declaration would shadow a consumer's
   override set on that element — the hook would then be unusable from outside,
   which is the `bfMedia` lesson from gh#26.
+
+  ## The alternative text (a11y epic, gh#221)
+
+  `content: <value> / ""` is the standardised way to say "this generated glyph
+  is decoration": the glyph paints exactly as before, and the empty string after
+  the `/` is what the pseudo-element contributes to the accessible name. Without
+  it the marker is appended to the name of every external link on the site —
+  measured before this change as `getComputedStyle(a, '::after').content ===
+  '" ↗"'` on all 15 `a[data-external]` on `/projects`.
+
+  This is the repo's own idiom, not a new one (a11y BRIEF D27): `Breadcrumb.vue`
+  ships `"/" / ""` and `nav/Dropdown.vue` ships `"▾" / ""`. This file was the
+  outlier, and the highest-frequency one, because the rule fires on every
+  external link rather than inside one component.
+
+  **The alt half lives in the `content` declaration, not in the hook.**
+  `Breadcrumb.vue:207` makes the other choice — `--_bf-breadcrumb-separator:
+  "/" / ""` — and has to warn the next reader to keep the `/ ""` half when
+  overriding. Stating it here instead means a consumer who sets
+  `--_bf-external-marker` to some other glyph gets the empty alternative text
+  whether they knew to ask for it or not; the hook stays a glyph hook and cannot
+  be used to reintroduce the defect.
+
+  What this does **not** establish is that a screen reader now stays silent on
+  the marker. That cannot be checked from this repo's harness — there is no
+  assistive technology and no WebKit on the runner (a11y BRIEF §0.2). What is
+  asserted is the computed condition, by `scripts/check-routes.ts`; the
+  announcement is the manual AT pass in BRIEF §8.
 */
 @layer components {
   a[data-external] {
@@ -67,7 +95,7 @@
   }
 
   a[data-external]::after {
-    content: var(--_bf-external-marker);
+    content: var(--_bf-external-marker) / "";
     font-size: var(--_bf-external-marker-font-size);
   }
 }

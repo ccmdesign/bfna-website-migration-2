@@ -219,7 +219,7 @@ const insightChips = (i: Insight): string[] | undefined =>
       />
     </ul>
 
-    <p><NuxtLink to="/projects"><strong>All projects →</strong></NuxtLink></p>
+    <p><NuxtLink to="/projects"><strong>All projects<span aria-hidden="true"> →</span></strong></NuxtLink></p>
   </bfSection>
 
   <!--
@@ -269,6 +269,6 @@ const insightChips = (i: Insight): string[] | undefined =>
       :heading-level="3"
     />
 
-    <p><NuxtLink to="/insights"><strong>All insights →</strong></NuxtLink></p>
+    <p><NuxtLink to="/insights"><strong>All insights<span aria-hidden="true"> →</span></strong></NuxtLink></p>
   </bfSection>
 </template>

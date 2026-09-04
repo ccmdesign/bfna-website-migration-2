@@ -328,7 +328,7 @@ const remaining = computed<number>(() => Math.max(filtered.value.length - visibl
     -->
     <div class="cluster" data-gap="xs">
       <bfButton to="/archive">
-        Include archived ({{ archived.length }}) →
+        Include archived ({{ archived.length }})<span aria-hidden="true"> →</span>
       </bfButton>
       <bfButton v-if="hasFilters" to="/insights">
         Clear filters
