@@ -54,6 +54,33 @@ jobs:
       - name: Install (npm ci)
         run: npm ci
 
+      # gh#250. Cheapest gate in the file — no build, no browser — so it runs
+      # first and a palette regression fails in seconds rather than after a
+      # `nuxt generate`.
+      #
+      # Two invocations, and the difference matters:
+      #
+      #   * `check:contrast:self-check` proves the instrument works — the maths
+      #     against published WCAG reference values, the resolver against the
+      #     recorded baseline, and a mutated palette that must come back failing.
+      #     A gate that cannot bite is not a gate, so this runs before the gate
+      #     itself and is never excused.
+      #
+      #   * `check:contrast:ci` is `--allow-known`. The strict default —
+      #     `npm run check:contrast`, what a developer runs locally — exits
+      #     non-zero today, because red (4.39) and amber (1.98) are shipped
+      #     colour that does not clear AA. Those two sit in the script's
+      #     KNOWN_FAILURES allowlist so gh#251, the PR that repairs them, is not
+      #     blocked by the gate that asked for the repair. Everything outside
+      #     that allowlist fails hard from day one, and an allowlisted pair that
+      #     starts passing is itself an error — so the list can only shrink.
+      #     See docs/decisions/gh250-contrast-gate-known-failures.md.
+      - name: Contrast gate self-check
+        run: npm run check:contrast:self-check
+
+      - name: Contrast gate (check:contrast)
+        run: npm run check:contrast:ci
+
       # `scripts/check-routes.ts` drives headless Chrome over CDP, resolving a
       # binary from $CHROME_PATH, then the ms-playwright cache, then
       # /usr/bin/google-chrome.
