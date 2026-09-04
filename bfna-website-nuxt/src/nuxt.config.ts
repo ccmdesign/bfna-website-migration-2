@@ -229,6 +229,36 @@ export default defineNuxtConfig({
   build: {
     transpile: ['vue-carousel'],
   },
+  /*
+    `<search>` is a native HTML element (WHATWG HTML, shipped in every engine
+    since 2023) that Vue's tag table has not caught up with. Measured on the
+    version this repo pins, not assumed:
+
+        require('@vue/shared').isHTMLTag('search')  // => false   (vue 3.5.40)
+
+    Without this predicate `@vue/compiler-dom` compiles `<search>` to
+    `resolveComponent("search")`. The element still *renders* — the resolver
+    falls back to the tag name — but every dev render logs "Failed to resolve
+    component: search", and the vnode takes the component path rather than the
+    element one on both the client and the SSR compiler.
+
+    `isCustomElement` is the escape hatch Vue's own warning names, and it is
+    the whole fix: with it, both compilers emit a plain element
+    (`createElementBlock("search", …)` / `_push('<search…>')`) — byte-identical
+    to what a native tag would have produced.
+
+    Scoped to the one tag on purpose. It is a predicate, not a list, so it must
+    say no to everything else: a broader match would silently turn a mistyped
+    component name into a stray unknown element instead of an error.
+
+    Delete this block when Vue adds `search` to `HTML_TAGS` — the check above is
+    the one-line test for whether that has happened. Added by gh#227.
+  */
+  vue: {
+    compilerOptions: {
+      isCustomElement: (tag: string) => tag === 'search'
+    }
+  },
   vite: {
   },
   plugins: [
