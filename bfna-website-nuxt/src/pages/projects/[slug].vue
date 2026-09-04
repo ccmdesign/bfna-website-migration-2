@@ -284,6 +284,11 @@ const related = (project ? insightsForProject(project.slug) : []).slice(0, 6)
         is the only honest text available. `bfMedia` renders an `aria-hidden`
         placeholder rather than an unlabelled box for the 6 full rows with no
         `image` at all.
+
+        TODO(gh#234): the same defect as `insights/[slug].vue` and left alone
+        for the same reason — the lead image's `alt` duplicates the `<h1>`. Not
+        decorative, so `alt=""` would be a lie; gh#222 forbids inventing a
+        string (D28, §8). #234 fixes it with the real field.
       -->
       <bfMedia :src="project.image" :alt="project.heading" ratio="21/9" />
     </bfPageHeader>

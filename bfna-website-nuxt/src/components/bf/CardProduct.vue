@@ -205,8 +205,8 @@ const blurb = computed(() => {
 const pendingLabel = computed(() => props.product.pending ?? 'Q6')
 
 /**
- * The defect is announced rather than swallowed — same shape as `bfMedia`'s
- * missing-`alt` warning (gh#26), `bfCard`'s outside-a-list warning (gh#29) and
+ * The defect is announced rather than swallowed — same shape as `bfCard`'s
+ * outside-a-list warning (gh#29) and
  * the five wrappers before it: a dev-time `console.warn`, never a thrown error,
  * with `import.meta.dev` keeping it out of the production bundle.
  */
@@ -279,7 +279,8 @@ if (import.meta.dev) {
         Decorative: the heading already names the publication, so a second
         announcement of the same title would be a duplicate rather than a
         description. `alt=""` is the *deliberate* decorative declaration —
-        `bfMedia` warns at dev time when `alt` is merely omitted (gh#26).
+        `bfMedia` requires `alt`, so omitting it is a typecheck error rather
+        than a silent `alt=""` (gh#222, D25).
 
         `21/9` is load-bearing and hard-coded, per the frozen source's own
         comment: at double width this keeps the card about as tall as one row

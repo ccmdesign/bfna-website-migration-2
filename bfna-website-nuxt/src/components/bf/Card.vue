@@ -118,7 +118,7 @@ const root = ref<HTMLLIElement | null>(null)
  * the caller's half of the bargain and this is where it is checked: once, here,
  * instead of in seven wrappers and three grids that each have to remember it.
  *
- * Same shape as `bfMedia`'s missing-`alt` warning (gh#26): a dev-time
+ * A dev-time
  * `console.warn`, never a silent fallback and never a thrown error, and
  * `import.meta.dev` keeps the whole thing out of the production bundle.
  *

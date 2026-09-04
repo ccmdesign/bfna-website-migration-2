@@ -244,8 +244,26 @@ const crumbs = [
         lead images with no separate description in the source; the heading is
         the only honest text available, and `bfMedia` renders an `aria-hidden`
         placeholder rather than an unlabelled box when there is no `src` at all.
+
+        TODO(gh#234): this is a real defect, deliberately left alone here.
+        Measured on `/insights/12-days-of-christmas-in-europe`, the `alt` is
+        character-identical to the `<h1>`, so the image is announced as a
+        duplicate of the heading a screen-reader user just heard. It is *not*
+        decorative, so `alt=""` would be a lie, and gh#222 forbids inventing a
+        string — the strings are content (D28, §8). #234 ships the `alt` field
+        through the schema, the normaliser and the importer and fixes this with
+        real data; #110 asserts the invariant.
+
+        `?? ''` because `Insight.heading` is `string | null` and `alt` is now
+        `string`. This is *not* the component-level coercion gh#222 deletes:
+        that one applied to every call site invisibly, this one is a single
+        call site declaring what it does with a null it cannot avoid. A row
+        with no heading already renders an empty `<h1>` (`PageHeader.vue:273`)
+        and already rendered `alt=""` before this change, so the behaviour is
+        unchanged — it is a content defect on that row, not a decorative
+        declaration, and it is the same defect the TODO above hands to #234.
       -->
-      <bfMedia :src="insight.image" :alt="insight.heading" ratio="16/9" />
+      <bfMedia :src="insight.image" :alt="insight.heading ?? ''" ratio="16/9" />
 
       <bfProse :content="insight.content" />
 

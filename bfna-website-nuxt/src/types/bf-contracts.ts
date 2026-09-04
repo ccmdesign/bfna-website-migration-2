@@ -263,19 +263,31 @@ export interface FilterBarProps {
  * outrank at any specificity, so the full-width Transponder card could not be
  * given the taller ratio its slot wanted.
  *
- * `alt` is required whenever `src` is set (BRIEF §5 rule 9). Omitting it is a
- * dev-time `console.warn`, not a silent `alt=""`; an explicit `alt=""` is the
- * decorative declaration and passes silently.
+ * `alt` is required, full stop (BRIEF §5 rule 9; a11y BRIEF D25). Omitting it
+ * is a **typecheck error**, not a dev-time warning and not a silent `alt=""`;
+ * an explicit `alt=""` is the decorative declaration and passes silently.
+ *
+ * Required on the prop rather than on the `src`-bearing branch alone, because
+ * `defineProps<T>()` cannot make one prop's requiredness depend on another's
+ * value and a discriminated union would cost every call site a cast. The
+ * placeholder branch ignores the value it is handed — it is `aria-hidden`, so
+ * there is nothing there to describe (gh#222).
  */
 export interface MediaProps {
   /** Image URL. Absent (or null) renders the placeholder box instead. */
   src?: string | null
   /**
-   * Alternative text. Required whenever `src` is set; pass `''` deliberately
-   * for a decorative image. Ignored on the placeholder branch, which is
-   * `aria-hidden` — there is no content there to describe.
+   * Alternative text. **Required** — pass `''` deliberately for a decorative
+   * image, and a real string for one that carries information. Ignored on the
+   * placeholder branch, which is `aria-hidden` — there is no content there to
+   * describe.
+   *
+   * Not `string | null`: `null` is the shape the content layer will use for
+   * "no string written yet" (#234 / D28), and accepting it here would let that
+   * absence reach an `alt` attribute as `""` — the same silent decorative
+   * claim this contract exists to prevent.
    */
-  alt?: string | null
+  alt: string
   /**
    * CSS `aspect-ratio` value for the box, e.g. `'16/9'`, `'3/2'`, `'1/1'`.
    * Omit it to inherit the component default and stay overridable from a
