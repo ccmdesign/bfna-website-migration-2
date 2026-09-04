@@ -589,6 +589,32 @@ export interface EmptyStateProps {
    * component.
    */
   headingLevel?: EmptyStateHeadingLevel
+  /**
+   * Announce the block to assistive technology when it appears.
+   *
+   * `true` renders `role="status"` (an implicit `aria-live="polite"` region);
+   * `false` — the default — renders no `role` attribute at all. Deliberately
+   * the same name, the same type, the same default and the same rendered
+   * binding as {@link NoticeProps.announced} (`Notice.vue:111`): two
+   * components that make the same decision should not make it two ways
+   * (a11y BRIEF D27).
+   *
+   * **Opt-in, never inferred.** The distinction is behavioural, not
+   * structural. A block present at first render that never changes — a
+   * prerendered "nothing here yet" band — is not a live region: an
+   * `aria-live` element that is never updated is noise in the accessibility
+   * tree, and its text is read by the document pass anyway. A block *swapped
+   * in* after a user action — the error page a client-side navigation lands
+   * on, a results list that a filter emptied — replaces the page's content
+   * silently unless it is announced. Nothing in the markup tells the two
+   * apart, so the caller says which it is.
+   *
+   * The announcement is the element itself, always mounted and carrying its
+   * own text (a11y BRIEF D29). It is never a hidden node toggled into view:
+   * `display: none` takes an element out of the accessibility tree, which
+   * silences the region it was meant to be.
+   */
+  announced?: boolean
 }
 
 /**

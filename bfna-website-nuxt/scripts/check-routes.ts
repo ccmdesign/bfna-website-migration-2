@@ -155,6 +155,20 @@
  * visible on a green run. `/wireframes/**` and `/docs/**` are excluded on the
  * same terms as DoD-A4.
  *
+ * **The error page announces, prerendered empty states do not** (a11y epic,
+ * gh#224). `bfEmptyState` gains an `announced` prop rendering `role="status"`,
+ * and both halves of it are asserted: the positive one drives a **client-side
+ * navigation** to `/this-page-does-not-exist` through the running app's own
+ * router — the case the prop exists for, and the only way to reach it, because
+ * `nuxt generate` writes `error.vue` to `404.html` as a client-only shell
+ * (`data-ssr="false"`, empty `#__nuxt`, no `<main>`), so there is nothing to
+ * grep. The negative one is a whole-build read: no prerendered `.bf-empty-state`
+ * carries `role="status"`, because a live region present at first paint that
+ * never updates is noise in the accessibility tree, and that row is what stops
+ * the prop's default being flipped to `true` later. Neither claims anything
+ * about what a screen reader says (BRIEF §0.2, §8). `/search`'s
+ * `display: none` count region is #233's, not this gate's.
+ *
  * **DoD-A8 — the reduced-motion floor** (a11y epic, gh#218). The served
  * `.output/public/css/base/reset.css` must carry a `prefers-reduced-motion:
  * reduce` block that sets `@view-transition { navigation: none }` and caps
@@ -1740,6 +1754,290 @@ const decorativeGlyphRows = (): Row[] => {
 }
 
 /* ------------------------------------------------------------------ *
+ * The error page announces, prerendered empty states do not (gh#224)
+ * ------------------------------------------------------------------ */
+/**
+ * `bfEmptyState` is the block a page renders **instead of** its content, and
+ * until gh#224 it carried no `role` at all (a11y BRIEF §0, "Live regions").
+ * On `error.vue` that is a real silence: a client-side navigation to a dead
+ * route does not reload the document, so Vue Router swaps `<main>`'s subtree
+ * for "Page not found" in place, the URL changes, and assistive technology is
+ * told nothing — the user is left on what still sounds like the previous page.
+ *
+ * The fix is one opt-in prop, `announced`, rendering `role="status"` — the
+ * shape `Notice.vue:94,111` already ships (BRIEF D27). This gate asserts both
+ * halves, because asserting only the positive one would stay green for a
+ * component that hard-coded the role and so made every prerendered empty state
+ * a live region that never updates.
+ *
+ * ## Why this half has to run in the browser
+ *
+ * There is nothing to grep. `nuxt generate` writes `error.vue` to `404.html`
+ * as a **client-only shell** — measured on this build: `data-ssr="false"`,
+ * `<div id="__nuxt"></div>` empty, zero `<main>`. The error page exists only
+ * after hydration, so a file-based row would either read an empty document or
+ * would have to be weakened until it asserted nothing.
+ *
+ * So the positive half drives the case the row exists for, exactly as written:
+ * load `/`, then push `/this-page-does-not-exist` through the app's **own**
+ * router. `$router` is reached off `#__nuxt.__vue_app__`, the handle
+ * `READ_PAGE` already uses to decide whether a route hydrated. No `Page.navigate`
+ * — a hard load is a different scenario, and on this static server it would not
+ * even reach the app (an unresolvable path is answered `404 text/plain`).
+ *
+ * ## Why the default matters as much as the fix
+ *
+ * `role="status"` is an implicit `aria-live="polite"` region. On content
+ * present at first paint that never changes — an empty-results band a facet
+ * prerendered — the region is announced for nothing and then sits in the
+ * accessibility tree for the life of the page. The prop exists so the caller
+ * states which case it is; the static row is what stops a later "just make it
+ * always announce" from landing.
+ *
+ * ## What this does not assert
+ *
+ * That a screen reader speaks the block. There is no assistive technology on
+ * this runner (a11y BRIEF §0.2); what is measured is the DOM condition. The
+ * announcement itself is the manual AT pass in BRIEF §8.
+ *
+ * It also does not judge `/search`'s idle count region — `role="status"` under
+ * `display: none`, and so out of the accessibility tree, a live region hidden
+ * the wrong way. That is #233's defect and #233's gate; this one is scoped to
+ * `bfEmptyState`.
+ */
+const ERROR_ROUTE = '/this-page-does-not-exist'
+
+/**
+ * Push the dead route through the running app's router and report what
+ * `<main>` then contains.
+ *
+ * Read in one round trip, for `READ_PAGE`'s reason: these are questions about
+ * one rendered state, and a second `Runtime.evaluate` only widens the window in
+ * which the page can change underneath them.
+ *
+ * `[role="status"]` rather than a class or a tag: what is being asserted is the
+ * accessibility-tree condition, not which component satisfied it. `aria-live`
+ * is counted alongside it and reported separately — an author who reaches for
+ * `aria-live="polite"` here has met the requirement a different way, and the
+ * row should say so rather than fail on the spelling.
+ */
+const READ_ERROR_ROUTE = `(async () => {
+  const root = document.getElementById('__nuxt')
+  const router = root && root.__vue_app__ && root.__vue_app__.config.globalProperties.$router
+  if (!router) return { pushed: false }
+
+  try { await router.push(${JSON.stringify(ERROR_ROUTE)}) } catch (e) { /* Nuxt answers an unmatched route with showError */ }
+  /* Two frames: the push resolves on navigation, the error component mounts on
+     the render that follows it. */
+  await new Promise(ok => requestAnimationFrame(() => requestAnimationFrame(ok)))
+
+  const main = document.querySelector('main')
+  if (!main) return { pushed: true, path: location.pathname, main: false }
+
+  const state = main.querySelector('.bf-empty-state')
+  return {
+    pushed: true,
+    path: location.pathname,
+    main: true,
+    regions: main.querySelectorAll('[role="status"]').length,
+    liveRegions: main.querySelectorAll('[aria-live]').length,
+    hasState: !!state,
+    stateRole: state ? state.getAttribute('role') : null,
+    h1s: Array.from(document.querySelectorAll('h1')).map(el => (el.textContent || '').trim().slice(0, 80))
+  }
+})()`
+
+type ErrorRouteRead = {
+  pushed: boolean
+  path?: string
+  main?: boolean
+  regions?: number
+  liveRegions?: number
+  hasState?: boolean
+  stateRole?: string | null
+  h1s?: string[]
+}
+
+/** `<[a-z…]` open tag whose attribute run names the block's own class. */
+const EMPTY_STATE_TAG = /<[a-z][\w-]*[^>]*\bbf-empty-state\b[^>]*>/gi
+
+/**
+ * Anchored on whitespace-or-tag-start rather than `\b`, for the reason
+ * `LIST_ROLE_IS_LIST` and `IMG_ALT_ATTR` both give: `\brole` matches inside
+ * `data-role=`, and a `data-role="status"` would then satisfy an ARIA
+ * requirement it has nothing to do with.
+ */
+const ROLE_STATUS_ATTR = /(?:^|\s)role\s*=\s*(?:"\s*status\s*"|'\s*status\s*'|status(?=[\s/>]|$))/i
+
+/**
+ * The client-only error shell. Excluded from the static half rather than
+ * silently passing it: it renders nothing today, and if a later Nuxt version
+ * server-renders it, its `role="status"` is the *correct* one and must not be
+ * read as an offender.
+ */
+const ERROR_PAGE = '404.html'
+
+/** `/wireframes/**` and `/docs/**`, excluded on DoD-A4's exact terms. */
+const EMPTY_STATE_SKIP = ['wireframes/', 'docs/']
+
+const emptyStateStaticRows = (): Row[] => {
+  if (!existsSync(publicDir)) {
+    return [{
+      label: 'gh#224 — prerendered output present',
+      ok: false,
+      detail: `expected ${publicDir} · actual missing — run \`npx nuxt generate\` first`
+    }]
+  }
+
+  const pages = prerenderedHtmlFiles(publicDir)
+    .map(file => file.slice(publicDir.length + 1))
+    .filter(rel => rel !== ERROR_PAGE)
+    .filter(rel => !EMPTY_STATE_SKIP.some(prefix => rel.startsWith(prefix)))
+
+  const offenders: string[] = []
+  let states = 0
+
+  for (const rel of pages) {
+    const raw = readFileSync(join(publicDir, rel), 'utf8')
+    /* `/g`, so `lastIndex` has to be reset per file — `listRoleRows`' note. */
+    EMPTY_STATE_TAG.lastIndex = 0
+    for (const tag of raw.match(EMPTY_STATE_TAG) ?? []) {
+      states++
+      if (ROLE_STATUS_ATTR.test(tag)) offenders.push(`${rel} — ${tag.slice(0, 72)}`)
+    }
+  }
+
+  const scope = `${pages.length} pages, excluding ${ERROR_PAGE}`
+    + ` and ${EMPTY_STATE_SKIP.join(' and ')}`
+
+  return [{
+    label: `gh#224 — no prerendered empty state announces (${states} inspected, ${scope})`,
+    ok: offenders.length === 0,
+    detail: offenders.length === 0
+      ? `expected 0 with role="status" · actual 0 of ${states}`
+        + (states === 0
+          ? ' — no bf route prerenders an empty state today, so this row is holding the'
+            + ' default open for the first one that does rather than reporting a fix'
+          : '')
+      : `expected 0 with role="status" · actual ${offenders.length} of ${states}: `
+        + `${offenders.slice(0, 5).join(' , ')}${offenders.length > 5 ? ' , …' : ''}`
+        + ' — content present at first paint is not a live region: role="status" is an'
+        + ' implicit aria-live, and one that never updates is noise in the accessibility'
+        + ' tree. `announced` defaults to false for exactly that case (gh#224, D29)'
+  }]
+}
+
+const emptyStateStatusRows = async (cdp: Cdp, origin: string): Promise<Row[]> => {
+  const rows: Row[] = []
+
+  const { targetId } = await cdp.send<{ targetId: string }>('Target.createTarget', { url: 'about:blank' })
+  const { sessionId } = await cdp.send<{ sessionId: string }>('Target.attachToTarget', { targetId, flatten: true })
+
+  let read: ErrorRouteRead | undefined
+  try {
+    await cdp.send('Runtime.enable', {}, sessionId)
+    await cdp.send('Page.enable', {}, sessionId)
+    await cdp.send('Page.navigate', { url: `${origin}/` }, sessionId)
+
+    /* Wait for `/` to hydrate before touching its router — the same condition,
+       read the same way, as the per-route loop above. */
+    const deadline = Date.now() + timeoutMs
+    let hydrated = false
+    while (Date.now() < deadline) {
+      await sleep(150)
+      try {
+        const evaluated = await cdp.send<{ result: { value?: PageRead } }>(
+          'Runtime.evaluate',
+          { expression: READ_PAGE, returnByValue: true },
+          sessionId
+        )
+        if (evaluated.result?.value?.hydrated === true) { hydrated = true; break }
+      } catch {
+        /* navigation swaps the execution context; keep polling */
+      }
+    }
+
+    if (!hydrated) {
+      return [{
+        label: `gh#224 — / hydrated, so ${ERROR_ROUTE} can be reached through the router`,
+        ok: false,
+        detail: `expected #__nuxt.__vue_app__ within ${timeoutMs}ms · actual absent`
+          + ' — without a running app there is no client-side navigation to judge'
+      }]
+    }
+
+    const evaluated = await cdp.send<{ result: { value?: ErrorRouteRead } }>(
+      'Runtime.evaluate',
+      { expression: READ_ERROR_ROUTE, returnByValue: true, awaitPromise: true },
+      sessionId
+    )
+    read = evaluated.result?.value
+  } finally {
+    await cdp.send('Target.closeTarget', { targetId }).catch(() => {})
+  }
+
+  if (read === undefined || read.pushed !== true) {
+    return [{
+      label: `gh#224 — the app's router accepted a push to ${ERROR_ROUTE}`,
+      ok: false,
+      detail: 'expected $router on #__nuxt.__vue_app__ · actual unreachable'
+        + ' — the probe could not perform a client-side navigation, so the announcement'
+        + ' is untested rather than absent'
+    }]
+  }
+
+  rows.push({
+    label: `gh#224 — a client-side navigation lands on ${ERROR_ROUTE} with a <main>`,
+    ok: read.main === true && read.path === ERROR_ROUTE,
+    detail: read.main === true && read.path === ERROR_ROUTE
+      ? `expected ${ERROR_ROUTE} in the bf-default layout · actual it is`
+      : `expected ${ERROR_ROUTE} with one <main> · actual path ${JSON.stringify(read.path ?? null)},`
+        + ` main ${read.main === true ? 'present' : 'absent'} — the rows below judge what`
+        + ' is inside that <main>, so they cannot be trusted without it'
+  })
+
+  const regions = read.regions ?? 0
+  rows.push({
+    label: `gh#224 — ${ERROR_ROUTE} exposes exactly one role="status" in <main>`,
+    ok: regions === 1,
+    detail: regions === 1
+      ? `expected 1 · actual 1 (plus ${read.liveRegions ?? 0} [aria-live] element(s))`
+      : `expected exactly 1 · actual ${regions} — 0 means a client-side navigation into an`
+        + ' error swaps the page body in silence, which is the gh#224 defect; more than 1'
+        + ' means two regions announce the same arrival over each other'
+  })
+
+  rows.push({
+    label: `gh#224 — the region is the bfEmptyState root, not a neighbouring node`,
+    ok: read.hasState === true && read.stateRole === 'status',
+    detail: read.hasState === true && read.stateRole === 'status'
+      ? 'expected .bf-empty-state[role="status"] · actual present'
+      : `expected .bf-empty-state[role="status"] · actual ${read.hasState === true
+        ? `role=${JSON.stringify(read.stateRole)}`
+        : 'no .bf-empty-state in <main>'} — pass \`announced\` on <bfEmptyState> rather`
+        + ' than putting a role somewhere else in the page (gh#224, the idiom at'
+        + ' Notice.vue:111)'
+  })
+
+  /* The heading is already correct and this row is here to keep it that way:
+     the fix is an attribute, and a fix that also reworded the page or changed
+     its rank would be a different change wearing this one's number. */
+  const h1s = read.h1s ?? []
+  rows.push({
+    label: `gh#224 — ${ERROR_ROUTE} still renders one <h1>, "Page not found"`,
+    ok: h1s.length === 1 && h1s[0] === 'Page not found',
+    detail: h1s.length === 1 && h1s[0] === 'Page not found'
+      ? 'expected 1 · actual 1'
+      : `expected exactly one <h1> reading "Page not found" · actual ${h1s.length}:`
+        + ` ${h1s.map(t => JSON.stringify(t)).join(', ') || '—'}`
+  })
+
+  rows.push(...emptyStateStaticRows())
+
+  return rows
+}
+
+/* ------------------------------------------------------------------ *
  * DoD-3 — every §7 route reachable from the menus
  * ------------------------------------------------------------------ */
 /**
@@ -2067,6 +2365,16 @@ const run = async (): Promise<void> => {
       )
       for (const row of glyphFailing) console.log(`      ✗ ${row.label} — ${row.detail}`)
       if (verbose) for (const row of glyphGate.filter(r => r.ok)) console.log(`      · ${row.label}`)
+
+      const emptyStateGate = await emptyStateStatusRows(cdp, origin)
+      const emptyStateFailing = emptyStateGate.filter(r => !r.ok)
+      results.push({ slug: 'empty-state announcement (gh#224)', rows: emptyStateGate, failing: emptyStateFailing })
+      console.log(
+        `${emptyStateFailing.length === 0 ? '  ✓ PASS' : '  ✗ FAIL'}  `
+        + `${'empty-state announcement (gh#224)'.padEnd(44)} ${emptyStateGate.length - emptyStateFailing.length}/${emptyStateGate.length} rows`
+      )
+      for (const row of emptyStateFailing) console.log(`      ✗ ${row.label} — ${row.detail}`)
+      if (verbose) for (const row of emptyStateGate.filter(r => r.ok)) console.log(`      · ${row.label}`)
 
       const navRows = homeLinks === undefined
         ? [{ label: 'DoD-3 — the home page rendered', ok: false, detail: 'expected / to hydrate · actual it did not, so reachability cannot be judged' }]

@@ -78,6 +78,26 @@
  * landed first; it has not (`components/bf/Section.vue` does not exist on
  * `dev`), so the spec's stated fallback applies. Recorded in Decisions.
  *
+ * ## `announced` — the block says it arrived, or it says nothing
+ *
+ * `announced` renders `role="status"` on the root; the default, `false`,
+ * renders no `role` at all. The prop is `bfNotice`'s, name for name and
+ * binding for binding (`Notice.vue:94,111`) — the same decision made the same
+ * way rather than a second dialect of it (a11y BRIEF D27).
+ *
+ * The default is `false` because this block is usually *prerendered*: it is
+ * what `/insights` ships when a facet matched nothing on the server, and a
+ * live region that is present at first paint and never updated is noise in the
+ * accessibility tree, read once by the document pass regardless. `true` is for
+ * the block that arrives **after** a user action and replaces what was there —
+ * `error.vue`, reached by a client-side navigation that would otherwise swap
+ * the entire page body in silence.
+ *
+ * The region is this element, mounted with its heading already in it (BRIEF
+ * D29). Nothing here is hidden and toggled: `display: none` removes an element
+ * from the accessibility tree, which is precisely how `/search`'s idle count
+ * region ended up silent (#233).
+ *
  * ## Styling
  *
  * One hook, one property, no new colour (BRIEF §5 rule 2) and no colour at all
@@ -92,7 +112,8 @@ const props = withDefaults(defineProps<EmptyStateProps>(), {
   message: undefined,
   backLabel: undefined,
   backTo: undefined,
-  headingLevel: 1
+  headingLevel: 1,
+  announced: false
 })
 
 /**
@@ -125,7 +146,11 @@ const hasBackLink = computed<boolean>(() =>
     there is exactly one destination and nothing to choose between. A caller's
     `class` therefore merges with, rather than replaces, `center | stack`.
   -->
-  <div class="center | stack bf-empty-state" data-gap="s">
+  <div
+    class="center | stack bf-empty-state"
+    data-gap="s"
+    :role="announced ? 'status' : undefined"
+  >
     <!--
       `<component :is>` over a computed tag name, not a chain of `v-if`s: the
       rank is a prop, the union is closed, and four near-identical elements
