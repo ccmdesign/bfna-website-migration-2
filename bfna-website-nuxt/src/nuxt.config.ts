@@ -146,6 +146,25 @@ export default defineNuxtConfig({
   },
   app: {
     head: {
+      /*
+       * DoD-A9 (a11y epic, gh#217). WCAG 3.1.1 is a Level A criterion and it is
+       * a property of the *document*, not of a layout — so it belongs to the one
+       * declaration every route inherits whether it renders `bf-default`,
+       * `wireframe`, `docs-layout`, `default`, `demo` or nothing at all.
+       *
+       * It used to live in `layouts/bf-default.vue` and `layouts/wireframe.vue`
+       * and only there, which meant `/docs/**` — whose layout makes no `useHead`
+       * call — shipped `<html>` with no `lang` and no way for a screen reader to
+       * pick a pronunciation dictionary. Both layout copies were deleted with
+       * this line's arrival; a route must not be able to opt out by omission.
+       *
+       * `app.head` is unhead's lowest-priority source, so a page that genuinely
+       * needs another language can still declare its own `htmlAttrs.lang`.
+       * Nothing does today, and the build gate in `scripts/check-routes.ts`
+       * ("every prerendered HTML file carries a non-empty lang") fails the run
+       * if a future route drops it again.
+       */
+      htmlAttrs: { lang: "en" },
       meta: [
         { name: "viewport", content: "width=device-width, initial-scale=1" },],
       link: [

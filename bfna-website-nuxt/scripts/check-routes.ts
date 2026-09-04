@@ -816,6 +816,85 @@ const cascadeLayerRows = (): Row[] => {
 }
 
 /* ------------------------------------------------------------------ *
+ * DoD-A9 — `lang` is a config default (a11y epic, gh#217)
+ * ------------------------------------------------------------------ */
+/** Every `*.html` file under `.output/public`, absolute paths, depth-first. */
+const prerenderedHtmlFiles = (dir: string): string[] => {
+  const out: string[] = []
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    const path = join(dir, entry.name)
+    if (entry.isDirectory()) out.push(...prerenderedHtmlFiles(path))
+    else if (entry.isFile() && entry.name.toLowerCase().endsWith('.html')) out.push(path)
+  }
+  return out
+}
+
+/**
+ * The opening `<html …>` tag of `html`, or `undefined` if there is none.
+ *
+ * Deliberately a tag match rather than a `lang="…"` search anywhere in the
+ * document: `lang` appears on `<code lang>` samples and inside inlined payload
+ * JSON, and a naive whole-file search would go green on a page whose root
+ * element carries nothing.
+ */
+const HTML_OPEN_TAG = /<html\b([^>]*)>/i
+const LANG_ATTR = /\blang\s*=\s*("([^"]*)"|'([^']*)'|([^\s"'>]+))/i
+
+/**
+ * DoD-A9: every prerendered page carries a non-empty `lang` on `<html>`.
+ *
+ * A whole-build gate rather than a per-route row, because the acceptance is
+ * phrased over *every* prerendered route and the per-route loop above visits
+ * only the nine §7 routes. `/docs/**` — whose layout makes no `useHead` call —
+ * is precisely the family the narrower check could not see, and was shipping
+ * `<html>` with no `lang` at all until gh#217 moved the declaration into
+ * `nuxt.config.ts` `app.head`.
+ *
+ * WCAG 3.1.1 is Level A. A missing `lang` leaves assistive technology to guess
+ * a pronunciation dictionary, and the guess is silent when it is wrong.
+ */
+const langRows = (): Row[] => {
+  if (!existsSync(publicDir)) {
+    return [{
+      label: 'DoD-A9 — prerendered output present',
+      ok: false,
+      detail: `expected ${publicDir} · actual missing — run \`npx nuxt generate\` first`
+    }]
+  }
+
+  const files = prerenderedHtmlFiles(publicDir)
+
+  if (files.length === 0) {
+    return [{
+      label: 'DoD-A9 — the build emitted prerendered HTML',
+      ok: false,
+      detail: 'expected >= 1 *.html under .output/public · actual 0'
+    }]
+  }
+
+  const offenders: string[] = []
+  for (const file of files) {
+    const open = HTML_OPEN_TAG.exec(readFileSync(file, 'utf8'))
+    const attrs = open?.[1]
+    const lang = attrs === undefined ? undefined : LANG_ATTR.exec(attrs)
+    /* `?? ''` collapses the three quoting alternates; `.trim()` so `lang=" "`
+       is the failure it plainly is rather than a technically-present value. */
+    const value = (lang?.[2] ?? lang?.[3] ?? lang?.[4] ?? '').trim()
+    if (open === null || value === '') offenders.push(file.slice(publicDir.length + 1))
+  }
+
+  return [{
+    label: `DoD-A9 — every prerendered page has a non-empty lang on <html> (${files.length} scanned)`,
+    ok: offenders.length === 0,
+    detail: offenders.length === 0
+      ? `expected 0 without lang · actual 0 of ${files.length}`
+      : `expected 0 without lang · actual ${offenders.length} of ${files.length}: `
+        + `${offenders.slice(0, 5).join(', ')}${offenders.length > 5 ? ', …' : ''}`
+        + ' — set it once in nuxt.config.ts app.head.htmlAttrs, not per layout (gh#217)'
+  }]
+}
+
+/* ------------------------------------------------------------------ *
  * DoD-3 — every §7 route reachable from the menus
  * ------------------------------------------------------------------ */
 /**
@@ -1066,6 +1145,16 @@ const run = async (): Promise<void> => {
       )
       for (const row of layerFailing) console.log(`      ✗ ${row.label} — ${row.detail}`)
       if (verbose) for (const row of layerRows.filter(r => r.ok)) console.log(`      · ${row.label}`)
+
+      const langGate = langRows()
+      const langFailing = langGate.filter(r => !r.ok)
+      results.push({ slug: 'lang on <html> (DoD-A9)', rows: langGate, failing: langFailing })
+      console.log(
+        `${langFailing.length === 0 ? '  ✓ PASS' : '  ✗ FAIL'}  `
+        + `${'lang on <html> (DoD-A9)'.padEnd(44)} ${langGate.length - langFailing.length}/${langGate.length} rows`
+      )
+      for (const row of langFailing) console.log(`      ✗ ${row.label} — ${row.detail}`)
+      if (verbose) for (const row of langGate.filter(r => r.ok)) console.log(`      · ${row.label}`)
 
       const navRows = homeLinks === undefined
         ? [{ label: 'DoD-3 — the home page rendered', ok: false, detail: 'expected / to hydrate · actual it did not, so reachability cannot be judged' }]

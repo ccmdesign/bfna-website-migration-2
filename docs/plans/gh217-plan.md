@@ -22,11 +22,30 @@ Structural only (D23/D32) — no colour, type, radius or shadow anywhere in the 
    Nuxt merges `app.head` into the root `useHead` call, so it applies to every
    route regardless of which layout (or none) renders.
 2. **`src/layouts/bf-default.vue`** — delete the `htmlAttrs` line from its `useHead`.
-3. **`src/layouts/wireframe.vue`** — delete the same line. `wireframe.vue` is a
-   `wf-*` file by association but the BF-217 D2 freeze covers `wf-*` **components
-   and their markup**; this is a one-line head declaration whose rendered output is
-   byte-identical (`lang="en"` still lands on `<html>`, just from a different
-   source). No wireframe markup, class or style changes.
+3. **`src/layouts/wireframe.vue`** — **not touched. Deliberate deviation from the
+   issue body**, taken during implementation and recorded here.
+
+   The issue names `layouts/wireframe.vue:43` as a starting point and says "layouts
+   keep no copy". But site-epic DoD-4 byte-guards that exact path:
+
+   ```
+   git diff --stat f757a649361993275a43282456f4746d247be37b -- \
+     bfna-website-nuxt/src/pages/wireframes bfna-website-nuxt/src/components/wireframe \
+     bfna-website-nuxt/src/composables/useWfContent.ts bfna-website-nuxt/src/layouts/wireframe.vue \
+     bfna-website-nuxt/public/css/wireframe.css bfna-website-nuxt/src/assets/wireframe-data
+   ```
+
+   Measured: that command is **empty on `origin/dev`** today. The a11y brief §7 says
+   `/wireframes/**` is "frozen by BF-217 D2 and byte-guarded by site-epic DoD-4 — not
+   touched by this epic", and §5 inherits "never touch `wf-*`" in full. Editing the
+   file would have been the first commit in the epic to redden that guard.
+
+   The acceptance does not need it: DoD-A9 is "`app.head.htmlAttrs.lang` is set;
+   every prerendered route has a non-empty `lang`". Both halves hold with the
+   wireframe layout untouched — its `htmlAttrs` merely restates what `app.head`
+   already provides, and the new build gate fails the run if the value ever goes
+   missing from *any* prerendered page, wireframes included. The leftover line is
+   filed as a residual for a human to remove when the freeze lifts.
 4. **`scripts/check-routes.ts`** — add a whole-build gate (brief §5: every issue adds
    at least one assertion). The existing per-route loop only visits the nine §7
    routes, which is too narrow for an acceptance criterion phrased over *every*
@@ -39,7 +58,6 @@ Structural only (D23/D32) — no colour, type, radius or shadow anywhere in the 
 
 - `bfna-website-nuxt/src/nuxt.config.ts` (add `app.head.htmlAttrs`)
 - `bfna-website-nuxt/src/layouts/bf-default.vue` (remove `htmlAttrs`)
-- `bfna-website-nuxt/src/layouts/wireframe.vue` (remove `htmlAttrs`)
 - `bfna-website-nuxt/scripts/check-routes.ts` (new `langRows()` build gate)
 - `docs/plans/gh217-plan.md` (this file)
 

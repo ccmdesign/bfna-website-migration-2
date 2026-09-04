@@ -215,7 +215,12 @@ const doc = announcement()
 const banner = doc?.message ? doc : undefined
 
 useHead({
-  htmlAttrs: { lang: 'en' },
+  /*
+   * No `htmlAttrs: { lang: 'en' }` here — it moved to `nuxt.config.ts`
+   * `app.head` in gh#217 (DoD-A9). Setting it per-layout meant a route that
+   * rendered neither this layout nor `wireframe` shipped no `lang` at all.
+   * Restating it here would work but would re-create the drift the move fixed.
+   */
   /*
    * A template, not a title: every `/` page sets its own `title` and this adds
    * the site name once. The `?? ` branch is the site root, whose page sets no
