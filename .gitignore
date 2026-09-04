@@ -46,6 +46,5 @@ specs/
 contentful-data/*
 spec-kit
 bfna-website-nuxt/contentful-data/
-.github/
 
 bfna-website-legacy/

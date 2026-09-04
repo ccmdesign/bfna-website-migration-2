@@ -1,0 +1,111 @@
+# Verification gate for PRs into `dev` — gh#236.
+#
+# The accessibility pass-1 run (site-epic #82, Plane BF-219) auto-merges 18-odd
+# issues into `dev`. Before this file there was no CI on `dev` at all, so every
+# one of those merges was ungated. This is the gate.
+#
+# Two things it deliberately does NOT do:
+#
+#   * It never runs `npm run generate`. That script is
+#     `node ./contentImporter.js && nuxt generate` — the importer pulls from
+#     Directus and needs credentials CI does not have and should not have.
+#     `nuxt generate` alone builds from the `src/content/bf/**` snapshots that
+#     are committed for exactly this reason.
+#
+#   * It never asserts the typecheck exits 0. The tree carries 90 pre-existing
+#     diagnostics, all outside `bf-*` scope; site-epic #83 owns paying them down
+#     and flipping this to a hard zero. Until then the gate is "no NEW errors",
+#     enforced against `.github/typecheck-baseline.txt`.
+
+name: verify
+
+on:
+  pull_request:
+    branches: [dev]
+
+# A force-push should not leave the previous run burning a runner.
+concurrency:
+  group: verify-${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    defaults:
+      run:
+        working-directory: bfna-website-nuxt
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # Node 24 to match the tree `package-lock.json` was resolved against.
+      # `better-sqlite3` is a native module, so the major matters.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: bfna-website-nuxt/package-lock.json
+
+      - name: Install (npm ci)
+        run: npm ci
+
+      # `scripts/check-routes.ts` drives headless Chrome over CDP. It resolves a
+      # binary from $CHROME_PATH, then the ms-playwright cache, then
+      # /usr/bin/google-chrome. `ubuntu-latest` ships Chrome stable at that path;
+      # the fallback populates the ms-playwright cache the script also probes, so
+      # the step keeps working if the runner image ever drops it.
+      - name: Resolve headless Chrome
+        run: |
+          if [ -x /usr/bin/google-chrome ]; then
+            echo "CHROME_PATH=/usr/bin/google-chrome" >> "$GITHUB_ENV"
+            /usr/bin/google-chrome --version
+          else
+            echo "::warning::/usr/bin/google-chrome missing on this runner image; falling back to a playwright chromium download"
+            npx --yes playwright@1 install --with-deps chromium
+          fi
+
+      # Not `exit 0` — see the header. The gate runs `nuxt typecheck` and
+      # `typecheck:scripts` itself (npm chains them with `&&`, so the second
+      # never runs today) and compares the merged diagnostics to the baseline.
+      - name: Typecheck (no new errors vs baseline)
+        working-directory: .
+        run: node .github/typecheck-gate.mjs
+
+      # NEVER `npm run generate`.
+      - name: Build (nuxt generate)
+        run: npx nuxt generate
+
+      - name: Route harness (check-routes)
+        run: npx tsx scripts/check-routes.ts
+
+      # `check-links.ts` shells out to linkinator against http://localhost:3000
+      # and nothing in the repo starts a server for it, so serve the generated
+      # output first. `nuxt preview` would do the same thing via an unpinned
+      # `npx serve`; this pins the major and keeps the failure legible.
+      - name: Link check (check-links)
+        run: |
+          npx --yes serve@14 --no-clipboard --no-port-switching -l 3000 .output/public > /tmp/serve.log 2>&1 &
+          echo $! > /tmp/serve.pid
+          for i in $(seq 1 30); do
+            if curl -sf -o /dev/null http://localhost:3000/; then
+              echo "static server up after ${i}s"
+              break
+            fi
+            if [ "$i" = "30" ]; then
+              echo "static server never came up:"
+              cat /tmp/serve.log
+              exit 1
+            fi
+            sleep 1
+          done
+          set +e
+          npx tsx scripts/check-links.ts
+          status=$?
+          set -e
+          kill "$(cat /tmp/serve.pid)" 2>/dev/null || true
+          exit $status
