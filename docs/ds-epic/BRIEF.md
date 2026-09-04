@@ -78,6 +78,41 @@ representative sample data; that issue's acceptance check runs against it.
 Probes are dev-only and never linked from nav; the final cutover issue (59)
 deletes `src/pages/bf-probe/` before the epic closes.
 
+### The console gate and the smoke set (gh#200, from residual #199)
+
+`npx tsx scripts/check-probes.ts` fails on **any console message at `error`
+level** on any page it opens, probes included, and a full run also opens eight
+**real routes** — `/`, `/insights`, `/about`, `/archive`, `/projects`,
+`/search`, one `/insights/:slug` and one `/projects/:slug` (both slugs derived
+from `.output/public`, never hard-coded). Those eight assert nothing about
+layout: the contract is *"this page hydrates and says nothing"*.
+
+Why both halves exist: #199 was a hydration mismatch in the shared shell
+(`Hydration completed but contains mismatches.`), which fails no build, breaks
+no assertion, and leaves a page that still looks right while Vue throws away
+the server markup and re-renders it. Probe pages could never have caught it —
+a probe composes `bf-probe`, not `bf-default`. Both channels are read
+(`Runtime.consoleAPICalled` for what the page says, `Log.entryAdded` for what
+the browser says, e.g. a 404 on a `/_nuxt/*.js` chunk), and a smoke route must
+also prove it actually hydrated (`#__nuxt.__vue_app__`), so a page whose entry
+chunk 404s cannot pass by having nothing to say.
+
+Two limits, stated so nobody has to rediscover them:
+
+- The gate is **blind to compiler-hoisted static subtrees** — Vue hydrates a
+  `createStaticVNode` by advancing the node pointer without comparing content,
+  so a mismatch confined to static markup emits nothing on any channel. It
+  catches every mismatch that reaches a dynamic node, which is every mismatch
+  #199 was about.
+- `--ignore-console <regex>` drops matching text before judging. It exists
+  because the shell links one third-party stylesheet and a gate with no escape
+  hatch turns a network hiccup into a merge blocker. It defaults to nothing, so
+  the committed behaviour is strict and using it is a visible act on a command
+  line — not a way to make a real failure go away.
+
+`--only <nn>` still runs one probe and skips the smoke set, so the per-issue
+acceptance keeps its current cost; `--only smoke` runs the eight routes alone.
+
 ## 6. Data contract (fixed names — do not invent variants)
 
 Collections registered in `bfna-website-nuxt/content.config.ts`, all `type: 'data'`, source `content/bf/<name>/*.json`:

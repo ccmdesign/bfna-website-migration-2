@@ -139,4 +139,98 @@ gate verifies itself the way the rest of this epic does — by running:
 
 ## Decisions
 
-*(appended during implementation — see below)*
+**D-200.1 — No shell component is edited, and no `<ClientOnly>` is added.**
+The issue's first ask is a root-cause fix in `bf-default` / `bfNav` / `bfFooter`
+/ `bfNotice`. The diagnosis in §1 shows there is no cause left to fix on `dev`
+tip: three independent readings (dev build with detailed Vue warnings, generated
+output, generated output at 390×840) are clean across nine routes, and a
+control injection proves the reader is not silently blind. #199's own PR names
+and fixes the real defect in `cccd30e`. Editing a shell component to "fix" a
+mismatch that does not occur would be a change with no test that can fail
+without it. The issue's second ask — the gate — is the whole of the change, and
+it is the half with durable value.
+
+**D-200.2 — The gate reads two CDP channels, not one.**
+`Runtime.consoleAPICalled` carries what the page says, which is where Vue's
+`Hydration completed but contains mismatches.` lands. `Log.entryAdded` carries
+what the browser says, which is where a 404 on a `/_nuxt/*.js` chunk lands — the
+page never hears about that one. A gate on either channel alone reports a class
+of broken build as perfectly quiet. Verified: the harness's own run shows the
+Vue message on the first channel (negative test) and a 404 on the second (an
+early diagnostic run hit `/insights/100-questions`, a projects slug, and the
+gate reported `Failed to load resource: the server responded with a status of
+404`).
+
+**D-200.3 — Smoke routes are real routes, and their slugs are derived.**
+A probe page composes `bf-probe`, not `bf-default`; 46 green probes said
+nothing about #199 and never could. The eight routes are the ones the issue's
+acceptance names. The two detail slugs are read from `.output/public` (first
+alphabetical child holding an `index.html`), for the reason the harness's
+docstring already refuses a hard-coded probe list: a pinned slug rots the first
+time content moves, and it rots as a 404 that this gate would then report as a
+console error on a build that is fine.
+
+**D-200.4 — A smoke route must prove it hydrated, not merely load.**
+`document.readyState === 'complete'` **and**
+`document.getElementById('__nuxt').__vue_app__`. A prerendered page whose entry
+chunk 404s stays as static HTML, looks perfect, and passes a console-only check
+by having nothing to say. That is the exact shape of a false green this epic
+cannot afford at cutover.
+
+**D-200.5 — `SMOKE_SETTLE_MS = 1500`, and probes get no equivalent.**
+Vue logs the mismatch from `logMismatchError()` when the mismatching node is
+hydrated. This app's root is an async `<Suspense>` (the `bf-default` layout
+`await`s `useBfSite()`), so `hydrate()` returns and `__vue_app__` is assigned
+*before* the layout's subtree hydrates — breaking out of the poll the instant
+`__vue_app__` appears would stop listening one tick before the message. Probes
+need no settle: their verdict is painted in `onMounted`, which runs after their
+subtree has hydrated, so a probe that has reported a verdict has already said
+whatever it was going to say. The value is deliberately generous — too small is
+a silent false green, too large costs seconds.
+
+**D-200.6 — `--ignore-console` exists, defaults to nothing.**
+The shell links one third-party stylesheet (`fonts.googleapis.com`). A gate
+with no way to say "not that one" turns a network hiccup on someone's laptop
+into a merge blocker, and the predictable response to that is deleting the
+gate. The flag is empty by default, so the committed behaviour is strict, and
+using it is a visible act on a command line rather than a quiet default.
+Compiled without the `g` flag on purpose: a `/g/` regex carries `lastIndex`
+between calls and would match every *other* line.
+
+**D-200.7 — The gate cannot see compiler-hoisted static subtrees.**
+Established by control, not by reading source: patching a static text node
+(`Site by` in `bfFooter`'s legal block) in a prerendered page produced silence,
+while patching the adjacent dynamic one (`{{ year }}`) produced the message.
+Vue hydrates a `createStaticVNode` by advancing the node pointer without
+comparing content. Recorded in the harness docstring and in `BRIEF.md` so the
+next person to trust this gate knows its edge. It still catches every mismatch
+that reaches a dynamic node, which is every mismatch #199 was about.
+
+**D-200.8 — `BRIEF.md` is edited, once, in the section the issue names.**
+Epic ground rule 8 freezes `BRIEF.md` to item-runners. Issue #200's body
+instructs this edit explicitly and by section (*"Document the new gate in
+`docs/ds-epic/BRIEF.md` §Probe pages"*), and it is the only place the gate can
+be documented where the next item-runner will read it — every runner reads
+`BRIEF.md` once by contract. The edit is confined to §Probe pages, adds no rule
+and changes no DoD. `issues.md` is untouched.
+
+**D-200.9 — Vitest substitution (residual #86).**
+No vitest test is added. The equivalent-strength check is the harness itself,
+run in both directions: `npx tsx scripts/check-probes.ts` PASS (46 pages, 1659
+rows, 0 failures) **and** a negative run in which the `© 2026` → `© 2027` patch
+is re-injected into the prerendered `/about`, producing exit 1 with
+`console error — Hydration completed but contains mismatches.` on `smoke /about`
+and green everywhere else. Both transcripts are in the issue journal.
+
+## Verification evidence
+
+| Gate | Command | Result |
+|---|---|---|
+| Console gate, smoke alone | `npx tsx scripts/check-probes.ts --only smoke` | PASS — 8 pages, 16 rows, 0 failures |
+| Console gate, negative | same, with `© 2027` injected into `.output/public/about/index.html` | **exit 1**, `smoke /about` FAIL, `console error — Hydration completed but contains mismatches.` |
+| `--ignore-console` | same injection, `--ignore-console "Hydration completed"` | exit 0 — the escape hatch works and is narrow |
+| Probe-only `--only` still skips smoke | `npx tsx scripts/check-probes.ts --only 46` | `check-probes — 1 probe`, PASS — 1 page, 28 rows |
+| Full harness | `npx tsx scripts/check-probes.ts` | **exit 0** — PASS, 46 pages, 1659 rows, 0 failures (38 probes + 8 smoke) |
+| DoD-1 | `npx nuxt generate` | exit 0 |
+| Typecheck gate (residual #71) | `npx nuxt typecheck` | 176 `error TS` = baseline 176; 0 scoped; 0 in `check-probes.ts` |
+| DoD-4 wireframe byte-identity | `git diff --stat f757a64 HEAD -- <wf paths>` | empty |
