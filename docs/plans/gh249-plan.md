@@ -62,11 +62,14 @@ Docs-only, so the gates are textual:
 
 ```bash
 test -f docs/decisions/design-phase-colour-and-art-direction.md
-head -3 docs/decisions/design-phase-colour-and-art-direction.md | grep -q "Context:"
-! grep -q 'grep -Lq' docs/ds-epic/issues/37-bf-hero.md          # line 67 de-inverted
-! sed -n '67p' docs/ds-epic/issues/37-bf-hero.md | grep -q background-image
-git diff --name-only dev...HEAD | grep -qv '\.\(css\|vue\|ts\)$'  # docs only
-git diff --stat dev...HEAD -- docs/ds-epic/BRIEF.md              # empty
+head -3 docs/decisions/design-phase-colour-and-art-direction.md | grep -q 'Context:'
+# no inverted grep survives in the acceptance block (lines 55-68); the string is
+# allowed to remain in D-37.5's prose, which is the record of why it was wrong
+! sed -n '55,68p' docs/ds-epic/issues/37-bf-hero.md | grep -q 'grep -Lq'
+! sed -n '55,68p' docs/ds-epic/issues/37-bf-hero.md | grep -q 'background-image'
+# docs only — no app file in the diff
+! git diff --name-only dev...HEAD | grep -q '^bfna-website-nuxt/'
+test -z "$(git diff --name-only dev...HEAD -- docs/ds-epic/BRIEF.md)"
 ```
 
 Plus CI (`.github/workflows/verify.yml`): typecheck against the 90-diagnostic baseline,
