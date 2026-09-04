@@ -823,29 +823,9 @@ const SMOKE_READY = `(() => {
  */
 const SMOKE_SETTLE_MS = 1_500
 
-/**
- * The `/_ipx/` gate (gh#203).
- *
- * `nuxt.config.ts` leaves `image.provider` undefined unless
- * `NUXT_IMAGE_PROVIDER` is set, so `@nuxt/image` falls back to the **`ipx`**
- * provider and rewrites image URLs — remote ones included — into
- * `/_ipx/q_90/https:/host/…`. `ipx` is a runtime image *server*. This site
- * deploys as static `nuxt generate` output, so nothing answers those URLs: the
- * SPA fallback returns `200 text/plain` and every affected photo renders
- * broken. That is exactly what happened on the bf-dev preview, on `/` and
- * `/about`, and nothing in this harness noticed.
- *
- * Read off **disk**, from the prerendered HTML, rather than out of the live
- * DOM. The artifact in `.output/public` is what Netlify serves; a DOM check
- * runs after hydration, when Vue has already re-rendered the tree, and would
- * be answering a different question. It is also the only form of the check
- * that survives a page whose client bundle never loads.
- *
- * Scoped to the smoke routes, i.e. real pages. `bf-probe/17-bf-media`
- * deliberately renders one local image through `NuxtImg` — proving the module
- * branch is still live — so its output legitimately contains `/_ipx/`, and the
- * frozen `wireframes/` tree is out of scope by D2.
- */
+/* ------------------------------------------------------------------ *
+ * The `/_ipx/` gate (gh#203) — see the header section of the same name
+ * ------------------------------------------------------------------ */
 /**
  * Every `/_ipx/…` URL a page references, from `src` and from `srcset` alike.
  *
