@@ -80,6 +80,7 @@ import type { Cta } from '~/types/bf-contracts'
 import { useBfInsights } from '~/composables/data/useBfInsights'
 import { useBfPrograms } from '~/composables/data/useBfPrograms'
 import { useBfProjects } from '~/composables/data/useBfProjects'
+import { useProgramTheme } from '~/composables/useProgramTheme'
 import { kindLabel, paragraphs } from '~/utils/format'
 
 defineOptions({ name: 'ProjectDetailPage' })
@@ -131,13 +132,31 @@ const crumbs = [
  * migration signal addressed to the client, not a programme, and
  * `/projects/100-questions` is a prerendered page a reader can reach. Resolving
  * the stored string against the three real `bfPrograms` rows and dropping
- * anything that does not match is what keeps that sentence off the page. It is
- * a chip and nothing else hangs off it here — this route has no programme link
- * and no programme-scoped heading — so the guard is one lookup.
+ * anything that does not match is what keeps that sentence off the page.
+ *
+ * The **row** is what is resolved, not just its name, since gh#252: two things
+ * hang off it now — the header chip, which reads the name, and the programme
+ * colour scope, which reads the slug. That is the shape
+ * `/insights/:slug` has carried since #50, and the lookup is still one `find`.
  */
-const programName = project?.program
-  ? programs().find(p => p.name === project.program)?.name
+const program = project?.program
+  ? programs().find(p => p.name === project.program)
   : undefined
+
+/** The name a reader may be shown, or nothing. */
+const programName = program?.name
+
+/**
+ * The programme colour scope (gh#252). `data-program` lands on `<html>` — the
+ * only placement that reaches every branch's bands without the wrapper `<div>`
+ * this template's comment forbids; `useProgramTheme` carries the full argument.
+ *
+ * It applies to both render branches, external and full, because the scope is
+ * a property of the project rather than of the template it happens to use.
+ * `undefined` — an unknown slug, or one of the mis-tagged rows above — leaves
+ * the neutral `:root` default in place.
+ */
+useProgramTheme(program?.slug)
 
 /**
  * The header chips, in the frozen source's order: the literal `Project`, the
