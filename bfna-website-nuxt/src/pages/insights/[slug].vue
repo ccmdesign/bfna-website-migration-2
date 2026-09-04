@@ -196,16 +196,29 @@ const crumbs = [
       `tagline` is for, and it then sits above the meta row instead of below
       it.
 
-      `bf-article-header` (gh#254) is the *only* thing that distinguishes this
-      band from the seven other `bfPageHeader` call sites, and it carries two
-      article-only decisions, both in `public/css/components/article.css`: the
-      band takes the body's 60ch measure so the `<h1>` ranges left on the same
-      vertical as the copy beneath it, and the `<h1>` takes `--size-7`. `class`
-      is on `bfSection`'s pass-through allow-list by name, so it merges onto the
-      band root rather than replacing `bf-page-header`.
+      Two additions, gh#254, and they are the only things distinguishing this
+      band from the seven other `bfPageHeader` call sites.
+
+      `measure="narrow"` gives the header the **body's** 60ch column, so the
+      `<h1>` ranges left on the same vertical as the copy beneath it instead of
+      some 300px outside it. It is a prop rather than a rule in
+      `public/css/components/article.css`, and review is why: the first draft
+      wrote `--_bf-section-measure` from that file and lost a same-specificity,
+      same-layer tie to `Section.vue`'s compiled `.bf-section[data-v-…]` on
+      link order — the header silently kept 1100px in the built site while
+      looking correct in source. `bfPageHeader` declares no `measure` prop, so
+      this falls through `$attrs` onto its `bfSection` root and is consumed as
+      that component's prop; it is the same mechanism the body band below uses,
+      and it competes with nothing.
+
+      `bf-article-header` carries what is left: the `<h1>` at `--size-7`, and
+      the transparent half of the spine's border. `class` is on `bfSection`'s
+      pass-through allow-list by name, so it merges onto the band root rather
+      than replacing `bf-page-header`.
     -->
     <bfPageHeader
       class="bf-article-header"
+      measure="narrow"
       label="Insight header"
       :crumbs="crumbs"
       :chips="chips"

@@ -97,10 +97,18 @@
     font-weight: var(--font-weight-bold);
   }
 
+  /*
+   * `h6` shares `h5`'s step, so `text-transform` alone was carrying the
+   * distinction — and it carries nothing at all for a heading whose text is
+   * already capitalised, which on a foreign-policy site (`NATO`, `EU`, `G7`)
+   * is not hypothetical. `letter-spacing` differentiates the two ranks by
+   * something the content cannot accidentally match.
+   */
   h6,
   .h6 {
     font-size: var(--size--1);
     font-weight: var(--font-weight-bold);
+    letter-spacing: 0.06em;
     text-transform: uppercase;
   }
 

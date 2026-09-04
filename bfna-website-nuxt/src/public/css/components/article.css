@@ -1,22 +1,30 @@
 /*
  * The article page — `/insights/:slug` — gh#254.
  *
- * ## Why this is a static stylesheet and not a `<style scoped>` block
+ * ## Why this is a static stylesheet, and what that does *not* buy
  *
  * `nuxt.config.ts:216-221` records that `public/css/**` is served through
- * `<link>` and never passes through Vite or PostCSS. That matters here for a
- * reason gh#253 paid for: its shipped defect was a focus ring that was correct
- * on the dev server and wrong in the built artefact, because two rules of equal
- * specificity in the same layer were resolved by their order **in the bundle**.
- * A file whose layer position is fixed by the `@layer` statement at
- * `styles.css:2`, and which is never re-ordered by a bundler, cannot acquire
- * that failure mode.
+ * `<link>` and never passes through Vite or PostCSS, so this file's layer
+ * position is fixed by the `@layer` statement at `styles.css:2` and no bundler
+ * can re-order the rules inside it.
  *
- * Nothing below ties on specificity in any case — but two of these rules write
- * variables that `bf/Section.vue`'s own scoped rules also write, at (0,1,0). So
- * every such rule here names **both** classes the band carries, `.bf-section`
- * and the article's own, which makes it (0,2,0) and removes the tie by
- * construction rather than by trusting an order.
+ * That is worth having and it is **not** immunity from gh#253's defect, which
+ * was a focus ring correct on the dev server and wrong in the built artefact
+ * because two rules of equal specificity in one layer were decided by their
+ * order in the bundle. The first draft of this file reproduced it exactly, in
+ * the paragraph that claimed to be safe from it: it set `--_bf-section-measure`
+ * here and called the rule (0,2,0) against `Section.vue`'s (0,1,0) — but Vue's
+ * scoped compiler emits `.bf-section[data-v-…]`, which is **(0,2,0) too**. Same
+ * specificity, same layer, and `/css/styles.css` is linked *before* the Vite
+ * chunk, so `Section.vue` won and the article header silently kept its 1100px
+ * measure in the built site while looking correct in source.
+ *
+ * **The rule that came out of it: never write a custom property from this file
+ * that a `bf-*` SFC also writes.** Its compiled specificity is not what its
+ * source looks like, and it is not visible from here. The measure is set
+ * through `bfSection`'s own `measure` prop from the page instead, so nothing
+ * below competes with a compiled rule at all — the two `border-inline-start`
+ * declarations add a property that `composition/center.css` never declares.
  *
  * ## The two classes
  *
@@ -37,25 +45,6 @@
   }
 
   /*
-   * The header band takes the **body's** measure.
-   *
-   * `bfPageHeader` composes `bfSection` with no `measure`, so its column
-   * resolves the 1100px default while the body band below it is
-   * `measure="narrow"` — 60ch. The `<h1>` therefore ranged left some 300px
-   * outside the column its own article occupies. `--_bf-section-measure` is the
-   * hook `Section.vue:26-42` documents for exactly this: a call site retuning
-   * the band's measure from one place. Written here rather than as a
-   * `measure="narrow"` prop because the band's whole contents — breadcrumb,
-   * chips, heading, standfirst, byline — move together, and because the prop
-   * would also stamp `data-measure` onto the inner box, where
-   * `composition/center.css:45` would set `--_measure` as well and cap a
-   * `[data-measure]` descendant a second time.
-   */
-  .bf-section.bf-article-header {
-    --_bf-section-measure: 60ch;
-  }
-
-  /*
    * The programme spine — an opaque rule down the article's left edge.
    *
    * `--color-program`, not `--color-program-on-light`: this is a fill and never
@@ -71,7 +60,7 @@
    * rule then sits one `--space-s` to the left of the copy instead of at the
    * viewport edge.
    */
-  .bf-section.bf-article-body > .center {
+  .bf-article-body > .center {
     border-inline-start: var(--_bf-article-spine) solid var(--color-program);
   }
 
@@ -82,10 +71,15 @@
    * (`composition/center.css:50-58`), so a 4px border makes the body column 4px
    * wider overall and auto-centring then moves its content 2px right. The
    * header's column would no longer start on the same vertical — which is the
-   * one thing the measure above exists to achieve. Giving both columns the same
-   * box model costs one declaration and keeps the edge exact at every width.
+   * one thing the `measure="narrow"` on the band exists to achieve. Giving both
+   * columns the same box model costs one declaration and keeps the edge exact at
+   * every width.
+   *
+   * `border-inline-start` is safe to declare from here where the measure was
+   * not: `composition/center.css` declares no border at all, so there is
+   * nothing to tie with — this adds a property rather than overwriting one.
    */
-  .bf-section.bf-article-header > .center {
+  .bf-article-header > .center {
     border-inline-start: var(--_bf-article-spine) solid transparent;
   }
 
