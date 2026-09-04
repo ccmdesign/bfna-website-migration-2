@@ -63,7 +63,7 @@
  * program hub's `#projects` and `/about#board` are working in-page links, and a
  * report that cried wolf about them would be one nobody read.
  *
- * ## The two gates that are not per-route
+ * ## The three gates that are not per-route
  *
  * **DoD-3 — every §7 route is reachable from the menus.** BRIEF §2 requires
  * each route in §7 to be linked from `bfNav` or `bfFooter`, with no orphans.
@@ -86,6 +86,15 @@
  * here — generalised from `.bf-logo` to every `bf-*` rule, which is strictly
  * stronger than what it replaces.
  *
+ * **DoD-A9 — `lang` on every prerendered page** (a11y epic, gh#217). Every
+ * `*.html` under `.output/public` must carry a non-empty `lang` on its `<html>`
+ * element. Not a per-route row, because the route list above is the nine BRIEF
+ * §7 routes and the acceptance is phrased over *every* prerendered route:
+ * `/docs/**` renders `layouts/docs-layout.vue`, which makes no `useHead` call,
+ * and shipped no `lang` at all while the declaration lived in the two layouts
+ * that happened to set it. It now lives in `nuxt.config.ts` `app.head`, and this
+ * gate is what stops it drifting back out.
+ *
  * ## Known limit, stated rather than rediscovered
  *
  * Vue hydrates a `createStaticVNode` subtree by advancing the node pointer
@@ -100,7 +109,8 @@
  *
  * `0` only when every route hydrated, carried exactly one `h1`, had no dangling
  * `/_ipx/` URL and logged no console error; when every §7 route is reachable
- * from the menus; and when no compiled stylesheet lost its `@layer` wrapper.
+ * from the menus; when no compiled stylesheet lost its `@layer` wrapper; and
+ * when every prerendered page carries a non-empty `lang`.
  * Placeholder anchors are reported and do not affect the exit code. A route
  * that could not be evaluated is a **failure**, never a skip — a verification
  * that quietly downgrades itself to "PASS (1 skipped)" is exactly how a broken
@@ -116,7 +126,7 @@
  *
  * ## Flags
  *
- *   --only <route>     run a single route (`--only /about`). Skips the two
+ *   --only <route>     run a single route (`--only /about`). Skips the three
  *                      whole-build gates below — they are statements about the
  *                      build, not about a route, and a one-route run is a
  *                      debugging tool rather than the gate.
@@ -127,7 +137,7 @@
  *   --verbose          print every row, not just the failing ones
  */
 import { spawn, type ChildProcess } from 'node:child_process'
-import { createReadStream, existsSync, readFileSync, readdirSync, statSync } from 'node:fs'
+import { createReadStream, existsSync, readFileSync, readdirSync, realpathSync, statSync } from 'node:fs'
 import { mkdtemp, rm } from 'node:fs/promises'
 import { createServer, type Server } from 'node:http'
 import { homedir, tmpdir } from 'node:os'
@@ -816,6 +826,108 @@ const cascadeLayerRows = (): Row[] => {
 }
 
 /* ------------------------------------------------------------------ *
+ * DoD-A9 — `lang` is a config default (a11y epic, gh#217)
+ * ------------------------------------------------------------------ */
+/**
+ * Every `*.html` file under `.output/public`, absolute paths, depth-first.
+ *
+ * `statSync` rather than the `Dirent`'s own `isFile()`/`isDirectory()`: a
+ * symlink is *neither* of those, so a `Dirent`-only walk would skip a symlinked
+ * page and never recurse into a symlinked directory — silently, which is the
+ * one failure mode a gate must not have (see the header). `.output/public`
+ * carries no symlinks today, but `bfna-website-nuxt/public/css` is one in the
+ * source tree, so the shape is not hypothetical. `statSync` follows the link
+ * and reports what is on the other end; `seen` stops a link that points at an
+ * ancestor from looping forever.
+ */
+const prerenderedHtmlFiles = (dir: string, seen = new Set<string>()): string[] => {
+  const real = realpathSync(dir)
+  if (seen.has(real)) return []
+  seen.add(real)
+
+  const out: string[] = []
+  for (const entry of readdirSync(dir)) {
+    const path = join(dir, entry)
+    let stat
+    try {
+      stat = statSync(path)
+    } catch {
+      /* a broken symlink is not a page; the link check owns dead targets */
+      continue
+    }
+    if (stat.isDirectory()) out.push(...prerenderedHtmlFiles(path, seen))
+    else if (stat.isFile() && entry.toLowerCase().endsWith('.html')) out.push(path)
+  }
+  return out
+}
+
+/**
+ * The opening `<html …>` tag, and a `lang` attribute within one.
+ *
+ * Deliberately a tag match rather than a `lang="…"` search anywhere in the
+ * document: `lang` appears on `<code lang>` samples and inside inlined payload
+ * JSON, and a naive whole-file search would go green on a page whose root
+ * element carries nothing. The three `LANG_ATTR` alternates are the three legal
+ * quotings — double, single, bare.
+ */
+const HTML_OPEN_TAG = /<html\b([^>]*)>/i
+const LANG_ATTR = /\blang\s*=\s*("([^"]*)"|'([^']*)'|([^\s"'>]+))/i
+
+/**
+ * DoD-A9: every prerendered page carries a non-empty `lang` on `<html>`.
+ *
+ * A whole-build gate rather than a per-route row, because the acceptance is
+ * phrased over *every* prerendered route and the per-route loop above visits
+ * only the nine §7 routes. `/docs/**` — whose layout makes no `useHead` call —
+ * is precisely the family the narrower check could not see, and was shipping
+ * `<html>` with no `lang` at all until gh#217 moved the declaration into
+ * `nuxt.config.ts` `app.head`.
+ *
+ * WCAG 3.1.1 is Level A. A missing `lang` leaves assistive technology to guess
+ * a pronunciation dictionary, and the guess is silent when it is wrong.
+ */
+const langRows = (): Row[] => {
+  if (!existsSync(publicDir)) {
+    return [{
+      label: 'DoD-A9 — prerendered output present',
+      ok: false,
+      detail: `expected ${publicDir} · actual missing — run \`npx nuxt generate\` first`
+    }]
+  }
+
+  const files = prerenderedHtmlFiles(publicDir)
+
+  if (files.length === 0) {
+    return [{
+      label: 'DoD-A9 — the build emitted prerendered HTML',
+      ok: false,
+      detail: 'expected >= 1 *.html under .output/public · actual 0'
+    }]
+  }
+
+  const offenders: string[] = []
+  for (const file of files) {
+    const open = HTML_OPEN_TAG.exec(readFileSync(file, 'utf8'))
+    const attrs = open?.[1]
+    const lang = attrs === undefined ? undefined : LANG_ATTR.exec(attrs)
+    /* `?? ''` collapses the three quoting alternates; `.trim()` so `lang=" "`
+       is the failure it plainly is rather than a technically-present value. */
+    const value = (lang?.[2] ?? lang?.[3] ?? lang?.[4] ?? '').trim()
+    if (open === null || value === '') offenders.push(file.slice(publicDir.length + 1))
+  }
+
+  return [{
+    label: `DoD-A9 — every prerendered page has a non-empty lang on <html> (${files.length} scanned)`,
+    ok: offenders.length === 0,
+    detail: offenders.length === 0
+      ? `expected 0 without lang · actual 0 of ${files.length}`
+      : `expected 0 without lang · actual ${offenders.length} of ${files.length}: `
+        + `${offenders.slice(0, 5).join(', ')}${offenders.length > 5 ? ', …' : ''}`
+        + ' — set it once in nuxt.config.ts app.head.htmlAttrs, not per layout (gh#217)'
+  }]
+}
+
+/* ------------------------------------------------------------------ *
  * DoD-3 — every §7 route reachable from the menus
  * ------------------------------------------------------------------ */
 /**
@@ -1066,6 +1178,16 @@ const run = async (): Promise<void> => {
       )
       for (const row of layerFailing) console.log(`      ✗ ${row.label} — ${row.detail}`)
       if (verbose) for (const row of layerRows.filter(r => r.ok)) console.log(`      · ${row.label}`)
+
+      const langGate = langRows()
+      const langFailing = langGate.filter(r => !r.ok)
+      results.push({ slug: 'lang on <html> (DoD-A9)', rows: langGate, failing: langFailing })
+      console.log(
+        `${langFailing.length === 0 ? '  ✓ PASS' : '  ✗ FAIL'}  `
+        + `${'lang on <html> (DoD-A9)'.padEnd(44)} ${langGate.length - langFailing.length}/${langGate.length} rows`
+      )
+      for (const row of langFailing) console.log(`      ✗ ${row.label} — ${row.detail}`)
+      if (verbose) for (const row of langGate.filter(r => r.ok)) console.log(`      · ${row.label}`)
 
       const navRows = homeLinks === undefined
         ? [{ label: 'DoD-3 — the home page rendered', ok: false, detail: 'expected / to hydrate · actual it did not, so reachability cannot be judged' }]
