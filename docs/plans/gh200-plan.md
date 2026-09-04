@@ -222,6 +222,25 @@ is re-injected into the prerendered `/about`, producing exit 1 with
 `console error — Hydration completed but contains mismatches.` on `smoke /about`
 and green everywhere else. Both transcripts are in the issue journal.
 
+**D-200.10 — The harness outlives `src/pages/bf-probe/` (review P2-1).**
+Issue #68 deletes that directory at cutover, and `check-probes` used to
+`process.exit(1)` the moment it was gone. #200 is sequenced *before* the
+cutover issues so the shell has a console gate while they land; a gate that
+stops existing at the commit that most needs it is not a gate. The empty-dir
+guard now fires only when nothing else would run (`--only <nn>` with no probes),
+and the probe list degrades to `[]`. Verified by moving the directory aside:
+`check-probes — 0 probes + 8 smoke routes` … `PASS — 8 pages, 16 rows`, exit 0,
+while `--only 46` still reports `No probe pages … Nothing to check.`
+
+**D-200.11 — Console events are attributed to a session (review P3-1).**
+The CDP client tracks the page it is reading (`watching`) and ignores events
+from any other session, cleared *after* `Target.closeTarget` so a dying target's
+last flush still counts against the page that produced it. Currently
+unreachable — pages are sequential and both buffers are cleared per page — but
+a gate whose entire value is quoting the right page's console should not have
+the other shape. The negative test was re-run after this change and still
+fails correctly.
+
 ## Verification evidence
 
 | Gate | Command | Result |

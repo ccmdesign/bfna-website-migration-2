@@ -208,7 +208,25 @@ const verbose = argv.includes('--verbose')
 /* ------------------------------------------------------------------ *
  * Which probes
  * ------------------------------------------------------------------ */
-if (!existsSync(probeDir)) {
+/**
+ * Does this invocation include the real-route smoke set?
+ *
+ * A probe-scoped `--only` skips it, so the epic's per-issue acceptance
+ * (`--only <nn>`) keeps its current cost. Declared here rather than beside the
+ * routes because the guards below need it.
+ */
+const runSmoke = only === undefined || only === 'smoke'
+
+/**
+ * A missing probe directory is fatal only when there is nothing else to run.
+ *
+ * Issue #68 deletes `src/pages/bf-probe/` at cutover, and gh#200 is sequenced
+ * *before* the cutover issues precisely so the shell has a console gate while
+ * they land. A harness that refused to start without probe pages would stop
+ * existing at the commit that most needs it, so the smoke set outlives the
+ * directory it never depended on.
+ */
+if (!existsSync(probeDir) && !runSmoke) {
   console.error(`No probe pages at ${probeDir}. Nothing to check.`)
   process.exit(1)
 }
@@ -219,10 +237,12 @@ if (!existsSync(probeDir)) {
  * whole point of a harness (#115's "hard-coded totals" complaint, applied here
  * before it can be made).
  */
-const allProbes = readdirSync(probeDir)
-  .filter(f => f.endsWith('.vue'))
-  .map(f => f.replace(/\.vue$/, ''))
-  .sort()
+const allProbes = existsSync(probeDir)
+  ? readdirSync(probeDir)
+    .filter(f => f.endsWith('.vue'))
+    .map(f => f.replace(/\.vue$/, ''))
+    .sort()
+  : []
 
 const probes = only === undefined
   ? allProbes
@@ -230,7 +250,9 @@ const probes = only === undefined
     ? []
     : allProbes.filter(slug => slug === only || slug.startsWith(`${only}-`))
 
-if (probes.length === 0 && only !== 'smoke') {
+/* Only a `--only` that named something can match nothing; a full run with no
+   probe pages left (post-#68) is the smoke set on its own, not an error. */
+if (probes.length === 0 && only !== undefined && only !== 'smoke') {
   console.error(`--only ${only} matched no probe. Available: ${allProbes.join(', ')}, smoke`)
   process.exit(2)
 }
@@ -280,9 +302,6 @@ const smokeRoutes = ((): string[] => {
     ...(project === undefined ? [] : [`/projects/${project}`])
   ]
 })()
-
-/** A probe-scoped `--only` skips the smoke set; the epic's per-issue acceptance keeps its cost. */
-const runSmoke = only === undefined || only === 'smoke'
 
 /* ------------------------------------------------------------------ *
  * Static server over .output/public
@@ -489,6 +508,19 @@ class Cdp {
    */
   consoleErrors: string[] = []
 
+  /**
+   * The page currently under test.
+   *
+   * Events carry the session they came from; without this the client would
+   * attribute anything a *closing* target still flushes to whichever page is
+   * opened next. Pages are visited sequentially and both buffers are cleared
+   * per page, so that window is narrow — but a gate whose entire value is
+   * quoting the right page's console should not have that shape at all.
+   * `undefined` means "listening to nothing", which is the honest state
+   * between pages.
+   */
+  watching: string | undefined
+
   private note(text: string): void {
     const clean = text.trim()
     if (clean === '') return
@@ -504,6 +536,7 @@ class Cdp {
         result?: unknown
         error?: { message: string }
         method?: string
+        sessionId?: string
         params?: Record<string, unknown>
       }
       if (typeof message.id === 'number') {
@@ -514,6 +547,9 @@ class Cdp {
         else waiter.ok(message.result)
         return
       }
+      /* Only the page under test speaks; see `watching`. */
+      if (this.watching !== undefined && message.sessionId !== this.watching) return
+
       if (message.method === 'Runtime.exceptionThrown') {
         const details = (message.params?.exceptionDetails ?? {}) as { text?: string, exception?: { description?: string } }
         this.exceptions.push(details.exception?.description ?? details.text ?? 'unknown exception')
@@ -811,6 +847,7 @@ const run = async (): Promise<void> => {
       try {
         cdp.exceptions = []
         cdp.consoleErrors = []
+        cdp.watching = sessionId
         await cdp.send('Runtime.enable', {}, sessionId)
         /* The console gate's browser-side channel (gh#200). */
         await cdp.send('Log.enable', {}, sessionId)
@@ -886,6 +923,8 @@ const run = async (): Promise<void> => {
         }
       } finally {
         await cdp.send('Target.closeTarget', { targetId }).catch(() => {})
+        /* After the close, so anything the dying target flushes still counts. */
+        cdp.watching = undefined
       }
 
       /*
@@ -928,6 +967,7 @@ const run = async (): Promise<void> => {
         try {
           cdp.exceptions = []
           cdp.consoleErrors = []
+          cdp.watching = sessionId
           await cdp.send('Runtime.enable', {}, sessionId)
           await cdp.send('Log.enable', {}, sessionId)
           await cdp.send('Page.enable', {}, sessionId)
@@ -965,6 +1005,7 @@ const run = async (): Promise<void> => {
           }
         } finally {
           await cdp.send('Target.closeTarget', { targetId }).catch(() => {})
+          cdp.watching = undefined
         }
 
         const rows: Row[] = [{
