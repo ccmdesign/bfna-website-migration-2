@@ -56,6 +56,7 @@ import { fileURLToPath } from 'node:url'
 import {
   LEGACY_GONE_EXACT,
   LEGACY_GONE_SENTINEL,
+  LEGACY_REDIRECT_COLLAPSE_PREFIXES,
   LEGACY_REDIRECT_EXACT,
   LEGACY_REDIRECT_PREFIXES,
   LEGACY_UNTOUCHED_PREFIXES
@@ -114,7 +115,8 @@ function reservedSegments(): Set<string> {
     ...LEGACY_UNTOUCHED_PREFIXES,
     ...LEGACY_GONE_EXACT,
     ...Object.keys(LEGACY_REDIRECT_EXACT),
-    ...LEGACY_REDIRECT_PREFIXES.map(([from]) => from)
+    ...LEGACY_REDIRECT_PREFIXES.map(([from]) => from),
+    ...LEGACY_REDIRECT_COLLAPSE_PREFIXES.map(([from]) => from)
   ]
   for (const path of ruledPaths) reserved.add(path.replace(/^\//, ''))
 
@@ -185,8 +187,9 @@ function renderRedirectsFile(map: Map<string, string>): string {
     '# CDN. Both are generated from server/utils/legacy-redirect-rules.ts.',
     '#',
     '# Every rule is forced (`!`) because Netlify serves a matching static file',
-    '# ahead of an unforced rule, and the legacy page files these rules replace are',
-    '# deleted by issue #58, not this one — until then they still prerender.',
+    '# ahead of an unforced rule. The legacy page files these rules replace are gone',
+    '# as of issue #58 (gh#67), but `!` is kept: it states the intent independently',
+    '# of what happens to be in .output/public on any given build.',
     '#',
     `# Absent below by design: ${LEGACY_UNTOUCHED_PREFIXES.join(', ')} and any sub-path.`,
     '# 02 §E marks them explicitly unchanged, and "no rule" is how that is expressed.',
@@ -206,6 +209,11 @@ function renderRedirectsFile(map: Map<string, string>): string {
   lines.push('', '# --- prefix families (splat preserved) ---')
   for (const [from, to] of LEGACY_REDIRECT_PREFIXES) {
     lines.push(row(`${from}/*`, `${to}/:splat`, '301!'))
+  }
+
+  lines.push('', '# --- prefix families (splat dropped: the target takes no second segment) ---')
+  for (const [from, to] of LEGACY_REDIRECT_COLLAPSE_PREFIXES) {
+    lines.push(row(`${from}/*`, to, '301!'))
   }
 
   lines.push('', `# --- one-segment legacy content slugs (${map.size}) ---`)

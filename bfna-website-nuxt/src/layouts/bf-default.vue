@@ -49,9 +49,9 @@
  * order is idempotent: whichever copy arrives first fixes the same order, and
  * probe 46 asserts the resulting order rather than assuming it.
  *
- * `layouts/legacy-base.vue` is deliberately **not** touched — it injects the
- * three `css-legacy/*` files for the routes still served by the legacy stack,
- * and those routes are issue #58's to retire, not this one's.
+ * `layouts/legacy-base.vue` used to inject three `css-legacy/*` files for the
+ * routes the legacy stack served. Issue #58 (gh#67) retired that layout and
+ * those routes, so this layout is now the only stylesheet injector at `/`.
  *
  * ## Head
  *

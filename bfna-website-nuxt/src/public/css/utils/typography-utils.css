@@ -8,7 +8,8 @@
    * src/nuxt.config.ts. The competing `.icon, .material-icons` rule that used
    * to sit here pointed `.icon` at the older icon family and was already
    * losing the source-order tie to utils.css inside `@layer utils`.
-   * `.material-icons` itself comes from Google's hosted stylesheet, which
-   * layouts/legacy-base.vue loads for the legacy pages that use that class.
+   * `.material-icons` itself came from Google's hosted stylesheet, which
+   * layouts/legacy-base.vue loaded for the legacy pages that used that class;
+   * gh#67 retired that layout, so nothing on the site loads it any more.
    */
 }

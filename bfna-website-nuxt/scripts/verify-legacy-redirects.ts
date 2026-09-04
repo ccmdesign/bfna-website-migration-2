@@ -26,14 +26,18 @@
  *
  * ## What is checked live vs. exhaustively
  *
- * Every rule — the 410s, the exact 301s, the prefix families and all 415 slug-map
- * rows — is asserted against `public/_redirects`. Against a live server the fixed
- * rules are all asserted too, plus a representative slice of the slug map (both
- * buckets and every `aka` alias) and the behaviours a table cannot express:
- * `/docs` untouched, an unknown one-segment path falling through rather than being
- * guessed at, a preserved query string, and a normalised trailing slash. Firing
- * 415 HTTP requests to prove a `Record` lookup works would be slower without being
- * stronger; the map's own correctness is the exhaustive static half's job.
+ * Every rule — the 410s, the exact 301s, both kinds of prefix family and all
+ * slug-map rows — is asserted against `public/_redirects`. Against a live server
+ * the fixed rules are all asserted too, plus a representative slice of the slug
+ * map (both buckets and every `aka` alias) and the behaviours a table cannot
+ * express: `/docs` untouched, an unknown one-segment path falling through rather
+ * than being guessed at, a preserved query string, and a normalised trailing
+ * slash. Firing one HTTP request per slug to prove a `Record` lookup works would
+ * be slower without being stronger; the map's own correctness is the exhaustive
+ * static half's job.
+ *
+ * gh#67 added the collapsing families (`<from>/<rest>` → `<to>`, splat dropped)
+ * for residuals #206 and #208, and asserts them on both halves.
  */
 
 import { readFileSync } from 'node:fs'
@@ -44,6 +48,7 @@ import { LEGACY_SLUG_MAP } from '../server/utils/legacy-slug-map'
 import {
   LEGACY_GONE_EXACT,
   LEGACY_GONE_SENTINEL,
+  LEGACY_REDIRECT_COLLAPSE_PREFIXES,
   LEGACY_REDIRECT_EXACT,
   LEGACY_REDIRECT_PREFIXES,
   LEGACY_UNTOUCHED_PREFIXES
@@ -96,6 +101,7 @@ function verifyStatic(): void {
   for (const path of LEGACY_GONE_EXACT) expectRow(path, LEGACY_GONE_SENTINEL, '410!')
   for (const [from, to] of Object.entries(LEGACY_REDIRECT_EXACT)) expectRow(from, to, '301!')
   for (const [from, to] of LEGACY_REDIRECT_PREFIXES) expectRow(`${from}/*`, `${to}/:splat`, '301!')
+  for (const [from, to] of LEGACY_REDIRECT_COLLAPSE_PREFIXES) expectRow(`${from}/*`, to, '301!')
   for (const [slug, target] of Object.entries(LEGACY_SLUG_MAP)) expectRow(`/${slug}`, target, '301!')
 
   // 02 §E: /docs is explicitly unchanged, and "no rule" is how that is expressed.
@@ -108,6 +114,7 @@ function verifyStatic(): void {
     LEGACY_GONE_EXACT.length +
     Object.keys(LEGACY_REDIRECT_EXACT).length +
     LEGACY_REDIRECT_PREFIXES.length +
+    LEGACY_REDIRECT_COLLAPSE_PREFIXES.length +
     Object.keys(LEGACY_SLUG_MAP).length
   assert(rows.size === expectedCount, `no extra rules (${expectedCount})`, `file has ${rows.size}`)
 }
@@ -144,6 +151,12 @@ async function verifyLive(base: string): Promise<void> {
   for (const [from, to] of Object.entries(LEGACY_REDIRECT_EXACT)) await expectRedirect(from, to)
   for (const [from, to] of LEGACY_REDIRECT_PREFIXES) {
     await expectRedirect(`${from}/${SPLAT_PROBE}`, `${to}/${SPLAT_PROBE}`)
+  }
+  // Collapsing families (gh#67): the splat is dropped, so the target is the whole
+  // answer. Asserting the *absence* of the child path is the point — #206 was a
+  // 301 that landed on a 404.
+  for (const [from, to] of LEGACY_REDIRECT_COLLAPSE_PREFIXES) {
+    await expectRedirect(`${from}/${SPLAT_PROBE}`, to)
   }
 
   // A slice of the slug map: one from each bucket plus every `aka` alias, which

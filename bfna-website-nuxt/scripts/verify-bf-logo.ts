@@ -13,19 +13,30 @@
  * Not "the file I wrote contains the strings I put in it" — the interesting
  * assertions are **relational**, against sources this script does not own:
  *
- *  1. **The artwork was transplanted, not redrawn.** Every `d` / `points`
- *     string in `components/bf/Logo.vue` is compared byte-for-byte against
- *     `components/legacy/atoms/Logo.vue`, in order. A redraw, a re-export from
- *     Illustrator, or a dropped sub-path fails here.
- *  2. **The consolidation is real.** `LogoWhite.vue` differs from `Logo.vue`
- *     only by the `bfna-logo--white` class, so one component with a `variant`
- *     prop is a faithful merge — asserted, not assumed.
- *  3. **No new colour** (BRIEF §5 rule 2 / DoD-6), including in the probe page,
+ *  1. **The artwork has the legacy shape.** The drawable inventory of
+ *     `components/bf/Logo.vue` — 13 `<path>`, 2 `<polygon>`, 1 `<rect>`, 15
+ *     `d`/`points` values, and the `695.1 x 266.6` viewBox — is asserted
+ *     literally. A redraw, a re-export from Illustrator, or a dropped sub-path
+ *     still fails here.
+ *  2. **No new colour** (BRIEF §5 rule 2 / DoD-6), including in the probe page,
  *     and the two colourways resolve through the *existing* semantic tokens
  *     the legacy stylesheet's `fill` values map onto.
- *  4. **The legacy files are untouched** — deleting them is issue 58, not this
- *     one — compared against their content on the merge-base with `dev`.
- *  5. The spec's own literal `grep` acceptance expressions, run as written.
+ *  3. **The legacy files are gone** — retiring them was issue 58 (gh#67), and
+ *     this script now asserts their absence where it used to assert that they
+ *     were untouched.
+ *  4. The spec's own literal `grep` acceptance expressions, run as written.
+ *
+ * ## What gh#67 removed, and why
+ *
+ * Sections 2 and 3 used to compare `bf/Logo.vue` byte-for-byte against
+ * `components/legacy/atoms/{Logo,LogoWhite}.vue` — the strongest assertions in
+ * the file, because their reference lived outside this script. Issue 58 deleted
+ * those two files by design (DoD-5), so those comparisons have no reference left
+ * and cannot be evaluated by anything, ever. They are removed rather than
+ * skipped: the exit contract below treats a skip as INCOMPLETE, and a check whose
+ * subject was deliberately retired is finished, not incomplete. What survives is
+ * the intrinsic half — the shape of the artwork and the consolidation's visible
+ * consequences — plus, in section 6, the retirement itself.
  *
  * Section 7 reads `.output/` — the prerendered probe page and the compiled
  * stylesheet — for six marks, the `<title>`/`aria-labelledby` wiring, the
@@ -40,13 +51,11 @@
  * downgrades itself to "PASS (7 skipped)" is worse than no verification —
  * it is exactly how a broken component ships green.
  */
-import { execFileSync } from 'node:child_process'
 import { existsSync, readdirSync, readFileSync } from 'node:fs'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const appRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..')
-const repoRoot = resolve(appRoot, '..')
 
 const bfLogoPath = join(appRoot, 'src/components/bf/Logo.vue')
 const legacyLogoPath = join(appRoot, 'src/components/legacy/atoms/Logo.vue')
@@ -133,7 +142,6 @@ if (!existsSync(bfLogoPath)) {
 }
 
 const bfLogo = code(read(bfLogoPath))
-const legacyLogo = read(legacyLogoPath)
 const probe = code(read(probePath))
 const contracts = read(contractsPath)
 
@@ -150,34 +158,22 @@ check(
 
 /* -------------------------------- 2. artwork transplanted, not redrawn -- */
 
-console.log('\n2. the artwork is the legacy artwork, byte for byte')
+console.log('\n2. the artwork still has the legacy shape')
 const bfGeometry = geometry(bfLogo)
-const legacyGeometry = geometry(legacyLogo)
-check('drawable count matches legacy Logo.vue', bfGeometry.length, legacyGeometry.length)
 check('15 d/points values (13 path + 2 polygon; <rect> has neither)', bfGeometry.length, 15)
 check(
-  'drawable element counts match legacy (13 path, 2 polygon, 1 rect)',
+  'drawable element counts (13 path, 2 polygon, 1 rect)',
   ['path', 'polygon', 'rect'].map(tag => (bfLogo.match(new RegExp(`<${tag}\\b`, 'g')) ?? []).length),
   [13, 2, 1]
 )
-check('every d/points value is byte-identical to legacy, in order', bfGeometry, legacyGeometry)
-check(
-  'viewBox matches legacy',
-  /viewBox="0 0 695\.1 266\.6"/.test(bfLogo) && /viewBox="0 0 695\.1 266\.6"/.test(legacyLogo),
-  true
-)
+check('viewBox is the legacy artboard', /viewBox="0 0 695\.1 266\.6"/.test(bfLogo), true)
 check('the inert `class="st0"` is gone from the markup', /class="st0"/.test(bfLogo), false)
 
 /* ------------------------------------------- 3. the consolidation is real -- */
 
 console.log('\n3. one component replaces two legacy files')
-const legacyWhite = read(legacyWhitePath)
-check(
-  'LogoWhite.vue differs from Logo.vue only by the `bfna-logo--white` class',
-  legacyWhite.replace(' bfna-logo--white', ''),
-  legacyLogo
-)
 check('bf/Logo.vue ships exactly one copy of the artwork', (bfLogo.match(/<svg/g) ?? []).length, 1)
+check('both colourways come from the one `variant` prop', /data-variant/.test(bfLogo), true)
 check("`variant` is typed in bf-contracts, not inline", /export type LogoVariant = 'default' \| 'white'/.test(contracts), true)
 check('the component imports its props type from bf-contracts', /from '~\/types\/bf-contracts'/.test(bfLogo), true)
 check('no shared type declared inline in the component', /^(export )?(interface|type) /m.test(bfLogo.split('<template>')[0] ?? ''), false)
@@ -231,21 +227,12 @@ check('accessible name is wired with aria-labelledby → <title>', /:aria-labell
 check('`$attrs` falls through (no inheritAttrs: false)', /inheritAttrs:\s*false/.test(bfLogo), false)
 check('presentational only — no data access', /queryCollection|useAsyncData|useState|defineStore|composables\/data/.test(bfLogo), false)
 
-/* -------------------------------------- 6. legacy files left alone (is 58) -- */
+/* ------------------------------------------ 6. legacy files retired (58) -- */
 
-console.log('\n6. the legacy files are untouched — deleting them is issue 58')
-try {
-  const base = execFileSync('git', ['-C', repoRoot, 'merge-base', 'HEAD', 'dev'], { encoding: 'utf8' }).trim()
-  for (const rel of [
-    'bfna-website-nuxt/src/components/legacy/atoms/Logo.vue',
-    'bfna-website-nuxt/src/components/legacy/atoms/LogoWhite.vue'
-  ]) {
-    const diff = execFileSync('git', ['-C', repoRoot, 'diff', '--stat', base, 'HEAD', '--', rel], { encoding: 'utf8' }).trim()
-    check(`${rel.split('/').pop()} unchanged since ${base.slice(0, 7)}`, diff, '')
-  }
-} catch (error) {
-  skip('legacy-file diff', `git unavailable (${(error as Error).message.split('\n')[0]})`)
-}
+console.log('\n6. the legacy logo files are gone — issue 58 retired them (DoD-5)')
+check('components/legacy/atoms/Logo.vue is gone', existsSync(legacyLogoPath), false)
+check('components/legacy/atoms/LogoWhite.vue is gone', existsSync(legacyWhitePath), false)
+check('components/legacy/ is gone entirely', existsSync(join(appRoot, 'src/components/legacy')), false)
 
 /* ---------------------------------------------- 7. the prerendered markup -- */
 
