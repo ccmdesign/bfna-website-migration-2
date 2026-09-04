@@ -190,13 +190,9 @@ const year = new Date().getFullYear()
             </p>
 
             <!--
-              `role="list"` is not redundant: `base/reset.css:95-103` strips
-              `list-style` from every `ul[class]`, and WebKit reads that
-              declaration as the author no longer meaning a list — VoiceOver stops
-              saying "list, N items" and stops offering list navigation. Restating
-              the implicit role puts the semantics back without putting the bullets
-              back. Same fix and same reason as `nav/Dropdown.vue:109` and
-              `Breadcrumb.vue:238-240` (gh#220, D27).
+              `role="list"` for the reason given on the `bf-footer__menus` list
+              above: `base/reset.css` strips the marker from every `ul[class]`
+              and WebKit drops the implicit list role with it (gh#220).
             -->
             <ul
               v-if="m.items"
@@ -215,17 +211,10 @@ const year = new Date().getFullYear()
       </ul>
 
       <!--
-        `role="list"` is not redundant: `base/reset.css:95-103` strips
-        `list-style` from every `ul[class]`, and WebKit reads that
-        declaration as the author no longer meaning a list — VoiceOver stops
-        saying "list, N items" and stops offering list navigation. Restating
-        the implicit role puts the semantics back without putting the bullets
-        back. Same fix and same reason as `nav/Dropdown.vue:109` and
-        `Breadcrumb.vue:238-240` (gh#220, D27).
-
-        Load-bearing twice over here: `aria-label` is only exposed on an element
-        with a role that supports a name, so without the role the label goes as
-        well as the list.
+        `role="list"` for the reason given on the `bf-footer__menus` list above,
+        and load-bearing twice over here: `aria-label` is only exposed on an
+        element whose role supports a name, so without the role this list loses
+        its name as well as its semantics (gh#220).
       -->
       <ul
         class="bf-footer__social | cluster"

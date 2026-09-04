@@ -77,8 +77,7 @@ const props = withDefaults(defineProps<GridProjectsProps>(), {
     policy is `data-min-width`, there is no `style` binding on this element,
     and nothing in this file names a column template.
 
-    `role="list"` is what keeps that announcement, and it is not
-    redundant: `base/reset.css:95-103` strips `list-style` from every
+    `role="list"` is not redundant: `base/reset.css:95-103` strips `list-style` from every
     `ul[class]`, and WebKit reads that declaration as the author no longer
     meaning a list — VoiceOver stops saying "list, N items" and stops
     offering list navigation. Restating the implicit role puts the

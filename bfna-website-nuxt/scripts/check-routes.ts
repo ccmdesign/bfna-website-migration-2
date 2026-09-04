@@ -167,8 +167,8 @@
  *
  * ## Flags
  *
- *   --only <route>     run a single route (`--only /about`). Skips the three
- *                      whole-build gates below — they are statements about the
+ *   --only <route>     run a single route (`--only /about`). Skips every
+ *                      whole-build gate below — they are statements about the
  *                      build, not about a route, and a one-route run is a
  *                      debugging tool rather than the gate.
  *   --timeout <ms>     per-route budget for reaching a hydrated state
@@ -1116,10 +1116,16 @@ const reducedMotionRows = (): Row[] => {
  * naive search would go green on a page whose lists carry neither. The `role`
  * alternates are the three legal quotings, and the value has to be `list`
  * exactly — `role="presentation"` is the author saying the opposite.
+ *
+ * Both attribute patterns anchor on whitespace-or-tag-start rather than on
+ * `\\b`, and that is the difference between a gate and a hole: `\\brole` matches
+ * inside `data-role="list"` — `-` is a non-word character, so the boundary is
+ * there — which would let a `data-role` attribute satisfy an ARIA requirement.
+ * Review finding on this PR (gh#220 P2-1).
  */
 const LIST_OPEN_TAG = /<(ul|ol)\b([^>]*)>/gi
-const LIST_CLASS_ATTR = /\bclass\s*=/i
-const LIST_ROLE_IS_LIST = /\brole\s*=\s*(?:"\s*list\s*"|'\s*list\s*'|list(?=[\s>]|$))/i
+const LIST_CLASS_ATTR = /(?:^|\s)class\s*=/i
+const LIST_ROLE_IS_LIST = /(?:^|\s)role\s*=\s*(?:"\s*list\s*"|'\s*list\s*'|list(?=[\s>]|$))/i
 
 /**
  * Prerendered trees this gate does not judge, and why. Stated as data rather
@@ -1178,7 +1184,7 @@ const listRoleRows = (): Row[] => {
       if (!LIST_CLASS_ATTR.test(attrs)) continue
       inspected++
       if (!LIST_ROLE_IS_LIST.test(attrs)) {
-        const cls = /\bclass\s*=\s*"([^"]*)"/i.exec(attrs)?.[1] ?? '?'
+        const cls = /(?:^|\s)class\s*=\s*"([^"]*)"/i.exec(attrs)?.[1] ?? '?'
         offenders.push(`${rel} — <${tag.toLowerCase()} class="${cls}">`)
       }
     }

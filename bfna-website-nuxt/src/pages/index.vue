@@ -152,8 +152,7 @@ const insightChips = (i: Insight): string[] | undefined =>
     as a flex item beside the cards — and `bfCard` renders an `<li>`, which
     needs a real list parent. This is also the frozen wireframe's own shape.
 
-    `role="list"` is what keeps that announcement, and it is not
-    redundant: `base/reset.css:95-103` strips `list-style` from every
+    `role="list"` is not redundant: `base/reset.css:95-103` strips `list-style` from every
     `ul[class]`, and WebKit reads that declaration as the author no longer
     meaning a list — VoiceOver stops saying "list, N items" and stops
     offering list navigation. Restating the implicit role puts the
