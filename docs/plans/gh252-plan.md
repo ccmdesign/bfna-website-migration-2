@@ -43,16 +43,16 @@ The two permitted placements are not equivalent:
   bands, two colours. That is not the mechanism #251 built.
 - **`<html>`, via `useHead({ htmlAttrs })`.** One attribute, set above the
   landmark, recolouring everything below it. This is production's actual
-  mechanism as `semantic-colors.css:186-192` describes it ("one custom property,
+  mechanism as `semantic-colors.css:187-193` describes it ("one custom property,
   set high in the tree, recolours every component below it"), and it needs no
   element that does not already exist.
 
 `<html>` it is. The specificity tie this creates was anticipated and is already
 handled: `:root` and `[data-program="x"]` have equal specificity, both live in
-`@layer tokens`, and `semantic-colors.css:239-244` states that the neutral
+`@layer tokens`, and `semantic-colors.css:237-241` states that the neutral
 default is declared **first on purpose** so the programme block wins when the
 attribute lands on `<html>` itself. Source order is verified, not assumed —
-`:root` at 245, `[data-program="democracy"]` at 249.
+`:root` at 242, `[data-program="democracy"]` at 249.
 
 `<body>` was considered and rejected: it works, but it makes the neutral default
 unreachable-in-practice rather than genuinely a fallback, and it disagrees with

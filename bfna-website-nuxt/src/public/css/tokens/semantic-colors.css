@@ -190,7 +190,14 @@
      * one custom property, set high in the tree, recolours every component
      * below it. In v2 that survived only in dead code
      * (`css-legacy/global.css:274-289`). This is the hook, keyed to
-     * `[data-program]` on the route wrapper.
+     * `[data-program]`.
+     *
+     * gh#252 settled where that attribute goes, and it is NOT a route
+     * wrapper — pages in this app render no element of their own, so
+     * there is none to key off. It is set on `<html>` by
+     * `src/composables/useProgramTheme.ts` through
+     * `useHead({ htmlAttrs })`, which is exactly the case the source-order
+     * note above the `:root` block below was written for.
      *
      * The hue assignment below is taken from the LIVE production site as
      * measured, not from that dead block, which has green and yellow swapped

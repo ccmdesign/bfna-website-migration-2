@@ -32,6 +32,14 @@
  *   what `semantic-colors.css` describes at its point of declaration: "one
  *   custom property, set high in the tree, recolours every component below it".
  *
+ * The issue's own wording offers a third option — "on `<main>` via
+ * `useHead`" — and that one does not exist. `useHead` writes `title`, `meta`,
+ * `link`, `script`, `style`, `noscript`, `htmlAttrs` and `bodyAttrs`; it has no
+ * way to address an arbitrary element in the page, and `<main>` belongs to the
+ * layout, not to any of the three pages. `htmlAttrs` is the nearest real thing
+ * the sentence could have meant, and it is strictly better here: the scope
+ * starts one element higher and needs nothing from the layout.
+ *
  * Hence `htmlAttrs`. Note the consequence for later consumers (#253 onward):
  * the scope spans the nav and the footer, not only `<main>`, so a token
  * consumed in site chrome recolours per route. That is production's behaviour;
