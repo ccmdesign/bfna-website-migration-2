@@ -107,11 +107,23 @@ issue order = dependency order. Specs at `docs/a11y-epic/issues/<NN>-<slug>.md`.
 Dev server: `env NUXT_IMAGE_PROVIDER=none npx nuxt dev`. The env var is load-bearing — without it
 `@nuxt/image`'s ipx provider breaks Directus-hosted images even in dev (D12).
 
-Gates per issue: `npm run typecheck` (no new errors until site-epic #83, zero after),
-`npx nuxt generate` exit 0 (**never** `npm run generate` — it runs the importer, which needs Directus
-secrets), `npx tsx scripts/check-routes.ts`, `npx tsx scripts/check-links.ts`. Install with
-`npm install` until site-epic #82 tracks the lockfile. Typecheck baseline at the branch point is
-**73 errors**, all outside bf scope.
+Gates per issue are now enforced by CI. `.github/workflows/verify.yml` runs on every PR to `dev`
+(gh#236, merged 2026-09-04) and executes `npm ci`, the typecheck gate, `npx nuxt generate`
+(**never** `npm run generate` — it runs the importer, which needs Directus secrets),
+`npx tsx scripts/check-routes.ts` and `npx tsx scripts/check-links.ts`. The lockfile is tracked, so
+`npm ci` is now correct and `npm install` is not.
+
+**Typecheck baseline corrected: 90, not 73.** gh#236 measured it — 89 from `nuxt typecheck` plus 1
+from `typecheck:scripts`, a half that had never run at all because `npm run typecheck` chains the
+two with `&&`. The 73 figure inherited from site-epic §3 was measuring only the first half. The
+gate is not an integer either: `.github/typecheck-baseline.txt` holds a `(file, TS-code, count)`
+signature set, so a commit that fixes one error and introduces another cannot pass. Do not "fix"
+the baseline errors — site-epic #83 owns that debt.
+
+Two things CI does **not** cover, both filed as residuals off gh#236: `check-routes.ts` runs on
+`chromium-headless-shell` rather than the Chrome stable the runner image ships, because Chrome
+requests `/favicon.ico` and the site 404s on it (gh#241, overlapping site-epic #69); and
+`check-links.ts` reaches `bfna.simplyas.com`, so a Directus outage reddens the gate (gh#238).
 
 ## 4. Decisions of record (D23–D32)
 
