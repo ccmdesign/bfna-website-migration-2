@@ -83,13 +83,16 @@ function checkOutputPackageJson() {
 function checkSourceImports() {
   const { execSync } = require('child_process')
   try {
-    const grepResult = execSync(
+    // Typed explicitly: `require()` returns `any`, so without this every value
+    // downstream is `any` too and the callback parameter below is an implicit
+    // one — which is the error residual #104's `tsc` pass found here.
+    const grepResult: string = execSync(
       'grep -r "contentful" --include="*.ts" --include="*.js" --include="*.vue" src/ || true',
       { cwd: projectRoot, encoding: 'utf-8' }
     )
-    
+
     // Filter out false positives (metadata fields in JSON, comments, etc.)
-    const lines = grepResult.split('\n').filter(line => {
+    const lines = grepResult.split('\n').filter((line: string) => {
       const trimmed = line.trim()
       return trimmed && 
         !trimmed.includes('excerpt_from_contentful') &&

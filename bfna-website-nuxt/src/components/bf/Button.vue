@@ -67,10 +67,11 @@
  * `0.4em 1.2em` padding and a 2px border, the latter through the existing
  * `--border-width-medium` token. Because the padding is in `em`, a size change
  * is a font-size change and the whole box scales with it — there is no
- * per-size padding table. `scripts/verify-bf-button.ts` parses those two
- * values back out of `wireframe.css`, and the probe measures a real hidden
- * wireframe button against a rendered `bf-button`, so neither number is typed
- * twice and drift on either side fails.
+ * per-size padding table. `scripts/verify-bf-button.ts` parsed those two
+ * values back out of `wireframe.css`, and probe 15 measured a real hidden
+ * wireframe button against a rendered `bf-button`. Both retired with the probe
+ * pages in gh#68 (BRIEF §5); the two values below still come from the frozen
+ * rule and are not to be re-derived.
  */
 import type { ButtonProps } from '~/types/bf-contracts'
 
@@ -208,8 +209,10 @@ const cssVars = computed<Record<string, string>>(() => {
   gh#101: `postcss-preset-env`'s `stage: 1` enabled the cascade-layers
   polyfill, which rewrote each SFC stylesheet in isolation and flattened this
   wrapper into unlayered rules that then outranked every layer. The feature is
-  off in `nuxt.config.ts`; `scripts/verify-bf-button.ts` §5 reads the emitted
-  CSS and the probe reads the live CSSOM, so a regression fails loudly.
+  off in `nuxt.config.ts`, and `scripts/check-routes.ts`'s cascade-layer gate
+  reads the emitted CSS, so a regression fails loudly. (That gate replaced
+  `verify-bf-button.ts` §5 and probe 15's live-CSSOM read in gh#68, and covers
+  every `bf-*` rule rather than this one component's.)
 */
 @layer components {
   .bf-button {

@@ -413,9 +413,19 @@ const related = (project ? insightsForProject(project.slug) : []).slice(0, 6)
  * they are a class, which is the only difference.
  *
  * No colour, no `--_bf-*` variable, no `:not()` (D-20.5).
+ *
+ * Wrapped in `@layer components` (gh#68). It was not, and the cascade-layer
+ * gate in `scripts/check-routes.ts` caught it on its first run: this was the one
+ * `.bf-*` rule in the whole build shipping **unlayered**, and unlayered author
+ * CSS outranks every layer — so a `utils` or `overrides` rule could never have
+ * beaten it, which is backwards. Exactly the defect residual #98 / gh#101 was
+ * about, arriving through a page's own `<style scoped>` rather than through the
+ * postcss polyfill.
  */
-.bf-project-episodes {
-  padding-inline-start: 0;
-  list-style: none;
+@layer components {
+  .bf-project-episodes {
+    padding-inline-start: 0;
+    list-style: none;
+  }
 }
 </style>

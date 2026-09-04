@@ -252,9 +252,20 @@ const expectedMenus = [
   { label: 'Documentaries', href: 'https://bfnadocs.org', external: true }
 ]
 
-/** The one rewrite: `/wireframes/insights?format=video` → `/insights?format=video`. */
-const deWireframe = <T extends { to?: string }>(node: T): T =>
-  (node.to ? { ...node, to: node.to.replace(/^\/wireframes/, '') } : node)
+/**
+ * The one rewrite: `/wireframes/insights?format=video` → `/insights?format=video`.
+ *
+ * Constrained to `object` rather than to `{ to?: string }` (residual #104, which
+ * put `scripts/**` under `tsc` and surfaced this): the expected menu shape is a
+ * union, and its *group* members — `{ label, items }` — carry no `to` at all.
+ * A `{ to?: string }` constraint makes those a weak-type mismatch, so the call
+ * below did not compile. The property is read through a narrowing cast instead,
+ * which is what the runtime check on the next line was already doing.
+ */
+const deWireframe = <T extends object>(node: T): T => {
+  const to = (node as { to?: string }).to
+  return to ? { ...node, to: to.replace(/^\/wireframes/, '') } : node
+}
 
 check('menus() — top-level labels',
   menus.map(m => m.label), expectedMenus.map(m => m.label))

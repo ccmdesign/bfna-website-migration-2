@@ -111,12 +111,28 @@ independent of the flip): `server/api/test.get.ts`, `server/api/contact.post.ts`
   feeds `src/server/api/search.get.ts` → `pages/search.vue`. Retire together
   with `/search`; no wireframe page depends on it (`/wireframes/search`
   reads `src/assets/wireframe-data/*.json` directly, not this index).
+  **Done in gh#68 (residual #211), with one correction to the wording above:**
+  `/search` was *replaced*, not retired — `pages/search.vue` is now a `bf-*`
+  page reading the `bf*` `@nuxt/content` collections, and it never touched this
+  index. What retired was the whole legacy chain behind the old page:
+  `scripts/generate-search-index.ts`, `server/api/search.get.ts`,
+  `src/types/search.ts` (importable only by that script) and
+  `public/search.json`, plus the `generate:search-index` step in `build` and the
+  script entry itself. gh#67 had already deleted `composables/legacy/useSearch.ts`,
+  the last caller of `/api/search`; a repo-wide `grep -rn "api/search"` over
+  `src/`, `scripts/`, `server/` and `package.json` returned nothing before the
+  deletion.
 - `src/layouts/legacy-base.vue:133-138` — `useHead` stylesheet hrefs
   `/global.css`, `/fixes.css`, `/v2updates.css` (public root). These files do
   **not exist at that path** today — the actual files live at
   `public/css-legacy/{global,fixes,v2updates}.css`. Pre-existing broken
   reference in the current checkout, unrelated to the flip itself, but worth
   fixing or dropping in the same pass since `legacy-base.vue` retires anyway.
+  **Done: gh#67 deleted `legacy-base.vue` and with it the three `useHead`
+  links; gh#68 verified no other layout references those paths, emptied the
+  matching commented-out entries from `nuxt.config.ts`'s `css: []`, and deleted
+  the four unreferenced copies at `public/{global,fixes,v2updates,legacy-styles}.css`.
+  The originals stay at `src/public/css-legacy/`, unserved.**
 - No `routeRules` are defined anywhere in `nuxt.config.ts` (none to update).
 - No sitemap module/config file exists in the repo (nothing to update there).
 - `.netlify/netlify.toml` is a local auto-generated CLI state file (empty
