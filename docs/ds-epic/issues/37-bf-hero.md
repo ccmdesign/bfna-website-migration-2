@@ -58,15 +58,27 @@ npm run typecheck
 npx nuxt generate
 test -f src/components/bf/Hero.vue
 grep -q "<h1" src/components/bf/Hero.vue
-grep -Lq "level" src/components/bf/Hero.vue
+! grep -q "level" src/components/bf/Hero.vue
 ```
 Probe page `src/pages/bf-probe/37-bf-hero.vue` renders heading-only,
 heading+description, and heading+description+actions forms:
 ```bash
 [ "$(grep -c '<h1' .output/public/bf-probe/37-bf-hero/index.html)" = "3" ]
-grep -Lq "background-image\|--color-.*:.*#" src/components/bf/Hero.vue
+! grep -q -- "--color-.*:.*#" src/components/bf/Hero.vue
 ```
 Fails today (no `bf/Hero.vue`), passes once done.
+
+> **Amended 2026-09-04, gh#249.** Both `grep -Lq` lines above are now `! grep -q`,
+> writing back the substitution D-37.5 §1 published but never applied to this block,
+> and `background-image` has been dropped from the second pattern. It was the last
+> mechanical enforcement of BRIEF D5 / §5 rule 2 standing in front of work that has to
+> paint one: BF-220 gives `bfHero` a photograph and a scrim. The colour-literal half of
+> the assertion is kept — a hard-coded hex in this component is still a defect — and
+> what a new colour now has to clear is a measured contrast floor rather than a ban. See
+> [`docs/decisions/design-phase-colour-and-art-direction.md`](../../decisions/design-phase-colour-and-art-direction.md).
+> D-37.5 §2's `grep -c` defect is **not** amended here: gh#249's scope is the colour
+> rule, the substitution below still stands, and rewriting a passing check that no one
+> is blocked on is not this issue's business.
 
 ## Decisions
 
@@ -159,6 +171,10 @@ identical property.
    ! grep -q "level" src/components/bf/Hero.vue
    ! grep -q "background-image\|--color-.*:.*#" src/components/bf/Hero.vue
    ```
+
+   *(As run at gh#46. gh#249 has since written both negations back into the
+   acceptance block above and dropped `background-image` from the second pattern —
+   see the amendment note there. The `level` line is unchanged in substance.)*
 
 2. **`grep -c` counts lines, not occurrences.** Nuxt's prerendered HTML is a
    single line — `wc -l .output/public/bf-probe/37-bf-hero/index.html` is `0` —
