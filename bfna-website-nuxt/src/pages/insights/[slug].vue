@@ -195,8 +195,30 @@ const crumbs = [
       `<p><strong>`: it is the standfirst of the article, which is what
       `tagline` is for, and it then sits above the meta row instead of below
       it.
+
+      Two additions, gh#254, and they are the only things distinguishing this
+      band from the seven other `bfPageHeader` call sites.
+
+      `measure="narrow"` gives the header the **body's** 60ch column, so the
+      `<h1>` ranges left on the same vertical as the copy beneath it instead of
+      some 300px outside it. It is a prop rather than a rule in
+      `public/css/components/article.css`, and review is why: the first draft
+      wrote `--_bf-section-measure` from that file and lost a same-specificity,
+      same-layer tie to `Section.vue`'s compiled `.bf-section[data-v-…]` on
+      link order — the header silently kept 1100px in the built site while
+      looking correct in source. `bfPageHeader` declares no `measure` prop, so
+      this falls through `$attrs` onto its `bfSection` root and is consumed as
+      that component's prop; it is the same mechanism the body band below uses,
+      and it competes with nothing.
+
+      `bf-article-header` carries what is left: the `<h1>` at `--size-7`, and
+      the transparent half of the spine's border. `class` is on `bfSection`'s
+      pass-through allow-list by name, so it merges onto the band root rather
+      than replacing `bf-page-header`.
     -->
     <bfPageHeader
+      class="bf-article-header"
+      measure="narrow"
       label="Insight header"
       :crumbs="crumbs"
       :chips="chips"
@@ -245,9 +267,17 @@ const crumbs = [
 
       `measure="narrow"` is the frozen page's own — this is the one band on the
       site that is a column of running prose and wants a reading measure rather
-      than the default.
+      than the default. It stays 60ch; gh#254 changed nothing about it.
+
+      `bf-article-body` carries the programme spine — an opaque `--color-program`
+      rule down the column's left edge, tying the piece to its programme without
+      a second token or a `v-if`. `data-program` is on `<html>` for the three
+      real programmes only (gh#252), so a row carrying one of the 52 migration
+      signals, or none, resolves the neutral `:root` default and the spine paints
+      navy. Same D-50.2 guard as the chip, the banner link and the related
+      heading, arrived at without this file saying anything.
     -->
-    <bfSection label="Body" measure="narrow">
+    <bfSection class="bf-article-body" label="Body" measure="narrow">
       <!--
         The dek. A plain string: the HTML strip and entity decode the frozen
         page's render-time helper did now happen once, in the build-time

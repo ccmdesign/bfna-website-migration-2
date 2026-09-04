@@ -1,0 +1,104 @@
+/*
+ * The article page — `/insights/:slug` — gh#254.
+ *
+ * ## Why this is a static stylesheet, and what that does *not* buy
+ *
+ * `nuxt.config.ts:216-221` records that `public/css/**` is served through
+ * `<link>` and never passes through Vite or PostCSS, so this file's layer
+ * position is fixed by the `@layer` statement at `styles.css:2` and no bundler
+ * can re-order the rules inside it.
+ *
+ * That is worth having and it is **not** immunity from gh#253's defect, which
+ * was a focus ring correct on the dev server and wrong in the built artefact
+ * because two rules of equal specificity in one layer were decided by their
+ * order in the bundle. The first draft of this file reproduced it exactly, in
+ * the paragraph that claimed to be safe from it: it set `--_bf-section-measure`
+ * here and called the rule (0,2,0) against `Section.vue`'s (0,1,0) — but Vue's
+ * scoped compiler emits `.bf-section[data-v-…]`, which is **(0,2,0) too**. Same
+ * specificity, same layer, and `/css/styles.css` is linked *before* the Vite
+ * chunk, so `Section.vue` won and the article header silently kept its 1100px
+ * measure in the built site while looking correct in source.
+ *
+ * **The rule that came out of it: never write a custom property from this file
+ * that a `bf-*` SFC also writes.** Its compiled specificity is not what its
+ * source looks like, and it is not visible from here. The measure is set
+ * through `bfSection`'s own `measure` prop from the page instead, so nothing
+ * below competes with a compiled rule at all — the two `border-inline-start`
+ * declarations add a property that `composition/center.css` never declares.
+ *
+ * ## The two classes
+ *
+ * `.bf-article-header` on the `bfPageHeader` band and `.bf-article-body` on the
+ * body `bfSection`, both from `pages/insights/[slug].vue`. `class` is on
+ * `bfSection`'s pass-through allow-list by name (`Section.vue:120-122`), so it
+ * merges onto the band root rather than replacing `bf-section`.
+ */
+
+@layer components {
+  /*
+   * The spine's width, declared once on the two bands that share it.
+   * `--border-width-thick` is 4px (`tokens/semantic-misc.css`).
+   */
+  .bf-article-header,
+  .bf-article-body {
+    --_bf-article-spine: var(--border-width-thick);
+  }
+
+  /*
+   * The programme spine — an opaque rule down the article's left edge.
+   *
+   * `--color-program`, not `--color-program-on-light`: this is a fill and never
+   * text, which is the only tier distinction that matters
+   * (`tokens/semantic-colors.css:255-258`). It needs no guard and no fallback
+   * declaration: `data-program` lands on `<html>` only for the three real
+   * programmes (gh#252), and `semantic-colors.css` declares the neutral `:root`
+   * default first and deliberately, so an article carrying one of the 52
+   * migration-signal values — or none at all — paints navy. That is the
+   * degradation, and it is the token's, not this file's.
+   *
+   * On `.center` rather than on the band, because `.center` is the column: the
+   * rule then sits one `--space-s` to the left of the copy instead of at the
+   * viewport edge.
+   */
+  .bf-article-body > .center {
+    border-inline-start: var(--_bf-article-spine) solid var(--color-program);
+  }
+
+  /*
+   * The same border on the header, in `transparent`, and it is load-bearing.
+   *
+   * `.center` is `box-sizing: content-box` with `margin-inline: auto`
+   * (`composition/center.css:50-58`), so a 4px border makes the body column 4px
+   * wider overall and auto-centring then moves its content 2px right. The
+   * header's column would no longer start on the same vertical — which is the
+   * one thing the `measure="narrow"` on the band exists to achieve. Giving both
+   * columns the same box model costs one declaration and keeps the edge exact at
+   * every width.
+   *
+   * `border-inline-start` is safe to declare from here where the measure was
+   * not: `composition/center.css` declares no border at all, so there is
+   * nothing to tie with — this adds a property rather than overwriting one.
+   */
+  .bf-article-header > .center {
+    border-inline-start: var(--_bf-article-spine) solid transparent;
+  }
+
+  /*
+   * The article's `<h1>`, at the top of the ramp gh#254 extended.
+   *
+   * `--size-7` is 27.4px at 320 and 64.5px at 1248 and above. `base/typography.
+   * css` sets `h1` to `--size-4` in `@layer defaults`; this is `@layer
+   * components`, which is later in the order at `styles.css:2`, so it wins on
+   * layer alone and no specificity argument is involved.
+   *
+   * `line-height: 1.05` because the stack's 1.5 is a reading value and would
+   * open a 64px headline into unrelated lines. `text-wrap: balance` so a
+   * two-word last line does not hang off a headline this size; it degrades to
+   * normal wrapping where unsupported.
+   */
+  .bf-article-header .bf-page-header__heading {
+    font-size: var(--size-7);
+    line-height: 1.05;
+    text-wrap: balance;
+  }
+}

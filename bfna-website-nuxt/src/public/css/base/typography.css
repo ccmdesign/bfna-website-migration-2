@@ -29,40 +29,86 @@
     margin-block: 0;
   }
 
+  /*
+   * gh#254. Every rank below used to declare a numeric literal — `600` on
+   * `h1`, `500` on the rest. Two things were wrong with that, and only the
+   * first is the one the issue names.
+   *
+   * 1. They were literals where the stack has tokens.
+   *
+   * 2. **`500` and `600` are not faces this site has.** `trade-gothic-next`
+   *    ships 300, 400, 700 and 800 (roman and italic) and nothing between;
+   *    `use.typekit.net/tsd2tcy.css` is the list. CSS font matching resolves a
+   *    desired weight of 500 by looking *down* first, so `500` was rendering
+   *    as the **400** face — the same face body copy uses. `h2` through `h6`
+   *    were therefore heading-sized body weight, whatever the computed style
+   *    said. `600` looks *up* and was already resolving to **700**, so `h1`'s
+   *    rendered face does not change here; only its declaration stops lying.
+   *
+   * So every rank takes `--font-weight-bold`: it is the next weight that
+   * actually exists, and giving the headings a real bold face is the "bolder
+   * typography" half of the brief. `--font-weight-medium` (500) and
+   * `--font-weight-semibold` (600) are left in `tokens/semantic-misc.css` —
+   * they are correct for a future family that ships those faces, and nothing
+   * here should pretend this one does.
+   *
+   * The display family is a separate, worse problem and deliberately not
+   * touched: `--font-family-display` names Sentinel SSm, and
+   * `cloud.typography.com/7264818/6341032/css/fonts.css` currently answers a
+   * single CSS comment reading DEACTIVATED and nothing else, so every heading
+   * on the site falls through to generic `sans-serif`. Raised as its own
+   * issue.
+   */
   h1,
   .h1 {
     font-size: var(--size-4);
-    font-weight: 600;
+    font-weight: var(--font-weight-bold);
   }
 
   h2,
   .h2 {
     font-size: var(--size-2);
-    font-weight: 500;
+    font-weight: var(--font-weight-bold);
   }
 
   h3,
   .h3 {
     font-size: var(--size-1);
-    font-weight: 500;
+    font-weight: var(--font-weight-bold);
   }
 
   h4,
   .h4 {
     font-size: var(--size-0);
-    font-weight: 500;
+    font-weight: var(--font-weight-bold);
   }
 
+  /*
+   * `--size--1`, not `--size-0`: `h4` and `h5` were the same size and the same
+   * weight, i.e. the same heading twice, and a rank that cannot be seen is not
+   * a rank. `h6` shares this step but is uppercased below, so all three stay
+   * mutually distinguishable. `--size--2` was considered for `h6` and
+   * rejected — 12.5px at its maximum, on a site whose accessibility pass
+   * already flags sub-10px chip text.
+   */
   h5,
   .h5 {
-    font-size: var(--size-0);
-    font-weight: 500;
+    font-size: var(--size--1);
+    font-weight: var(--font-weight-bold);
   }
 
+  /*
+   * `h6` shares `h5`'s step, so `text-transform` alone was carrying the
+   * distinction — and it carries nothing at all for a heading whose text is
+   * already capitalised, which on a foreign-policy site (`NATO`, `EU`, `G7`)
+   * is not hypothetical. `letter-spacing` differentiates the two ranks by
+   * something the content cannot accidentally match.
+   */
   h6,
   .h6 {
     font-size: var(--size--1);
-    font-weight: 500;
+    font-weight: var(--font-weight-bold);
+    letter-spacing: 0.06em;
     text-transform: uppercase;
   }
 
@@ -121,15 +167,35 @@
     border-left: 0;
   }
 
+  /*
+   * gh#254. `100` was below every `--font-weight-*` token and below hairline.
+   * `trade-gothic-next` has no 100 face — it ships 300, 400, 700, 800 — so
+   * this resolved to **300**, and the whole site read in Light. That is a
+   * legibility decision, not a contrast one: font weight does not enter the
+   * WCAG 1.4.3 calculation at all, and every pair the accessibility pass
+   * measured already clears AA. Body copy is now the 400 face the `:root`
+   * rule at the top of this file already names.
+   *
+   * `strong` moves with it, and has to. Its emphasis was carried entirely by
+   * the 100-against-400 gap; leaving it at 400 while body copy rose to 400
+   * would have deleted inline emphasis from every page on the site. 700 is a
+   * real face here — see the heading block above for why 500 and 600 are not.
+   *
+   * The brace at the end of this file has NOT moved. These rules stay inside
+   * `@layer defaults`, which is the whole point of the note at the top of this
+   * block: outside a layer they outranked every `bf-*` component's
+   * `font: inherit` and beat `.bf-chip` on its `<a>` and `<button>` branches
+   * (gh#116, residual #113). Only the values changed.
+   */
   p,
   li,
   input,
   button,
   a {
-    font-weight: 100;
+    font-weight: var(--font-weight-normal);
   }
 
   strong {
-    font-weight: 400;
+    font-weight: var(--font-weight-bold);
   }
 }
