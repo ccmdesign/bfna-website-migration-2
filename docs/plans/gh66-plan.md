@@ -109,8 +109,8 @@ its content now renders on `/about` via `useBfPages().stiftungPage` — hence `/
 | File | Change |
 |---|---|
 | `bfna-website-nuxt/scripts/generate-legacy-redirects.ts` | new — generator + `--check` |
-| `bfna-website-nuxt/src/server/utils/legacy-slug-map.ts` | new, generated — slug → target |
-| `bfna-website-nuxt/src/server/middleware/redirects.ts` | rewritten, same `defineEventHandler` shape |
+| `bfna-website-nuxt/server/utils/legacy-slug-map.ts` | new, generated — slug → target |
+| `bfna-website-nuxt/server/middleware/redirects.ts` | rewritten, same `defineEventHandler` shape. **Correction during implementation:** the spec's `src/server/middleware/redirects.ts` is dead code under Nuxt 4's `serverDir` — see D-57.10 |
 | `bfna-website-nuxt/public/_redirects` | new, generated — Netlify static rules |
 | `bfna-website-nuxt/package.json` | new script `redirects:generate` / `redirects:check` |
 | `docs/ds-epic/02-legacy-retirement-inventory.md` | §E table gains the three #182 rows |

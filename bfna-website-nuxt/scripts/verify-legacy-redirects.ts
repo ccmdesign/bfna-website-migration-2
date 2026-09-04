@@ -2,7 +2,7 @@
  * Verify the legacy redirect map (gh#66, spec `docs/ds-epic/issues/57-cutover-redirects.md`),
  * on **both** paths it has to hold on:
  *
- * - the **middleware** path — `src/server/middleware/redirects.ts`, which is what
+ * - the **middleware** path — `server/middleware/redirects.ts`, which is what
  *   answers in `nuxt dev`, during prerender, and on an SSR deploy;
  * - the **static** path — `public/_redirects`, which is what answers on the
  *   deployed site, where `nuxt generate` publishes `.output/public` to Netlify's
@@ -40,14 +40,14 @@ import { readFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-import { LEGACY_SLUG_MAP } from '../src/server/utils/legacy-slug-map'
+import { LEGACY_SLUG_MAP } from '../server/utils/legacy-slug-map'
 import {
   LEGACY_GONE_EXACT,
   LEGACY_GONE_SENTINEL,
   LEGACY_REDIRECT_EXACT,
   LEGACY_REDIRECT_PREFIXES,
   LEGACY_UNTOUCHED_PREFIXES
-} from '../src/server/utils/legacy-redirect-rules'
+} from '../server/utils/legacy-redirect-rules'
 
 const appRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const REDIRECTS_FILE = resolve(appRoot, 'public/_redirects')

@@ -2,9 +2,9 @@
 # Regenerate with `npm run redirects:generate`.
 #
 # The deployed site is static (`nuxt generate` -> Netlify CDN), so the Nitro
-# server middleware in src/server/middleware/redirects.ts does not run for a
+# server middleware in server/middleware/redirects.ts does not run for a
 # prerendered path in production. This file is the same table, applied by the
-# CDN. Both are generated from src/server/utils/legacy-redirect-rules.ts.
+# CDN. Both are generated from server/utils/legacy-redirect-rules.ts.
 #
 # Every rule is forced (`!`) because Netlify serves a matching static file
 # ahead of an unforced rule, and the legacy page files these rules replace are

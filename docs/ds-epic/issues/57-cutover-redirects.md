@@ -193,6 +193,35 @@ which matches **one** segment, so those two-segment targets 404. Preserving the
 splat is what the spec says; second-guessing it into a hub-root redirect would
 have thrown away the only information those URLs carry. Recorded as a residual.
 
+**D-57.10 — The file the spec names, `src/server/middleware/redirects.ts`, was
+never running. The map lives at `server/middleware/redirects.ts`.** This repo is
+Nuxt **4.5.2** with `future.compatibilityVersion: 4`, and Nuxt 4 moved `serverDir`
+from `<srcDir>/server` to `<rootDir>/server`. `src/nuxt.config.ts` sets
+`srcDir: <rootDir>/src`, so the resolved `serverDir` is
+`bfna-website-nuxt/server` — which already holds the two live handlers
+(`api/search.get.ts`, `api/component-docs/[component].get.ts`) — and everything
+under `bfna-website-nuxt/src/server/**` is dead code that Nitro never scans.
+
+Measured, not inferred. Against `nuxt dev` with the map implemented in
+`src/server/middleware/redirects.ts`, **every** rule returned the page instead of
+the redirect, including the two `/digital-economy/*` and `/future-of-work/*`
+families that have been in the file since `cab3a00 Add Nuxt app` — so those two
+301s, which 02 §D describes as live, have never fired either. `nuxt generate`
+corroborates it from the other side: `/team`, `/updates`, `/blog`, `/archives`,
+`/test` and `/test-base-layout` all still prerendered to full HTML with the
+middleware supposedly in front of them.
+
+So the implementation moved to `server/middleware/redirects.ts` (with its two rule
+modules alongside at `server/utils/`), and the dead
+`src/server/middleware/redirects.ts` was removed rather than left as a second,
+non-functional copy of the same table — two redirect tables that cannot both be
+authoritative is precisely the drift D-57.1 is built to prevent. This is not the
+"deleting a page or component" that the spec puts out of scope (#58's job): it is
+the file this issue was told to edit, relocated to where it executes.
+
+The remaining dead files under `src/server/api/**` (five, two of them stale
+duplicates of the live pair) are outside this issue and are filed as a residual.
+
 **D-57.9 — Query strings survive, trailing slashes are normalised.** A redirect
 that drops `?utm_source=…` loses the attribution the inbound link was carrying, so
 the query is split off before matching and re-attached to the target — ahead of a

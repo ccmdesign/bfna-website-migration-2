@@ -4,7 +4,7 @@
  * if this file has drifted from `content/bf/**`.
  *
  * Every one-segment legacy content URL, mapped to where that document lives in
- * the `bf-*` site. Read by `src/server/middleware/redirects.ts` and mirrored
+ * the `bf-*` site. Read by `server/middleware/redirects.ts` and mirrored
  * into `public/_redirects` for the static deploy. See the generator's header for
  * how a slug's bucket is resolved and what is excluded.
  *

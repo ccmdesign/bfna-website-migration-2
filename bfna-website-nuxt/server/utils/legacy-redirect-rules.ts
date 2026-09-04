@@ -3,7 +3,7 @@
  *
  * This module is the **single source of truth** for both halves of the cutover:
  *
- * - `src/server/middleware/redirects.ts` reads it at request time (dev server,
+ * - `server/middleware/redirects.ts` reads it at request time (dev server,
  *   prerender, and any SSR deploy);
  * - `scripts/generate-legacy-redirects.ts` reads it to emit `public/_redirects`,
  *   which is what actually holds on the deployed static site — `nuxt generate`

@@ -2,11 +2,11 @@
  * Emit the two generated halves of the legacy redirect map (gh#66, spec
  * `docs/ds-epic/issues/57-cutover-redirects.md`):
  *
- * 1. `src/server/utils/legacy-slug-map.ts` — the one-segment legacy slug →
+ * 1. `server/utils/legacy-slug-map.ts` — the one-segment legacy slug →
  *    `/insights/:slug` | `/projects/:slug` lookup, statically imported by
- *    `src/server/middleware/redirects.ts`.
+ *    `server/middleware/redirects.ts`.
  * 2. `public/_redirects` — the same map, plus every rule in
- *    `src/server/utils/legacy-redirect-rules.ts`, in Netlify's `_redirects`
+ *    `server/utils/legacy-redirect-rules.ts`, in Netlify's `_redirects`
  *    grammar, so the rules hold on the deployed **static** site where no Nitro
  *    server runs.
  *
@@ -59,7 +59,7 @@ import {
   LEGACY_REDIRECT_EXACT,
   LEGACY_REDIRECT_PREFIXES,
   LEGACY_UNTOUCHED_PREFIXES
-} from '../src/server/utils/legacy-redirect-rules'
+} from '../server/utils/legacy-redirect-rules'
 
 const scriptDir = dirname(fileURLToPath(import.meta.url))
 const appRoot = resolve(scriptDir, '..')
@@ -68,7 +68,7 @@ const CONTENT_ROOT = resolve(appRoot, 'content/bf')
 const PAGES_ROOT = resolve(appRoot, 'src/pages')
 const PUBLIC_ROOT = resolve(appRoot, 'public')
 
-const SLUG_MAP_FILE = resolve(appRoot, 'src/server/utils/legacy-slug-map.ts')
+const SLUG_MAP_FILE = resolve(appRoot, 'server/utils/legacy-slug-map.ts')
 const REDIRECTS_FILE = resolve(PUBLIC_ROOT, '_redirects')
 
 /** One `content/bf/<collection>/*.json` document, only the fields used here. */
@@ -162,7 +162,7 @@ function renderSlugMapModule(map: Map<string, string>): string {
  * if this file has drifted from \`content/bf/**\`.
  *
  * Every one-segment legacy content URL, mapped to where that document lives in
- * the \`bf-*\` site. Read by \`src/server/middleware/redirects.ts\` and mirrored
+ * the \`bf-*\` site. Read by \`server/middleware/redirects.ts\` and mirrored
  * into \`public/_redirects\` for the static deploy. See the generator's header for
  * how a slug's bucket is resolved and what is excluded.
  *
@@ -180,9 +180,9 @@ function renderRedirectsFile(map: Map<string, string>): string {
     '# Regenerate with `npm run redirects:generate`.',
     '#',
     '# The deployed site is static (`nuxt generate` -> Netlify CDN), so the Nitro',
-    '# server middleware in src/server/middleware/redirects.ts does not run for a',
+    '# server middleware in server/middleware/redirects.ts does not run for a',
     '# prerendered path in production. This file is the same table, applied by the',
-    '# CDN. Both are generated from src/server/utils/legacy-redirect-rules.ts.',
+    '# CDN. Both are generated from server/utils/legacy-redirect-rules.ts.',
     '#',
     '# Every rule is forced (`!`) because Netlify serves a matching static file',
     '# ahead of an unforced rule, and the legacy page files these rules replace are',
