@@ -175,8 +175,16 @@ const go = (
  * debounces to one emit per burst, but a burst is still a burst: pushing would
  * bury the page the reader arrived from under one entry per pause, and Back
  * would walk them backwards through their own typing.
+ *
+ * The value is written **exactly as it was typed**, not trimmed. The shell
+ * resynchronises its draft against `query` whenever the incoming value differs
+ * from the one it last emitted, so a page that trimmed would delete the space
+ * the reader had just typed: emit `"how "`, store `"how"`, and the shell —
+ * seeing a value that is not its own echo — treats it as an external change
+ * and rewrites the input mid-word. Trimming happens where it belongs, in
+ * `hasQuery` and in the scorer, both of which already do it.
  */
-const onQuery = (value: string) => go({ q: value.trim() || undefined }, true)
+const onQuery = (value: string) => go({ q: value || undefined }, true)
 
 /**
  * Facets, back into two parameters. Single-select per family, as the frozen

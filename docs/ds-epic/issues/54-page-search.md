@@ -187,3 +187,16 @@ new errors against the 176-error `dev` baseline, zero in `src/components/bf` /
 run against the generated `search/index.html`, the full probe harness
 (`npx tsx scripts/check-probes.ts` — 38 probes, 1642 rows, 0 failures), and a
 headless browser pass over the served build.
+
+### D-54.7 — the query is written to the URL untrimmed (review finding P1-1)
+
+`bfSearchShell` resynchronises its draft against the `query` prop whenever the
+incoming value is **not** the one it last emitted — that is how an externally
+cleared or restored query wins over a half-typed draft. A page that trimmed
+before writing the URL turns every echo into an "external change": the shell
+emits `"how "`, the page stores `"how"`, the shell sees a value that is not its
+own echo and rewrites the input, deleting the space the reader had just typed.
+Multi-word queries would lose a space at every debounce boundary.
+
+So `onQuery` writes the value verbatim (dropping only an empty one) and the
+trimming happens where it always did: `hasQuery` and the scorer.
