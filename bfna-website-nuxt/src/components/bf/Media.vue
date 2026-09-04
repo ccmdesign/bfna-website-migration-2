@@ -136,29 +136,6 @@ const cssVars = computed(() =>
  * - a `data:` URI — `NuxtImg` passes those straight through already.
  */
 const isAbsolute = computed(() => /^https?:\/\//.test(props.src ?? ''))
-
-/**
- * `alt` is required whenever `src` is set (BRIEF §5 rule 9 — `alt` required on
- * content images). A missing one is a dev-time warning, never a silent
- * `alt=""`, because a silently-empty `alt` tells a screen-reader user the
- * image carries no information when nobody ever decided that.
- *
- * The check is on `alt == null` — *unspecified* — not on falsiness. An
- * explicit `alt=""` is the standard way to declare an image decorative and is
- * a legitimate answer, so warning on it would train call sites to ignore the
- * warning. `import.meta.dev` keeps the whole thing out of the production
- * bundle.
- */
-if (import.meta.dev) {
-  watchEffect(() => {
-    if (props.src && props.alt == null) {
-      console.warn(
-        '[bfMedia] `alt` is required when `src` is set. '
-        + `Pass alt="" only if the image is decorative. src: ${props.src}`
-      )
-    }
-  })
-}
 </script>
 
 <template>
@@ -181,7 +158,7 @@ if (import.meta.dev) {
     v-if="src && isAbsolute"
     class="bf-media"
     :src="src"
-    :alt="alt ?? ''"
+    :alt="alt"
     :style="cssVars"
     loading="lazy"
     decoding="async"
@@ -190,7 +167,7 @@ if (import.meta.dev) {
     v-else-if="src"
     class="bf-media"
     :src="src"
-    :alt="alt ?? ''"
+    :alt="alt"
     :style="cssVars"
     loading="lazy"
     decoding="async"

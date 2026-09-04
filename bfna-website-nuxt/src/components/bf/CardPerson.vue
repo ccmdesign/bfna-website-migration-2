@@ -58,11 +58,12 @@
  *
  * ## The portrait is decorative
  *
- * `alt=""`, deliberately declared rather than omitted — `bfMedia` warns at dev
- * time about an omitted `alt` (gh#26). The heading immediately above already
- * names the person, so alt text here would be a second announcement of the
- * same name, not a description. `ratio="1/1"` is `wfCardPerson.vue`'s square
- * and lands as a `--_bf-media-ratio` declaration a consumer stylesheet can
+ * `alt=""`, deliberately declared rather than omitted — `bfMedia` requires
+ * `alt`, so omitting it is a typecheck error (gh#222). The heading immediately
+ * above already names the person, so alt text here would be a second
+ * announcement of the same name, not a description. `ratio="1/1"` is
+ * `wfCardPerson.vue`'s square and lands as a `--_bf-media-ratio` declaration
+ * a consumer stylesheet can
  * still re-proportion (never an inline `aspect-ratio`; that was the gh#26
  * defect).
  *
@@ -139,10 +140,9 @@ const jobTitle = computed(() => props.person.job_title ?? '—')
 
 /**
  * …and the blank-name defect is announced rather than swallowed. Same shape as
- * `bfMedia`'s missing-`alt` warning (gh#26), `bfCard`'s outside-a-list warning
- * (gh#29) and the three earlier wrappers': a dev-time `console.warn`, never a
- * thrown error, with `import.meta.dev` keeping it out of the production
- * bundle.
+ * `bfCard`'s outside-a-list warning (gh#29) and the three earlier wrappers': a
+ * dev-time `console.warn`, never a thrown error, with `import.meta.dev`
+ * keeping it out of the production bundle.
  */
 if (import.meta.dev) {
   watchEffect(() => {
@@ -189,8 +189,9 @@ if (import.meta.dev) {
       <!--
         Decorative: the heading above already names the person, so alt text
         would repeat it rather than describe anything. `alt=""` is the
-        *deliberate* decorative declaration — `bfMedia` warns at dev time when
-        `alt` is merely omitted (gh#26).
+        *deliberate* decorative declaration — `bfMedia` requires `alt`, so
+        omitting it is a typecheck error rather than a silent `alt=""`
+        (gh#222, D25).
 
         `1/1` is hard-coded rather than a `mediaRatio` prop: one call site
         (issue 53's two `/about` grids), so the rule of three is not met. It is

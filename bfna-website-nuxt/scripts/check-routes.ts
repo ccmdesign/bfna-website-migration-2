@@ -140,6 +140,21 @@
  * pass in BRIEF §8. `/wireframes/**` and `/docs/**` are excluded on the same
  * terms as DoD-A4, and `wireframe.css` and `css-legacy/` on the CSS side.
  *
+ * **DoD-A3 (first half) — every `<img>` states an `alt`** (a11y epic, gh#222).
+ * One whole-build row over the prerendered HTML: no `<img>` opening tag may
+ * lack an `alt` attribute. It is the output-side half of a pair whose type-side
+ * half is `MediaProps.alt` being required — gh#222 deleted the
+ * `:alt="alt ?? ''"` coercion in `Media.vue` that had been marking every
+ * unnamed content image decorative, and the compile error binds the call sites
+ * this repo owns while this row binds anything that reaches the HTML another
+ * way (Directus rich-text body content, a hand-written template). It asserts
+ * **presence, not correctness**: whether a given `alt=""` is honest is a
+ * content question — the strings are Irene's, #234 ships the field (a11y BRIEF
+ * D28, §8), and the `alt`-duplicates-the-`h1` invariant is #110's. The row
+ * prints the empty/non-empty split so the share still waiting on #234 is
+ * visible on a green run. `/wireframes/**` and `/docs/**` are excluded on the
+ * same terms as DoD-A4.
+ *
  * **DoD-A8 — the reduced-motion floor** (a11y epic, gh#218). The served
  * `.output/public/css/base/reset.css` must carry a `prefers-reduced-motion:
  * reduce` block that sets `@view-transition { navigation: none }` and caps
@@ -1233,6 +1248,124 @@ const listRoleRows = (): Row[] => {
 }
 
 /* ------------------------------------------------------------------ *
+ * DoD-A3 (first half) — every <img> states an alt (gh#222)
+ * ------------------------------------------------------------------ */
+/**
+ * `alt` is not optional on an `<img>`. A missing attribute and `alt=""` are
+ * different statements to a screen reader — the first is an undescribed image
+ * announced by its filename, the second is the author declaring there is
+ * nothing to describe — and until gh#222 the codebase could only make the
+ * first by accident: `MediaProps.alt` was optional and `Media.vue` wrote
+ * `:alt="alt ?? ''"`, so *every* call site that said nothing shipped the
+ * decorative claim.
+ *
+ * gh#222 makes the omission a compile error. This is the other half of that
+ * pair, and it is here because the type and the output can drift: an `<img>`
+ * can reach the prerendered HTML without passing through `bfMedia` at all —
+ * rich-text body HTML from Directus, a hand-written template, a future
+ * component. The type gate binds the call sites this repo owns; this one binds
+ * the build.
+ *
+ * It asserts **presence, not correctness**. Whether a given `alt=""` is honest
+ * is a content question this harness cannot answer — the strings are Irene's
+ * and #234 ships the field (a11y BRIEF D28, §8). The `alt`-duplicates-the-`h1`
+ * invariant is #110's. So the row also prints the empty/non-empty split, which
+ * is the number that shows how much of the site is still waiting on #234
+ * rather than a number that can be made green by writing `alt=""` everywhere.
+ *
+ * `/wireframes/**` and `/docs/**` are excluded on exactly the terms DoD-A4
+ * states: the wireframes are frozen by BF-217 D2 and byte-guarded by site-epic
+ * DoD-4, and `/docs/**` renders `components/ds/**`, which a11y BRIEF §7 puts
+ * outside this epic pending the site-epic #88 keep-or-delete call —
+ * `ccmSection.vue:15,23` binds `:alt="imageLeftAlt"`, which emits no attribute
+ * at all when the prop is unset.
+ */
+const IMG_OPEN_TAG = /<img\b([^>]*)>/gi
+
+/**
+ * Anchored on whitespace-or-tag-start rather than `\b`, for the reason
+ * `LIST_ROLE_IS_LIST` gives: `\balt` matches inside `data-alt=` — `-` is a
+ * non-word character, so the boundary is there — and a `data-alt` attribute
+ * would then satisfy an ARIA requirement it has nothing to do with.
+ *
+ * **A valueless `alt` is a present `alt`.** Vue's SSR serialiser emits an
+ * empty-string attribute in its shorthand form: `:alt="''"` renders
+ * `<img … alt style=…>`, not `alt=""`. Measured on this build — all 23
+ * `bfMedia` images on `/` and `/about` serialise that way. A pattern that
+ * demanded `alt=` would therefore have reported every deliberately decorative
+ * image on the site as an offender, which is the exact inverse of the defect
+ * and would have been "fixed" by someone weakening the gate. So presence is
+ * `alt` followed by `=`, whitespace, a self-closing slash, or end of the
+ * attribute run — and the empty test accepts the same shorthand.
+ */
+const IMG_ALT_ATTR = /(?:^|\s)alt(?=\s*=|\s|\/|$)/i
+const IMG_ALT_EMPTY = /(?:^|\s)alt(?:\s*=\s*(?:"\s*"|'\s*')|(?=\s|\/|$))/i
+
+const IMG_ALT_SKIP = ['wireframes/', 'docs/']
+
+const imageAltRows = (): Row[] => {
+  if (!existsSync(publicDir)) {
+    return [{
+      label: 'DoD-A3 — prerendered output present',
+      ok: false,
+      detail: `expected ${publicDir} · actual missing — run \`npx nuxt generate\` first`
+    }]
+  }
+
+  const files = prerenderedHtmlFiles(publicDir)
+    .map(file => file.slice(publicDir.length + 1))
+    .filter(rel => !IMG_ALT_SKIP.some(prefix => rel.startsWith(prefix)))
+
+  const offenders: string[] = []
+  let images = 0
+  let empty = 0
+
+  for (const rel of files) {
+    const raw = readFileSync(join(publicDir, rel), 'utf8')
+    let match: RegExpExecArray | null
+    /* `/g`, so `lastIndex` has to be reset per file — see `listRoleRows`. */
+    IMG_OPEN_TAG.lastIndex = 0
+    while ((match = IMG_OPEN_TAG.exec(raw)) !== null) {
+      const attrs = match[1] ?? ''
+      images++
+      if (!IMG_ALT_ATTR.test(attrs)) {
+        const src = /(?:^|\s)src\s*=\s*"([^"]*)"/i.exec(attrs)?.[1] ?? '?'
+        offenders.push(`${rel} — <img src="${src.slice(0, 64)}">`)
+        continue
+      }
+      if (IMG_ALT_EMPTY.test(attrs)) empty++
+    }
+  }
+
+  const scope = `${files.length} pages, excluding ${IMG_ALT_SKIP.join(' and ')}`
+
+  return [
+    {
+      label: `DoD-A3 — the build emitted images to inspect (${scope})`,
+      ok: images > 0,
+      detail: images > 0
+        ? `expected >= 1 <img> · actual ${images}`
+        : 'expected >= 1 · actual 0 — either the build is empty or this walk no longer'
+          + ' reaches the bf pages, and in both cases the row below would pass by'
+          + ' finding nothing'
+    },
+    {
+      label: `DoD-A3 — every <img> carries an alt attribute (${images} images, ${scope})`,
+      ok: offenders.length === 0,
+      detail: offenders.length === 0
+        ? `expected 0 without alt · actual 0 of ${images}`
+          + ` — ${empty} deliberately empty (decorative), ${images - empty} with text`
+          + ' (the empty share is what #234 pays down; presence is what this row asserts)'
+        : `expected 0 without alt · actual ${offenders.length} of ${images}: `
+          + `${offenders.slice(0, 5).join(' , ')}${offenders.length > 5 ? ' , …' : ''}`
+          + ' — a missing alt is announced as the filename, which is never what the author'
+          + ' meant; state alt="" for a decorative image or real text for a content one'
+          + ' (gh#222, MediaProps.alt is required)'
+    }
+  ]
+}
+
+/* ------------------------------------------------------------------ *
  * DoD-A7 — the visually-hidden utility (gh#219)
  * ------------------------------------------------------------------ */
 /**
@@ -1904,6 +2037,16 @@ const run = async (): Promise<void> => {
       )
       for (const row of listFailing) console.log(`      ✗ ${row.label} — ${row.detail}`)
       if (verbose) for (const row of listGate.filter(r => r.ok)) console.log(`      · ${row.label}`)
+
+      const altGate = imageAltRows()
+      const altFailing = altGate.filter(r => !r.ok)
+      results.push({ slug: 'images state an alt (DoD-A3)', rows: altGate, failing: altFailing })
+      console.log(
+        `${altFailing.length === 0 ? '  ✓ PASS' : '  ✗ FAIL'}  `
+        + `${'images state an alt (DoD-A3)'.padEnd(44)} ${altGate.length - altFailing.length}/${altGate.length} rows`
+      )
+      for (const row of altFailing) console.log(`      ✗ ${row.label} — ${row.detail}`)
+      if (verbose) for (const row of altGate.filter(r => r.ok)) console.log(`      · ${row.label}`)
 
       const hiddenGate = visuallyHiddenRows()
       const hiddenFailing = hiddenGate.filter(r => !r.ok)

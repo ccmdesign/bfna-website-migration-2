@@ -207,7 +207,8 @@ if (import.meta.dev) {
         Decorative: the heading already names the destination, so a second
         announcement of the same title would be a duplicate rather than a
         description. `alt=""` is the *deliberate* decorative declaration —
-        `bfMedia` warns at dev time when `alt` is merely omitted (gh#26).
+        `bfMedia` requires `alt`, so omitting it is a typecheck error rather
+        than a silent `alt=""` (gh#222, D25).
       -->
       <bfMedia :src="project.image" alt="" :ratio="mediaRatio" />
     </template>

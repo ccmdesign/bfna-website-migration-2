@@ -179,10 +179,10 @@ const externalMarker = computed(() => isExternal(externalHref.value) || undefine
 const excerptText = computed(() => props.item.excerpt ?? '')
 
 /**
- * …and the defect is announced rather than swallowed. Same shape as `bfMedia`'s
- * missing-`alt` warning (gh#26), `bfCard`'s outside-a-list warning (gh#29) and
- * the two earlier wrappers': a dev-time `console.warn`, never a thrown error,
- * with `import.meta.dev` keeping it out of the production bundle.
+ * …and the defect is announced rather than swallowed. Same shape as `bfCard`'s
+ * outside-a-list warning (gh#29) and the two earlier wrappers': a dev-time
+ * `console.warn`, never a thrown error, with `import.meta.dev` keeping it out
+ * of the production bundle.
  */
 if (import.meta.dev) {
   watchEffect(() => {
@@ -256,7 +256,8 @@ if (import.meta.dev) {
         Decorative: the heading already names the destination, so a second
         announcement of the same title would be a duplicate rather than a
         description. `alt=""` is the *deliberate* decorative declaration —
-        `bfMedia` warns at dev time when `alt` is merely omitted (gh#26).
+        `bfMedia` requires `alt`, so omitting it is a typecheck error rather
+        than a silent `alt=""` (gh#222, D25).
 
         `16/9` is hard-coded rather than a `mediaRatio` prop: one call site, so
         the rule of three is not met. It is `bfMedia`'s `ratio`, which lands as
