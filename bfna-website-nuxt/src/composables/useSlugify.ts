@@ -20,3 +20,7 @@ export function useSlugify() {
 
   return { slugify }
 }
+
+// gh#236 acceptance criterion 3 — a deliberate type error, to prove verify.yml goes RED.
+// This branch is a throwaway; it is never merged.
+export const gh236PlantedTypeError: number = "not a number"
