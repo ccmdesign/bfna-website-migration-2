@@ -33,7 +33,48 @@
  * moved is where it is declared. Both rows are asserted on
  * `/bf-probe/17-bf-media`.
  *
- * ## 2. `NuxtImg`, not a raw `<img>`
+ * ## 2. `NuxtImg` for local assets, a plain `<img>` for absolute URLs
+ *
+ * **The rule: an `src` matching `/^https?:\/\//` renders a plain `<img>` with
+ * that URL verbatim. Everything else renders through `<NuxtImg>`.**
+ *
+ * Why (gh#203, P1 — this component originally sent *everything* through
+ * `NuxtImg` and every image on the deployed site was broken):
+ *
+ * `src/nuxt.config.ts` sets `image.provider` to
+ * `process.env.NUXT_IMAGE_PROVIDER || undefined`, so an unconfigured build
+ * falls back to the **`ipx`** provider, which rewrites the URL into a
+ * server-side route:
+ *
+ *     <img src="/_ipx/q_90/https:/bfna.simplyas.com/assets/2e1d…">
+ *
+ * `ipx` is a runtime image *server*. This site deploys as `nuxt generate`
+ * output served statically, so nothing answers `/_ipx/…`; the SPA fallback
+ * returns `200 text/plain` and the browser paints a broken image. The
+ * component that renders a photo cannot depend on infrastructure the deploy
+ * does not have.
+ *
+ * `nuxt.config.ts` already documents the house rule two lines above that
+ * provider setting — "For external images, components use regular img tags to
+ * bypass optimization" — and `wfMedia.vue` plus nine legacy components already
+ * follow it. This is `bfMedia` rejoining them, not a new policy.
+ *
+ * A plain `<img>` rather than `<NuxtImg provider="none">`: `none` still routes
+ * through the module's runtime and still emits its `sizes`/`densities`
+ * plumbing, for a URL nobody is allowed to transform anyway. And the external
+ * hosts are not all declared in `image.domains` (one person photo lives on
+ * `images.ctfassets.net`), so the module would refuse some of them outright.
+ *
+ * The cost is real and accepted: no `srcset` for external images. An
+ * unoptimised image that loads beats an optimised one that 404s, and moving
+ * the site onto the Netlify Image CDN (`/.netlify/images`, `netlify.toml`
+ * `[images] remote_images`, a linked build) is a separate decision.
+ *
+ * Both image branches are otherwise identical — same `.bf-media` class, same
+ * `--_bf-media-ratio` hook, same `loading="lazy"`, `decoding="async"`, `alt`
+ * handling and `$attrs` fallthrough — so no consumer can tell which one it
+ * got. `/bf-probe/17-bf-media` asserts exactly that, including that the
+ * absolute URL survives verbatim with no `/_ipx/` prefix.
  *
  * `@nuxt/image` is already in `src/nuxt.config.ts` `modules:` and nine legacy
  * components use it. `loading="lazy"` and `decoding="async"` are set here
@@ -82,6 +123,21 @@ const cssVars = computed(() =>
 )
 
 /**
+ * Is this `src` an absolute URL on a remote host? See header §2.
+ *
+ * Only `http:`/`https:`. Deliberately *not* matched:
+ *
+ * - a root-relative path (`/images/hero/democracy.jpg`) — that file is in
+ *   `src/public/` and `NuxtImg` optimising it is the whole point of having the
+ *   module;
+ * - a protocol-relative URL (`//host/…`) — none appear in the Directus or
+ *   Contentful payloads, and one arriving later should be noticed rather than
+ *   silently handled;
+ * - a `data:` URI — `NuxtImg` passes those straight through already.
+ */
+const isAbsolute = computed(() => /^https?:\/\//.test(props.src ?? ''))
+
+/**
  * `alt` is required whenever `src` is set (BRIEF §5 rule 9 — `alt` required on
  * content images). A missing one is a dev-time warning, never a silent
  * `alt=""`, because a silently-empty `alt` tells a screen-reader user the
@@ -115,11 +171,23 @@ if (import.meta.dev) {
     over `cssVars` — which is the escape hatch for an instance that does pass
     a `ratio` prop.
 
-    The two branches are `v-if` / `v-else` on `src` alone, exactly as
-    `wfMedia.vue` decides them.
+    `src` present / absent decides image-vs-placeholder, exactly as
+    `wfMedia.vue` decides it. The image side then splits again on the *shape*
+    of the URL (header §2): an absolute one is handed to the browser
+    untouched, a local one goes through `NuxtImg`. Every attribute is
+    identical across the two, so a consumer cannot tell them apart.
   -->
+  <img
+    v-if="src && isAbsolute"
+    class="bf-media"
+    :src="src"
+    :alt="alt ?? ''"
+    :style="cssVars"
+    loading="lazy"
+    decoding="async"
+  >
   <NuxtImg
-    v-if="src"
+    v-else-if="src"
     class="bf-media"
     :src="src"
     :alt="alt ?? ''"

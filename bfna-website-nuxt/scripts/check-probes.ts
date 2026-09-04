@@ -94,10 +94,34 @@
  * load-bearing: a page whose entry chunk 404s stays as static prerendered HTML,
  * looks perfect, and passes a console-only check by having nothing to say.
  *
+ * ## The `/_ipx/` gate (gh#203)
+ *
+ * Every `/_ipx/…` URL in a smoke route's **prerendered HTML** — `src` and
+ * `srcset` both — must have an actual file behind it in `.output/public`.
+ *
+ * `@nuxt/image` falls back to the `ipx` provider whenever
+ * `NUXT_IMAGE_PROVIDER` is unset, and `ipx` is a runtime image server this
+ * static deploy does not have. For a **local** source that is harmless: the
+ * prerenderer transforms the file and writes the result to disk, so the URL
+ * resolves. For a **remote** one it cannot — nothing is written, the URL
+ * returns `200 text/plain` from the SPA fallback, and the photo is simply
+ * broken. Every image on `/` and `/about` shipped that way (P1, gh#203) past a
+ * harness watching only hydration and the console.
+ *
+ * So the rule is existence, not absence. Banning the substring would ban the
+ * image module itself; requiring a file distinguishes the two cases exactly,
+ * and also catches a URL that quietly stops being emitted at build time for
+ * some future reason a substring ban would wave through.
+ *
+ * Disk rather than DOM on purpose: the artifact is what Netlify serves, the
+ * check then survives a page whose bundle never loads, and it cannot be masked
+ * by Vue re-rendering the subtree after hydration.
+ *
  * ## Exit contract
  *
  * `0` only when every probe reported `PASS` with zero failing rows, every smoke
- * route hydrated, and no page logged a console error. A probe still `PENDING`
+ * route hydrated, no smoke route's HTML carries a dangling `/_ipx/` URL, and no
+ * page logged a console error. A probe still `PENDING`
  * when the timeout expires is a **failure**, not a skip: a verification that
  * quietly downgrades itself to "PASS (1 skipped)" is exactly how a broken
  * component ships green (`verify-bf-*.ts`'s contract, kept).
@@ -122,7 +146,7 @@
  *   --verbose          print every row, not just the failing ones
  */
 import { spawn, type ChildProcess } from 'node:child_process'
-import { createReadStream, existsSync, readdirSync, statSync } from 'node:fs'
+import { createReadStream, existsSync, readFileSync, readdirSync, statSync } from 'node:fs'
 import { mkdtemp, rm } from 'node:fs/promises'
 import { createServer, type Server } from 'node:http'
 import { homedir, tmpdir } from 'node:os'
@@ -800,6 +824,59 @@ const SMOKE_READY = `(() => {
 const SMOKE_SETTLE_MS = 1_500
 
 /* ------------------------------------------------------------------ *
+ * The `/_ipx/` gate (gh#203) — see the header section of the same name
+ * ------------------------------------------------------------------ */
+/**
+ * Every `/_ipx/…` URL a page references, from `src` and from `srcset` alike.
+ *
+ * `srcset` is not optional here: `NuxtImg` emits the same URL twice, once as
+ * `src` and once inside `srcset="… 1x, … 2x"`, and a check that read only
+ * `src` would go green on a page whose `srcset` still pointed at a dead
+ * endpoint. Descriptors (` 1x`, ` 640w`) and the commas between candidates are
+ * stripped by the character class, which stops at the first space, quote or
+ * comma.
+ */
+const IPX_REFERENCES = /\/_ipx\/[^"'\s,)]+/g
+
+/**
+ * `route` → the file `resolveFile` would serve for it, read as text.
+ * `undefined` when there is no such file, which the caller reports as its own
+ * distinct failure rather than as a silent pass.
+ */
+const prerenderedHtml = (route: string): string | undefined => {
+  const file = resolveFile(route)
+  return file === undefined ? undefined : readFileSync(file, 'utf8')
+}
+
+/**
+ * The `/_ipx/` URLs in `html` that no file in `.output/public` answers.
+ *
+ * **Not** "any `/_ipx/` URL at all", which is the check this gate first
+ * reached for and which is wrong. `@nuxt/image` *does* transform local
+ * `src/public/` images at prerender time and write the result to disk —
+ * `.output/public/_ipx/q_90/images/hero/stiftung.jpg` is a real 1600×774 JPEG
+ * — so a local image routed through the module works perfectly on a static
+ * host and banning its URL would ban the module itself.
+ *
+ * What has no file behind it is a URL `ipx` could only have produced at
+ * *runtime*: a remote source (`/_ipx/q_90/https:/bfna.simplyas.com/assets/…`),
+ * which the prerenderer cannot fetch and therefore never writes. Those are the
+ * gh#203 breakage, and existence on disk separates them from the working case
+ * exactly.
+ *
+ * It is also the stronger rule. A future `/_ipx/` URL that silently stops
+ * being emitted at build time — a new modifier, a route that stops being
+ * prerendered — fails here too, and a substring ban would not have noticed.
+ */
+const danglingIpx = (html: string): string[] => {
+  const seen = new Set<string>()
+  for (const url of html.match(IPX_REFERENCES) ?? []) {
+    if (resolveFile(url) === undefined) seen.add(url)
+  }
+  return [...seen]
+}
+
+/* ------------------------------------------------------------------ *
  * Run
  * ------------------------------------------------------------------ */
 type Result = { slug: string, verdict: string, rows: Row[], failing: Row[], note?: string }
@@ -1015,6 +1092,31 @@ const run = async (): Promise<void> => {
             ? 'expected #__nuxt.__vue_app__ · actual present'
             : 'expected #__nuxt.__vue_app__ · actual absent'
         }]
+
+        /*
+         * The `/_ipx/` gate (gh#203) — on the generated HTML, not the DOM.
+         * Placed before the console rows so a route that is broken in both
+         * ways reports the cause above the symptom.
+         */
+        const html = prerenderedHtml(route)
+        if (html === undefined) {
+          rows.push({
+            label: 'every /_ipx/ URL in the generated HTML has a file behind it',
+            ok: false,
+            detail: `expected a prerendered file for ${route} · actual none under .output/public`
+          })
+        } else {
+          const dangling = danglingIpx(html)
+          rows.push({
+            label: 'every /_ipx/ URL in the generated HTML has a file behind it',
+            ok: dangling.length === 0,
+            detail: dangling.length === 0
+              ? 'expected 0 dangling · actual 0'
+              : `expected 0 dangling · actual ${dangling.length}: ${dangling.slice(0, 3).join(' , ')}`
+                + ' — ipx is a server and this deploy is static, so these return the SPA fallback'
+                + ' as 200 text/plain; render absolute URLs as a plain <img> (gh#203)'
+          })
+        }
 
         if (cdp.consoleErrors.length === 0) {
           rows.push({ label: 'console clean', ok: true, detail: 'no error-level console output' })
