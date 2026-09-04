@@ -11,18 +11,20 @@
  *
  * ## What this replaces
  *
- * The third and last consumer of the as-built D.1 finding — the not-found block
- * duplicated verbatim at three call sites. The component-level fix shipped as
- * `bfEmptyState` in #33/gh#42; the other two consumers were replaced inside
- * `pages/insights/[slug].vue` and `pages/projects/[slug].vue`. This closes the
- * finding end to end.
+ * The last consumer of the as-built D.1 finding — the not-found block
+ * duplicated verbatim at three wireframe call sites. The component-level fix
+ * shipped as `bfEmptyState` in #33/gh#42, and the `bf-*` page templates took it
+ * up as they landed: `pages/[program].vue`, `pages/insights/[slug].vue` and
+ * `pages/projects/[slug].vue` each render it in their own not-found branch. The
+ * error page is what a route that never reached a page hits, and it was the one
+ * place still hand-rolling the block. This closes the finding end to end.
  *
  * The file it replaces hand-rolled all of it: its own `h1` element reading
  * "404", a centred wrapper, a pill button, and a `<style scoped>` block
- * carrying two `hsl()` colour literals. Every one of those is something the
- * token set and the composition layer already own, and the colours were the
- * kind BRIEF §5 rule 2 exists to stop. The stylesheet is gone entirely: this
- * file declares no CSS at all.
+ * carrying four `hsl()` colour declarations. Every one of those is something
+ * the token set and the composition layer already own, and the colours were
+ * the kind BRIEF §5 rule 2 exists to stop. The stylesheet is gone entirely:
+ * this file declares no CSS at all.
  *
  * ## Why the layout is invoked here and not inferred
  *
