@@ -38,8 +38,17 @@
  *    `bfChip` `<span>`, not the frozen `wf-chip`;
  * 3. **every** card renders a `.bf-card__media` whose `bfMedia` resolves
  *    `aspect-ratio: 16 / 9`, declared `alt=""` rather than omitted;
- * 4. the heading links to `/insights/<slug>` for all eight, one anchor per
- *    card, heading-first in the DOM, and nothing links into `/wireframes/`;
+ * 4. the heading links **where its row points** — the row's `external_url` for
+ *    all eight (residual #187: every curated row is a pointer to another site,
+ *    `content: null`, and `useBfInsights.items` excludes `featured`, so
+ *    `/insights/<slug>` resolved for none of them), all eight with
+ *    `rel="noopener"` and six with the `[data-external]` ↗ marker — the other
+ *    two point back at `www.bfna.org`, a `SITE_HOST`, so `isExternal()` says
+ *    no and the arrow would misdescribe them (D-26.1); a synthesised row with
+ *    no `external_url`
+ *    still takes the internal `/insights/<slug>` branch, with neither
+ *    attribute. One anchor per card, heading-first in the DOM, and nothing
+ *    links into `/wireframes/`;
  * 5. the excerpt is rendered **whole** — text-identical to the stored field,
  *    with no ellipsis anywhere — which is what makes "ported as-is, no
  *    truncation" a checkable claim rather than a comment;
@@ -56,6 +65,7 @@
  * probe 20), so this page declares no `data-probe-keys`.
  */
 import type { Insight } from '~/types/bf-contracts'
+import { isExternal } from '~/utils/link'
 
 defineOptions({ name: 'BfProbe23BfCardFeatured' })
 
@@ -119,6 +129,21 @@ const first = computed<Insight | null>(() => highlights.value[0] ?? null)
 const firstNoHeading = computed<Insight | null>(() => {
   const row = first.value
   return row ? { ...row, heading: null } : null
+})
+
+/**
+ * The same first row with its `external_url` cleared — the *other* branch of
+ * the heading link (#187).
+ *
+ * Synthesised rather than queried, because there is no featured row in the
+ * snapshot that lacks a pointer: all eight carry one, which is the whole
+ * finding. Nulling the field is the only way to keep the internal
+ * `/insights/<slug>` branch asserted rather than merely present in the source,
+ * and it is the shape `firstNoHeading` above already uses for #130.
+ */
+const firstInternal = computed<Insight | null>(() => {
+  const row = first.value
+  return row ? { ...row, external_url: null } : null
 })
 
 const checks = ref<Check[]>([])
@@ -215,6 +240,7 @@ onMounted(() => {
   const level4 = card('level4')
   const noheading = card('noheading')
   const spanned = card('spanned')
+  const internal = card('internal')
 
   /** The eight rows as the page received them, for text-identity assertions. */
   const rows = highlights.value
@@ -236,8 +262,19 @@ onMounted(() => {
     .filter((row, i) => excerptOf(stripCard(i)) !== (row.excerpt ?? ''))
     .map(row => row.slug)
 
+  /**
+   * The href every strip card must carry — residual #187. A curated `featured`
+   * row is a pointer to another site (`content: null`, `external_url` set), and
+   * `useBfInsights.items` excludes `featured`, so `bySlug` resolves none of
+   * them and the old `/insights/<slug>` href 404ed on all eight. The expected
+   * value is the row's own `external_url`, falling back to the internal route
+   * for a row that has none.
+   */
+  const expectedHref = (row: Insight) =>
+    (row.external_url ?? '').trim() || `/insights/${row.slug}`
+
   const hrefMismatches = rows
-    .filter((row, i) => headingLink(stripCard(i))?.getAttribute('href') !== `/insights/${row.slug}`)
+    .filter((row, i) => headingLink(stripCard(i))?.getAttribute('href') !== expectedHref(row))
     .map(row => row.slug)
 
   const headingMismatches = rows
@@ -401,28 +438,74 @@ onMounted(() => {
       actual: String(!!stripEls[0] && headingIsFirst(stripEls[0]))
     },
 
-    // --- 5. the heading links to the bf-* insight route --------------------
+    // --- 5. the heading link — both branches (#187) ------------------------
     {
-      label: 'every heading links to /insights/<slug>',
+      label: 'every heading links where its row points (external_url, else /insights/<slug>)',
       expected: '(none wrong)',
       actual: hrefMismatches.join(',') || '(none wrong)'
     },
     {
       label: '  …e.g. the first curated row',
-      expected: `/insights/${rows[0]?.slug ?? 'missing row'}`,
+      expected: rows[0] ? expectedHref(rows[0]) : 'missing row',
       actual: headingLink(stripEls[0] ?? null)?.getAttribute('href') ?? 'missing'
+    },
+    {
+      label: '  …and the check is not vacuous: every curated row really carries an external_url',
+      expected: HIGHLIGHT_COUNT,
+      actual: rows.filter(r => (r.external_url ?? '').trim() !== '').length
+    },
+    {
+      label: '  …none of which has a body to have rendered at /insights/<slug> instead',
+      expected: HIGHLIGHT_COUNT,
+      actual: rows.filter(r => r.content == null).length
+    },
+    {
+      label: '  …so the whole strip is raw <a>, never NuxtLink-resolved routes',
+      expected: HIGHLIGHT_COUNT,
+      actual: stripEls
+        .filter(el => (headingLink(el)?.getAttribute('href') ?? '').startsWith('http')).length
+    },
+    {
+      label: '  …each carrying the [data-external] ↗ marker exactly when the host is off-site',
+      expected: '(none wrong)',
+      actual: rows
+        .filter((row, i) =>
+          !!headingLink(stripCard(i))?.hasAttribute('data-external')
+          !== isExternal(row.external_url))
+        .map(row => row.slug)
+        .join(',') || '(none wrong)'
+    },
+    {
+      label: '  …which is 6 of the 8: two point back at www.bfna.org, a SITE_HOST',
+      expected: '6,2',
+      actual: `${rows.filter(r => isExternal(r.external_url)).length},`
+        + `${rows.filter(r => !isExternal(r.external_url)).length}`
+    },
+    {
+      label: '  …and rel="noopener"',
+      expected: HIGHLIGHT_COUNT,
+      actual: stripEls.filter(el => headingLink(el)?.getAttribute('rel') === 'noopener').length
+    },
+    {
+      label: 'the OTHER branch: a row with no external_url links to /insights/<slug>',
+      expected: `/insights/${rows[0]?.slug ?? 'missing row'}`,
+      actual: headingLink(internal)?.getAttribute('href') ?? 'missing'
+    },
+    {
+      label: '  …with no [data-external] marker and no rel on that internal link',
+      expected: 'false,null',
+      actual: (() => {
+        const link = headingLink(internal)
+        return link
+          ? `${link.hasAttribute('data-external')},${link.getAttribute('rel')}`
+          : 'missing'
+      })()
     },
     {
       label: '  …and no card links into /wireframes/ (the wf-* route is gone)',
       expected: 0,
       actual: Array.from(document.querySelectorAll<HTMLAnchorElement>('.probe__cards a'))
         .filter(a => (a.getAttribute('href') ?? '').includes('/wireframes')).length
-    },
-    {
-      label: '  …nor straight to an external URL',
-      expected: 0,
-      actual: Array.from(document.querySelectorAll<HTMLAnchorElement>('.probe__cards a'))
-        .filter(a => (a.getAttribute('href') ?? '').startsWith('http')).length
     },
     {
       label: 'every card with a heading has exactly one link — no repeated "View" CTA',
@@ -516,7 +599,7 @@ onMounted(() => {
     },
     {
       label: '  …and there really are anchors on the page to have checked',
-      expected: HIGHLIGHT_COUNT + 3,
+      expected: HIGHLIGHT_COUNT + 4,
       actual: document.querySelectorAll('.probe__cards a').length
     },
 
@@ -665,6 +748,17 @@ const verdict = computed(() =>
           span="full"
           class="probe__tinted"
           data-probe-card="spanned"
+        />
+
+        <!--
+          #187: the internal branch of the heading link. Every real curated row
+          carries an `external_url`, so this card is the only place the
+          `NuxtLink` to `/insights/<slug>` is exercised at all.
+        -->
+        <bfCardFeatured
+          v-if="firstInternal"
+          :item="firstInternal"
+          data-probe-card="internal"
         />
       </ul>
     </section>
