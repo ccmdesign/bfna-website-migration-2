@@ -24,8 +24,9 @@
  *    chip as a radio), and a toolbar implies a collection of *different*
  *    controls. `role="group"` + `aria-pressed` per chip is what a set of
  *    independent toggle buttons actually is.
- * 2. **Roving tabindex** — one tab stop for the whole group, with arrow keys
- *    moving focus inside it. See below for why that is worth the code.
+ * 2. **Arrow-key movement** — Left/Up and Right/Down step between chips, Home
+ *    and End jump to the ends. An *addition* to the tab order, not a
+ *    replacement for it. See below for the pattern that was removed and why.
  *
  * Presentational-only (BRIEF D8): props in, one event out. No data access, no
  * store, no composable that reads content. Applying the filters to data is the
@@ -34,16 +35,46 @@
  * The frozen files stay exactly as they are (BRIEF D2): nothing here edits
  * them, imports from them, or reuses their class.
  *
- * ## Why roving tabindex, when the chips are already focusable
+ * ## Every chip is a tab stop — the roving tabindex was removed (gh#228)
  *
- * Every chip is a native `<button>`, so a plain row is already keyboard
- * operable — n chips means n tab stops. That is correct and it does not scale:
- * the search template renders a programme facet and a format facet together,
- * so a keyboard user reaching the results below crosses seven tab stops that
- * are, to them, one control they have already decided not to use. The ARIA
- * practice for a homogeneous set of controls is one stop for the set plus
- * arrows inside it, and that is what this implements — Left/Up to the previous
- * chip, Right/Down to the next, both wrapping, plus Home and End.
+ * This component used to write a roving tabindex: one `tabindex="0"` per group
+ * and `-1` on every other chip, so seven chips across two facet rows cost a
+ * keyboard user two tab stops instead of seven. The reasoning was sound about
+ * tab stops and wrong about ARIA.
+ *
+ * A roving tabindex is a **composite-widget** pattern. ARIA APG scopes it to
+ * the roles that declare one — `toolbar`, `radiogroup`, `listbox`, `grid`,
+ * `menubar`, `tablist`, `tree` — because the role is the contract that tells
+ * assistive technology "Tab enters this thing once; the arrows move inside
+ * it". On a plain `role="group"` there is no such contract: six of the seven
+ * chips were simply out of the tab order, and the arrow keys that were meant
+ * to replace Tab were undiscoverable. Measured on `/insights` before the fix:
+ * `tabindex` `0/-1/-1/-1` per group, container `role="group"`.
+ *
+ * gh#228 (a11y epic D30) offered two ways out — name the pattern
+ * `role="toolbar"`, or drop the pattern. **Dropping it is the one taken**, for
+ * three reasons:
+ *
+ * 1. This file had already rejected `toolbar`, with a reason, in the paragraph
+ *    above about group semantics: a toolbar implies a collection of different
+ *    controls, and this is a homogeneous multi-select set of toggle buttons.
+ *    Overturning a written decision in order to keep a mechanism is a worse
+ *    trade than dropping the mechanism and letting the correct role stand.
+ * 2. `role="group"` + `aria-pressed` + a native `<button>` in the document tab
+ *    order needs no ARIA composite contract at all — D30's "native first".
+ * 3. Both mechanisms now reach every chip: Tab because nothing is `-1` any
+ *    more, arrows because the handler below survived unchanged.
+ *
+ * The cost is the five extra tab stops the old comment worried about. That is
+ * the right cost to pay for a facet row that is the primary interaction of the
+ * page it sits on, and for a control set the previous pattern made unreachable
+ * by the only key that discovers a control.
+ *
+ * ## The arrow keys, which stay
+ *
+ * Left/Up to the previous chip, Right/Down to the next, both wrapping, plus
+ * Home and End. They are now an enhancement *over* the tab order rather than a
+ * substitute *for* it.
  *
  * Home/End are not in the spec's text. They are in the pattern the spec names,
  * they cost two `case` labels, and a user who has learnt arrows on a group
@@ -58,21 +89,14 @@
  * page scrolling on Up/Down survives everywhere else — including on a chip,
  * for any key not in the switch.
  *
- * ## Why the tab stop is derived rather than stored
+ * ## `focusedIndex`
  *
  * `focusedIndex` is set by the chips' own `focus` events (so pointer focus and
- * keyboard focus land in the same place) and read through `activeIndex`, which
- * falls back to **the first selected chip, else the first chip**, and clamps
- * to the current `filters.length`.
- *
- * The alternative — a plain `rovingIndex` ref kept in step with a watcher — is
- * the same code plus a synchronisation bug waiting for the first consumer that
- * changes `filters` at runtime (the search template narrows its format facet
- * as the query changes). A stored index would point at a chip that no longer
- * exists, leaving the group with **no** element at `tabindex="0"` and so no
- * way in from the keyboard at all. Deriving it makes that state unreachable
- * instead of merely unlikely; the probe asserts "exactly one chip is tabbable"
- * across a filters-array change.
+ * keyboard focus land in the same place) and read by nothing that renders —
+ * with the roving tabindex gone it feeds only `focusChip`, which writes it
+ * back. Nothing in the DOM derives from it, so a stale value from a `filters`
+ * array that has since been replaced cannot reach the page; `chipElements()`
+ * is read fresh on every keypress and `focusChip` bails on a missing index.
  *
  * ## The emitted array
  *
@@ -124,30 +148,13 @@ const root = ref<HTMLElement | null>(null)
  * The last chip to hold focus, or `null` before the group has been entered.
  *
  * Written from the chips' `focus` listener rather than only from the arrow
- * handler, so that clicking the fourth chip and then tabbing away and back
- * returns to the fourth chip — which is the behaviour a roving group promises
- * and the reason the pattern is worth having.
+ * handler, so that pointer focus and keyboard focus agree about where the
+ * group currently is. Nothing renders from it (gh#228 removed the roving
+ * `tabindex` that did), so it cannot put a stale index into the DOM.
  */
 const focusedIndex = ref<number | null>(null)
 
 const isSelected = (key: Filter['key']): boolean => props.modelValue.includes(key)
-
-/**
- * Which chip carries the group's single tab stop.
- *
- * Clamped rather than trusted: `focusedIndex` is a number this component wrote
- * about a `filters` array that may since have been replaced by a shorter one.
- */
-const activeIndex = computed<number>(() => {
-  const last = props.filters.length - 1
-  if (last < 0) return 0
-
-  const focused = focusedIndex.value
-  if (focused !== null) return Math.min(Math.max(focused, 0), last)
-
-  const firstSelected = props.filters.findIndex(f => isSelected(f.key))
-  return firstSelected === -1 ? 0 : firstSelected
-})
 
 /**
  * The chip elements, in DOM order.
@@ -221,6 +228,12 @@ const onKeydown = (event: KeyboardEvent, index: number): void => {
 
 <template>
   <!--
+    `role="group"` — and, since gh#228, a role that matches the tab order it
+    describes. There is no roving `tabindex` under it any more, so `group` is
+    not standing in for a composite role it never had: it is a named set of
+    independent toggle buttons, each one an ordinary tab stop, which is what
+    `group` means.
+
     `role="group"` on a plain `div`, per the spec, rather than a `<fieldset>`:
     a fieldset's accessible name comes from a `<legend>` it must contain, which
     would put a visible caption inside the row that every call site then has to
@@ -243,9 +256,15 @@ const onKeydown = (event: KeyboardEvent, index: number): void => {
   >
     <!--
       One chip per filter, driven controlled. `data-filter-key` is this
-      component's own focus hook (see `chipElements`); `tabindex` falls through
-      `bfChip`'s `$attrs` — it is bound *before* `aria-pressed`, which the chip
-      deliberately binds last (residual #115), so neither can clobber the other.
+      component's own focus hook (see `chipElements`).
+
+      **No `tabindex` binding** (gh#228). Every chip is a native `<button>` and
+      therefore already a tab stop; writing `-1` on all but one made six of the
+      seven chips on `/insights` unreachable by Tab under a `role="group"` that
+      promises no such thing. Leaving the attribute off entirely is the fix —
+      not `tabindex="0"`, which would be the same statement said twice and
+      would start mattering the day a chip renders as something other than a
+      button.
 
       No `:style`, no `:class`, no `active` prop: the selected state is
       `bfChip`'s `[data-active]` rule, reached through `model-value` alone.
@@ -256,7 +275,6 @@ const onKeydown = (event: KeyboardEvent, index: number): void => {
       toggle
       :model-value="isSelected(filter.key)"
       :data-filter-key="filter.key"
-      :tabindex="index === activeIndex ? 0 : -1"
       @update:model-value="(next: boolean) => onToggle(filter.key, next)"
       @keydown="(event: KeyboardEvent) => onKeydown(event, index)"
       @focus="focusedIndex = index"

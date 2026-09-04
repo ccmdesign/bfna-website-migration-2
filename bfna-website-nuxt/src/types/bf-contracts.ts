@@ -440,16 +440,26 @@ export interface AccordionProps {
    */
   label: string
   /**
-   * The **initial** open state, mapped straight onto the `open` content
-   * attribute. Not a two-way binding and not tracked afterwards: once the
-   * browser has toggled the element the DOM property and this prop disagree,
-   * and that is correct — the user's interaction is the source of truth, and
-   * nothing re-renders the node to overwrite it.
+   * The open state, mapped onto the `open` content attribute — the initial
+   * state on first render, and **two-way from then on** (gh#228). The
+   * component emits `update:open` from the native `toggle` event carrying the
+   * element's own `open` property, so `v-model:open` works and a consumer can
+   * hold the reader's choice.
    *
-   * A caller wanting *controlled* disclosure wants a different component; this
-   * one deliberately declines to grow one, because the value of native
-   * `<details>` is that its keyboard contract and its tab-order behaviour are
-   * the browser's job rather than ours.
+   * It is two-way because the one-way form made a promise it could not keep.
+   * The old contract said the DOM owns the state and "nothing re-renders the
+   * node to overwrite it" — but that is a statement about the *consumer's*
+   * render behaviour, not this component's. A parent that re-creates the
+   * subtree (a keyed list whose keys move, a `v-if`, a consumer that does not
+   * memoise) mounts a fresh `<details>` and writes the initial state back over
+   * a reader who had opened it. That is WCAG 3.2.2 (On Input).
+   *
+   * This is still **not controlled disclosure**: the component never calls
+   * `preventDefault`, never assigns `el.open`, and never refuses a toggle. The
+   * browser opens and closes the element and the emit reports what it did, so
+   * the native keyboard contract and tab-order behaviour stay the browser's
+   * job rather than ours. A consumer may ignore the event entirely, in which
+   * case the behaviour is exactly what it was before.
    */
   open?: boolean
 }

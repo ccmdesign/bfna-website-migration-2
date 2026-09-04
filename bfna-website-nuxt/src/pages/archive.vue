@@ -37,8 +37,14 @@
  * keyboard-operable" is the browser's guarantee rather than a behaviour this
  * page wires: Enter and Space activate a focused `<summary>`, and a closed
  * `<details>` keeps its 20-odd rows out of the tab order without a `tabindex`
- * anywhere. `:open` binds the *content attribute*, i.e. the initial state — so
- * once a reader has toggled a year, nothing here overwrites their choice.
+ * anywhere.
+ *
+ * What this page *does* wire, since gh#228, is the state: `bfAccordion`'s
+ * `open` is two-way, and `openYears` below holds what the reader chose. It
+ * used to say here that "once a reader has toggled a year, nothing here
+ * overwrites their choice" — which was true only for as long as nothing
+ * re-created the subtree. Now it is true because the page can answer the
+ * question, not because nobody asks it.
  *
  * That is also why ten of the eleven bands being closed on load is cheap: the
  * cost of 256 rows in one document is DOM weight, not layout or tab stops.
@@ -128,6 +134,45 @@ const newestYear = computed<string | undefined>(() => datedYears.value[0])
 const oldestYear = computed<string | undefined>(
   () => datedYears.value[datedYears.value.length - 1]
 )
+
+/**
+ * Which bands the reader has opened or closed, by year (gh#228).
+ *
+ * `bfAccordion`'s `open` is two-way now, and this is the state it hands back
+ * to. Until gh#228 nothing on this page held it: the disclosure lived only in
+ * the DOM, so any render that re-created the subtree — a keyed list whose keys
+ * move, a `v-if`, a `<Suspense>` re-run — remounted a fresh `<details>` and
+ * wrote `year === years[0]` back over a reader who had opened 2014. A
+ * disclosure closing under a reader who did not ask for it is WCAG 3.2.2.
+ *
+ * Keyed by `year.year` — a string, and already the `v-for` key — rather than
+ * by object identity, so a `years` recomputation that produces fresh bucket
+ * objects does not throw the record away. A partial record, not a
+ * pre-populated one: a year absent from it has never been touched, and falls
+ * back to the frozen source's own rule.
+ */
+const openYears = ref<Record<string, boolean>>({})
+
+/**
+ * `??`, not `||`: `false` is a value the reader chose, and the whole point is
+ * that it outranks the default. The default is the frozen source's
+ * `:open="y === years[0]"` — identity against the first bucket, unchanged.
+ */
+const isYearOpen = (year: ArchiveYear): boolean =>
+  openYears.value[year.year] ?? (year === years.value[0])
+
+/**
+ * A new object rather than a mutation, so the `v-for` re-renders and every
+ * band's `:open` is re-evaluated from one source of truth.
+ *
+ * This cannot loop: the write only reaches here from a native `toggle`, which
+ * the browser fires only when `details.open` actually changed, and the value
+ * stored is the one the element already holds — so the re-render writes
+ * `el.open = <same>`, which changes nothing and fires no second `toggle`.
+ */
+const setYearOpen = (year: ArchiveYear, open: boolean): void => {
+  openYears.value = { ...openYears.value, [year.year]: open }
+}
 </script>
 
 <template>
@@ -183,10 +228,16 @@ const oldestYear = computed<string | undefined>(
   -->
   <bfSection label="By year" heading="By year">
     <!--
-      One band per year, newest first, open by default — the frozen source's
-      `:open="y === years[0]"`, unchanged. Identity comparison, not an index
-      lookup, because that is what the source writes and the two are the same
-      statement.
+      One band per year, newest first, newest open by default — the frozen
+      source's `:open="y === years[0]"`, now reached through `isYearOpen` as
+      the *fallback* for a year the reader has not touched (gh#228). Identity
+      comparison, not an index lookup, because that is what the source writes
+      and the two are the same statement.
+
+      `@update:open` is the other half: `bfAccordion` reports the browser's own
+      toggle and `setYearOpen` records it, so the reader's choice survives any
+      render of this page rather than only the renders that happen not to
+      re-create the node.
 
       The label is composed **here**: `AccordionProps.label` is a plain string
       by contract, and its note names this call site as the reason (the
@@ -198,7 +249,8 @@ const oldestYear = computed<string | undefined>(
       v-for="year in years"
       :key="year.year"
       :label="`${year.year} (${year.items.length})`"
-      :open="year === years[0]"
+      :open="isYearOpen(year)"
+      @update:open="(open: boolean) => setYearOpen(year, open)"
     >
       <!--
         No `<li>` wrapper here, and that is the load-bearing detail of this

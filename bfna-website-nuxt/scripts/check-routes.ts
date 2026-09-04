@@ -212,6 +212,42 @@
  * anywhere (a11y BRIEF §5). A non-vacuity row fails the group if the press
  * never focused the input.
  *
+ * **Composite-widget roles and the two-way disclosure** (a11y epic, gh#228).
+ * Two independent halves under one group.
+ *
+ * `/insights` measured a roving tabindex — `0/-1/-1/-1` per facet row — under a
+ * plain `role="group"`, a role that declares no such contract, so six of the
+ * seven chips were out of the tab order with nothing telling assistive
+ * technology why. The gate asserts **coherence** rather than one shape: every
+ * chip may be tabbable under any role, or chips may be `-1` **only** under a
+ * role that owns a roving tabindex (`toolbar`, `radiogroup`, `listbox`, `grid`,
+ * `menubar`, `tablist`, `tree`). That keeps both of D30's exits open and closes
+ * the incoherent middle. On top of it: a **real Tab walk** — a `focusin`
+ * recorder plus batches of real `Tab` presses from a fresh load — must reach
+ * every chip; a real `ArrowRight` from a chip must still move focus; the two
+ * bars' `aria-labelledby` must still resolve to different non-empty visible
+ * captions (`insights/index.vue` wires them, and a roving-tabindex fix that
+ * dropped them would be a net loss); and every chip must still carry
+ * `aria-pressed`.
+ *
+ * `bfAccordion`'s `open` was a one-way binding with no emit, so a consumer
+ * could not hold the reader's disclosure state and any render that re-created
+ * the subtree wrote the initial state back over them (WCAG 3.2.2). The wiring
+ * half is asserted from source — `Accordion.vue` must declare `update:open`
+ * and listen for the native `toggle`, and `archive.vue` must bind the event —
+ * because the runtime difference is not observable in a production build:
+ * `__vueParentComponent` and `__vnode` are dev-only, and Vue's own vnode diff
+ * skips an unchanged `open`, so a one-way binding and a two-way one behave
+ * identically until something remounts. The behavioural half is still driven
+ * with real keys and catches every regression that *is* observable: a real
+ * `Enter` on the first `<summary>` must close it, a `Tab` (which only reaches
+ * the second summary because the closed first band took its rows out of the
+ * tab order — native `<details>`, D30) and a real `Enter` must open the second,
+ * and then `Shift`+`Tab` back to the first summary and a third real `Enter` —
+ * a genuine parent re-render once the binding is two-way — must leave the
+ * second band open. That is the row that would catch an accordion fighting the
+ * native toggle, or a two-way binding that loops or inverts.
+ *
  * **DoD-A8 — the reduced-motion floor** (a11y epic, gh#218). The served
  * `.output/public/css/base/reset.css` must carry a `prefers-reduced-motion:
  * reduce` block that sets `@view-transition { navigation: none }` and caps
@@ -3235,6 +3271,554 @@ const searchLandmarkRows = async (cdp: Cdp, origin: string): Promise<Row[]> => {
 }
 
 /* ------------------------------------------------------------------ *
+ * Composite-widget roles + the two-way disclosure (a11y epic, gh#228)
+ * ------------------------------------------------------------------ */
+/**
+ * Two independent halves, one group. See the header section of the same name
+ * for the defect each was measured against and for why the accordion's wiring
+ * is asserted from source while its behaviour is asserted with real keys.
+ */
+const FILTER_BAR_ROUTE = '/insights'
+const ACCORDION_ROUTE = '/archive'
+
+/**
+ * The roles that own a roving tabindex, per ARIA APG. A chip at `tabindex=-1`
+ * is only defensible under one of these; under anything else — `group`
+ * included — it is simply out of the tab order.
+ */
+const COMPOSITE_ROLES = new Set([
+  'toolbar', 'radiogroup', 'listbox', 'grid', 'menubar', 'menu', 'tablist', 'tree', 'treegrid'
+])
+
+type ChipRead = {
+  key: string | null
+  tabIndex: number
+  hasTabIndexAttr: boolean
+  ariaPressed: string | null
+  tag: string
+  disabled: boolean
+}
+
+type FilterBarRead = {
+  bars: Array<{
+    role: string | null
+    ariaLabel: string | null
+    labelledBy: string | null
+    labelledByText: string | null
+    chips: ChipRead[]
+  }>
+}
+
+const READ_FILTER_BARS = `(() => {
+  const bars = Array.from(document.querySelectorAll('.bf-filter-bar')).map(bar => {
+    const ids = (bar.getAttribute('aria-labelledby') || '').trim()
+    const labelledByText = ids === ''
+      ? null
+      : ids.split(/\\s+/)
+          .map(id => { const el = document.getElementById(id); return el ? (el.textContent || '').trim() : '' })
+          .join(' ')
+          .trim()
+    return {
+      role: bar.getAttribute('role'),
+      ariaLabel: bar.getAttribute('aria-label'),
+      labelledBy: ids === '' ? null : ids,
+      labelledByText: labelledByText === '' ? null : labelledByText,
+      chips: Array.from(bar.querySelectorAll('[data-filter-key]')).map(chip => ({
+        key: chip.getAttribute('data-filter-key'),
+        tabIndex: chip.tabIndex,
+        hasTabIndexAttr: chip.hasAttribute('tabindex'),
+        ariaPressed: chip.getAttribute('aria-pressed'),
+        tag: chip.tagName.toLowerCase(),
+        disabled: !!chip.disabled
+      }))
+    }
+  })
+  return { bars: bars }
+})()`
+
+/**
+ * A `focusin` recorder. Installed once per navigation, before the first Tab, so
+ * the walk below reads what focus actually visited rather than sampling
+ * `document.activeElement` between every press.
+ *
+ * `focusin` rather than `focus`: it bubbles, so one listener on the document
+ * sees every element, and it fires for the same elements a `focus` handler
+ * would. Nothing here calls `.focus()` — the recorder only observes.
+ */
+const ARM_FOCUS_RECORDER = `(() => {
+  window.__gh228Focus = []
+  if (!window.__gh228Armed) {
+    window.__gh228Armed = true
+    document.addEventListener('focusin', event => {
+      const el = event.target
+      if (!el || !el.tagName) return
+      window.__gh228Focus.push({
+        key: el.getAttribute ? el.getAttribute('data-filter-key') : null,
+        summary: !!(el.classList && el.classList.contains('bf-accordion__summary')),
+        tag: el.tagName.toLowerCase()
+      })
+    })
+  }
+  return true
+})()`
+
+const READ_FOCUS_RECORDER = `(() => (window.__gh228Focus || []))()`
+
+type FocusHit = { key: string | null, summary: boolean, tag: string }
+
+type AccordionRead = {
+  count: number
+  open: boolean[]
+  labels: string[]
+  activeIsSummary: boolean
+  activeSummaryIndex: number
+}
+
+const READ_ACCORDIONS = `(() => {
+  const all = Array.from(document.querySelectorAll('details.bf-accordion'))
+  const active = document.activeElement
+  return {
+    count: all.length,
+    open: all.map(el => el.open),
+    labels: all.map(el => {
+      const s = el.querySelector('.bf-accordion__summary')
+      return s ? (s.textContent || '').trim() : ''
+    }),
+    activeIsSummary: !!(active && active.classList && active.classList.contains('bf-accordion__summary')),
+    activeSummaryIndex: all.findIndex(el => el.querySelector('.bf-accordion__summary') === active)
+  }
+})()`
+
+/**
+ * One real key press.
+ *
+ * `rawKeyDown` + `keyUp` for the keys whose default action Chrome performs on
+ * keydown (Tab, the arrows). **Enter needs the `char` event in between** —
+ * measured while building this gate: `rawKeyDown`/`keyUp` alone leaves a
+ * focused `<summary>` untoggled, because summary activation hangs off the
+ * character event, not the raw one. That is the same three-event sequence
+ * gh#227's Enter uses to submit the search form.
+ */
+const pressKey = async (
+  cdp: Cdp,
+  sessionId: string,
+  key: 'Tab' | 'Enter' | 'ArrowRight',
+  count = 1,
+  /** CDP modifier bitmask. 8 is Shift — i.e. `Shift`+`Tab`, focus backwards. */
+  modifiers = 0
+): Promise<void> => {
+  const code = key === 'Tab' ? 9 : key === 'Enter' ? 13 : 39
+  for (let i = 0; i < count; i += 1) {
+    await cdp.send('Input.dispatchKeyEvent', {
+      type: 'rawKeyDown', windowsVirtualKeyCode: code, nativeVirtualKeyCode: code, key, code: key, modifiers
+    }, sessionId)
+    if (key === 'Enter') {
+      await cdp.send('Input.dispatchKeyEvent', {
+        type: 'char', windowsVirtualKeyCode: code, nativeVirtualKeyCode: code, key, code: key, modifiers,
+        text: '\r', unmodifiedText: '\r'
+      }, sessionId)
+    }
+    await cdp.send('Input.dispatchKeyEvent', {
+      type: 'keyUp', windowsVirtualKeyCode: code, nativeVirtualKeyCode: code, key, code: key, modifiers
+    }, sessionId)
+  }
+}
+
+/** Navigate an attached target and wait for the Vue app to hydrate. */
+const openHydrated = async (cdp: Cdp, sessionId: string, url: string): Promise<boolean> => {
+  await cdp.send('Runtime.enable', {}, sessionId)
+  await cdp.send('Page.enable', {}, sessionId)
+  await cdp.send(
+    'Emulation.setDeviceMetricsOverride',
+    { width: viewport.width, height: viewport.height, deviceScaleFactor: 1, mobile: false },
+    sessionId
+  )
+  await cdp.send('Page.navigate', { url }, sessionId)
+
+  const deadline = Date.now() + timeoutMs
+  while (Date.now() < deadline) {
+    await sleep(150)
+    try {
+      const evaluated = await cdp.send<{ result: { value?: PageRead } }>(
+        'Runtime.evaluate',
+        { expression: READ_PAGE, returnByValue: true },
+        sessionId
+      )
+      if (evaluated.result?.value?.hydrated === true) return true
+    } catch {
+      /* navigation swaps the execution context; keep polling */
+    }
+  }
+  return false
+}
+
+const evaluate = async <T>(cdp: Cdp, sessionId: string, expression: string): Promise<T | undefined> =>
+  (await cdp.send<{ result: { value?: T } }>(
+    'Runtime.evaluate',
+    { expression, returnByValue: true },
+    sessionId
+  )).result?.value
+
+/* ---- the accordion's wiring, read from source ---- */
+const accordionWiringRows = (): Row[] => {
+  const rows: Row[] = []
+  const component = join(appRoot, 'src/components/bf/Accordion.vue')
+  const consumer = join(appRoot, 'src/pages/archive.vue')
+
+  for (const file of [component, consumer]) {
+    if (existsSync(file)) continue
+    return [{
+      label: 'gh#228 — the accordion source files are where this gate expects them',
+      ok: false,
+      detail: `expected ${file.slice(appRoot.length + 1)} · actual missing`
+    }]
+  }
+
+  /* Comments stripped first: both files argue about the pattern in prose and
+     quote the bindings verbatim, so a raw scan would read the explanation as
+     the implementation — the `decorativeGlyphRows` lesson. */
+  const strip = (raw: string): string =>
+    raw.replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/<!--[\s\S]*?-->/g, ' ')
+
+  const accordion = strip(readFileSync(component, 'utf8'))
+  const archive = strip(readFileSync(consumer, 'utf8'))
+
+  const declaresEmit = /defineEmits<\{[\s\S]*?['"]update:open['"]\s*:/.test(accordion)
+  rows.push({
+    label: 'gh#228 — bfAccordion declares an `update:open` emit',
+    ok: declaresEmit,
+    detail: declaresEmit
+      ? 'expected defineEmits<{ \'update:open\': [value: boolean] }> · actual present'
+      : 'expected a declared `update:open` emit · actual absent — without it `:open` is a'
+        + ' one-way binding and no consumer can hold the reader\'s disclosure state (WCAG 3.2.2)'
+  })
+
+  const listensToggle = /<details[^>]*@toggle=/.test(accordion)
+  rows.push({
+    label: 'gh#228 — the emit is driven by the native `toggle` event on the <details>',
+    ok: listensToggle,
+    detail: listensToggle
+      ? 'expected @toggle on <details> · actual present'
+      : 'expected `@toggle` on the <details> itself · actual absent — the browser owns the'
+        + ' state (D30, native first), so the only correct trigger is the event it fires'
+  })
+
+  const noForcedOpen = !/\.open\s*=(?!=)/.test(accordion)
+  rows.push({
+    label: 'gh#228 — bfAccordion never writes `.open` back, so it cannot fight the native toggle',
+    ok: noForcedOpen,
+    detail: noForcedOpen
+      ? 'expected no assignment to `.open` in the component · actual none'
+      : 'expected the component to report the toggle, not perform it · actual it assigns `.open`'
+        + ' — that is a controlled disclosure, which D30 declines to build'
+  })
+
+  const consumerBinds = /<bfAccordion[\s\S]*?@update:open=/.test(archive)
+    || /<bfAccordion[\s\S]*?v-model:open=/.test(archive)
+  rows.push({
+    label: `gh#228 — ${ACCORDION_ROUTE}'s call site binds the event`,
+    ok: consumerBinds,
+    detail: consumerBinds
+      ? 'expected @update:open (or v-model:open) on <bfAccordion> · actual present'
+      : 'expected archive.vue to bind @update:open or v-model:open · actual neither —'
+        + ' an emit nobody listens to leaves the eleven year groups exactly as they were'
+  })
+
+  return rows
+}
+
+const compositeWidgetRows = async (cdp: Cdp, origin: string): Promise<Row[]> => {
+  const rows: Row[] = accordionWiringRows()
+
+  const { targetId } = await cdp.send<{ targetId: string }>('Target.createTarget', { url: 'about:blank' })
+  const { sessionId } = await cdp.send<{ sessionId: string }>('Target.attachToTarget', { targetId, flatten: true })
+
+  let filterBars: FilterBarRead | undefined
+  let tabbed: FocusHit[] = []
+  let arrowMoved: string | null = null
+  let arrowFrom: string | null = null
+  let accordionAfterFirst: AccordionRead | undefined
+  let accordionAfterSecond: AccordionRead | undefined
+  let accordionAfterThird: AccordionRead | undefined
+  let reachedFirstSummary = false
+  let note: string | undefined
+
+  try {
+    /* Cleared and restored for gh#224's reason: with `watching` unset the
+       client files every target's console output into the shared arrays the
+       per-route rows are judged on. */
+    cdp.exceptions = []
+    cdp.consoleErrors = []
+    cdp.watching = sessionId
+
+    /* ---- half 1: the facet rows on /insights ---- */
+    if (!(await openHydrated(cdp, sessionId, `${origin}${FILTER_BAR_ROUTE}`))) {
+      note = `expected ${FILTER_BAR_ROUTE} to hydrate within ${timeoutMs}ms · actual it did not`
+    } else {
+      await sleep(250)
+      filterBars = await evaluate<FilterBarRead>(cdp, sessionId, READ_FILTER_BARS)
+
+      await evaluate<boolean>(cdp, sessionId, ARM_FOCUS_RECORDER)
+
+      /* Real Tab presses, in batches, stopping as soon as every chip has been
+         reached. No `.focus()` anywhere (a11y BRIEF §5). */
+      const wanted = new Set(
+        (filterBars?.bars ?? []).flatMap(bar => bar.chips.map(chip => chip.key)).filter((k): k is string => k !== null)
+      )
+      for (let batch = 0; batch < 9; batch += 1) {
+        await pressKey(cdp, sessionId, 'Tab', 20)
+        await sleep(60)
+        tabbed = (await evaluate<FocusHit[]>(cdp, sessionId, READ_FOCUS_RECORDER)) ?? []
+        const seen = new Set(tabbed.map(hit => hit.key).filter((k): k is string => k !== null))
+        if ([...wanted].every(key => seen.has(key))) break
+      }
+
+      /* Arrows, on a fresh load: the batched walk above deliberately overshoots
+         the facet region, so it cannot leave focus on a chip to press from.
+         This second pass Tabs one press at a time until a chip has focus, then
+         presses ArrowRight once. Still no `.focus()` and no `.click()`. */
+      if (await openHydrated(cdp, sessionId, `${origin}${FILTER_BAR_ROUTE}`)) {
+        await sleep(250)
+        const activeChip = `(() => { const a = document.activeElement; return a && a.getAttribute ? a.getAttribute('data-filter-key') : null })()`
+        for (let press = 0; press < 60 && arrowFrom === null; press += 1) {
+          await pressKey(cdp, sessionId, 'Tab')
+          await sleep(25)
+          arrowFrom = (await evaluate<string | null>(cdp, sessionId, activeChip)) ?? null
+        }
+        if (arrowFrom !== null) {
+          await pressKey(cdp, sessionId, 'ArrowRight')
+          await sleep(80)
+          arrowMoved = (await evaluate<string | null>(cdp, sessionId, activeChip)) ?? null
+        }
+      }
+    }
+
+    /* ---- half 2: the disclosure on /archive ---- */
+    if (!(await openHydrated(cdp, sessionId, `${origin}${ACCORDION_ROUTE}`))) {
+      note = `${note === undefined ? '' : `${note}; `}`
+        + `expected ${ACCORDION_ROUTE} to hydrate within ${timeoutMs}ms · actual it did not`
+    } else {
+      await sleep(250)
+      await evaluate<boolean>(cdp, sessionId, ARM_FOCUS_RECORDER)
+
+      /* Tab to the first <summary>, one press at a time so the walk stops on it
+         rather than inside the open band's 27 links. */
+      for (let press = 0; press < 40 && !reachedFirstSummary; press += 1) {
+        await pressKey(cdp, sessionId, 'Tab')
+        await sleep(30)
+        const read = await evaluate<AccordionRead>(cdp, sessionId, READ_ACCORDIONS)
+        if (read?.activeIsSummary === true && read.activeSummaryIndex === 0) reachedFirstSummary = true
+      }
+
+      if (reachedFirstSummary) {
+        /* 1 — Enter closes the band that was open on load. */
+        await pressKey(cdp, sessionId, 'Enter')
+        await sleep(120)
+        accordionAfterFirst = await evaluate<AccordionRead>(cdp, sessionId, READ_ACCORDIONS)
+
+        /* 2 — one Tab now reaches the *second* summary, because the closed band
+           took its rows out of the tab order (native <details>, D30). Enter
+           opens it. */
+        await pressKey(cdp, sessionId, 'Tab')
+        await sleep(60)
+        await pressKey(cdp, sessionId, 'Enter')
+        await sleep(120)
+        accordionAfterSecond = await evaluate<AccordionRead>(cdp, sessionId, READ_ACCORDIONS)
+
+        /* 3 — back to the first summary and re-open it. `Shift`+`Tab`, not
+           `Tab`: forwards from summary 2 now leads *into* the band just opened,
+           where the next Enter would follow a card link and take the page under
+           test away — measured while building this gate, and the reason for the
+           non-vacuity row below. Backwards is one stop, because the first band
+           is closed and its rows are out of the tab order.
+
+           Once `open` is two-way this third toggle is a real parent state
+           change, so the whole v-for re-renders under the band opened at step 2;
+           it must come through that unchanged. */
+        await pressKey(cdp, sessionId, 'Tab', 1, 8)
+        await sleep(60)
+        await pressKey(cdp, sessionId, 'Enter')
+        await sleep(150)
+        accordionAfterThird = await evaluate<AccordionRead>(cdp, sessionId, READ_ACCORDIONS)
+      }
+    }
+  } finally {
+    await cdp.send('Target.closeTarget', { targetId }).catch(() => {})
+    /* After the close, so anything the dying target flushes still counts. */
+    cdp.watching = undefined
+  }
+
+  /* ---- rows: the facet rows ---- */
+  if (filterBars === undefined) {
+    rows.push({
+      label: `gh#228 — ${FILTER_BAR_ROUTE} hydrated, so its facet rows can be read`,
+      ok: false,
+      detail: `${note ?? 'the page did not answer'} — without a running app there is no`
+        + ' role or tab order to judge, so this half is untested rather than green'
+    })
+  } else {
+    const bars = filterBars.bars
+    const chips = bars.flatMap(bar => bar.chips)
+
+    rows.push({
+      label: `gh#228 — ${FILTER_BAR_ROUTE} renders the facet rows this gate was measured against`,
+      ok: bars.length >= 2 && chips.length >= 7,
+      detail: bars.length >= 2 && chips.length >= 7
+        ? `expected >= 2 .bf-filter-bar and >= 7 chips · actual ${bars.length} and ${chips.length}`
+        : `expected >= 2 .bf-filter-bar and >= 7 chips · actual ${bars.length} and ${chips.length}`
+          + ' — a vacuous pass is not a pass; every row below is judged on these elements'
+    })
+
+    const untabbable = chips.filter(chip => chip.tabIndex < 0)
+    rows.push({
+      label: 'gh#228 — every filter chip is in the tab order',
+      ok: chips.length > 0 && untabbable.length === 0,
+      detail: chips.length > 0 && untabbable.length === 0
+        ? `expected 0 chips at tabindex < 0 · actual 0 of ${chips.length}`
+        : `expected 0 chips at tabindex < 0 · actual ${untabbable.length} of ${chips.length}`
+          + ` (${untabbable.map(c => c.key).join(', ')}) — a roving tabindex takes them out of`
+          + ' the tab order, and gh#228 removed it rather than naming it role="toolbar"'
+    })
+
+    /* The coherence rule, which is the one that stays true whichever of D30's
+       two exits a future change takes. */
+    const incoherent = bars.filter(bar =>
+      bar.chips.some(chip => chip.tabIndex < 0)
+      && !COMPOSITE_ROLES.has((bar.role ?? '').toLowerCase())
+    )
+    rows.push({
+      label: 'gh#228 — a roving tabindex only under a role that owns one',
+      ok: incoherent.length === 0,
+      detail: incoherent.length === 0
+        ? `expected 0 bars with tabindex=-1 chips under a non-composite role · actual 0 of ${bars.length}`
+        : `expected 0 · actual ${incoherent.length} of ${bars.length}`
+          + ` — role ${JSON.stringify(incoherent[0]?.role ?? null)} declares no roving-tabindex`
+          + ' contract, so the chips are simply unreachable by Tab. Either drop the roving'
+          + ` tabindex or use one of: ${[...COMPOSITE_ROLES].join(', ')}`
+    })
+
+    const named = bars.filter(bar => (bar.labelledByText ?? bar.ariaLabel ?? '').trim() !== '')
+    const names = bars.map(bar => (bar.labelledByText ?? bar.ariaLabel ?? '').trim())
+    const distinct = new Set(names.filter(n => n !== ''))
+    const labelledByBars = bars.filter(bar => (bar.labelledByText ?? '').trim() !== '')
+    rows.push({
+      label: `gh#228 — both facet rows on ${FILTER_BAR_ROUTE} keep their visible captions as their name`,
+      ok: named.length === bars.length && distinct.size === bars.length && labelledByBars.length === bars.length,
+      detail: named.length === bars.length && distinct.size === bars.length && labelledByBars.length === bars.length
+        ? `expected ${bars.length} distinct names, all via aria-labelledby · actual ${JSON.stringify(names)}`
+        : `expected every bar named through aria-labelledby, all names distinct · actual ${JSON.stringify(names)},`
+          + ` ${labelledByBars.length} of ${bars.length} via aria-labelledby — insights/index.vue points`
+          + ' each bar at a visible "Format:" / "Program:" caption, which outranks the component\'s'
+          + ' generic aria-label; losing it makes two rows announce as the same group'
+    })
+
+    const unpressed = chips.filter(chip => chip.ariaPressed === null)
+    rows.push({
+      label: 'gh#228 — every filter chip still carries aria-pressed',
+      ok: chips.length > 0 && unpressed.length === 0,
+      detail: chips.length > 0 && unpressed.length === 0
+        ? `expected 0 chips without aria-pressed · actual 0 of ${chips.length}`
+        : `expected 0 · actual ${unpressed.length} of ${chips.length} — aria-pressed is the only`
+          + ' thing that says a chip is a toggle rather than a link, and Chip.vue binds it after $attrs'
+    })
+
+    const seenKeys = new Set(tabbed.map(hit => hit.key).filter((k): k is string => k !== null))
+    const missed = chips.map(c => c.key).filter((k): k is string => k !== null).filter(k => !seenKeys.has(k))
+    rows.push({
+      label: `gh#228 — a real Tab walk of ${FILTER_BAR_ROUTE} reaches every filter chip`,
+      ok: chips.length > 0 && missed.length === 0,
+      detail: chips.length > 0 && missed.length === 0
+        ? `expected all ${chips.length} chips focused by real Tab presses · actual all of them,`
+          + ` in order [${tabbed.filter(h => h.key !== null).map(h => h.key).join(', ')}]`
+        : `expected all ${chips.length} chips · actual ${chips.length - missed.length}`
+          + ` — never focused: ${missed.join(', ')}. Real Input.dispatchKeyEvent presses, never .focus()`
+          + ' (a11y BRIEF §5)'
+    })
+
+    const arrowOk = arrowFrom !== null && arrowMoved !== null && arrowMoved !== arrowFrom
+    rows.push({
+      label: 'gh#228 — a real ArrowRight still moves focus between chips',
+      ok: arrowOk,
+      detail: arrowOk
+        ? `expected focus to move · actual ${arrowFrom} → ${arrowMoved}`
+        : `expected a chip focused, then ArrowRight to move focus · actual from ${JSON.stringify(arrowFrom)}`
+          + ` to ${JSON.stringify(arrowMoved)} — dropping the roving tabindex must not drop the arrow`
+          + ' handler with it; both mechanisms are meant to reach every chip'
+    })
+  }
+
+  /* ---- rows: the disclosure ---- */
+  if (accordionAfterThird === undefined) {
+    rows.push({
+      label: `gh#228 — ${ACCORDION_ROUTE}'s first <summary> is reachable by real Tab presses`,
+      ok: false,
+      detail: reachedFirstSummary
+        ? 'expected three real Enter presses to be readable · actual the page stopped answering'
+        : `expected a real Tab walk to land on the first .bf-accordion__summary within 40 presses`
+          + ` · actual it did not${note === undefined ? '' : ` (${note})`}`
+    })
+  } else {
+    const first = accordionAfterFirst
+    const second = accordionAfterSecond
+    const third = accordionAfterThird
+
+    /* Non-vacuity, and the failure mode this gate hit while it was being built:
+       an Enter that does not activate the summary leaves focus to wander into
+       the open band's links, where the next Enter follows one and the whole
+       page under test is gone. Zero accordions is that, not a pass. */
+    const stayedPut = third.count > 2 && (second?.count ?? 0) > 2 && (first?.count ?? 0) > 2
+    rows.push({
+      label: `gh#228 — ${ACCORDION_ROUTE} is still the page under test after three real Enter presses`,
+      ok: stayedPut,
+      detail: stayedPut
+        ? `expected > 2 details.bf-accordion throughout · actual ${third.count}`
+        : `expected > 2 details.bf-accordion after each press · actual`
+          + ` ${first?.count ?? 0}, ${second?.count ?? 0}, ${third.count}`
+          + ' — 0 means Enter activated something else and navigated away, so the three rows'
+          + ' below are judged on a page that is not this one'
+    })
+
+    const closedOk = first !== undefined && first.open[0] === false
+    rows.push({
+      label: `gh#228 — a real Enter on ${ACCORDION_ROUTE}'s first <summary> closes its band`,
+      ok: closedOk,
+      detail: closedOk
+        ? 'expected details[0].open false after Enter · actual false'
+        : `expected details[0].open false · actual ${JSON.stringify(first?.open[0] ?? null)}`
+          + ' — native <details> activation on Enter is the browser\'s, and nothing this epic'
+          + ' added may take it away'
+    })
+
+    const openedOk = second !== undefined && second.open[1] === true && second.open[0] === false
+    rows.push({
+      label: `gh#228 — Tab then a real Enter opens the second band, and the first stays closed`,
+      ok: openedOk,
+      detail: openedOk
+        ? 'expected [false, true, …] · actual [false, true, …]'
+        : `expected details[0].open false and details[1].open true · actual`
+          + ` ${JSON.stringify(second?.open.slice(0, 3) ?? null)} — one Tab reaches the second`
+          + ' summary only because the closed first band took its rows out of the tab order'
+    })
+
+    const survivesOk = third.open[0] === true && third.open[1] === true
+    rows.push({
+      label: 'gh#228 — a third toggle re-renders the parent and the band opened before it stays open',
+      ok: survivesOk,
+      detail: survivesOk
+        ? 'expected [true, true] after Shift+Tab back to the first summary and a third real Enter'
+          + ' · actual [true, true]'
+        : `expected details[0].open true and details[1].open true · actual`
+          + ` ${JSON.stringify(third.open.slice(0, 2))}`
+          + ' — once `open` is two-way the third toggle is a genuine parent state change, so the'
+          + ' whole v-for re-renders under the band opened at step 2. A disclosure that snaps'
+          + ' shut under a reader who did not ask for it is WCAG 3.2.2 (On Input)'
+    })
+  }
+
+  return rows
+}
+
+/* ------------------------------------------------------------------ *
  * DoD-3 — every §7 route reachable from the menus
  * ------------------------------------------------------------------ */
 /**
@@ -3602,6 +4186,16 @@ const run = async (): Promise<void> => {
       )
       for (const row of searchLandmarkFailing) console.log(`      ✗ ${row.label} — ${row.detail}`)
       if (verbose) for (const row of searchLandmarkGate.filter(r => r.ok)) console.log(`      · ${row.label}`)
+
+      const compositeGate = await compositeWidgetRows(cdp, origin)
+      const compositeFailing = compositeGate.filter(r => !r.ok)
+      results.push({ slug: 'composite roles + disclosure (gh#228)', rows: compositeGate, failing: compositeFailing })
+      console.log(
+        `${compositeFailing.length === 0 ? '  ✓ PASS' : '  ✗ FAIL'}  `
+        + `${'composite roles + disclosure (gh#228)'.padEnd(44)} ${compositeGate.length - compositeFailing.length}/${compositeGate.length} rows`
+      )
+      for (const row of compositeFailing) console.log(`      ✗ ${row.label} — ${row.detail}`)
+      if (verbose) for (const row of compositeGate.filter(r => r.ok)) console.log(`      · ${row.label}`)
 
       const navRows = homeLinks === undefined
         ? [{ label: 'DoD-3 — the home page rendered', ok: false, detail: 'expected / to hydrate · actual it did not, so reachability cannot be judged' }]
