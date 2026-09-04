@@ -729,20 +729,40 @@ function buildPairs(): Pair[] {
     })
     pairs.push({
       id: `program-on-dark--${program.slug}`,
-      label: `--color-program-on-dark on the scrim ground [${program.slug}]`,
+      label: `--color-program-on-dark on --color-surface-inverse [${program.slug}]`,
       fg: { kind: 'token', name: '--color-program-on-dark' },
-      bg: {
-        kind: 'over',
-        top: { kind: 'token', name: '--color-scrim' },
-        under: { kind: 'token', name: '--color-surface-page' }
-      },
+      bg: { kind: 'token', name: '--color-surface-inverse' },
       floor: 4.5,
       scope,
       requireScoped: ['--color-program-on-dark', '--hsl-program-on-dark'],
-      // The token itself landed in gh#251. What is still missing is
-      // `--color-scrim`, so this names the phase that supplies the ground —
-      // otherwise the report reads "lands in #251" forever after #251 merged.
-      pendingFrom: 'the hero + scrim phase'
+      /*
+        The ground moved in gh#253, and the reason is arithmetic rather than
+        preference.
+
+        This pair used to read `over(--color-scrim, --color-surface-page)` and
+        wait on a token the hero phase would supply. The hero phase supplied
+        it — `--color-scrim` is `hsl(var(--hsl-navy), 0.70)` — and the pair
+        still could not pass, because over that ground the highest ratio ANY
+        colour can reach is 4.840 and pure white is what reaches it. These
+        three measure 1.92 / 1.64 / 1.87 there. Red is worse than unlucky: it
+        needs a ground of relative luminance <= 0.0291 to clear 4.5, and
+        navy's own luminance is 0.04004, so it fails over a navy scrim at
+        every alpha including 1.0. No amount of tuning fixes that.
+
+        What the pair was asserting, then, was programme colour as text over
+        media — which is exactly what gh#253 measured and forbade. The scrim
+        ground is not left unmeasured: `white-on-scrim` and
+        `white-on-scrim-panel` below measure it, at the one foreground the
+        architecture ever puts there.
+
+        `--color-surface-inverse` is the ground this tier is named for and the
+        one `semantic-colors.css` has always recorded its ratios against
+        (7.96 / 6.79 / 7.73) with nothing checking them. This is residual
+        #264's own suggested fix, and it closes that issue's on-dark half.
+        Its other half — the `:root` neutral programme default, which no pair
+        declares — is deliberately still open.
+      */
+      note: 'the tier\'s real ground; the scrim-composited form is unsatisfiable (see gh#253)'
     })
     pairs.push({
       id: `white-on-program--${program.slug}`,
@@ -756,6 +776,14 @@ function buildPairs(): Pair[] {
     })
   }
 
+  /*
+    The two scrim modes, live since gh#253. Both measure the worst case a
+    photograph can present — a blown-out white frame, which is BFNA's house
+    style — so a pass here is a pass over any image the site can ship.
+
+    This is the pair that decided the alpha: 0.60 gives 3.692 and 0.65 gives
+    4.245, both fails, and 0.70 is the first value that clears 4.5.
+  */
   pairs.push({
     id: 'white-on-scrim',
     label: 'white on --color-scrim over a blown-out white photograph',
@@ -767,8 +795,21 @@ function buildPairs(): Pair[] {
     },
     floor: 4.5,
     scope: ROOT,
-    pendingFrom: 'the hero + scrim phase',
     note: 'worst-case ground: BFNA house style is bright imagery'
+  })
+
+  pairs.push({
+    id: 'white-on-scrim-panel',
+    label: 'white on --color-scrim-panel over a blown-out white photograph',
+    fg: WHITE,
+    bg: {
+      kind: 'over',
+      top: { kind: 'token', name: '--color-scrim-panel' },
+      under: WHITE
+    },
+    floor: 4.5,
+    scope: ROOT,
+    note: 'data-scrim="panel" — the near-opaque column behind the copy'
   })
 
   return pairs

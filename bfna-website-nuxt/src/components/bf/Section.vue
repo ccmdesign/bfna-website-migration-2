@@ -203,6 +203,31 @@ const headingLabelledBy = computed(() => (props.heading ? headingId : undefined)
     v-bind="rootAttrs"
   >
     <!--
+      A full-bleed layer, outside the measure. gh#253.
+
+      The default slot below renders **inside** `.center`, and `.center` is
+      `content-box` with `padding-inline` (`center.css:50-58`) — its rendered
+      width is `measure + 2 x padding`, and it is centred. So nothing passed
+      through the default slot can paint edge to edge, and a band that wants a
+      photograph behind its own copy has nowhere to put one.
+
+      This is that place: a direct child of the band root, before the column,
+      taking the band's whole box. `bfPageHeader` puts `bfHeroMedia` here.
+
+      Purely additive — unused, it renders nothing, and the eight templates
+      that composed this component before gh#253 are untouched.
+
+      And deliberately unopinionated: this component adds **no rule** for it.
+      A layer here positions itself, and the *consumer* declares the
+      containing block it needs on the root — `bfPageHeader` writes
+      `position: relative; isolation: isolate` onto `.bf-page-header--media`,
+      which is this same `<section>` under the consumer's own class. A band
+      that has no bleed layer therefore keeps exactly the box model it had,
+      and this file keeps paying nothing for a feature one caller uses.
+    -->
+    <slot name="bleed" />
+
+    <!--
       The wireframe's inner box, kept exactly: `.center` gives the column its
       measure and inline padding, the layout class lays the children out, and
       both live in `@layer composition` — nothing in this file re-states them.

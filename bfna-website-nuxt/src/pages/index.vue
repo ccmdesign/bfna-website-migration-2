@@ -137,8 +137,22 @@ const insightChips = (i: Insight): string[] | undefined =>
     removed there and is not reinstated here; no newsletter exists.
 
     `/democracy`, not `/wireframes/democracy`: the hub route of BRIEF §7.
+
+    The photograph is `src/public/images/hero/homepage.jpg` (gh#253) — a local
+    file that was on disk and read by nothing. **Local, not the Directus URL
+    the content layer stores**: `bfMedia` routes a root-relative path through
+    `NuxtImg` and gets a real srcset, and hands an absolute `https://` URL to
+    the browser untouched with none (`Media.vue:70-76`). No `imageAlt`: the
+    picture is decorative and the `<h1>` beside it carries the meaning.
+
+    No `scrim` either — `full` is the default, and it is the flat 0.70 navy
+    that makes white type clear 4.5:1 over any photograph BFNA ships.
   -->
-  <bfHero :heading="home?.heading" :description="home?.description">
+  <bfHero
+    :heading="home?.heading"
+    :description="home?.description"
+    image="/images/hero/homepage.jpg"
+  >
     <bfButton to="/democracy" variant="primary">Explore our work</bfButton>
   </bfHero>
 

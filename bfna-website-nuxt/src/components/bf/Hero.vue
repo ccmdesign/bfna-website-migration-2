@@ -75,19 +75,40 @@
  * what the spec forbids, and would also mean this component disagreed with
  * every other `h1` in the system.
  *
- * ## What is not here
+ * ## The photograph and the scrim (gh#253)
  *
- * No background image and no art direction (D5) — the band paints nothing at
- * all, so it also declares no colour of any kind and adds no token (BRIEF §5
- * rule 2). No carousel: no wireframe evidence for one. No `:not()` appears in
- * the stylesheet, complex-selector or otherwise (D-20.5).
+ * This band did paint nothing at all until gh#253, and its own comment said
+ * so. The design phase gave it an image, and the rule that comes with one is
+ * measured rather than chosen: a navy scrim at **0.70** is the first alpha at
+ * which white clears 4.5:1 over a blown-out white photograph, which is BFNA's
+ * house style, and at that alpha nothing else in the palette clears it at all
+ * — the ceiling over that ground is 4.840 and pure white is what reaches it.
+ * **So over media, type is white; programme colour appears only as an opaque
+ * fill, never as text.**
+ *
+ * The whole treatment is `bfHeroMedia`, shared with `bfPageHeader` — read
+ * that component for the argument. This band contributes four things and no
+ * more: the containing block and stacking context it needs, the `data-scrim`
+ * attribute that selects its mode, the inverted text colour, and the two
+ * inversions a dark ground forces on the controls inside it — a visible focus
+ * ring and a visible control boundary.
+ * Every value below still comes from a token; no colour literal appears in
+ * this file, which is what `docs/ds-epic/issues/37-bf-hero.md:67`'s narrowed
+ * gate asserts.
+ *
+ * ## What is still not here
+ *
+ * No carousel: no wireframe evidence for one. No `:not()` appears in the
+ * stylesheet, complex-selector or otherwise (D-20.5). No `.cover`, `.frame`
+ * or `.imposter` — all three are written and used zero times, and `.cover`
+ * would regress the `svh` fix below by defaulting to `100vh`.
  */
 import { Comment, Fragment, Text, useSlots, type VNode } from 'vue'
 import type { HeroProps } from '~/types/bf-contracts'
 
 defineOptions({ name: 'BfHero' })
 
-defineProps<HeroProps>()
+withDefaults(defineProps<HeroProps>(), { imageAlt: '', scrim: 'full' })
 
 const slots = useSlots()
 
@@ -165,7 +186,24 @@ const showActions = (): boolean => hasRenderedContent(slots.default?.())
     left at its default: a caller's `class` merges with `bf-hero` rather than
     replacing it, and a caller's `style` can set the height hook.
   -->
-  <section class="bf-hero">
+  <section
+    class="bf-hero"
+    :class="{ 'bf-hero--media': Boolean(image) }"
+    :data-scrim="image ? scrim : undefined"
+  >
+    <!--
+      The photograph and its scrim, gh#253. A **sibling** of the inner box and
+      a direct child of the band, never a `.stack` child: `composition/stack.css`
+      spaces with `> * + *` margin rather than `gap`, so an absolutely
+      positioned layer inside one still takes a `margin-block-start` that
+      shrinks and offsets it. `bfHeroMedia` carries the whole treatment; this
+      band contributes only the containing block and the attribute.
+
+      `v-if`, so a hero with no image renders exactly the markup it rendered
+      before this prop existed — no wrapper, no scrim, no `data-scrim`.
+    -->
+    <bfHeroMedia v-if="image" :src="image" :alt="imageAlt" />
+
     <!--
       The wireframe's inner box, unchanged. `.center` gives the column its
       measure and its inline padding; `.stack` makes it a column and owns the
@@ -240,6 +278,94 @@ const showActions = (): boolean => hasRenderedContent(slots.default?.())
     */
     display: grid;
     align-content: center;
+
+    /*
+      The containing block for `bfHeroMedia`, and the stacking context that
+      makes its `z-index: -1` safe. gh#253.
+
+      `isolation: isolate` is the load-bearing half: it makes this element a
+      stacking context, so the media layer paints above this band's own
+      background and below every in-flow descendant, and cannot slide behind
+      the page. The alternative — raising the content column with
+      `position: relative; z-index: 1` — is what `bfPageHeader` could not do,
+      because its column belongs to `bfSection`; using the same mechanism in
+      both places is what makes `bfHeroMedia` one component rather than two.
+
+      Declared unconditionally rather than under the `--media` modifier. Both
+      are inert on a band with no positioned descendant, and a band whose
+      geometry changes when a photograph arrives is the kind of thing that
+      makes a layout bug depend on the content.
+    */
+    position: relative;
+    isolation: isolate;
+  }
+
+  /*
+    With a photograph, the band is dark and its type is white — the rule the
+    scrim's alpha was chosen to make true (`--color-scrim`, 0.70, white at
+    4.840 over the worst case). `color` on the band rather than on each
+    element, so the `<h1>`, the standfirst and anything a template puts in the
+    actions cluster all inherit it.
+
+    No programme colour anywhere in this rule, deliberately. At this alpha the
+    programme hues measure 1.92 / 1.64 / 1.87 as text over the scrim; they
+    appear in a hero only as an opaque fill, which does not composite with the
+    photograph. That also means nothing this component declares is scoped by
+    `[data-program]`, so the band does not recolour per route.
+  */
+  .bf-hero--media {
+    color: var(--color-text-inverse);
+  }
+
+  /*
+    The focus ring, inverted. `base/focus.css:76-82` outlines with
+    `--color-text` — near-black — and the stack has no inverse variant, so on
+    a navy scrim the indicator all but disappears (WCAG 2.4.7). That file sits
+    in `@layer defaults` precisely so a component layer can win, which this
+    does.
+
+    `:deep()` because the controls in a hero are slot content and
+    child-component roots, and neither carries this component's scope id.
+
+    `outline-color` as a longhand at specificity (0,3,0) also outranks
+    `bfButton`'s and `bfBreadcrumb`'s own `outline:` shorthands at (0,2,0) in
+    this same layer, so one rule covers every control the band can hold
+    without reaching into any of their `--_bf-*-focus-color` hooks.
+  */
+  .bf-hero--media :deep(:focus-visible) {
+    outline-color: var(--color-text-inverse);
+  }
+
+  /*
+    The controls' visible boundary, gh#253 — WCAG 1.4.11, and a regression
+    this band would otherwise introduce rather than an adjacent issue.
+
+    `bfButton`'s `primary` variant fills and outlines itself with
+    `--color-primary`. Against a white page that reads at 6.3:1; against this
+    band's scrim over the real photograph it measured **1.22:1**, so the
+    control had no discernible edge at all. The `default` variant is worse
+    still on a dark ground: `--color-text` label on `--_bf-button-bg: none`.
+
+    `border-color` as a longhand rather than through `--_bf-button-border`,
+    because `primary` writes that hook **inline** (`Button.vue:135-139`) and
+    an inline declaration cannot be outranked by any rule. The longhand at
+    (0,3,0) beats the component's own `border:` shorthand at (0,1,0) in the
+    same layer, so it lands on both variants. White on this scrim is 4.84:1,
+    comfortably past the 3:1 floor.
+
+    `--_bf-button-color` *is* written through the hook, because it is only the
+    `default` variant that needs it — `primary` already writes
+    `--color-text-inverse` inline, and an inline value winning there is the
+    right outcome.
+
+    The focus ring stays distinguishable from this keyline: it is an `outline`
+    with `outline-offset`, so it draws a second ring outside the border with
+    the band's ground showing between them.
+  */
+  .bf-hero--media :deep(.bf-button) {
+    --_bf-button-color: var(--color-text-inverse);
+
+    border-color: var(--color-text-inverse);
   }
 }
 </style>

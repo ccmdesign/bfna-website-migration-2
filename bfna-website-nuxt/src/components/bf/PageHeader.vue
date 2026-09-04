@@ -55,18 +55,30 @@
  *
  * ## Styling
  *
- * None. This file declares no stylesheet at all — no custom property, no
- * colour, no rule. Every value on the page comes from `bfSection`,
- * `bfBreadcrumb` and `bfChip`'s own hooks, or from `@layer composition`
- * resolving `.cluster` + `data-gap="xs"` and `data-measure="normal"`. The BEM
- * class names below are selector hooks for a template, a probe or a future
- * skin — the pattern `bf-section__heading` and `bf-hero__heading` already set —
- * and they carry no declarations here. Nothing to say about `@layer components`
- * or D-20.5 that an empty stylesheet does not already say.
+ * Almost none, and none at all until gh#253. Every value on the page still
+ * comes from `bfSection`, `bfBreadcrumb` and `bfChip`'s own hooks, or from
+ * `@layer composition` resolving `.cluster` + `data-gap="xs"` and
+ * `data-measure="normal"`. The BEM class names below are selector hooks for a
+ * template, a probe or a future skin — the pattern `bf-section__heading` and
+ * `bf-hero__heading` already set — and they carry no declarations.
+ *
+ * What gh#253 adds is four rules and nothing more, every one of them
+ * conditional on there being a photograph: the containing block and stacking
+ * context `bfHeroMedia` needs, the inverted text colour that goes with a dark
+ * band, the crumb links (which do **not** inherit it — see the rule), and an
+ * inverted focus ring. A header with no `image` still resolves to the empty
+ * stylesheet this component shipped with.
+ *
+ * That block is the first `<style>` this file has ever had, so its
+ * `@layer components { }` wrapper is written **by hand**:
+ * `src/nuxt.config.ts:200` disables `postcss-preset-env`'s cascade-layers
+ * polyfill (which would flatten the wrapper into unlayered rules that outrank
+ * every layer — residual #98 / gh#101) and `scripts/check-routes.ts` gates
+ * every compiled `bf-*` stylesheet for it.
  */
 import { Comment, Fragment, Text } from 'vue'
 import type { VNode } from 'vue'
-import type { Crumb } from '~/types/bf-contracts'
+import type { Crumb, ScrimMode } from '~/types/bf-contracts'
 
 defineOptions({ name: 'BfPageHeader' })
 
@@ -121,9 +133,35 @@ interface Props {
    * `<p data-measure="normal">`, a `string[]` one per entry, `null` none.
    */
   tagline?: string | string[] | null
+  /**
+   * A photograph behind the band. gh#253.
+   *
+   * **Prefer a root-relative local path** — `/images/hero/democracy.jpg`.
+   * `bfMedia` routes those through `NuxtImg` and gets a real srcset, and
+   * hands an absolute `https://` URL to the browser untouched with none
+   * (`Media.vue:70-76`), so the `image` field on a `bfPrograms` document —
+   * a Directus URL — is deliberately *not* what a hub passes here.
+   *
+   * Absent or `null` and the header paints nothing at all: no bleed layer, no
+   * scrim, no `data-scrim`, no colour. That is what the four routes this item
+   * does not art-direct keep doing, byte for byte.
+   */
+  image?: string | null
+  /**
+   * The photograph's alternative text, `''` by default because a header image
+   * is normally decorative: the `<h1>` carries the meaning. Pass a real
+   * string for one that genuinely carries information.
+   */
+  imageAlt?: string
+  /** Which scrim treatment the band wears. Ignored without an `image`. */
+  scrim?: ScrimMode
 }
 
-const props = withDefaults(defineProps<Props>(), { label: 'Page header' })
+const props = withDefaults(defineProps<Props>(), {
+  label: 'Page header',
+  imageAlt: '',
+  scrim: 'full'
+})
 
 defineSlots<{
   /** By-lines, meta rows, header actions — and the `/search` template's input. */
@@ -233,10 +271,32 @@ const showChips = (): boolean => chipList.value.length > 0 || hasRenderedContent
   -->
   <bfSection
     class="bf-page-header"
+    :class="{ 'bf-page-header--media': Boolean(image) }"
+    :data-scrim="image ? scrim : undefined"
     :label="label"
     gap="s"
     padded
   >
+    <!--
+      The photograph and its scrim, gh#253, into `bfSection`'s `#bleed` slot —
+      a direct child of the band's `<section>`, *outside* `.center`.
+
+      Outside for two reasons, both of which have bitten this repository
+      already. `.center` is `content-box` with `padding-inline`
+      (`center.css:50-58`), so a layer inside it is not full-bleed. And it is
+      a `.stack`, which spaces with `> * + *` **margin** rather than `gap`, so
+      an absolutely positioned child of it still takes a `margin-block-start`
+      that shrinks and offsets it — three logged defects come from exactly
+      that (`layouts/bf-default.vue:77-103`, `Hero.vue:94-130`, and this
+      file's own history at `:158-190`).
+
+      `class` and `data-scrim` both survive `bfSection`'s attribute
+      allow-list — `class` by name, `data-scrim` by the `data-` prefix.
+    -->
+    <template v-if="image" #bleed>
+      <bfHeroMedia :src="image" :alt="imageAlt" />
+    </template>
+
     <!--
       `crumbs?.length`, not `crumbs`: an empty array passed by a template whose
       trail is still loading must render no `<nav>`. `bfBreadcrumb` guards
@@ -287,3 +347,143 @@ const showChips = (): boolean => chipList.value.length > 0 || hasRenderedContent
     <slot />
   </bfSection>
 </template>
+
+<style scoped>
+/*
+  Written by hand, for the reason in the header: `nuxt.config.ts:200` turns
+  `postcss-preset-env`'s cascade-layers polyfill off, and `check-routes.ts`
+  fails the build if any compiled `bf-*` stylesheet lost its wrapper.
+
+  No `:not()` appears below, complex-selector or otherwise (D-20.5), and no
+  colour literal — both values are semantic tokens that already existed.
+*/
+@layer components {
+  /*
+    `.bf-page-header` is `bfSection`'s root `<section>` wearing this
+    component's class, so this rule reaches it: a child component's root
+    element carries its parent's scope id. Its *insides* do not — `.center` is
+    `bfSection`'s own element — which is exactly why `bfHeroMedia` is built to
+    need no rule on the content column.
+
+    `isolation: isolate` is the load-bearing half. It makes this band a
+    stacking context, so `bfHeroMedia`'s `z-index: -1` paints above the band's
+    background and below every in-flow descendant, and cannot escape upward.
+
+    Scoped to the `--media` modifier rather than declared unconditionally,
+    because this band is composed by eight templates and seven of them pass no
+    image: a header with no photograph keeps precisely the box model it had
+    before gh#253.
+  */
+  .bf-page-header--media {
+    position: relative;
+    isolation: isolate;
+
+    /*
+      With a photograph the band is dark and its type is white — the rule
+      `--color-scrim`'s 0.70 alpha was chosen to make true (white at 4.840
+      over the worst case, a blown-out white photograph). Set on the band so
+      the breadcrumb, the `<h1>`, the taglines and anything in the default
+      slot inherit it; `bfBreadcrumb`'s links carry a class, so they inherit
+      rather than picking up `a:not([class])`'s link colour.
+
+      No programme colour in this rule, deliberately. At this alpha the
+      programme hues measure 1.92 / 1.64 / 1.87 as text over the scrim, so
+      they appear here only as an opaque fill — a `bfChip` — which does not
+      composite with the photograph. Nothing this component declares is
+      scoped by `[data-program]`, so nothing it adds recolours per route.
+    */
+    color: var(--color-text-inverse);
+  }
+
+  /*
+    The separator and the crumb focus ring are `--_bf-breadcrumb-*` hooks
+    declared inside `.bf-breadcrumb`'s own rule, so an inherited value cannot
+    reach them — the element's own declaration wins over inheritance. This
+    rule outranks that one on specificity (0,3,0 against 0,1,0) in the same
+    layer, which is the supported way to retune another component's hooks from
+    a band.
+
+    `--color-neutral-tint-60` on navy is a near-black separator on a dark
+    ground; the inverted pair is what the rest of this band already uses.
+  */
+  .bf-page-header--media :deep(.bf-breadcrumb) {
+    --_bf-breadcrumb-separator-color: var(--color-text-inverse);
+    --_bf-breadcrumb-focus-color: var(--color-text-inverse);
+  }
+
+  /*
+    The crumb links, explicitly — inheritance does **not** reach them, and
+    assuming it did was the one defect the browser pass caught in this item.
+
+    A linked crumb carries `class="bf-breadcrumb__link"`, so
+    `base/typography.css:75`'s `a:not([class])` does not match it and no
+    author rule colours it at all. It therefore falls all the way through to
+    the user agent's own `#0000EE`, which is not inherited and which measured
+    **1.83:1** on this band's scrim over the real photograph — a WCAG 1.4.3
+    failure, and invisible from the markup, because the element looks like it
+    is inheriting the white the rest of the header inherits.
+
+    `:visited` is stated with it: the UA colours a visited link `#551A8B`,
+    which is worse. `inherit` rather than repeating the token, so the crumbs
+    can never drift from the band's own colour — including on a band that
+    later chooses a different one.
+
+    That the link is unstyled on a *light* page too is a pre-existing gap in
+    `bfBreadcrumb` rather than something this band introduced; it is raised
+    separately.
+  */
+  .bf-page-header--media :deep(.bf-breadcrumb__link),
+  .bf-page-header--media :deep(.bf-breadcrumb__link:visited) {
+    color: inherit;
+  }
+
+  /*
+    The focus ring, inverted. `base/focus.css:76-82` outlines with
+    `--color-text` — near-black — and the stack has no inverse variant, so on
+    a navy scrim the indicator all but disappears (WCAG 2.4.7). That file sits
+    in `@layer defaults` precisely so a component layer can win, which this
+    does.
+
+    `:deep()` because a header's controls are slot content and
+    child-component roots, and neither carries this component's scope id.
+    `outline-color` as a longhand at (0,3,0) also outranks `bfButton`'s and
+    `bfBreadcrumb`'s own `outline:` shorthands at (0,2,0) in this same layer,
+    so one rule covers every control the band can hold.
+  */
+  .bf-page-header--media :deep(:focus-visible) {
+    outline-color: var(--color-text-inverse);
+  }
+
+  /*
+    The controls' visible boundary, gh#253 — WCAG 1.4.11, and a regression
+    this band would otherwise introduce rather than an adjacent issue.
+
+    `bfButton`'s `primary` variant fills and outlines itself with
+    `--color-primary`. Against a white page that reads at 6.3:1; against this
+    band's scrim over the real photograph it measured **1.22:1**, so the
+    control had no discernible edge at all. The `default` variant is worse
+    still on a dark ground: `--color-text` label on `--_bf-button-bg: none`.
+
+    `border-color` as a longhand rather than through `--_bf-button-border`,
+    because `primary` writes that hook **inline** (`Button.vue:135-139`) and
+    an inline declaration cannot be outranked by any rule. The longhand at
+    (0,3,0) beats the component's own `border:` shorthand at (0,1,0) in the
+    same layer, so it lands on both variants. White on this scrim is 4.84:1,
+    comfortably past the 3:1 floor.
+
+    `--_bf-button-color` *is* written through the hook, because it is only the
+    `default` variant that needs it — `primary` already writes
+    `--color-text-inverse` inline, and an inline value winning there is the
+    right outcome.
+
+    The focus ring stays distinguishable from this keyline: it is an `outline`
+    with `outline-offset`, so it draws a second ring outside the border with
+    the band's ground showing between them.
+  */
+  .bf-page-header--media :deep(.bf-button) {
+    --_bf-button-color: var(--color-text-inverse);
+
+    border-color: var(--color-text-inverse);
+  }
+}
+</style>
