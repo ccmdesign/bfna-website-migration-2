@@ -469,15 +469,27 @@ export interface LoadMoreProps {
    * Is there anything left to load? The caller's `filtered.length > visible`,
    * computed by the caller.
    *
-   * `false` removes the button — the wireframe's own behaviour, where the whole
-   * `<p>` carries `v-if="filtered.length > visible"` and the control simply is
-   * not there once everything is on the page. It does **not** remove the live
-   * region when the caller is announcing counts; see `visibleCount`.
+   * `false` makes the button **inert, not absent** — `aria-disabled="true"`
+   * with the activation swallowed, so it stays focusable. It used to unmount
+   * the control, which is the wireframe's own behaviour (the whole `<p>`
+   * carries `v-if="filtered.length > visible"` there), and which dropped focus
+   * to `<body>` on the last load: measured on `/insights`, four clicks, WCAG
+   * 2.4.3, gh#225. It does **not** remove the live region when the caller is
+   * announcing counts; see `visibleCount`.
+   *
+   * With **neither** count supplied the component still renders no element at
+   * all at `hasMore=false` — the button's presence is tied to the wrapper's,
+   * not given a condition of its own — so that contract is unchanged.
    */
   hasMore: boolean
   /**
-   * A load is in flight. Renders the button `disabled`, so it cannot be
-   * double-fired.
+   * A load is in flight. Renders the button inert — `aria-disabled="true"`,
+   * activation refused — so it cannot be double-fired.
+   *
+   * `aria-disabled` and not the native `disabled` attribute, for `hasMore`'s
+   * reason: setting `disabled` on the element that currently has focus blurs it
+   * to `<body>` in every major engine, so the obvious spelling of "busy" is
+   * itself a focus-order defect (gh#225).
    *
    * Optional and, for the insights feed, never set: that caller slices a
    * build-time-static array synchronously, so there is no flight to be in. It
@@ -507,13 +519,14 @@ export interface LoadMoreProps {
    * which is the spec's default and the configuration in which `hasMore=false`
    * renders literally nothing — no element at all.
    *
-   * With both supplied, the region **outlives the button**: at `hasMore=false`
-   * the button is removed and the region is not. A live region only announces a
-   * mutation observed inside a region that was already in the accessibility
-   * tree, so a region removed in the same tick as its final update announces
-   * nothing on the load that matters most — the last one, where the control
-   * also vanishes. The region is `position: absolute` and clipped, so it
-   * occupies no space and paints no pixel either way.
+   * With both supplied, the region persists at `hasMore=false` alongside the
+   * now-inert button. A live region only announces a mutation observed inside a
+   * region that was already in the accessibility tree, so a region removed in
+   * the same tick as its final update announces nothing on the load that
+   * matters most — the last one. The region is `position: absolute` and
+   * clipped, so it occupies no space and paints no pixel either way, and the
+   * button points `aria-describedby` at it so the final count is read out with
+   * the control that is now unavailable (gh#225).
    */
   visibleCount?: number
   /** @see {@link LoadMoreProps.visibleCount} — both or neither. */

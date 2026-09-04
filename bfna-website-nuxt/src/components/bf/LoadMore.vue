@@ -51,24 +51,55 @@
  * | caller passes | at `hasMore=false` |
  * |---|---|
  * | **neither** count | renders **literally nothing** — no element at all. The spec's letter, exactly. |
- * | **both** counts | the button is removed; the region persists with the final count. |
+ * | **both** counts | the button is present but inert; the region persists with the final count. |
  *
  * The persisting region is `position: absolute` and clipped to a 1px box, so it
  * occupies no space, paints no pixel and moves no layout — "renders nothing"
- * holds visually and in layout in both rows. Probe 32 measures the wrapper's
- * footprint at `hasMore=false` rather than taking that on trust.
+ * holds visually and in layout in the first row. Probe 32 measures the
+ * wrapper's footprint at `hasMore=false` rather than taking that on trust.
  *
- * ## `disabled`, not `aria-disabled`
+ * ## `aria-disabled`, not `disabled` — gh#225
  *
- * `loading` renders the button `disabled`, which is the spec's own contract and
- * `bfButton`'s only genuinely non-interactive branch. It has a known cost — a
- * focused button that becomes `disabled` drops focus to `<body>` — which is not
- * papered over here because the alternative is worse: `aria-disabled` leaves an
- * element that is still activated by Enter, i.e. a control that lies about
- * being unavailable. The one consumer this component was written for (issue 49)
- * slices a build-time-static array synchronously and never sets `loading` at
- * all, so the cost is not paid on any path the epic ships. A caller that does
- * fetch should move focus itself once the load resolves.
+ * This section previously argued the opposite, and the reversal is the whole of
+ * gh#225, so the original reasoning is kept rather than overwritten.
+ *
+ * It said: `loading` renders the button `disabled`, `bfButton`'s only genuinely
+ * non-interactive branch; the known cost is that a focused button which becomes
+ * `disabled` drops focus to `<body>`; that cost is accepted because
+ * `aria-disabled` leaves an element still activated by Enter — a control that
+ * lies about being unavailable — and because the one shipping consumer
+ * (issue 49) slices a static array synchronously and never sets `loading`.
+ *
+ * Two of those three premises did not survive the accessibility audit:
+ *
+ * 1. **The cost was being paid anyway, by the other branch.** `v-if="hasMore"`
+ *    is the same mechanism as `disabled` — it removes the focused element from
+ *    play — and it fires on a path the epic very much ships. Measured on
+ *    `/insights`: four "Load more" clicks, and on the fourth `hasMore` goes
+ *    false, the button unmounts under the user's finger and
+ *    `document.activeElement === document.body`. WCAG 2.4.3. A keyboard user's
+ *    next Tab restarts at the top of the document.
+ * 2. **"Still activated by Enter" is a property of a bare `aria-disabled`, not
+ *    of the attribute.** It describes an element whose handler was left live.
+ *    Guard the handler and the control is genuinely inert: `onActivate` below
+ *    returns without emitting on every input path — pointer, Enter and Space
+ *    alike, because all three arrive as one `click`.
+ *
+ * So the inert state is now spelled `aria-disabled="true"` with a guarded
+ * handler, and the button is no longer removed when `hasMore` goes false: it is
+ * mounted for exactly as long as this component renders anything at all, and
+ * focus resting on it survives both transitions. That is the ARIA APG's own
+ * rule for a control whose removal would strand focus, and it fixes `loading`
+ * and exhaustion with one mechanism instead of leaving the first for later.
+ *
+ * What did **not** change: the "renders literally nothing" row of the table
+ * above. The button's presence is tied to the wrapper's `v-if`, not given one
+ * of its own, so a caller that supplies neither count still gets no element
+ * whatsoever once `hasMore` is false.
+ *
+ * A caller that genuinely fetches may still want to move focus once the load
+ * resolves — to the first appended row, say. Nothing here prevents that; what
+ * is guaranteed is that this component will not drop focus on the floor first.
  *
  * ## Styling
  *
@@ -98,7 +129,7 @@ const props = withDefaults(defineProps<LoadMoreProps>(), {
   totalCount: undefined
 })
 
-defineEmits<{
+const emit = defineEmits<{
   /**
    * The user asked for more. Fired once per activation — the caller increments
    * its own `visible` ref in response. Carries no payload: how much "more" is
@@ -106,6 +137,30 @@ defineEmits<{
    */
   (e: 'load'): void
 }>()
+
+/**
+ * Is the control unavailable right now?
+ *
+ * Two reasons, one state: there is nothing left to load, or a load is already
+ * in flight. Both used to remove the button from play — one by unmounting it,
+ * one by setting `disabled` — and both therefore dropped focus to `<body>`
+ * (gh#225). They now render the same inert-but-focusable control.
+ */
+const inert = computed<boolean>(() => !props.hasMore || props.loading)
+
+/**
+ * The guard that makes `aria-disabled` honest.
+ *
+ * `aria-disabled` is an announcement, not a behaviour: the element stays
+ * clickable and stays activated by Enter and Space. Swallowing the activation
+ * here is what turns it into a real unavailability, and it covers every input
+ * path at once because a keyboard activation of a `<button>` arrives as a
+ * `click` too.
+ */
+const onActivate = (): void => {
+  if (inert.value) return
+  emit('load')
+}
 
 /**
  * The announcement, or `''` for "announce nothing".
@@ -122,6 +177,22 @@ const announcement = computed<string>(() => {
   if (!Number.isFinite(shown) || !Number.isFinite(total)) return ''
   return `Showing ${shown} of ${total} items`
 })
+
+/**
+ * The status region's id, so the button can point `aria-describedby` at it.
+ *
+ * Without this, a screen reader landing on the now-persistent control at
+ * `hasMore=false` hears *"Load more (0 remaining), unavailable"* and is told
+ * nothing about why — the sentence that explains it is a sibling node it has to
+ * find on its own. Describing the button by the region reads the count out with
+ * it. No new copy is invented: the string already exists and is already correct.
+ *
+ * Nuxt's SSR-stable `useId()`, the idiom at `FormField.vue:119` and
+ * `Section.vue:167` (D27) — not a counter and not `crypto.randomUUID()`, both
+ * of which produce a different id on the server and the client and break the
+ * reference on hydration.
+ */
+const statusId = useId()
 </script>
 
 <template>
@@ -136,11 +207,33 @@ const announcement = computed<string>(() => {
     :data-has-more="hasMore || undefined"
     v-bind="$attrs"
   >
+    <!--
+      No `v-if` of its own (gh#225). The button is mounted for exactly as long
+      as this component renders anything at all, so the transition that used to
+      unmount it under a user's finger — `hasMore` going false on the last load
+      — no longer removes the focused element. The spec's "not even an empty
+      wrapper" case is still honoured, because the wrapper above still carries
+      the condition and this button lives inside it.
+
+      `aria-disabled` rather than `:disabled`: a native `disabled` on the
+      element that currently has focus blurs it to `<body>`, which is the same
+      defect this row exists to remove, one step later. `aria-disabled` leaves
+      the control focusable and in the tab order; `onActivate` is what makes it
+      genuinely do nothing. `|| undefined` so the attribute is absent rather
+      than `"false"` while the control is live — the `[data-external]` idiom
+      `bfButton` itself uses.
+
+      `aria-describedby` names the status region below, so the count is read
+      with the control instead of the reader being left to wonder why a "Load
+      more" button is unavailable. Dropped along with the region when there is
+      no announcement: a dangling IDREF describes nothing and some readers
+      announce the failure.
+    -->
     <bfButton
-      v-if="hasMore"
       class="bf-load-more__button"
-      :disabled="loading"
-      @click="$emit('load')"
+      :aria-disabled="inert || undefined"
+      :aria-describedby="announcement ? statusId : undefined"
+      @click="onActivate"
     >
       {{ label }}
     </bfButton>
@@ -166,6 +259,7 @@ const announcement = computed<string>(() => {
     -->
     <span
       v-if="announcement"
+      :id="statusId"
       class="bf-load-more__status visually-hidden"
       role="status"
       aria-live="polite"

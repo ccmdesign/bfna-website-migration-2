@@ -169,6 +169,18 @@
  * about what a screen reader says (BRIEF §0.2, §8). `/search`'s
  * `display: none` count region is #233's, not this gate's.
  *
+ * **DoD-A6 — "Load more" never drops focus to `<body>`** (a11y epic, gh#225).
+ * `/insights` is opened in its own target and its "Load more" is driven to
+ * exhaustion with real `Input.dispatchMouseEvent` press/release pairs — not
+ * `el.click()`, and no programmatic `.focus()` anywhere, which BRIEF §5 rules
+ * out as a measurement of focus. `document.activeElement !== document.body` is
+ * asserted after every click; the exhausted button must still be mounted,
+ * `aria-disabled="true"` and *not* natively `disabled` (a native one blurs the
+ * focused element exactly as an unmount does); and the `role="status"` region
+ * must still be mounted, not `display: none`, and reading `Showing N of N
+ * items`. A non-vacuity row fails the group if the walk never found an
+ * interactive button to click.
+ *
  * **DoD-A8 — the reduced-motion floor** (a11y epic, gh#218). The served
  * `.output/public/css/base/reset.css` must carry a `prefers-reduced-motion:
  * reduce` block that sets `@view-transition { navigation: none }` and caps
@@ -2071,6 +2083,362 @@ const emptyStateStatusRows = async (cdp: Cdp, origin: string): Promise<Row[]> =>
 }
 
 /* ------------------------------------------------------------------ *
+ * DoD-A6 — "Load more" never drops focus to <body> (a11y epic, gh#225)
+ * ------------------------------------------------------------------ */
+/**
+ * The measured defect: on `/insights`, the fourth "Load more" click takes
+ * `remaining` to `0`, `hasMore` goes false, `LoadMore.vue`'s `v-if` unmounts
+ * the button the user is standing on, and `document.activeElement` becomes
+ * `document.body`. The next Tab restarts at the top of the document. WCAG
+ * 2.4.3. `:disabled="loading"` was the same mechanism spelled differently — a
+ * native `disabled` on the focused element blurs it too.
+ *
+ * This group walks the real control to exhaustion and asserts focus survives
+ * every step, that the walk was not vacuous, and that the announcement the fix
+ * had to preserve still reads at the end.
+ *
+ * ## Real input, not `el.click()` and not `el.focus()`
+ *
+ * The clicks are `Input.dispatchMouseEvent` press/release pairs at the
+ * button's own viewport coordinates. That matters twice over: `el.click()`
+ * dispatches an event without any of the focus behaviour a real press has, so
+ * a probe using it would have to `.focus()` the button by hand and would then
+ * be asserting something about its own bookkeeping rather than about the
+ * browser; and BRIEF §5 rules programmatic focus out as a measurement of focus
+ * anywhere in this epic. Chrome focuses a `<button>` on mousedown, so the walk
+ * establishes focus exactly the way a user does — and one row below asserts
+ * that it did, so a browser that stops doing so reports *that* rather than
+ * failing the focus-retention row for the wrong reason.
+ *
+ * ## What it does not assert
+ *
+ * That a screen reader speaks the count. There is no assistive technology on
+ * this runner (a11y BRIEF §0.2); what is measured is the DOM condition —
+ * region present, not `display: none`, text correct. The announcement itself is
+ * the manual AT pass in BRIEF §8.
+ *
+ * It also does not judge the zero-results case. `bfLoadMore` sits inside
+ * `<template v-if="filtered.length">` in `insights/index.vue`, so filtering to
+ * nothing unmounts the live region wholesale — real, and **#233's**, not this
+ * gate's.
+ */
+const LOAD_MORE_ROUTE = '/insights'
+
+/**
+ * `/insights` needs four clicks at 24 a page for 98 rows. The cap is a
+ * runaway guard, not an expectation: a page-size change moves the real number
+ * and the rows below assert *exhaustion was reached*, not that it took four.
+ */
+const LOAD_MORE_MAX_CLICKS = 12
+
+/** `Showing 98 of 98 items` — the exact sentence `bfLoadMore` composes. */
+const SHOWING_TEXT = /^Showing (\d+) of (\d+) items$/
+
+/**
+ * One round trip: where the button is, what state it is in, and where focus is.
+ *
+ * `scrollIntoView` is a write, in a function otherwise named for reading, and
+ * it is deliberate — the coordinates handed to `Input.dispatchMouseEvent` have
+ * to be the ones the button occupies *now*, and reading a rect in one
+ * evaluation and scrolling in another leaves a window in which the page moves
+ * between them. `behavior` is left at its default, which scrolls synchronously,
+ * so the `getBoundingClientRect` on the next line is already the settled one.
+ */
+const READ_LOAD_MORE = `(() => {
+  const button = document.querySelector('.bf-load-more__button')
+  const status = document.querySelector('.bf-load-more__status')
+  const active = document.activeElement
+
+  let rect = null
+  if (button) {
+    button.scrollIntoView({ block: 'center', inline: 'center' })
+    const box = button.getBoundingClientRect()
+    rect = { x: box.x, y: box.y, width: box.width, height: box.height }
+  }
+
+  return {
+    button: !!button,
+    ariaDisabled: button ? button.getAttribute('aria-disabled') : null,
+    nativeDisabled: button ? button.hasAttribute('disabled') : false,
+    describedBy: button ? button.getAttribute('aria-describedby') : null,
+    rect,
+    status: !!status,
+    statusId: status ? status.id : null,
+    statusRole: status ? status.getAttribute('role') : null,
+    statusLive: status ? status.getAttribute('aria-live') : null,
+    statusText: status ? (status.textContent || '').trim() : null,
+    statusDisplay: status ? getComputedStyle(status).display : null,
+    activeIsBody: active === document.body,
+    activeIsButton: !!button && active === button,
+    activeTag: active ? active.tagName : null,
+    activeClass: active && typeof active.className === 'string' ? active.className.trim().slice(0, 80) : null
+  }
+})()`
+
+type LoadMoreRead = {
+  button: boolean
+  ariaDisabled: string | null
+  nativeDisabled: boolean
+  describedBy: string | null
+  rect: { x: number, y: number, width: number, height: number } | null
+  status: boolean
+  statusId: string | null
+  statusRole: string | null
+  statusLive: string | null
+  statusText: string | null
+  statusDisplay: string | null
+  activeIsBody: boolean
+  activeIsButton: boolean
+  activeTag: string | null
+  activeClass: string | null
+}
+
+/** Where focus is, in one printable phrase. */
+const describeFocus = (read: LoadMoreRead): string => {
+  if (read.activeIsButton) return 'the load-more button'
+  if (read.activeIsBody) return '<body> — DROPPED'
+  const tag = (read.activeTag ?? '?').toLowerCase()
+  const first = (read.activeClass ?? '').split(/\s+/).filter(Boolean)[0]
+  return first === undefined ? `<${tag}>` : `${tag}.${first}`
+}
+
+const loadMoreFocusRows = async (cdp: Cdp, origin: string): Promise<Row[]> => {
+  const { targetId } = await cdp.send<{ targetId: string }>('Target.createTarget', { url: 'about:blank' })
+  const { sessionId } = await cdp.send<{ sessionId: string }>('Target.attachToTarget', { targetId, flatten: true })
+
+  const steps: string[] = []
+  const dropped: number[] = []
+  const shownCounts: number[] = []
+  let clicks = 0
+  let hydrated = false
+  let initial: LoadMoreRead | undefined
+  let read: LoadMoreRead | undefined
+  let focusedAfterFirstClick: boolean | undefined
+  let stalled: string | undefined
+
+  try {
+    /* Cleared and restored for the reason gh#224's probe gives: with
+       `watching` unset the client files every target's console output into the
+       shared arrays the per-route rows are judged on. */
+    cdp.exceptions = []
+    cdp.consoleErrors = []
+    cdp.watching = sessionId
+    await cdp.send('Runtime.enable', {}, sessionId)
+    await cdp.send('Page.enable', {}, sessionId)
+    await cdp.send(
+      'Emulation.setDeviceMetricsOverride',
+      { width: viewport.width, height: viewport.height, deviceScaleFactor: 1, mobile: false },
+      sessionId
+    )
+    await cdp.send('Page.navigate', { url: `${origin}${LOAD_MORE_ROUTE}` }, sessionId)
+
+    const deadline = Date.now() + timeoutMs
+    while (Date.now() < deadline) {
+      await sleep(150)
+      try {
+        const evaluated = await cdp.send<{ result: { value?: PageRead } }>(
+          'Runtime.evaluate',
+          { expression: READ_PAGE, returnByValue: true },
+          sessionId
+        )
+        if (evaluated.result?.value?.hydrated === true) { hydrated = true; break }
+      } catch {
+        /* navigation swaps the execution context; keep polling */
+      }
+    }
+
+    if (hydrated) {
+      const look = async (): Promise<LoadMoreRead | undefined> => {
+        const evaluated = await cdp.send<{ result: { value?: LoadMoreRead } }>(
+          'Runtime.evaluate',
+          { expression: READ_LOAD_MORE, returnByValue: true },
+          sessionId
+        )
+        return evaluated.result?.value
+      }
+
+      initial = await look()
+      read = initial
+
+      while (
+        read !== undefined
+        && read.button
+        && read.ariaDisabled !== 'true'
+        && !read.nativeDisabled
+        && clicks < LOAD_MORE_MAX_CLICKS
+      ) {
+        const rect = read.rect
+        if (
+          rect === null
+          || rect.width === 0
+          || rect.height === 0
+          || rect.y < 0
+          || rect.y + rect.height > viewport.height
+        ) {
+          /* Loud rather than silent: a press dispatched at coordinates the
+             button does not occupy hits the page instead, focus goes nowhere
+             near the control, and the focus rows below would then be reporting
+             a probe bug as a product defect. */
+          stalled = `after ${clicks} click(s) the button's rect is ${JSON.stringify(rect)},`
+            + ` which is not inside the ${viewport.width}x${viewport.height} viewport — nothing to press`
+          break
+        }
+
+        const x = Math.round(rect.x + rect.width / 2)
+        const y = Math.round(rect.y + rect.height / 2)
+        await cdp.send('Input.dispatchMouseEvent', { type: 'mousePressed', x, y, button: 'left', buttons: 1, clickCount: 1 }, sessionId)
+        await cdp.send('Input.dispatchMouseEvent', { type: 'mouseReleased', x, y, button: 'left', buttons: 0, clickCount: 1 }, sessionId)
+        clicks += 1
+
+        /* One tick for Vue's re-render plus a settle, the same shape of wait
+           `READ_ERROR_ROUTE` uses and for the same reason: `requestAnimationFrame`
+           does not fire on a target the browser considers hidden. */
+        await sleep(250)
+        read = await look()
+        if (read === undefined) {
+          stalled = `the page stopped answering after click ${clicks}`
+          break
+        }
+
+        if (clicks === 1) focusedAfterFirstClick = read.activeIsButton
+        if (read.activeIsBody) dropped.push(clicks)
+        const showing = read.statusText === null ? null : SHOWING_TEXT.exec(read.statusText)
+        if (showing) shownCounts.push(Number(showing[1]))
+        steps.push(`${clicks}: focus ${describeFocus(read)}, status ${JSON.stringify(read.statusText)}`)
+      }
+    }
+  } finally {
+    await cdp.send('Target.closeTarget', { targetId }).catch(() => {})
+    /* After the close, so anything the dying target flushes still counts. */
+    cdp.watching = undefined
+  }
+
+  const walk = steps.length === 0 ? '—' : steps.join(' · ')
+
+  if (!hydrated || initial === undefined) {
+    return [{
+      label: `gh#225 — ${LOAD_MORE_ROUTE} hydrated, so its "Load more" can be walked`,
+      ok: false,
+      detail: `expected #__nuxt.__vue_app__ within ${timeoutMs}ms · actual absent`
+        + ' — without a running app there is no pagination to drive, and DoD-A6 is'
+        + ' untested rather than passing'
+    }]
+  }
+
+  const rows: Row[] = []
+
+  rows.push({
+    label: `gh#225 — ${LOAD_MORE_ROUTE} renders a live "Load more" to walk`,
+    ok: initial.button && initial.ariaDisabled !== 'true' && !initial.nativeDisabled,
+    detail: initial.button && initial.ariaDisabled !== 'true' && !initial.nativeDisabled
+      ? 'expected .bf-load-more__button, interactive · actual present'
+      : `expected an interactive .bf-load-more__button on first paint · actual ${initial.button
+        ? `present but aria-disabled=${JSON.stringify(initial.ariaDisabled)}, disabled=${initial.nativeDisabled}`
+        : 'no button at all'} — every row below would pass without doing anything, so this one`
+        + ' is what stops the group going green on a feed that never paginates'
+  })
+
+  const exhausted = stalled === undefined && clicks >= 2 && read !== undefined && read.ariaDisabled === 'true'
+  rows.push({
+    label: `gh#225 — the walk reached exhaustion (${clicks} real click(s), ≤ ${LOAD_MORE_MAX_CLICKS})`,
+    ok: exhausted,
+    detail: exhausted
+      ? `expected ≥ 2 clicks ending aria-disabled · actual ${clicks}, counts ${shownCounts.join(' → ') || '—'}`
+      : `expected ≥ 2 clicks ending on aria-disabled="true" · actual ${clicks} click(s)`
+        + `${stalled === undefined ? '' : `, stalled: ${stalled}`}`
+        + ` — walk: ${walk}`
+  })
+
+  rows.push({
+    label: 'gh#225 — a real mouse press put focus on the button (probe sanity, not the defect)',
+    ok: focusedAfterFirstClick === true,
+    detail: focusedAfterFirstClick === true
+      ? 'expected document.activeElement === the button after click 1 · actual it is'
+      : `expected the press to focus the button · actual focus went to ${read === undefined
+        ? 'an unreadable page'
+        : describeFocus(read)} — this browser does not focus a <button> on mousedown, so the`
+        + ' rows below are measuring the probe rather than the page. Not the gh#225 defect'
+  })
+
+  /* The DoD-A6 row itself. */
+  rows.push({
+    label: `gh#225 — DoD-A6: focus never reached <body> across ${clicks} click(s)`,
+    ok: dropped.length === 0 && clicks > 0,
+    detail: dropped.length === 0 && clicks > 0
+      ? `expected document.activeElement !== document.body at every step · actual it never was — ${walk}`
+      : clicks === 0
+        ? 'expected at least one click to judge · actual none was performed'
+        : `expected document.activeElement !== document.body at every step · actual <body> after click(s)`
+          + ` ${dropped.join(', ')} — ${walk}. Removing the focused control (a v-if, or a native`
+          + ' `disabled`) leaves the browser nowhere to put focus; keep it mounted and use'
+          + ' aria-disabled with a guarded handler (gh#225)'
+  })
+
+  const finalFocusOk = read !== undefined && read.activeIsButton
+  rows.push({
+    label: 'gh#225 — after the last click focus is still on the button, not merely off <body>',
+    ok: finalFocusOk,
+    detail: finalFocusOk
+      ? 'expected document.activeElement === .bf-load-more__button · actual it is'
+      : `expected focus to stay put · actual ${read === undefined ? 'unreadable' : describeFocus(read)}`
+        + ' — "not <body>" is the floor, not the goal: focus that survives by landing somewhere'
+        + ' else is still a focus jump the user did not ask for'
+  })
+
+  const inertOk = read !== undefined && read.button && read.ariaDisabled === 'true' && !read.nativeDisabled
+  rows.push({
+    label: 'gh#225 — the exhausted button is mounted, aria-disabled, and not natively disabled',
+    ok: inertOk,
+    detail: inertOk
+      ? 'expected [aria-disabled="true"] without [disabled] · actual exactly that'
+      : `expected the button present with aria-disabled="true" and no native disabled · actual ${read === undefined
+        ? 'unreadable'
+        : read.button
+          ? `aria-disabled=${JSON.stringify(read.ariaDisabled)}, disabled=${read.nativeDisabled}`
+          : 'unmounted'} — a native disabled blurs the focused element exactly as an unmount does,`
+        + ' so it is not a fix for this defect but a second spelling of it'
+  })
+
+  const showing = read?.statusText == null ? null : SHOWING_TEXT.exec(read.statusText)
+  const announcementOk = read !== undefined
+    && read.status
+    && read.statusRole === 'status'
+    && read.statusDisplay !== 'none'
+    && showing !== null
+    && showing[1] === showing[2]
+  rows.push({
+    label: 'gh#225 — the final announcement survives the fix, mounted and not display:none',
+    ok: announcementOk,
+    detail: announcementOk && showing !== null
+      ? `expected role="status" reading "Showing N of N items" · actual ${JSON.stringify(read?.statusText)}`
+        + ` (aria-live=${JSON.stringify(read?.statusLive)}, display ${read?.statusDisplay})`
+      : `expected a mounted, non-display:none role="status" reading "Showing N of N items" · actual`
+        + ` present=${read?.status ?? false}, role=${JSON.stringify(read?.statusRole ?? null)},`
+        + ` display=${JSON.stringify(read?.statusDisplay ?? null)}, text=${JSON.stringify(read?.statusText ?? null)}`
+        + ' — the region outliving the button is the whole reason the wrapper carries'
+        + ' `v-if="hasMore || announcement"` (D29); this row is what stops gh#225 regressing it'
+  })
+
+  const describedOk = read !== undefined
+    && read.describedBy !== null
+    && read.describedBy === read.statusId
+    && read.statusId !== null
+    && read.statusId !== ''
+  rows.push({
+    label: 'gh#225 — the inert button says why, via aria-describedby → the status region',
+    ok: describedOk,
+    detail: describedOk
+      ? `expected aria-describedby to resolve to the status region · actual ${JSON.stringify(read?.describedBy)}`
+      : `expected aria-describedby === the status region's id · actual describedby`
+        + ` ${JSON.stringify(read?.describedBy ?? null)}, status id ${JSON.stringify(read?.statusId ?? null)}`
+        + ' — a control left in the tab order announcing only "unavailable" tells the reader'
+        + ' nothing about why; the sentence explaining it is already on the page'
+  })
+
+  return rows
+}
+
+/* ------------------------------------------------------------------ *
  * DoD-3 — every §7 route reachable from the menus
  * ------------------------------------------------------------------ */
 /**
@@ -2408,6 +2776,16 @@ const run = async (): Promise<void> => {
       )
       for (const row of emptyStateFailing) console.log(`      ✗ ${row.label} — ${row.detail}`)
       if (verbose) for (const row of emptyStateGate.filter(r => r.ok)) console.log(`      · ${row.label}`)
+
+      const loadMoreGate = await loadMoreFocusRows(cdp, origin)
+      const loadMoreFailing = loadMoreGate.filter(r => !r.ok)
+      results.push({ slug: 'load-more focus (DoD-A6)', rows: loadMoreGate, failing: loadMoreFailing })
+      console.log(
+        `${loadMoreFailing.length === 0 ? '  ✓ PASS' : '  ✗ FAIL'}  `
+        + `${'load-more focus (DoD-A6)'.padEnd(44)} ${loadMoreGate.length - loadMoreFailing.length}/${loadMoreGate.length} rows`
+      )
+      for (const row of loadMoreFailing) console.log(`      ✗ ${row.label} — ${row.detail}`)
+      if (verbose) for (const row of loadMoreGate.filter(r => r.ok)) console.log(`      · ${row.label}`)
 
       const navRows = homeLinks === undefined
         ? [{ label: 'DoD-3 — the home page rendered', ok: false, detail: 'expected / to hydrate · actual it did not, so reachability cannot be judged' }]
