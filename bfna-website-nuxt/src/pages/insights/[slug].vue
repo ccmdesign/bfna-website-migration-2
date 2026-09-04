@@ -195,8 +195,17 @@ const crumbs = [
       `<p><strong>`: it is the standfirst of the article, which is what
       `tagline` is for, and it then sits above the meta row instead of below
       it.
+
+      `bf-article-header` (gh#254) is the *only* thing that distinguishes this
+      band from the seven other `bfPageHeader` call sites, and it carries two
+      article-only decisions, both in `public/css/components/article.css`: the
+      band takes the body's 60ch measure so the `<h1>` ranges left on the same
+      vertical as the copy beneath it, and the `<h1>` takes `--size-7`. `class`
+      is on `bfSection`'s pass-through allow-list by name, so it merges onto the
+      band root rather than replacing `bf-page-header`.
     -->
     <bfPageHeader
+      class="bf-article-header"
       label="Insight header"
       :crumbs="crumbs"
       :chips="chips"
@@ -245,9 +254,17 @@ const crumbs = [
 
       `measure="narrow"` is the frozen page's own — this is the one band on the
       site that is a column of running prose and wants a reading measure rather
-      than the default.
+      than the default. It stays 60ch; gh#254 changed nothing about it.
+
+      `bf-article-body` carries the programme spine — an opaque `--color-program`
+      rule down the column's left edge, tying the piece to its programme without
+      a second token or a `v-if`. `data-program` is on `<html>` for the three
+      real programmes only (gh#252), so a row carrying one of the 52 migration
+      signals, or none, resolves the neutral `:root` default and the spine paints
+      navy. Same D-50.2 guard as the chip, the banner link and the related
+      heading, arrived at without this file saying anything.
     -->
-    <bfSection label="Body" measure="narrow">
+    <bfSection class="bf-article-body" label="Body" measure="narrow">
       <!--
         The dek. A plain string: the HTML strip and entity decode the frozen
         page's render-time helper did now happen once, in the build-time
