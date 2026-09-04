@@ -29,6 +29,14 @@
  * the only branch that is genuinely non-interactive *and* non-focusable, which
  * is what the acceptance asks for.
  *
+ * That still holds for the `disabled` prop, and the prop is unchanged. What
+ * gh#225 added is that non-focusable is sometimes the wrong answer: removing
+ * focusability from the element a keyboard user is *currently standing on*
+ * drops focus to `<body>` (WCAG 2.4.3). A caller in that position passes
+ * `aria-disabled="true"` through `$attrs` instead and guards its own handler,
+ * and the stylesheet below renders the two spellings identically so the choice
+ * costs nothing visually. `bfLoadMore` is the worked example.
+ *
  * The three-way branch itself is the one `wfChip.vue` already demonstrates,
  * down to `:data-external="external || undefined"` so the attribute is absent
  * rather than `"false"` on internal links. The marker is formalised as a
@@ -265,11 +273,23 @@ const cssVars = computed<Record<string, string>>(() => {
   }
 
   /*
-    Only ever a `<button>` — the element resolution guarantees it — so the
-    native pseudo-class is the whole selector. Disabled controls are exempt
-    from WCAG 1.4.3 contrast, so the dimmed state is not a contrast failure.
+    `:disabled` is only ever a `<button>` — the element resolution guarantees
+    it. `[aria-disabled='true']` is the second spelling of the same state, added
+    for gh#225 and reachable on any of the three branches: a caller whose
+    control must stay focusable while unavailable writes that instead, because
+    setting the native attribute on the element that currently has focus blurs
+    it to `<body>` (`bfLoadMore` is the case in point). One state, one
+    appearance — no new declaration, no new token, no second opinion about what
+    unavailable looks like.
+
+    Disabled controls are exempt from WCAG 1.4.3 contrast, so the dimmed state
+    is not a contrast failure. `aria-disabled` is *not* exempt in the same way,
+    but it is here: the element is inert in fact, not merely in appearance —
+    the caller's handler refuses the activation — so it is a disabled control
+    that happens to keep focus, not an enabled one wearing a dimmed skin.
   */
-  .bf-button:disabled {
+  .bf-button:disabled,
+  .bf-button[aria-disabled='true'] {
     cursor: not-allowed;
     opacity: 0.5;
   }
