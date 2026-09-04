@@ -56,8 +56,10 @@ would have to sit at luminance ≥ 0.927, i.e. be white with a tint of colour le
 
 Stronger, and specific to navy: `future-leadership`'s on-dark red needs a ground of
 luminance ≤ 0.0291 to clear 4.5. **Navy's own luminance is 0.04004 — higher than that at
-alpha 1.0.** So red-on-dark cannot clear 4.5 over a navy scrim at *any* alpha, over any
-photograph, ever. This is not a tuning problem.
+alpha 1.0.** So red-on-dark cannot clear 4.5 over a navy scrim at *any* alpha, for any
+photograph no darker than navy itself — which is the case the pair's white ground models,
+and the only case that can be asserted about an image nobody has uploaded yet. This is not
+a tuning problem.
 
 ---
 
@@ -100,12 +102,14 @@ gate's own comments and here:
   one the tokens' own comments already record ratios against
   (`semantic-colors.css`: 7.96 / 6.79 / 7.73). Those comments have never been checked by
   anything. Now they are.
-- This is **residual #264's own suggested fix, verbatim**: "add a fourth pair per
-  programme measuring `--color-program-on-dark` directly against
-  `--color-surface-inverse`, floor 4.5, no `pendingFrom`." #264 expected the
-  scrim-composited pairs to survive alongside; the measurement says they cannot, so they
-  are re-pointed rather than duplicated — one pair per tier per programme, asserting the
-  thing that is true.
+- This is residual #264's suggested ground, but **not** literally its suggested fix, and
+  the difference matters: #264 asked for a *fourth* pair per programme against
+  `--color-surface-inverse` while "the scrim-composited pairs stay pending for the hero
+  phase". This *is* the hero phase, and it is the phase that discovered the
+  scrim-composited pair can never pass — so keeping it alongside would mean three pairs
+  reporting red, or pending, forever, for a combination the design forbids. It is
+  re-pointed rather than joined. #264's on-dark half is closed by that; its `:root`
+  neutral default and its `pendingFrom`-has-no-expiry observation stay open.
 - The scrim ground does not stop being measured: `white-on-scrim` and
   `white-on-scrim-panel` measure it, at the only foreground the architecture puts there.
 
@@ -122,8 +126,9 @@ after this change **no pair in the gate is pending at all.**
 New: `src/components/bf/HeroMedia.vue` → `bfHeroMedia`.
 
 ```
-<div class="bf-hero-media" aria-hidden="true">
-  <bfMedia v-if="src" class="bf-hero-media__image" :src :alt loading="eager" fetchpriority="high" />
+<div class="bf-hero-media">
+  <bfMedia v-if="src" class="bf-hero-media__image" :src :alt
+           ratio="auto" sizes="100vw" loading="eager" fetchpriority="high" />
   <div class="bf-hero-media__scrim" />
 </div>
 ```
@@ -135,8 +140,10 @@ New: `src/components/bf/HeroMedia.vue` → `bfHeroMedia`.
   keeps this working identically inside `bfHero` (which renders its own `.center`) and
   inside `bfPageHeader` (whose `.center` belongs to `bfSection` and is unreachable from
   `bfPageHeader`'s scoped styles).
-- The image is rendered through `bfMedia`, so a **local** path gets `NuxtImg` and a real
-  srcset (`Media.vue:70-76` — external Directus URLs deliberately do not). Its
+- The image is rendered through `bfMedia`, so a **local** path gets `NuxtImg` (external
+  Directus URLs deliberately do not — `bfMedia`'s `isAbsolute` predicate), and
+  `sizes="100vw"` is passed with it so the module emits real width descriptors rather
+  than a density srcset with one URL in it twice (§11.2). Its
   `aspect-ratio: 16/9` and `inline-size: 100%` are overridden to `auto` / `100%` block
   size by `.bf-hero-media > .bf-hero-media__image` (specificity 0,2,0 against `bfMedia`'s
   own 0,1,0 in the same layer, so the win is by specificity and not by source order).
@@ -250,7 +257,31 @@ them; wiring their art direction is not this item's scope.
   text**, not the token; keyboard focus ring screenshotted on the scrim;
   `documentElement.scrollWidth` vs `clientWidth` at 375 and 1440; console clean.
 
-## 11. Risks
+## 11. Applied after review
+
+Five things in the sections above were wrong or unrealized and were corrected in
+`fix(review)`. They are listed here rather than silently rewritten, because a plan that
+edits itself to match the outcome is worth nothing as a record:
+
+1. **The inverted focus ring did not reach `bfButton`.** §8's specificity claim counted
+   the band rule with its scope attribute and `bfButton`'s without: both compile to
+   (0,3,0), so source order decided, and in the *built* stylesheet `bfButton` came last —
+   correct in dev, near-black on the scrim in production. A second rule naming the control
+   makes it (0,4,0) and removes the tie.
+2. **The srcset justification was unrealized.** `NuxtImg` with no `sizes` emits a density
+   srcset with the same URL twice, so `nuxt.config.ts`'s `screens` ladder never engaged.
+   `sizes="100vw"` is now passed and the claim is true.
+3. **`aria-hidden="true"` on the media wrapper made `alt` unreachable**, in a component
+   whose props documented the opposite in three files. Removed; `alt=""` does the
+   decorative job on its own.
+4. **§4's `panel` measure claim was false.** The layer is a *sibling* of `.center`, so
+   `bfSection`'s `--_bf-section-measure` and `data-measure` never reach it. The width is
+   now a hook of the component's own, and the comment states exactly which retune paths
+   are tracked.
+5. **Several `file:line` citations were wrong** — inherited from the issue and the wave-1
+   plan, and repeated into six files. Replaced with symbol references.
+
+## 12. Risks
 
 - `bfSection` is composed by eight templates. The new slot is additive and unused by all
   of them; the risk is a review objection to widening a shared component, not a runtime

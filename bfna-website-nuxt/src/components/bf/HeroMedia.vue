@@ -3,7 +3,8 @@
  * `bfHeroMedia` — the photograph and the scrim, as one layer behind a band.
  *
  * gh#253. Consumed by **both** head components: `bfHero` (the homepage band)
- * and `bfPageHeader` (the other seven routes). It is the whole of the "shared
+ * and `bfPageHeader` (every other route that carries a header). It is the
+ * whole of the "shared
  * media/scrim layer" the wave-1 plan asks for; neither host repeats a single
  * declaration of it.
  *
@@ -51,11 +52,12 @@
  * an absolutely positioned child of a stack still takes a
  * `margin-block-start`, and with `inset: 0` fully specified that margin
  * shrinks and offsets the layer. Three logged defects in this repository come
- * from exactly that (`layouts/bf-default.vue:77-103`, `Hero.vue:94-130`,
- * `PageHeader.vue:158-190`).
+ * from exactly that — the route announcer inside `bf-default`'s `<main>`,
+ * and the two head components' own inner boxes.
  *
  * And it must not sit inside `.center` either, for a second reason:
- * `center.css:50-58` makes that box `content-box` with `padding-inline`, so
+ * `center.css`'s `.center` rule makes that box `content-box` with
+ * `padding-inline`, so
  * its rendered width is `measure + 2 x padding` and a layer inside it is not
  * full-bleed.
  *
@@ -73,8 +75,9 @@
  * ## Why `bfMedia` rather than a `background-image`
  *
  * Because a local path through `bfMedia` reaches `NuxtImg` and gets a real
- * srcset, and an absolute Directus URL deliberately does not
- * (`Media.vue:70-76`). The hero images this ships against are local files that
+ * srcset, and an absolute Directus URL deliberately does not — `bfMedia`'s
+ * `isAbsolute` predicate, and the header section that explains it. The hero
+ * images this ships against are local files that
  * nothing read before now. A CSS `background-image` would get neither, and
  * `.cover` / `.frame` / `.imposter` are all declined on the wave-1 plan's own
  * grounds — `.cover` defaults to `100vh` and would regress the `svh` fix,
@@ -90,7 +93,7 @@ interface Props {
    * The photograph. **Prefer a root-relative local path** —
    * `/images/hero/democracy.jpg` — because `bfMedia` routes those through
    * `NuxtImg` and an absolute `https://` URL past it untouched, with no
-   * srcset (`Media.vue:70-76`).
+   * srcset (`bfMedia`'s `isAbsolute` predicate).
    *
    * Absent or `null` renders no image at all and leaves the scrim painting on
    * its own, which is a legitimate band treatment rather than a broken one: a
@@ -120,12 +123,19 @@ withDefaults(defineProps<Props>(), { alt: '' })
     One root, so `$attrs` has exactly one destination and a host's `class`
     merges with `bf-hero-media` rather than replacing it.
 
-    `aria-hidden` on the wrapper rather than relying on `alt=""` alone: the
-    scrim is a second, unlabelled element in here, and the layer as a whole is
-    presentation. It holds nothing focusable, so hiding it costs no keyboard
-    user anything.
+    **No `aria-hidden` here.** It was on this wrapper, and review found that
+    it made the `alt` prop unreachable: `aria-hidden` on an ancestor removes
+    the whole subtree from the accessibility tree, so a caller that passed a
+    real string for a photograph that carries information would have had it
+    silently dropped — a prop documented in three files with no effect any
+    assistive technology could observe.
+
+    `alt` is the mechanism instead, which is what it is for. `alt=""` — the
+    default, and the decorative case — already makes the `<img>` ignored, and
+    the scrim is an empty unlabelled `<div>` that is ignored anyway. Nothing
+    in here is focusable, so nothing is trapped either way.
   -->
-  <div class="bf-hero-media" aria-hidden="true">
+  <div class="bf-hero-media">
     <!--
       `ratio="auto"` rather than a stylesheet override of `--_bf-media-ratio`.
       `bfMedia` declares its `16 / 9` default *in a rule* so a consumer can
@@ -137,7 +147,33 @@ withDefaults(defineProps<Props>(), { alt: '' })
       the largest contentful paint on every route that renders it, and
       `bfMedia` hard-codes `loading="lazy"` for the card grids it was built
       for. Fallthrough attributes are merged after the child's own bindings,
-      so these win.
+      so these win — verified in the generated markup, not assumed.
+
+      `sizes` is what makes the srcset real, and review is the reason it is
+      here. Without it `NuxtImg` emits a **density** srcset with nothing to
+      vary — `"…/homepage.jpg 1x, …/homepage.jpg 2x"`, the same URL twice —
+      the `screens:` ladder in `nuxt.config.ts` never engages, and a 375px
+      phone downloads the full desktop bitmap as its largest contentful paint.
+      That was the whole stated reason for preferring a local path over the
+      Directus URL, and it was not true until this attribute existed.
+
+      **It must be written screen by screen.** `@nuxt/image`'s `parseSizes`
+      files any entry without a `screen:` prefix under the literal key `1px`,
+      and `getSizesVariant` then resolves that key to a screen width of **1**
+      — so a plain `sizes="100vw"` silently emits `w_1 1w, w_2 2w` and ships a
+      one-pixel hero. Verified in the generated output before this form
+      replaced it; it is a footgun with no error message, so it is written
+      down here rather than left for the next component to rediscover.
+
+      Every step is `100vw` because this layer is always full-bleed: `inset: 0`
+      on a band that spans the viewport.
+
+      The ladder stops at `xxl` (1536) because the source files are 1600px
+      wide; `3xl`/`4xl` would ask ipx to enlarge a bitmap, which costs bytes
+      and buys nothing. `densities="1x"` for the same reason: with **width**
+      descriptors the browser already accounts for device pixel ratio when it
+      picks a candidate, so a second density would double the derivative count
+      to produce files no display needs.
     -->
     <bfMedia
       v-if="src"
@@ -145,6 +181,8 @@ withDefaults(defineProps<Props>(), { alt: '' })
       :src="src"
       :alt="alt"
       ratio="auto"
+      sizes="xs:100vw sm:100vw md:100vw lg:100vw xl:100vw xxl:100vw"
+      densities="1x"
       loading="eager"
       fetchpriority="high"
     />
@@ -205,6 +243,20 @@ withDefaults(defineProps<Props>(), { alt: '' })
       is load-bearing rather than incidental.
     */
     object-fit: cover;
+    /*
+      Which part of the photograph survives the crop, behind a hook.
+
+      This matters more here than anywhere else in the system and review is
+      the reason it is stated: two of the three programme sources
+      (`democracy.jpg`, `politics-society.jpg`) are **square** 1600x1600, and
+      `cover` into a 60svh band roughly a third as tall discards the top and
+      bottom of each. `center` is the platform default and what shipped
+      unstated before; naming it as `--_bf-hero-media-image-position` means a
+      band whose subject sits high or low in frame can be re-cropped from a
+      stylesheet or a call site's `style`, without an art director having to
+      re-cut the asset.
+    */
+    object-position: var(--_bf-hero-media-image-position, center);
   }
 
   .bf-hero-media__scrim {
@@ -217,12 +269,30 @@ withDefaults(defineProps<Props>(), { alt: '' })
     `panel` mode. The attribute is on the host band, so this reads it as an
     ancestor — see the block comment for why it lives there.
 
-    `inline-size` is the content column's own border box: `.center` is
-    `content-box` with `padding-inline` (`center.css:50-58`), so its rendered
-    width is `measure + 2 x padding`. Both halves are read through the
-    composition layer's documented `--theme-*` inputs and its own defaults, so
-    a band that retunes its measure retunes the panel with it and the number
-    is not copied anywhere.
+    The width is the content column's own border box: `.center` is
+    `content-box` with `padding-inline` (`center.css`, the `.center` rule), so
+    its rendered width is `measure + 2 x padding`.
+
+    ## What this does and does not track, stated exactly
+
+    Review corrected an earlier claim here that any retune of the band's
+    measure retunes the panel with it. It does not, and the reason is that
+    this layer is a **sibling** of `.center` rather than an ancestor or a
+    descendant of it:
+
+    - `--theme-center-measure` / `--theme-center-padding` set **at or above
+      the band root** inherit into both, and are tracked.
+    - `bfSection`'s own `--_bf-section-measure` hook is written onto
+      `.bf-section > .center`, so it never reaches here.
+    - `data-measure` on the inner box writes `--_center-measure`, a different
+      property, which this does not read at all.
+
+    Rather than reach across for either, the width is a hook of this
+    component's own — `--_bf-hero-media-panel-inline-size`, BRIEF §5 rule 4's
+    shape — defaulting to the composition layer's inputs and their published
+    defaults. A band that narrows its column narrows the panel by setting one
+    property on the band root, in the same place it sets the rest of its
+    geometry.
 
     `margin-inline: auto` is what centres it: for an absolutely positioned box
     with `inset-inline: 0` and a definite width, `auto` margins resolve to
@@ -232,11 +302,30 @@ withDefaults(defineProps<Props>(), { alt: '' })
     the band, which is the right answer on a phone.
   */
   [data-scrim="panel"] .bf-hero-media__scrim {
-    background-color: var(--color-scrim-panel);
     /* One line: stylelint's `scss/operator-no-newline-*` pair rejects a break
        on either side of the `+`. */
-    inline-size: min(100%, calc(var(--theme-center-measure, 1100px) + 2 * var(--theme-center-padding, var(--space-s))));
+    --_bf-hero-media-panel-inline-size: calc(var(--theme-center-measure, 1100px) + 2 * var(--theme-center-padding, var(--space-s)));
+
+    background-color: var(--color-scrim-panel);
+    inline-size: min(100%, var(--_bf-hero-media-panel-inline-size));
     margin-inline: auto;
+  }
+
+  /*
+    Print. The scrim is a `background-color`, which user agents drop by
+    default when printing, while the host bands set
+    `color: var(--color-text-inverse)` — so without this the `<h1>` and, on a
+    programme hub, two full paragraphs of intro come out white on white
+    paper. Newly load-bearing on four routes, which is why it is stated here
+    rather than left to the sitewide print gap.
+
+    The photograph goes too: it is decorative, it is the largest thing on the
+    page, and it is not what someone printing a programme hub wants.
+  */
+  @media print {
+    .bf-hero-media {
+      display: none;
+    }
   }
 }
 </style>

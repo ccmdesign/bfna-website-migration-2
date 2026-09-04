@@ -108,12 +108,15 @@ useProgramTheme(program?.slug)
  *
  * Every `content/bf/programs/*.json` carries an `image`, and every one of them
  * is an absolute Directus URL. `bfMedia` hands those to the browser verbatim
- * and deliberately does **not** route them through `NuxtImg`
- * (`Media.vue:70-76`), because this site deploys as `nuxt generate` output
- * with no image server to answer `/_ipx/…` — so a Directus URL here would
- * mean one unsized bitmap and no srcset on the largest contentful paint of
- * the route. The files below are local, were already on disk, and were read
- * by nothing until now.
+ * and deliberately does **not** route them through `NuxtImg` (its `isAbsolute`
+ * predicate), because the module's `ipx` provider rewrites a URL into a
+ * `/_ipx/…` route. For a **local** file `nuxt generate` prerenders those
+ * variants into the static output, so they resolve; for a remote one there
+ * would be nothing to prerender. So a Directus URL here would mean one
+ * unsized bitmap and no srcset on the largest contentful paint of the route,
+ * while a local path plus `bfHeroMedia`'s `sizes="100vw"` gets width
+ * descriptors against `nuxt.config.ts`'s `screens` ladder. The files below
+ * are local, were already on disk, and were read by nothing until now.
  *
  * ## The filenames carry the OLD taxonomy — read the mapping, not the names
  *

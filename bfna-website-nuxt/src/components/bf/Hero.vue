@@ -93,8 +93,8 @@
  * inversions a dark ground forces on the controls inside it — a visible focus
  * ring and a visible control boundary.
  * Every value below still comes from a token; no colour literal appears in
- * this file, which is what `docs/ds-epic/issues/37-bf-hero.md:67`'s narrowed
- * gate asserts.
+ * this file, which is what `docs/ds-epic/issues/37-bf-hero.md`'s narrowed
+ * acceptance grep asserts (gh#249).
  *
  * ## What is still not here
  *
@@ -327,12 +327,28 @@ const showActions = (): boolean => hasRenderedContent(slots.default?.())
     `:deep()` because the controls in a hero are slot content and
     child-component roots, and neither carries this component's scope id.
 
-    `outline-color` as a longhand at specificity (0,3,0) also outranks
-    `bfButton`'s and `bfBreadcrumb`'s own `outline:` shorthands at (0,2,0) in
-    this same layer, so one rule covers every control the band can hold
-    without reaching into any of their `--_bf-*-focus-color` hooks.
+    **Two rules, and the second is not redundant.** The bare pseudo-class
+    compiles to `.bf-hero--media[data-v-…] :focus-visible` — a class, a scope
+    attribute and a pseudo-class, so (0,3,0). `bfButton`'s own rule compiles
+    to `.bf-button[data-v-…]:focus-visible`, which is **also (0,3,0)**, in the
+    same layer. That is a tie, and a tie is decided by source order in the
+    built stylesheet — where `bfButton`'s rule happens to come last. Review
+    caught it in the generated output: the primary variant writes
+    `--_bf-button-focus-color: var(--color-text)` *inline*
+    (`Button.vue`, `cssVars`), so the CTA's ring resolved to near-black on the
+    navy scrim in a production build while looking correct in dev, which is
+    the worst shape a defect can have.
+
+    Naming the control adds a compound and makes it (0,4,0), which wins
+    outright and does not depend on which stylesheet the bundler emitted
+    first. The bare rule stays for every other focusable thing a band can
+    hold.
   */
   .bf-hero--media :deep(:focus-visible) {
+    outline-color: var(--color-text-inverse);
+  }
+
+  .bf-hero--media :deep(.bf-button:focus-visible) {
     outline-color: var(--color-text-inverse);
   }
 

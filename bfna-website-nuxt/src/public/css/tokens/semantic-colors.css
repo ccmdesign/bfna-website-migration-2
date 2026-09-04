@@ -271,10 +271,11 @@
      * never have passed.** Over a 0.70 navy scrim on a white photograph the
      * highest ratio anything in the palette can reach is 4.840, and pure
      * white is what reaches it; these three measure 1.92 / 1.64 / 1.87 there.
-     * Red is unsatisfiable at *any* alpha: it needs a ground of luminance
-     * <= 0.0291 and navy's own is 0.04004. The pair asserted precisely what
-     * the hero architecture forbids — programme colour as text over media —
-     * so it was re-pointed at the ground this tier is actually for,
+     * Red is unsatisfiable at *any* alpha over a navy scrim on a photograph
+     * no darker than navy: it needs a ground of luminance <= 0.0291 and navy
+     * at full opacity is 0.04004. The pair asserted precisely what the hero
+     * architecture forbids — programme colour as text over media — so it was
+     * re-pointed at the ground this tier is actually for,
      * `--color-surface-inverse` (#080808), which is the ground the ratios
      * below have always named. They are now checked rather than merely
      * written down. See `docs/decisions/gh253-hero-scrim-architecture.md`.

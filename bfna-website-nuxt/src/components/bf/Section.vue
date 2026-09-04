@@ -64,6 +64,7 @@
  * band exists anywhere under `pages/wireframes/`. `switcher` covers it. See
  * `SectionLayout` in `types/bf-contracts.ts` and the spec's Decisions.
  */
+import type { VNode } from 'vue'
 import type { SectionProps } from '~/types/bf-contracts'
 
 defineOptions({
@@ -74,6 +75,32 @@ defineOptions({
    */
   inheritAttrs: false
 })
+
+/**
+ * The two slots, declared so the `bleed` contract is visible where a consumer
+ * looks — in the type surface — rather than only in the template's comments.
+ *
+ * Added with `bleed` in gh#253. This component previously declared none at
+ * all, which meant a mistyped slot name compiled and silently rendered
+ * nothing; `bfPageHeader` beside it has always declared its two.
+ */
+defineSlots<{
+  /** The band's content. Rendered **inside** `.center`, on the measure. */
+  default?: () => VNode[]
+  /**
+   * A full-bleed layer behind the content, outside the measure — a
+   * photograph, a scrim, a texture. See the template comment for why it
+   * cannot go through the default slot.
+   *
+   * **The consumer owns the containing block.** This component adds no rule
+   * for the slot, so a layer that positions itself absolutely needs the band
+   * root to establish one: declare `position: relative` (and, for a layer
+   * that paints behind the content with a negative `z-index`,
+   * `isolation: isolate`) on your own class on the root. `bfPageHeader` does
+   * exactly that on `.bf-page-header--media`.
+   */
+  bleed?: () => VNode[]
+}>()
 
 const props = withDefaults(defineProps<SectionProps>(), {
   gap: 'm',
@@ -214,8 +241,13 @@ const headingLabelledBy = computed(() => (props.heading ? headingId : undefined)
       This is that place: a direct child of the band root, before the column,
       taking the band's whole box. `bfPageHeader` puts `bfHeroMedia` here.
 
-      Purely additive — unused, it renders nothing, and the eight templates
-      that composed this component before gh#253 are untouched.
+      Purely additive — unused, it renders **no element**, and the 25 call
+      sites that composed this component before gh#253 are untouched. Not
+      "byte for byte", though: an unfilled slot still emits Vue's pair of SSR
+      fragment-anchor comment nodes into the prerendered HTML. Comment nodes
+      are not elements, so `:first-child`, the sibling combinators and
+      `.stack`'s `> * + *` are all unaffected — but the markup is not
+      literally identical, and review was right to say so.
 
       And deliberately unopinionated: this component adds **no rule** for it.
       A layer here positions itself, and the *consumer* declares the

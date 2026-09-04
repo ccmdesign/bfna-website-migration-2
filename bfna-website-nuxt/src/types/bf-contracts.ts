@@ -660,8 +660,8 @@ export interface HeroProps {
    * **Prefer a root-relative local path** — `/images/hero/homepage.jpg`.
    * `bfMedia` routes those through `NuxtImg` and gets a real srcset, and
    * hands an absolute `https://` URL to the browser untouched with none
-   * (`Media.vue:70-76`), so a Directus URL here is a silent performance
-   * regression rather than an error.
+   * (`bfMedia`'s `isAbsolute` predicate), so a Directus URL here is a silent
+   * performance regression rather than an error.
    *
    * Absent or `null` and the band paints nothing at all — no scrim, no
    * `data-scrim`, no colour — which is exactly what it did before this prop

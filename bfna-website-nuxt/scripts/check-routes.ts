@@ -799,10 +799,45 @@ const prerenderedHtml = (route: string): string | undefined => {
   return file === undefined ? undefined : readFileSync(file, 'utf8')
 }
 
+/**
+ * HTML character references, undone.
+ *
+ * gh#253. This gate reads the **raw prerendered HTML**, where an attribute
+ * value is character-referenced by definition — so a URL carrying more than
+ * one query parameter arrives as `/_ipx/w_320&amp;q_90/…` while the file the
+ * build wrote is `_ipx/w_320&q_90/…`. Every `/_ipx/` URL in the repository had
+ * exactly one modifier until a hero passed `sizes`, so no URL had ever
+ * contained an `&` and the gate had never had to decode one; the first one
+ * that did was reported as dangling with the file sitting on disk beside it.
+ *
+ * A false *failure* rather than a false pass, so it was never dangerous — but
+ * it fails a build for a file that exists, and the next contributor to pass
+ * `sizes` would have hit exactly the same wall. Five references is the whole
+ * of the predefined set; anything numeric is out of scope for a URL a build
+ * tool wrote.
+ */
+const HTML_ENTITIES: Readonly<Record<string, string>> = {
+  '&amp;': '&',
+  '&lt;': '<',
+  '&gt;': '>',
+  '&quot;': '"',
+  '&#39;': "'"
+}
+
+const decodeHtmlEntities = (raw: string): string =>
+  raw.replace(/&(?:amp|lt|gt|quot|#39);/g, m => HTML_ENTITIES[m] ?? m)
+
 /** The `/_ipx/` URLs in `html` that no file in `.output/public` answers. */
 const danglingIpx = (html: string): string[] => {
   const seen = new Set<string>()
-  for (const url of html.match(IPX_REFERENCES) ?? []) {
+  for (const raw of html.match(IPX_REFERENCES) ?? []) {
+    /*
+      Decode before resolving, and report the decoded form: the path a
+      browser actually requests is the thing that either exists or does not,
+      and a failure message quoting `&amp;` sends the reader looking for a
+      file that was never going to be named that.
+    */
+    const url = decodeHtmlEntities(raw)
     if (resolveFile(url) === undefined) seen.add(url)
   }
   return [...seen]

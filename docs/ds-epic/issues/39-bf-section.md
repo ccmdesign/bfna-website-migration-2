@@ -34,6 +34,14 @@ plus explicit `v-bind` of only the intended pass-through attrs.
   }
   ```
   Default slot only.
+
+  > **Amended 2026-09-04, gh#253.** A second, named slot — `bleed` — renders as the
+  > first child of the root `<section>`, **outside** `.center`, for a full-bleed layer
+  > behind the band's own copy. It exists because `.center` is `content-box` with
+  > `padding-inline`, so nothing passed through the default slot can paint edge to edge.
+  > Purely additive: unused it renders no element, this component declares no rule for
+  > it, and the consumer owns the containing block. `bfPageHeader` is its first and only
+  > caller. The decision text above is kept rather than rewritten, per gh#249 §5.
 - Root: `<section class="bf-section" :data-label="label">` with an inner
   wrapper `:class="layout === 'plain' ? 'center' : \`center | ${layout}\`"`,
   `:data-gap` (omitted when `layout === 'plain'`, matching the wf source),

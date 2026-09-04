@@ -62,16 +62,18 @@
  * template, a probe or a future skin — the pattern `bf-section__heading` and
  * `bf-hero__heading` already set — and they carry no declarations.
  *
- * What gh#253 adds is four rules and nothing more, every one of them
+ * What gh#253 adds is a handful of rules and nothing more, every one of them
  * conditional on there being a photograph: the containing block and stacking
  * context `bfHeroMedia` needs, the inverted text colour that goes with a dark
- * band, the crumb links (which do **not** inherit it — see the rule), and an
- * inverted focus ring. A header with no `image` still resolves to the empty
+ * band, the crumb links (which do **not** inherit it — see the rule), and the
+ * two inversions a dark ground forces on the controls: a visible focus ring
+ * and a visible control boundary. A header with no `image` still resolves to the empty
  * stylesheet this component shipped with.
  *
  * That block is the first `<style>` this file has ever had, so its
  * `@layer components { }` wrapper is written **by hand**:
- * `src/nuxt.config.ts:200` disables `postcss-preset-env`'s cascade-layers
+ * `src/nuxt.config.ts`'s `postcss` block disables `postcss-preset-env`'s
+ * cascade-layers
  * polyfill (which would flatten the wrapper into unlayered rules that outrank
  * every layer — residual #98 / gh#101) and `scripts/check-routes.ts` gates
  * every compiled `bf-*` stylesheet for it.
@@ -139,12 +141,14 @@ interface Props {
    * **Prefer a root-relative local path** — `/images/hero/democracy.jpg`.
    * `bfMedia` routes those through `NuxtImg` and gets a real srcset, and
    * hands an absolute `https://` URL to the browser untouched with none
-   * (`Media.vue:70-76`), so the `image` field on a `bfPrograms` document —
+   * (`bfMedia`'s `isAbsolute` predicate), so the `image` field on a
+   * `bfPrograms` document —
    * a Directus URL — is deliberately *not* what a hub passes here.
    *
    * Absent or `null` and the header paints nothing at all: no bleed layer, no
-   * scrim, no `data-scrim`, no colour. That is what the four routes this item
-   * does not art-direct keep doing, byte for byte.
+   * scrim, no `data-scrim`, no colour, and the whole stylesheet below is
+   * inert. That is what the nine call sites this item does not art-direct
+   * keep doing.
    */
   image?: string | null
   /**
@@ -287,8 +291,8 @@ const showChips = (): boolean => chipList.value.length > 0 || hasRenderedContent
       a `.stack`, which spaces with `> * + *` **margin** rather than `gap`, so
       an absolutely positioned child of it still takes a `margin-block-start`
       that shrinks and offsets it — three logged defects come from exactly
-      that (`layouts/bf-default.vue:77-103`, `Hero.vue:94-130`, and this
-      file's own history at `:158-190`).
+      that — the route announcer inside `bf-default`'s `<main>`, `bfHero`'s
+      inner box, and this file's own.
 
       `class` and `data-scrim` both survive `bfSection`'s attribute
       allow-list — `class` by name, `data-scrim` by the `data-` prefix.
@@ -446,11 +450,20 @@ const showChips = (): boolean => chipList.value.length > 0 || hasRenderedContent
 
     `:deep()` because a header's controls are slot content and
     child-component roots, and neither carries this component's scope id.
-    `outline-color` as a longhand at (0,3,0) also outranks `bfButton`'s and
-    `bfBreadcrumb`'s own `outline:` shorthands at (0,2,0) in this same layer,
-    so one rule covers every control the band can hold.
+
+    **Two rules, and the second is not redundant** — see the identical pair in
+    `Hero.vue` for the full argument. In short: the bare pseudo-class compiles
+    to (0,3,0) and `bfButton`'s own `.bf-button[data-v-…]:focus-visible` is
+    (0,3,0) too, so source order in the built stylesheet decides and
+    `bfButton` won there. Naming the control makes it (0,4,0) and removes the
+    tie. `bfBreadcrumb` was only incidentally safe, through the
+    `--_bf-breadcrumb-focus-color` hook written above.
   */
   .bf-page-header--media :deep(:focus-visible) {
+    outline-color: var(--color-text-inverse);
+  }
+
+  .bf-page-header--media :deep(.bf-button:focus-visible) {
     outline-color: var(--color-text-inverse);
   }
 

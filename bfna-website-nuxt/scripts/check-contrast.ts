@@ -745,9 +745,12 @@ function buildPairs(): Pair[] {
         still could not pass, because over that ground the highest ratio ANY
         colour can reach is 4.840 and pure white is what reaches it. These
         three measure 1.92 / 1.64 / 1.87 there. Red is worse than unlucky: it
-        needs a ground of relative luminance <= 0.0291 to clear 4.5, and
-        navy's own luminance is 0.04004, so it fails over a navy scrim at
-        every alpha including 1.0. No amount of tuning fixes that.
+        needs a ground of relative luminance <= 0.0291 to clear 4.5, and navy
+        at full opacity is 0.04004 — so over a navy scrim it fails at every
+        alpha for any photograph no darker than navy itself, which is the
+        worst case this pair's ground models and the only one that can be
+        asserted about an image nobody has uploaded yet. No amount of tuning
+        fixes that.
 
         What the pair was asserting, then, was programme colour as text over
         media — which is exactly what gh#253 measured and forbade. The scrim
@@ -757,10 +760,18 @@ function buildPairs(): Pair[] {
 
         `--color-surface-inverse` is the ground this tier is named for and the
         one `semantic-colors.css` has always recorded its ratios against
-        (7.96 / 6.79 / 7.73) with nothing checking them. This is residual
-        #264's own suggested fix, and it closes that issue's on-dark half.
-        Its other half — the `:root` neutral programme default, which no pair
-        declares — is deliberately still open.
+        (7.96 / 6.79 / 7.73) with nothing checking them.
+
+        This is **not literally** what residual #264 asked for, and the
+        difference is worth stating where a future reader will hit it: #264
+        asked for a *fourth* pair per programme against
+        `--color-surface-inverse` and for the scrim-composited pairs to stay
+        pending for this phase. This phase is the one that discovered the
+        scrim-composited pair is unsatisfiable, so it is re-pointed rather
+        than joined by a sibling that would report red forever. #264's on-dark
+        half is closed by that. Its other two items are deliberately still
+        open: the `:root` neutral programme default, which no pair declares,
+        and the observation that `pendingFrom` has no expiry rule.
       */
       note: 'the tier\'s real ground; the scrim-composited form is unsatisfiable (see gh#253)'
     })
