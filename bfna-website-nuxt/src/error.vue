@@ -130,11 +130,26 @@ useHead({
 
 <template>
   <NuxtLayout name="bf-default">
+    <!--
+      `announced`, so the block renders `role="status"` (gh#224).
+
+      This is the one call site in the repo that unambiguously wants it. A
+      client-side navigation to a dead route does not reload the document: Vue
+      Router swaps `<main>`'s subtree for this block in place, the URL changes,
+      and a screen reader is told nothing — the user is left on what sounds
+      like the previous page. A live region is the announcement.
+
+      Not conditional on `isNotFound`: a 500 replaces the page just as silently
+      as a 404 does, and the branch would be a distinction without a
+      difference. Prop, not a hand-written `role` attribute, so the decision
+      stays the component's contract rather than this file's markup.
+    -->
     <bfEmptyState
       :heading="heading"
       :message="message"
       back-label="Back to home"
       back-to="/"
+      announced
     />
   </NuxtLayout>
 </template>
