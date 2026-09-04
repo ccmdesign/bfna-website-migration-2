@@ -1831,9 +1831,24 @@ const READ_ERROR_ROUTE = `(async () => {
   if (!router) return { pushed: false }
 
   try { await router.push(${JSON.stringify(ERROR_ROUTE)}) } catch (e) { /* Nuxt answers an unmatched route with showError */ }
-  /* Two frames: the push resolves on navigation, the error component mounts on
-     the render that follows it. */
-  await new Promise(ok => requestAnimationFrame(() => requestAnimationFrame(ok)))
+
+  /*
+    The push resolves on navigation; the error component mounts on a later
+    render. Poll for it rather than waiting a fixed number of frames —
+    \`requestAnimationFrame\` does not fire on a page the browser considers
+    hidden, and a probe that hangs there would time the whole harness out
+    instead of failing. Measured while verifying gh#224 in a hidden pane: a
+    two-frame wait never resolved.
+
+    The loop is bounded and its exit is not the element's presence alone: on a
+    build where the fix is missing the block still mounts, without the role, and
+    the read below is what says so. The extra tick after it is the settle.
+  */
+  const deadline = Date.now() + 3000
+  while (Date.now() < deadline && !document.querySelector('main .bf-empty-state')) {
+    await new Promise(ok => setTimeout(ok, 50))
+  }
+  await new Promise(ok => setTimeout(ok, 50))
 
   const main = document.querySelector('main')
   if (!main) return { pushed: true, path: location.pathname, main: false }
