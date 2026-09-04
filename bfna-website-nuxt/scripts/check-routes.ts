@@ -116,7 +116,10 @@
  *
  * ## Flags
  *
- *   --only <route>     run a single route (`--only /about`)
+ *   --only <route>     run a single route (`--only /about`). Skips the two
+ *                      whole-build gates below — they are statements about the
+ *                      build, not about a route, and a one-route run is a
+ *                      debugging tool rather than the gate.
  *   --timeout <ms>     per-route budget for reaching a hydrated state
  *   --port <n>         pin the static server port (default: a free one)
  *   --viewport <WxH>   layout viewport (default 1280x1024)
@@ -838,14 +841,17 @@ const NAV_REQUIRED = (): string[] => [
   '/archive'
 ]
 
-const reachabilityRows = (homeLinks: PageLink[]): Row[] => {
+const reachabilityRows = (homeLinks: PageLink[], origin: string): Row[] => {
   /* Path only: `/insights?format=video` links `/insights`, and a fragment
-     (`/about#board`) links `/about`. */
+     (`/about#board`) links `/about`. `origin` is the static server's, passed in
+     rather than inferred from the first link — the first anchor on `/` happens
+     to be the skip link today, but a page whose first anchor is external would
+     have made every route look like an orphan. */
   const reached = new Set<string>()
   for (const { resolved } of homeLinks) {
     try {
       const url = new URL(resolved)
-      if (url.origin !== new URL(homeLinks[0]?.resolved ?? 'http://127.0.0.1').origin) continue
+      if (url.origin !== origin) continue
       reached.add(url.pathname.replace(/(.)\/$/, '$1'))
     } catch {
       /* a mailto:, tel: or malformed href is not a site route */
@@ -1063,7 +1069,7 @@ const run = async (): Promise<void> => {
 
       const navRows = homeLinks === undefined
         ? [{ label: 'DoD-3 — the home page rendered', ok: false, detail: 'expected / to hydrate · actual it did not, so reachability cannot be judged' }]
-        : reachabilityRows(homeLinks)
+        : reachabilityRows(homeLinks, origin)
       const navFailing = navRows.filter(r => !r.ok)
       results.push({ slug: 'nav reachability (DoD-3)', rows: navRows, failing: navFailing })
       console.log(
