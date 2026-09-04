@@ -143,8 +143,9 @@ Both are fixed in one edit. The line becomes:
 that is the form D-37.5 already proved. Re-verified against the component as it stands on
 `dev`: the old form exits `1` on today's clean `Hero.vue` — it would fail a correct
 component — while the new form exits `0` there and non-zero against the same file with a
-`--color-x: #ff0000` declaration appended. The gate bites in the direction it claims to. Line 61 of the same block — `grep -Lq "level"` — is
-de-inverted with it, since D-37.5 §1 prescribes the negation "for **both** `grep -Lq`
+`--color-x: #ff0000` declaration appended. The gate bites in the direction it claims to.
+
+Line 61 of the same block — `grep -Lq "level"` — is de-inverted with it, since D-37.5 §1 prescribes the negation "for **both** `grep -Lq`
 lines" and repairing one inverted gate while leaving its twin two lines above would be a
 strange kind of thorough.
 
@@ -161,7 +162,8 @@ deleting it.
 Two other spec files carry the same shape of colour grep —
 `docs/ds-epic/issues/14-bf-logo.md:67` and `docs/ds-epic/issues/41-bf-notice.md:68`. Both
 are deliberately left alone: their components are built and merged, neither is touched by
-wave 1, and 41's own §190 already documents and substitutes its inversion. They are named
+wave 1, and 41's own acceptance-substitutions table (line 190) already documents and
+substitutes its inversion. They are named
 here so a later reader does not read the omission as an oversight.
 
 ## 6. Scope of this change
