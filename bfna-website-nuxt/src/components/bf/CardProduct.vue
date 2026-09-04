@@ -206,9 +206,9 @@ const pendingLabel = computed(() => props.product.pending ?? 'Q6')
 
 /**
  * The defect is announced rather than swallowed — same shape as `bfCard`'s
- * outside-a-list warning (gh#29) and
- * the five wrappers before it: a dev-time `console.warn`, never a thrown error,
- * with `import.meta.dev` keeping it out of the production bundle.
+ * outside-a-list warning (gh#29) and the five wrappers before it: a dev-time
+ * `console.warn`, never a thrown error, with `import.meta.dev` keeping it out
+ * of the production bundle.
  */
 if (import.meta.dev) {
   watchEffect(() => {

@@ -59,10 +59,11 @@
  * ## The portrait is decorative
  *
  * `alt=""`, deliberately declared rather than omitted — `bfMedia` requires
- * `alt`, so omitting it is a typecheck error (gh#222). The heading immediately above already
- * names the person, so alt text here would be a second announcement of the
- * same name, not a description. `ratio="1/1"` is `wfCardPerson.vue`'s square
- * and lands as a `--_bf-media-ratio` declaration a consumer stylesheet can
+ * `alt`, so omitting it is a typecheck error (gh#222). The heading immediately
+ * above already names the person, so alt text here would be a second
+ * announcement of the same name, not a description. `ratio="1/1"` is
+ * `wfCardPerson.vue`'s square and lands as a `--_bf-media-ratio` declaration
+ * a consumer stylesheet can
  * still re-proportion (never an inline `aspect-ratio`; that was the gh#26
  * defect).
  *
@@ -139,9 +140,9 @@ const jobTitle = computed(() => props.person.job_title ?? '—')
 
 /**
  * …and the blank-name defect is announced rather than swallowed. Same shape as
- * `bfCard`'s outside-a-list warning (gh#29) and the three earlier wrappers': a dev-time `console.warn`, never a
- * thrown error, with `import.meta.dev` keeping it out of the production
- * bundle.
+ * `bfCard`'s outside-a-list warning (gh#29) and the three earlier wrappers': a
+ * dev-time `console.warn`, never a thrown error, with `import.meta.dev`
+ * keeping it out of the production bundle.
  */
 if (import.meta.dev) {
   watchEffect(() => {

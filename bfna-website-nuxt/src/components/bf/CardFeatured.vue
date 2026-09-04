@@ -180,9 +180,9 @@ const excerptText = computed(() => props.item.excerpt ?? '')
 
 /**
  * …and the defect is announced rather than swallowed. Same shape as `bfCard`'s
- * outside-a-list warning (gh#29) and
- * the two earlier wrappers': a dev-time `console.warn`, never a thrown error,
- * with `import.meta.dev` keeping it out of the production bundle.
+ * outside-a-list warning (gh#29) and the two earlier wrappers': a dev-time
+ * `console.warn`, never a thrown error, with `import.meta.dev` keeping it out
+ * of the production bundle.
  */
 if (import.meta.dev) {
   watchEffect(() => {

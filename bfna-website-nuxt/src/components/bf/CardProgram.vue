@@ -138,8 +138,9 @@ const taglineText = computed(() => (props.program.tagline ?? '').trim())
 
 /**
  * The blank-name defect is announced rather than swallowed — same shape as
- * `bfCard`'s outside-a-list warning (gh#29) and the four wrappers before it: a dev-time `console.warn`, never a
- * thrown error, with `import.meta.dev` keeping it out of the production bundle.
+ * `bfCard`'s outside-a-list warning (gh#29) and the four wrappers before it: a
+ * dev-time `console.warn`, never a thrown error, with `import.meta.dev`
+ * keeping it out of the production bundle.
  */
 if (import.meta.dev) {
   watchEffect(() => {
