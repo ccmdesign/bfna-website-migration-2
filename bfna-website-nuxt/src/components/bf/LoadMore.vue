@@ -156,10 +156,17 @@ const announcement = computed<string>(() => {
 
       Rendered independently of `hasMore` (see the block comment above), so the
       final "Showing 354 of 354 items" is announced rather than removed.
+
+      `visually-hidden` is the shared utility in `public/css/utils/utils.css`
+      (gh#219), not a scoped rule: this component hand-rolled the clip until the
+      accessibility epic needed the same twelve lines in four more live regions.
+      It is a global class, so `scoped` does not rewrite it and the SFC's own
+      `<style>` no longer says anything about how this span is hidden. The BEM
+      class stays as the hook a harness or a later rule addresses.
     -->
     <span
       v-if="announcement"
-      class="bf-load-more__status"
+      class="bf-load-more__status visually-hidden"
       role="status"
       aria-live="polite"
       aria-atomic="true"
@@ -186,27 +193,12 @@ const announcement = computed<string>(() => {
   }
 
   /*
-    The standard visually-hidden clip. Reachable by assistive technology and
-    invisible to everyone else — `display: none` and `visibility: hidden` both
-    remove the element from the accessibility tree, which would silence the one
-    announcement this component exists to make.
-
-    `clip-path` and the legacy `clip` are both written: `clip` is deprecated but
-    is still the property some older AT/browser pairs honour, and the pair is
-    the well-worn recipe rather than a novelty. The 1px box (not zero) keeps the
-    element renderable, which is what keeps it in the tree.
+    `.bf-load-more__status` is deliberately not styled here. The clip that hides
+    it moved to the shared `.visually-hidden` utility in
+    `public/css/utils/utils.css` (gh#219), which the template now applies
+    alongside the BEM class. That utility sits in `@layer utils`, after this
+    layer in the order `styles.css` declares, so it also outranks anything a
+    later rule in here might lay on the same element.
   */
-  .bf-load-more__status {
-    position: absolute;
-    inline-size: 1px;
-    block-size: 1px;
-    margin: -1px;
-    padding: 0;
-    overflow: hidden;
-    clip: rect(0 0 0 0);
-    clip-path: inset(50%);
-    white-space: nowrap;
-    border: 0;
-  }
 }
 </style>
