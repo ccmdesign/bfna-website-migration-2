@@ -21,9 +21,11 @@
  *
  * ## What the wireframe got right, and the one thing it could not
  *
- * The element, the removal and the label shape are all the wireframe's, kept:
- * a real `<button>`, gone entirely once everything is loaded, labelled with the
- * caller's own remainder arithmetic.
+ * The element and the label shape are both the wireframe's, kept: a real
+ * `<button>`, labelled with the caller's own remainder arithmetic. The
+ * *removal* was kept too, until gh#225 measured what it costs a keyboard user
+ * and replaced it with an inert-but-focusable control — see the `aria-disabled`
+ * section below.
  *
  * What a raw inline button cannot do is tell anyone what happened. Activating
  * it appends items *above* itself — the control stays put, focus stays on it,
@@ -144,9 +146,14 @@ const emit = defineEmits<{
  * Two reasons, one state: there is nothing left to load, or a load is already
  * in flight. Both used to remove the button from play — one by unmounting it,
  * one by setting `disabled` — and both therefore dropped focus to `<body>`
- * (gh#225). They now render the same inert-but-focusable control.
+ * (gh#225). They now render the same unavailable-but-focusable control.
+ *
+ * Named for `aria-disabled`, not `inert`. HTML's `inert` attribute is the one
+ * thing this state must **not** do — it removes the subtree from the tab order,
+ * which is the defect, not the fix — so borrowing its name for the flag that
+ * keeps the button focusable would be actively misleading.
  */
-const inert = computed<boolean>(() => !props.hasMore || props.loading)
+const unavailable = computed<boolean>(() => !props.hasMore || props.loading)
 
 /**
  * The guard that makes `aria-disabled` honest.
@@ -158,7 +165,7 @@ const inert = computed<boolean>(() => !props.hasMore || props.loading)
  * `click` too.
  */
 const onActivate = (): void => {
-  if (inert.value) return
+  if (unavailable.value) return
   emit('load')
 }
 
@@ -197,9 +204,10 @@ const statusId = useId()
 
 <template>
   <!--
-    Present when there is a button to draw, or a count to keep announcing after
-    the button has gone. Absent — no element whatsoever — when neither is true,
-    which is the spec's "not even an empty wrapper" case.
+    Present when there is a button to draw — live or inert — or a count to keep
+    announcing. Absent, no element whatsoever, when neither is true, which is
+    the spec's "not even an empty wrapper" case. Since gh#225 this condition is
+    the button's too: it has no `v-if` of its own.
   -->
   <div
     v-if="hasMore || announcement"
@@ -231,7 +239,7 @@ const statusId = useId()
     -->
     <bfButton
       class="bf-load-more__button"
-      :aria-disabled="inert || undefined"
+      :aria-disabled="unavailable || undefined"
       :aria-describedby="announcement ? statusId : undefined"
       @click="onActivate"
     >

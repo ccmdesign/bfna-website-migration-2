@@ -2214,6 +2214,7 @@ const loadMoreFocusRows = async (cdp: Cdp, origin: string): Promise<Row[]> => {
   let initial: LoadMoreRead | undefined
   let read: LoadMoreRead | undefined
   let focusedAfterFirstClick: boolean | undefined
+  let firstClickFocus: string | undefined
   let stalled: string | undefined
 
   try {
@@ -2300,7 +2301,10 @@ const loadMoreFocusRows = async (cdp: Cdp, origin: string): Promise<Row[]> => {
           break
         }
 
-        if (clicks === 1) focusedAfterFirstClick = read.activeIsButton
+        if (clicks === 1) {
+          focusedAfterFirstClick = read.activeIsButton
+          firstClickFocus = describeFocus(read)
+        }
         if (read.activeIsBody) dropped.push(clicks)
         const showing = read.statusText === null ? null : SHOWING_TEXT.exec(read.statusText)
         if (showing) shownCounts.push(Number(showing[1]))
@@ -2354,10 +2358,10 @@ const loadMoreFocusRows = async (cdp: Cdp, origin: string): Promise<Row[]> => {
     ok: focusedAfterFirstClick === true,
     detail: focusedAfterFirstClick === true
       ? 'expected document.activeElement === the button after click 1 · actual it is'
-      : `expected the press to focus the button · actual focus went to ${read === undefined
-        ? 'an unreadable page'
-        : describeFocus(read)} — this browser does not focus a <button> on mousedown, so the`
-        + ' rows below are measuring the probe rather than the page. Not the gh#225 defect'
+      : `expected the press to focus the button · actual focus after click 1 was on`
+        + ` ${firstClickFocus ?? 'nothing readable — no click landed'} — this browser does not`
+        + ' focus a <button> on mousedown, so the rows below are measuring the probe rather'
+        + ' than the page. Not the gh#225 defect'
   })
 
   /* The DoD-A6 row itself. */
