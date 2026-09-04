@@ -52,6 +52,7 @@ import type { Insight } from '~/types/bf-contracts'
 import { useBfInsights } from '~/composables/data/useBfInsights'
 import { useBfPrograms } from '~/composables/data/useBfPrograms'
 import { useBfProjects } from '~/composables/data/useBfProjects'
+import { useProgramTheme } from '~/composables/useProgramTheme'
 import { isProgramSlug } from '~/utils/bf-programs'
 import { paragraphs } from '~/utils/format'
 
@@ -85,6 +86,20 @@ const program = programBySlug(route.params.program as string)
  * contract is that every page below the root states its own name.
  */
 useHead({ title: () => program?.name })
+
+/**
+ * The programme colour scope (gh#252). `data-program` lands on `<html>`, which
+ * is the only placement that recolours all three bands without the wrapper
+ * `<div>` this template's comment forbids — see `useProgramTheme` for the full
+ * argument and for the specificity tie it relies on.
+ *
+ * `program?.slug` rather than `route.params.program`: the param has already
+ * passed `validate`, but the attribute should name a document that exists, so
+ * it is read off the same row the rest of the page renders. The `undefined`
+ * branch is the defensive one `bfEmptyState` covers below, and it correctly
+ * leaves the neutral `:root` default in place.
+ */
+useProgramTheme(program?.slug)
 
 /**
  * Active, on-site projects in this program, in the client's grid order —

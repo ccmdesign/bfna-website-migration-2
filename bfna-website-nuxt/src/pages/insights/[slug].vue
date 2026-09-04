@@ -60,6 +60,7 @@ import { useBfInsights } from '~/composables/data/useBfInsights'
 import { useBfPages } from '~/composables/data/useBfPages'
 import { useBfPrograms } from '~/composables/data/useBfPrograms'
 import { useBfProjects } from '~/composables/data/useBfProjects'
+import { useProgramTheme } from '~/composables/useProgramTheme'
 import { formatLabel, monthYear } from '~/utils/format'
 
 defineOptions({ name: 'InsightDetailPage' })
@@ -102,6 +103,21 @@ const programName = program?.name
  * names the route rather than leaving the site title alone.
  */
 useHead({ title: () => insight?.heading ?? 'Insight' })
+
+/**
+ * The programme colour scope (gh#252). `data-program` lands on `<html>` — the
+ * only placement that reaches every band without the wrapper `<div>` this
+ * template's comment forbids; `useProgramTheme` carries the full argument.
+ *
+ * It is handed `program?.slug`, the row resolved above, and **not** the raw
+ * `insight.program` string. That is the same D-50.2 guard the chip, the
+ * banner's forward link and the related band's heading already hang off, for
+ * the same reason: 52 of the 354 rows store a migration signal there rather
+ * than a programme, and those must resolve the neutral `:root` default. The
+ * related band still runs on the raw string, so a mis-tagged row keeps its
+ * siblings while losing only the colour it was never entitled to.
+ */
+useProgramTheme(program?.slug)
 
 /**
  * Up to three more in the same programme, self excluded — the frozen page's
