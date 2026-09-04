@@ -1449,7 +1449,7 @@ const cssFiles = (dir: string, out: string[] = []): string[] => {
 
 /**
  * An `<a>`'s inner HTML with every `aria-hidden="true"` subtree removed, then
- * with tags stripped and the arrow entities decoded.
+ * with tags stripped and the arrow entities — numeric and named — decoded.
  *
  * Anchors cannot nest, so a non-greedy `<a…>…</a>` match is exact. The
  * `aria-hidden` removal is deliberately one level deep and non-nesting: every
@@ -1462,12 +1462,23 @@ const ARIA_HIDDEN_SUBTREE = /<([a-z][\w-]*)\b[^>]*\baria-hidden\s*=\s*(["'])\s*t
 const ANCHOR = /<a\b([^>]*)>([\s\S]*?)<\/a\s*>/gi
 const TAGS = /<[^>]*>/g
 
+const NAMED_ARROW_ENTITY: Record<string, string> = {
+  larr: '←', uarr: '↑', rarr: '→', darr: '↓',
+  nwarr: '↖', nearr: '↗', searr: '↘', swarr: '↙',
+  laquo: '«', raquo: '»'
+}
+
 const linkText = (innerHtml: string): string =>
   innerHtml
     .replace(ARIA_HIDDEN_SUBTREE, '')
     .replace(TAGS, '')
     .replace(/&#(\d+);/g, (_, code: string) => String.fromCodePoint(Number(code)))
     .replace(/&#x([0-9a-f]+);/gi, (_, code: string) => String.fromCodePoint(parseInt(code, 16)))
+    /* Nuxt emits these glyphs as raw UTF-8 today, so the entity forms are
+       belt-and-braces: a hand-written `&rarr;` in a template, or a future
+       serialiser that escapes non-ASCII, must not be able to walk past a gate
+       that only understands the literal character. */
+    .replace(/&([a-z]+);/gi, (whole, name: string) => NAMED_ARROW_ENTITY[name.toLowerCase()] ?? whole)
 
 const decorativeGlyphRows = (): Row[] => {
   const rows: Row[] = []
