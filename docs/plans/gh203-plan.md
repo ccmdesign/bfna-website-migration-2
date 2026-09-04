@@ -124,3 +124,31 @@ and every frozen wireframe path.
 - **D-203.5 — `ce-plan` / `ce-work` skills not invoked; both steps run inline.** The change is
   ~60 lines across three files against a fully specified issue body, and the runner's hard rule
   prefers a degraded inline step to any risk of detached background work.
+- **D-203.6 — the smoke gate asserts *existence*, not absence, of `/_ipx/`. Supersedes the
+  literal wording of the issue's acceptance grep.** Discovered during implementation: `@nuxt/image`
+  **does** transform local `src/public/` images at prerender time and write the result to disk.
+  After the fix, `.output/public/about/index.html` still carries one `/_ipx/` URL —
+  `/_ipx/q_90/images/hero/stiftung.jpg`, from the `stiftung` page row — and
+  `.output/public/_ipx/q_90/images/hero/stiftung.jpg` is a real, transformed
+  **1600×774 progressive JPEG, 332,878 bytes** (the untransformed original is 300,866). It serves
+  `200 image/jpeg` off any static host.
+
+  So `grep -rl '/_ipx/' … | grep -v wireframes | grep -v bf-probe` does **not** print nothing, and
+  cannot without deleting the `NuxtImg` branch the same issue says to keep — the two halves of the
+  stated acceptance contradict each other. The substantive half is the one that holds: every
+  `<img>` on `/about` resolves, 13 remote ones at `200 image/*` when curled and the one local one
+  as a real file on disk (evidence in the PR body).
+
+  What actually distinguishes broken from working is whether a file exists behind the URL. A
+  remote source cannot be prerendered — `ipx` would have to fetch it at runtime — so
+  `/_ipx/q_90/https:/bfna.simplyas.com/…` is written nowhere and 404s (SPA fallback,
+  `200 text/plain`); a local one is written and resolves. `scripts/check-probes.ts` therefore
+  requires every `/_ipx/` URL in a smoke route's generated HTML, `src` and `srcset` alike, to
+  resolve to a file under `.output/public`. Strictly stronger than the substring ban: it also
+  fails a `/_ipx/` URL that silently stops being emitted at build time for some future reason.
+
+  **Negative control run, not assumed.** Rewriting one absolute `src` on
+  `.output/public/about/index.html` back into its pre-fix `/_ipx/q_90/https:/…` form made
+  `npx tsx scripts/check-probes.ts --only smoke` exit `1` with
+  `smoke /about — 1/3 rows`, naming the dangling URL; restoring the file returned it to green. The
+  gate catches the exact defect this issue is about.

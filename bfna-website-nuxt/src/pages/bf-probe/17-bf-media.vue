@@ -34,7 +34,13 @@
  * 6. The real branch ships `loading="lazy"` and a non-empty `alt`; the
  *    placeholder branch is `aria-hidden` and painted by the two semantic
  *    tokens, with no colour literal.
+ * 7. **Which branch a `src` takes** (gh#203, P1). An absolute URL renders a
+ *    plain `<img>` carrying that URL *verbatim* — no `/_ipx/` rewrite, because
+ *    `ipx` is a server and this site deploys statically — while a local path
+ *    still goes through `NuxtImg`. Both halves are asserted: the second one is
+ *    what fails if someone "fixes" the first by deleting the module branch.
  *
+
  * The vitest harness on `dev` is broken and pre-existing (residual #86), so
  * acceptance is this page under `npx tsx scripts/check-probes.ts --only 17`,
  * per the gh#20–#23 precedent and the #109 harness decision. Recorded in the
@@ -55,6 +61,20 @@ useHead({
  */
 const SAMPLE_SRC = '/images/hero/democracy.jpg'
 const SAMPLE_ALT = 'Delegates seated around a conference table during a panel discussion.'
+
+/**
+ * The gh#203 regression fixture — an **absolute** URL on the real asset host.
+ *
+ * Never fetched by this probe (see the `naturalWidth` note above: the harness
+ * runs offline against `.output/public`). What is asserted is the *string the
+ * component put in the attribute*, which is the whole of the bug: `bfMedia`
+ * used to hand every `src` to `NuxtImg`, `@nuxt/image` fell back to the `ipx`
+ * provider because `nuxt.config.ts` leaves `image.provider` undefined, and the
+ * static deploy — which has no `ipx` server — served `200 text/plain` for
+ * every `/_ipx/…` URL. Every photo on `/` and `/about` was broken.
+ */
+const ABSOLUTE_SRC = 'https://bfna.simplyas.com/assets/2e1d0b1a-0000-4000-8000-000000000000'
+const ABSOLUTE_ALT = 'A remote photograph served straight from the asset host.'
 
 /**
  * The three ratios the acceptance criterion names.
@@ -175,6 +195,23 @@ onMounted(() => {
   const cssOverride = document.querySelector<HTMLElement>('[data-probe-override="css"] .bf-media')
   const styleOverride = document.querySelector<HTMLElement>('[data-probe-override="style"] .bf-media')
   const defaultInstance = byRatio(images, '16/9')
+
+  /*
+   * The gh#203 provider-branch instances. Queried out of their own section so
+   * the six-box count above stays exactly six.
+   */
+  const absoluteEl = document.querySelector<HTMLElement>('[data-probe-provider="absolute"] .bf-media')
+  const relativeEl = document.querySelector<HTMLElement>('[data-probe-provider="relative"] .bf-media')
+
+  /**
+   * The *attribute*, not the `.src` IDL property. `el.src` resolves against
+   * the document base URL, so a relative attribute would come back absolute
+   * and an `/_ipx/…` rewrite would come back as `http://127.0.0.1:PORT/_ipx/…`
+   * — still a fail, but a fail whose message names the harness's own port
+   * instead of the bug. The attribute is the literal string the component
+   * emitted, which is what the deployed HTML carries.
+   */
+  const srcAttr = (el: HTMLElement | null) => el?.getAttribute('src') ?? 'missing'
 
   const results: Check[] = [
     // --- 1. both branches × three ratios actually rendered -----------------
@@ -303,6 +340,66 @@ onMounted(() => {
       label: '  …and the two are not the same paint (the crosshatch is visible)',
       expected: 'true',
       actual: String(resolveToken('--color-light') !== resolveToken('--color-base-super-light'))
+    },
+
+    // --- 8. the provider branch (gh#203) ----------------------------------
+    {
+      label: 'an absolute src renders a plain <img>, never a <picture>/<source> wrapper',
+      expected: 'IMG',
+      actual: absoluteEl?.tagName ?? 'missing'
+    },
+    {
+      label: '  …with the URL verbatim — no /_ipx/ rewrite (gh#203)',
+      expected: ABSOLUTE_SRC,
+      actual: srcAttr(absoluteEl)
+    },
+    {
+      label: '  …and it still carries the shared .bf-media class',
+      expected: 'true',
+      actual: String(absoluteEl?.classList.contains('bf-media') === true)
+    },
+    {
+      label: '  …lazy, async and alt, exactly like the NuxtImg branch',
+      expected: 'lazy|async|' + ABSOLUTE_ALT,
+      actual: absoluteEl
+        ? [
+            absoluteEl.getAttribute('loading'),
+            absoluteEl.getAttribute('decoding'),
+            absoluteEl.getAttribute('alt')
+          ].join('|')
+        : 'missing'
+    },
+    {
+      label: '  …and the ratio hook still reaches it (ratio="1/1")',
+      expected: '1/1',
+      actual: absoluteEl?.style.getPropertyValue('--_bf-media-ratio').trim() ?? 'missing'
+    },
+    {
+      label: '  …so its box measures 1/1 like any other',
+      expected: 'true',
+      actual: String(ratioHolds(absoluteEl, 1))
+    },
+    {
+      /*
+       * The other half of the contract. Deleting the NuxtImg branch outright
+       * would satisfy every row above; this one fails if it happens, because a
+       * local asset that never reaches the module is a silent loss of every
+       * `srcset` on the site.
+       */
+      label: 'a relative src still goes through NuxtImg (src rewritten, not verbatim)',
+      expected: 'true',
+      actual: String(relativeEl !== null && srcAttr(relativeEl) !== SAMPLE_SRC)
+    },
+    {
+      /*
+       * Restating the verbatim row as a substring test, on purpose. The row
+       * above fails on *any* difference and prints two long URLs; this one
+       * names the actual defect in its own label, so a future reader of a red
+       * run sees `/_ipx/` rather than having to diff two strings by eye.
+       */
+      label: '  …and the absolute src contains no /_ipx/ segment at all',
+      expected: 'false',
+      actual: String(srcAttr(absoluteEl).includes('/_ipx/'))
     }
   ]
 
@@ -428,6 +525,58 @@ const verdict = computed(() =>
               :style="{ '--_bf-media-ratio': '4 / 3' }"
             />
             <figcaption><code>--_bf-media-ratio: 4 / 3</code> from <code>$attrs</code></figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!--
+      gh#203. Its own section and its own class, so the six-box count in
+      `.probe__gallery` is untouched.
+    -->
+    <section class="probe__providers" aria-labelledby="providers-heading">
+      <h2 id="providers-heading">Which branch a <code>src</code> takes</h2>
+      <p class="probe__lede">
+        The P1 this section exists for. <code>bfMedia</code> shipped sending
+        <em>every</em> <code>src</code> through <code>NuxtImg</code>;
+        <code>image.provider</code> is undefined in
+        <code>nuxt.config.ts</code> unless <code>NUXT_IMAGE_PROVIDER</code> is
+        set, so <code>@nuxt/image</code> fell back to <code>ipx</code> and
+        rewrote remote photos to <code>/_ipx/q_90/https:/…</code>.
+        <code>ipx</code> is a <em>server</em>; this site deploys as static
+        <code>nuxt generate</code> output, so those URLs returned
+        <code>200 text/plain</code> from the SPA fallback and every photo on
+        <code>/</code> and <code>/about</code> was broken. An absolute URL now
+        renders a plain <code>&lt;img&gt;</code> verbatim; a local path still
+        goes through the module, because optimising those is what the module
+        is for.
+      </p>
+
+      <div class="probe__columns">
+        <div class="probe__column" data-probe-provider="absolute">
+          <h3>Absolute <code>src</code></h3>
+          <p class="probe__note">
+            <code>https://bfna.simplyas.com/…</code> — plain
+            <code>&lt;img&gt;</code>, URL untouched. The bitmap is not fetched
+            in the harness; the assertion is on the emitted attribute.
+          </p>
+          <figure class="probe__box">
+            <bfMedia :src="ABSOLUTE_SRC" :alt="ABSOLUTE_ALT" ratio="1/1" />
+            <figcaption>no <code>/_ipx/</code> prefix</figcaption>
+          </figure>
+        </div>
+
+        <div class="probe__column" data-probe-provider="relative">
+          <h3>Relative <code>src</code></h3>
+          <p class="probe__note">
+            <code>/images/hero/democracy.jpg</code> — still
+            <code>NuxtImg</code>, so the emitted <code>src</code> differs from
+            the input. Deleting that branch would pass every row above and
+            silently drop every <code>srcset</code> on the site.
+          </p>
+          <figure class="probe__box">
+            <bfMedia :src="SAMPLE_SRC" :alt="SAMPLE_ALT" ratio="1/1" />
+            <figcaption>rewritten by the provider</figcaption>
           </figure>
         </div>
       </div>
