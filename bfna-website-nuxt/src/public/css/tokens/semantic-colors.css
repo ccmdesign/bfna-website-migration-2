@@ -192,6 +192,12 @@
      * (`css-legacy/global.css:274-289`). This is the hook, keyed to
      * `[data-program]` on the route wrapper.
      *
+     * The hue assignment below is taken from the LIVE production site as
+     * measured, not from that dead block, which has green and yellow swapped
+     * (`.democracy` yellow, `.politics-society` green) — the same reversal
+     * the wave-1 plan warns the old colour study carries. Read the legacy
+     * file for the mechanism, not for the mapping.
+     *
      * Three tiers, because one colour cannot do three jobs:
      *
      *   --color-program           the programme's identity colour — fills,
@@ -199,10 +205,12 @@
      *   --color-program-on-light  text on --color-surface-page, >= 4.5:1.
      *   --color-program-on-dark   text on a dark ground, >= 4.5:1.
      *
-     * Every ratio below is measured by `scripts/check-contrast.ts`, which
-     * asserts nine of these pairs in CI. Do not hand-edit a value without
-     * re-running `npm run check:contrast` — the numbers in these comments
-     * are the only place they are written down twice.
+     * Every ratio below is measured by `scripts/check-contrast.ts`. Six of
+     * the nine programme pairs it declares are asserted today; the three
+     * on-dark ones are pending (see below), and the `:root` defaults are not
+     * declared as pairs at all — #264 covers both gaps. Do not hand-edit a
+     * value without re-running `npm run check:contrast`; these comments are
+     * the only place the numbers are written down twice.
      *
      * The on-dark tier is the exception: its gate pair measures against
      * `--color-scrim`, which does not exist until the hero phase, so those
@@ -244,7 +252,15 @@
       --hsl-program-on-dark: 188, 97%, 41%; /* #03B3CE — 7.96:1 on --color-surface-inverse */
     }
 
-    /* Future Leadership — red. Production's Future Leadership was red. */
+    /*
+     * Future Leadership — red. Production's Future Leadership was red.
+     *
+     * `--hsl-program-on-light` repeats red's value as a literal rather than
+     * `var(--hsl-red)`, and that is deliberate for every programme: the
+     * on-light tier is a measured floor, so it must not silently follow a
+     * later nudge of the primitive below 4.5:1. It is allowed to coincide
+     * with the raw tier — today it does, because 54% is both.
+     */
     [data-program="future-leadership"] {
       --hsl-program: var(--hsl-red); /* #CF4457 — white on it, 4.55:1 */
       --hsl-program-on-light: 352, 59%, 54%; /* #CF4457 — 4.55:1 on --color-surface-page */
@@ -280,12 +296,18 @@
     }
 
     /*
-     * Resolved into both scopes deliberately. The gate's `requireScoped`
-     * refuses a programme pair whose token resolved from `:root` — that is
-     * how a mistyped programme block would otherwise report the neutral
-     * default under a programme's label. Declaring here means the lookup
-     * chain hits `[data-program]` first and the scoped `--hsl-program`
-     * above supplies the hue.
+     * Declared once, into both scopes. The hue is NOT carried here — it comes
+     * from the scoped `--hsl-program*` above, which is the only thing that
+     * varies per programme.
+     *
+     * That distinction is load-bearing for the gate. `requireScoped` refuses
+     * a programme pair whose token resolved from `:root`, and these three
+     * always resolve from `[data-program]` whether or not the slug block
+     * exists — so naming only them proved nothing: review found that
+     * renaming `[data-program="democracy"]` to `democrasy` still exited 0,
+     * printing the neutral navy under democracy's label. The gate now
+     * requires the `--hsl-program*` half too, which does vary, and the same
+     * sabotage is a fatal resolve error.
      */
     :root,
     [data-program] {

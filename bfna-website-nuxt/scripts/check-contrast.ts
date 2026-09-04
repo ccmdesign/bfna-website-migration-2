@@ -624,6 +624,16 @@ interface Pair {
    * missing `[data-program="…"]` block falls through to the `:root` default
    * and one programme's colour is reported under another's label — the exact
    * failure the scope-aware parser exists to prevent.
+   *
+   * Name the token that actually VARIES per programme, not merely one declared
+   * inside some non-`:root` rule. gh#251 declares `--color-program*` once, in
+   * a shared `:root, [data-program]` rule, and varies the hue through
+   * `--hsl-program*` inside each slug block. Listing only `--color-program*`
+   * therefore always resolved from `[data-program]` and passed whether or not
+   * the slug block existed at all: renaming `[data-program="democracy"]` to
+   * `democrasy` still exited 0, printing the neutral navy default under
+   * democracy's label. Both halves are listed now, so the check tests the
+   * thing it claims to.
    */
   requireScoped?: readonly string[]
   /** Issue that introduces the tokens this pair needs, when they do not exist yet. */
@@ -714,7 +724,7 @@ function buildPairs(): Pair[] {
       bg: { kind: 'token', name: '--color-surface-page' },
       floor: 4.5,
       scope,
-      requireScoped: ['--color-program-on-light'],
+      requireScoped: ['--color-program-on-light', '--hsl-program-on-light'],
       pendingFrom: '#251'
     })
     pairs.push({
@@ -728,7 +738,7 @@ function buildPairs(): Pair[] {
       },
       floor: 4.5,
       scope,
-      requireScoped: ['--color-program-on-dark'],
+      requireScoped: ['--color-program-on-dark', '--hsl-program-on-dark'],
       // The token itself landed in gh#251. What is still missing is
       // `--color-scrim`, so this names the phase that supplies the ground —
       // otherwise the report reads "lands in #251" forever after #251 merged.
@@ -741,7 +751,7 @@ function buildPairs(): Pair[] {
       bg: { kind: 'token', name: '--color-program' },
       floor: 4.5,
       scope,
-      requireScoped: ['--color-program'],
+      requireScoped: ['--color-program', '--hsl-program'],
       pendingFrom: '#251'
     })
   }
@@ -792,7 +802,9 @@ interface KnownFailure {
 const KNOWN_FAILURES: readonly KnownFailure[] = [
   {
     pairId: 'white-on-amber',
-    issue: '#251',
+    // Not #251. That issue decided against the repair; this one owns it, and
+    // the list's rule is that every entry names the issue that REMOVES it.
+    issue: '#263',
     why:
       'amber #EEAC49 measures 1.98 on white — the worst pair in the palette. ' +
       'gh#251 deliberately did NOT repair it. The only lightness that clears ' +
@@ -804,7 +816,7 @@ const KNOWN_FAILURES: readonly KnownFailure[] = [
       'transatlantic-relations-global-challenges, so the chip clears 4.5 ' +
       'without the primitive moving. Repairing --hsl-yellow is token-hygiene ' +
       'work with its own blast radius — see ' +
-      'docs/decisions/gh251-programme-colour-tokens.md §3.'
+      'docs/decisions/gh251-programme-colour-tokens.md §3. Removal is owned by #263.'
   }
 ]
 
@@ -1220,14 +1232,16 @@ function selfCheck(cssDir: string): number {
       fs.cpSync(path.join(cssDir, 'tokens'), path.join(ratchetDir, 'tokens'), { recursive: true })
       const primitives = path.join(ratchetDir, 'tokens', 'primitive-colors.css')
       const src = fs.readFileSync(primitives, 'utf-8')
-      const repaired = src
-        .replace('--hsl-red: 352, 59%, 55%;', '--hsl-red: 352, 59%, 30%;')
-        .replace('--hsl-yellow: 36, 83%, 61%;', '--hsl-yellow: 36, 83%, 30%;')
+      // One anchor per allowlisted primitive, and only those: red's row went
+      // with gh#251's repair, so mutating red here would prove nothing and
+      // would leave a non-matching literal propping up the `repaired === src`
+      // guard for the anchor that does matter.
+      const repaired = src.replace('--hsl-yellow: 36, 83%, 61%;', '--hsl-yellow: 36, 83%, 30%;')
       if (repaired === src) {
         assertions.push({
-          name: 'ratchet: the allowlisted primitives could be repaired',
+          name: 'ratchet: the allowlisted primitive could be repaired',
           ok: false,
-          detail: 'anchor strings not found in primitive-colors.css — update the self-check'
+          detail: 'anchor string not found in primitive-colors.css — update the self-check'
         })
       } else {
         fs.writeFileSync(primitives, repaired, 'utf-8')

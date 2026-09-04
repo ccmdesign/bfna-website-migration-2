@@ -25,8 +25,9 @@ Measured with the gate's own maths (css-color-4 `f(n)`, 8-bit rounded), against
 | `future-leadership` | red `#CF4457` — 4.55 | `#CF4457` — 4.55 | `#DC7986` — 6.79 |
 | `transatlantic-relations-global-challenges` | amber `#A3680F` — 4.62 | `#A3680F` — 4.62 | `#E08F15` — 7.73 |
 
-Mapping preserves production's real assignment (Democracy green, Future Leadership red,
-Transatlantic inheriting Politics & Society's orange). `--hsl-navy` and `--hsl-blue` stay
+Mapping is production's real assignment **as measured on the live site** (Democracy green,
+Future Leadership red, Transatlantic inheriting Politics & Society's orange) — not the dead
+legacy block, which has green and yellow swapped; see §8. `--hsl-navy` and `--hsl-blue` stay
 out of the programme axis so `--color-accent` and `--color-primary` keep carrying the
 neutral interface spine.
 
@@ -127,7 +128,9 @@ is narrower and, for a token PR, the one that matters:
   tokens are ladder-compatible.
 - **Scoping verified in the same engine.** `--color-program` computes to `#003C5C` at
   `:root`, `#027A8D` / `#CF4457` / `#A3680F` under the three `[data-program]` values, and
-  inherits into a child element — matching the gate's resolved hexes exactly.
+  inherits into a child element — matching the gate's resolved hexes exactly. A browser
+  probe is not a checked-in artefact, which is part of why §7.1's repaired `requireScoped`
+  matters: it is the check that runs on every commit.
 - Seeded from the primitives, never from `--color-success` / `--color-fail` /
   `--color-warning`, so the programme and status axes can still diverge.
 - No `--theme-*` namespace (taken by `composition/stack.css:7`, `center.css:51`,
@@ -137,13 +140,48 @@ is narrower and, for a token PR, the one that matters:
   specificity, so if the attribute ever lands on `<html>` itself, order decides. The neutral
   default is declared first so the programme block wins.
 
-## 7. One edit to the gate beyond the two constants
+## 7. Edits to the gate beyond the two constants
 
-The three `program-on-dark--*` pairs carried `pendingFrom: '#251'`. Their own token now
-exists; what is still missing is `--color-scrim`. Left alone, the report would say "lands in
-#251" forever after #251 merged. The string is now `'the hero + scrim phase'`, matching the
-sibling `white-on-scrim` pair. Cosmetic — it changes no verdict, no floor, no scope chain
-and no exit code.
+`gh250-contrast-gate-known-failures.md` §3 says #251 changes two constants and nothing else.
+Four edits go beyond that. Three are cosmetic; one is not, and it is the most important
+thing in this record after §3.
+
+**7.1 `requireScoped` was vacuous, and review caught it.** The gate refuses a programme pair
+whose token resolved from `:root` — the guard against a mistyped `[data-program="…"]` block
+reporting the neutral default under a programme's label. The pairs named
+`--color-program*`, which this change declares **once**, in the shared `:root, [data-program]`
+rule; only `--hsl-program*` varies per slug. So the named tokens always resolved from
+`[data-program]` whether or not the slug block existed. Demonstrated, not theorised:
+renaming `[data-program="democracy"]` to `democrasy` left the gate at **exit 0**, printing
+`PASS 11.66:1 #003C5C on #FFFFFF … [democracy]` — navy under democracy's label. The gate
+could go green while a programme rendered the wrong colour.
+
+Each pair now requires its `--hsl-program*` half as well. Re-verified: the same sabotage is
+two fatal resolve errors and **exit 2** under `--allow-known`; the clean tree still exits 0
+and the self-check is 14/14. The alternative fix — declaring `--color-program*` inside each
+slug block — was rejected: it triples the declarations to satisfy a check rather than making
+the check test the right thing.
+
+**7.2 The self-check's red mutation anchor went dead.** The ratchet assertion copied the
+token dir and repaired both allowlisted primitives by literal string replace. Red's literal
+`--hsl-red: 352, 59%, 55%;` no longer exists after §2, so that `.replace` became a no-op —
+and worse, a non-matching literal propping up the `repaired === src` guard that is supposed
+to catch exactly this staleness. Red also has no row left to make stale, so mutating it
+proved nothing. The anchor is deleted; amber's, the one that still matters, is the whole
+test.
+
+**7.3 `pendingFrom` on the three `program-on-dark--*` pairs** was `'#251'`. Their own token
+now exists; what is missing is `--color-scrim`. Left alone the report would say "lands in
+#251" forever after #251 merged. It now reads `'the hero + scrim phase'`, matching the
+sibling `white-on-scrim` pair. The field is tested for truthiness only, so no verdict, floor,
+scope chain or exit code changes.
+
+**7.4 The amber row's `issue` field** was `'#251'`, an issue that decided against the repair.
+The list's own rule is that every entry names the issue that **removes** it, so the row now
+points at #263, which owns the amber primitive repair.
+
+**7.5 The header docblock** was rewritten to say that one row remains deliberately rather
+than that #251 fixes both. Prose only.
 
 ## 8. Noted, not fixed
 
@@ -156,3 +194,18 @@ and no exit code.
   belong to `docs/ds-epic/issues/06-token-hygiene.md`.
 - `npm run lint:css` exits 2 on `dev` with 422 pre-existing errors. This change adds none;
   the two token files it edits were clean before and are clean after.
+- Both token files carry a banner pointing at `src/content/docs/tokens/{architecture,
+  maintenance,guide}.md`, none of which exists in the repo. Pre-existing since `cab3a00b`.
+- The mapping is taken from the live site. The dead legacy block this record cites for the
+  *mechanism* (`css-legacy/global.css:274-289`) has green and yellow swapped — `.democracy`
+  is yellow there and `.politics-society` green — the same reversal the wave-1 plan warns
+  the old colour study carries. The file's comments now say so at the point of use.
+
+## 9. Residuals raised by review
+
+| # | what |
+| --- | --- |
+| #263 | Repair `--hsl-yellow` — removes the last allowlist row (§3) |
+| #264 | The `:root` programme default and the on-dark tier ship unmeasured (§4, §7.3) |
+| #265 | Two ADRs still record `--hsl-red` at 55% / `#D0495B` / 4.39 (§2) |
+| #266 | `validate-tokens.ts:240` omits the `composition` layer (§8) |
