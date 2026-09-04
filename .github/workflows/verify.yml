@@ -1,0 +1,135 @@
+# Verification gate for PRs into `dev` — gh#236.
+#
+# The accessibility pass-1 run (site-epic #82, Plane BF-219) auto-merges 18-odd
+# issues into `dev`. Before this file there was no CI on `dev` at all, so every
+# one of those merges was ungated. This is the gate.
+#
+# Two things it deliberately does NOT do:
+#
+#   * It never runs `npm run generate`. That script is
+#     `node ./contentImporter.js && nuxt generate` — the importer pulls from
+#     Directus and needs credentials CI does not have and should not have.
+#     `nuxt generate` alone builds from the `src/content/bf/**` snapshots that
+#     are committed for exactly this reason.
+#
+#   * It never asserts the typecheck exits 0. The tree carries 90 pre-existing
+#     diagnostics, all outside `bf-*` scope; site-epic #83 owns paying them down
+#     and flipping this to a hard zero. Until then the gate is "no NEW errors",
+#     enforced against `.github/typecheck-baseline.txt`.
+
+name: verify
+
+on:
+  pull_request:
+    branches: [dev]
+
+# A force-push should not leave the previous run burning a runner.
+concurrency:
+  group: verify-${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    defaults:
+      run:
+        working-directory: bfna-website-nuxt
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # Node 24 to match the tree `package-lock.json` was resolved against.
+      # `better-sqlite3` is a native module, so the major matters.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: bfna-website-nuxt/package-lock.json
+
+      - name: Install (npm ci)
+        run: npm ci
+
+      # `scripts/check-routes.ts` drives headless Chrome over CDP, resolving a
+      # binary from $CHROME_PATH, then the ms-playwright cache, then
+      # /usr/bin/google-chrome.
+      #
+      # It must be the **headless shell**, not the Chrome stable that
+      # `ubuntu-latest` ships at /usr/bin/google-chrome. Full Chrome under
+      # `--headless=new` requests /favicon.ico on navigation and logs the 404 as
+      # a browser-level error, which check-routes reads through `Log.entryAdded`
+      # and — correctly — fails on. The shell does not ask, so a developer running
+      # the harness locally out of their ms-playwright cache never sees it. Two
+      # different verdicts for one commit is a broken gate, so CI runs the same
+      # browser every developer does. (The 404 is real and is filed separately;
+      # gh#236 is not allowed to fix what CI finds.)
+      #
+      # The symlink is not decoration: check-routes only skips `--headless=new`
+      # when the executable path matches /headless-shell/, and playwright's own
+      # directory spells it with underscores.
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ms-playwright-headless-shell-${{ runner.os }}-v1
+
+      - name: Resolve headless Chrome shell
+        working-directory: .
+        run: |
+          npx --yes playwright@1 install --with-deps chromium-headless-shell
+          bin="$(find "$HOME/.cache/ms-playwright" -type f \
+            \( -name 'chrome-headless-shell' -o -name 'headless_shell' \) \
+            -perm -u+x | head -n1)"
+          if [ -z "$bin" ]; then
+            echo "no headless shell under $HOME/.cache/ms-playwright after install:"
+            ls -R "$HOME/.cache/ms-playwright" | head -50
+            exit 1
+          fi
+          mkdir -p "$HOME/chrome-headless-shell-linux"
+          ln -sf "$bin" "$HOME/chrome-headless-shell-linux/chrome-headless-shell"
+          echo "CHROME_PATH=$HOME/chrome-headless-shell-linux/chrome-headless-shell" >> "$GITHUB_ENV"
+          "$bin" --version
+
+      # Not `exit 0` — see the header. The gate runs `nuxt typecheck` and
+      # `typecheck:scripts` itself (npm chains them with `&&`, so the second
+      # never runs today) and compares the merged diagnostics to the baseline.
+      - name: Typecheck (no new errors vs baseline)
+        working-directory: .
+        run: node .github/typecheck-gate.mjs
+
+      # NEVER `npm run generate`.
+      - name: Build (nuxt generate)
+        run: npx nuxt generate
+
+      - name: Route harness (check-routes)
+        run: npx tsx scripts/check-routes.ts
+
+      # `check-links.ts` shells out to linkinator against http://localhost:3000
+      # and nothing in the repo starts a server for it, so serve the generated
+      # output first. `nuxt preview` would do the same thing via an unpinned
+      # `npx serve`; this pins the major and keeps the failure legible.
+      - name: Link check (check-links)
+        run: |
+          npx --yes serve@14 --no-clipboard --no-port-switching -l 3000 .output/public > /tmp/serve.log 2>&1 &
+          echo $! > /tmp/serve.pid
+          for i in $(seq 1 30); do
+            if curl -sf -o /dev/null http://localhost:3000/; then
+              echo "static server up after ${i}s"
+              break
+            fi
+            if [ "$i" = "30" ]; then
+              echo "static server never came up:"
+              cat /tmp/serve.log
+              exit 1
+            fi
+            sleep 1
+          done
+          set +e
+          npx tsx scripts/check-links.ts
+          status=$?
+          set -e
+          kill "$(cat /tmp/serve.pid)" 2>/dev/null || true
+          exit $status

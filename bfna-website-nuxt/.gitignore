@@ -29,6 +29,5 @@ logs
 /content/*
 !/content/bf/
 
-package-lock.json
 
 _archive/

@@ -1,0 +1,37 @@
+# Typecheck baseline — gh#236. Regenerate with `node .github/typecheck-gate.mjs --write`.
+#
+# One row per <file><TAB><TS-code><TAB><count>, from `nuxt typecheck` and
+# `npm run typecheck:scripts` merged. This is a debt ledger, not a target:
+# site-epic #83 pays it down, and every row it removes should be removed
+# here too. Rows are never to be ADDED to make a red run green — a new row
+# is a new type error, which is the thing the gate exists to stop.
+#
+# total at time of writing: 90
+<project>	TS2688	1
+content.config.ts	TS2307	2
+src/components/content/docs-live-demo.vue	TS2532	1
+src/components/ds/molecules/ccmBreadcrumb.vue	TS2345	1
+src/components/ds/molecules/ccmButton.vue	TS7006	1
+src/components/ds/molecules/ccmButton.vue	TS7053	1
+src/components/ds/molecules/ccmTabs.vue	TS18046	2
+src/components/ds/molecules/ccmTabs.vue	TS18047	14
+src/components/ds/molecules/ccmTabs.vue	TS2322	1
+src/components/ds/molecules/ccmTabs.vue	TS2339	30
+src/components/ds/molecules/ccmTabs.vue	TS7006	10
+src/components/ds/organisms/ccmFooter.vue	TS7053	1
+src/components/ds/organisms/ccmHero.vue	TS2345	1
+src/components/ds/organisms/ccmHero.vue	TS7053	2
+src/composables/useWfContent.ts	TS2538	1
+src/layouts/demo.vue	TS2339	1
+src/nuxt.config.ts	TS2307	3
+src/nuxt.config.ts	TS2353	1
+src/nuxt.config.ts	TS2591	1
+src/nuxt.config.ts	TS7006	5
+src/pages/docs/components/[slug].vue	TS2322	2
+src/tests/components/ccmTable.spec.ts	TS7006	1
+src/tests/config/srcDir.spec.ts	TS2307	1
+src/tests/config/srcDir.spec.ts	TS2591	1
+src/tests/tokens/token-resolution.spec.ts	TS2345	1
+src/utils/designSystemRegistry.ts	TS2307	2
+src/utils/designSystemRegistry.ts	TS2591	1
+src/utils/docsPathTokens.ts	TS7053	1
