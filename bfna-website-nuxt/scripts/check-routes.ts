@@ -126,6 +126,20 @@
  * the site-epic #88 keep-or-delete call. Both are named in the row's own detail
  * string so the exclusion is visible on every run.
  *
+ * **Decorative glyphs stay out of accessible names** (a11y epic, gh#221). Two
+ * whole-build halves for one defect. In `.output/public/css/**`, every
+ * `content:` that emits a literal glyph — or assembles one from a `var()` hook —
+ * carries the `/ <string>` alternative-text form, the idiom this repo already
+ * uses at `Breadcrumb.vue:207` and `nav/Dropdown.vue:189`. In the prerendered
+ * HTML, no arrow glyph sits inside an `<a>`'s text unless it is inside an
+ * `aria-hidden="true"` element, the idiom at `CardProject.vue:194`. The second
+ * half is what makes the first trustworthy at the call sites: a glyph arriving
+ * from `assets/bf-data/*.json` rather than from a template still fails. Neither
+ * half claims anything about what a screen reader announces — there is no AT and
+ * no WebKit on this runner (a11y BRIEF §0.2); the announcement is the manual
+ * pass in BRIEF §8. `/wireframes/**` and `/docs/**` are excluded on the same
+ * terms as DoD-A4, and `wireframe.css` and `css-legacy/` on the CSS side.
+ *
  * **DoD-A8 — the reduced-motion floor** (a11y epic, gh#218). The served
  * `.output/public/css/base/reset.css` must carry a `prefers-reduced-motion:
  * reduce` block that sets `@view-transition { navigation: none }` and caps
@@ -150,8 +164,10 @@
  * `/_ipx/` URL and logged no console error; when every §7 route is reachable
  * from the menus; when no compiled stylesheet lost its `@layer` wrapper; when
  * every prerendered page carries a non-empty `lang`; when the served
- * reset stylesheet carries the reduced-motion floor; and when no marker-less
- * `ul`/`ol` is missing its `role="list"`, per route and across the build.
+ * reset stylesheet carries the reduced-motion floor; when no marker-less
+ * `ul`/`ol` is missing its `role="list"`, per route and across the build; and
+ * when no decorative glyph — generated or literal — can reach an accessible
+ * name.
  * Placeholder anchors are reported and do not affect the exit code. A route
  * that could not be evaluated is a **failure**, never a skip — a verification
  * that quietly downgrades itself to "PASS (1 skipped)" is exactly how a broken
@@ -1346,6 +1362,240 @@ const visuallyHiddenRows = (): Row[] => {
 }
 
 /* ------------------------------------------------------------------ *
+ * Decorative glyphs stay out of accessible names (a11y epic, gh#221)
+ * ------------------------------------------------------------------ */
+/**
+ * Two whole-build rows for one defect with two shapes: an arrow that decorates
+ * a link ends up read aloud as part of that link's name.
+ *
+ * **CSS half.** A `content:` declaration on a `::before`/`::after` that emits a
+ * literal glyph must carry the `/ <string>` alternative-text form. That form is
+ * the standardised way to say "this generated content is decoration"; without
+ * it the glyph is appended to the originating element's accessible name.
+ * `components/external-link.css` was the site's highest-frequency instance —
+ * `a[data-external]::after` fires on every external link — and is what gh#221
+ * fixed. The idiom is the repo's own (a11y BRIEF D27): `Breadcrumb.vue:207`
+ * ships `"/" / ""`, `nav/Dropdown.vue:189` ships `"▾" / ""`.
+ *
+ * Read from `.output/public/css/**` rather than the source tree, for the reason
+ * `reducedMotionRows()` gives: `public/css` reaches the build through a copy
+ * step and through the `bfna-website-nuxt/public/css` symlink, so a source-tree
+ * grep can stay green through a build that shipped none of it.
+ *
+ * "Emits a literal glyph" means a quoted string in the value containing a
+ * character outside printable ASCII. `content: attr(data-icon)`
+ * (`utils/utils.css`) is not a literal and is not judged here; neither is
+ * `content: ""`, which paints nothing.
+ *
+ * **HTML half.** No arrow glyph may sit inside an `<a>`'s text in the
+ * prerendered output unless it is inside an `aria-hidden="true"` element. The
+ * idiom, again the repo's own, is `CardProject.vue:194`. This half is the one
+ * that makes the sweep trustworthy: a call site the grep missed, or a glyph
+ * arriving from `assets/bf-data/*.json` rather than from a template, still
+ * fails the build.
+ *
+ * ## What neither row asserts
+ *
+ * That a screen reader now stays silent on these glyphs. There is no assistive
+ * technology and no WebKit on this runner (a11y BRIEF §0.2), so what is checked
+ * is the computed CSS condition and the markup condition only. The announcement
+ * is the manual AT pass in BRIEF §8. A row that claimed more than it measured
+ * would be worse than no row.
+ *
+ * Both halves print how many things they inspected, so neither can pass by
+ * finding nothing — the same denominator rule `listRoleRows()` states.
+ */
+const ARROW_GLYPHS = '←↑→↓↖↗↘↙«»'
+const ARROW_IN_TEXT = new RegExp(`[${ARROW_GLYPHS}]`)
+
+/** CSS comments, stripped before scanning — the prose quotes declarations. */
+const CSS_COMMENT = /\/\*[\s\S]*?\*\//g
+/** `content:` up to the declaration's end, `/g` so every rule in a file is seen. */
+const CONTENT_DECL = /content\s*:\s*([^;}]+)/gi
+/** A quoted string inside a `content` value that holds a non-ASCII character. */
+const GLYPH_STRING = /(["'])((?:\\.|(?!\1)[^\\])*?[^\x20-\x7e](?:\\.|(?!\1)[^\\])*?)\1/
+/** The alternative-text half: a `/` followed by a quoted string, at the end. */
+const CONTENT_ALT_FORM = /\/\s*(["'])(?:\\.|(?!\1)[^\\])*\1\s*$/
+
+/**
+ * Served stylesheets this gate does not judge, stated as data so the row can
+ * print them (`LIST_ROLE_SKIP`'s reasoning, same shape).
+ *
+ * - `wireframe.css` — the frozen skin, BF-217 D2 and site-epic DoD-4. Its
+ *   `" ↗"` and `" ▾"` markers are markup no issue in this epic may touch.
+ * - `css-legacy/` — the pre-migration stylesheets, not composed by
+ *   `styles.css` and not shipped on a bf route.
+ */
+const GLYPH_CSS_SKIP = ['wireframe.css', 'css-legacy/']
+
+/**
+ * Prerendered trees the HTML half does not judge. Identical set and identical
+ * reasoning to `LIST_ROLE_SKIP` — `wireframes/` is frozen and byte-guarded,
+ * `docs/` renders `components/ds/**`, which a11y BRIEF §7 puts outside this
+ * epic pending the site-epic #88 call.
+ */
+const ARROW_HTML_SKIP = ['wireframes/', 'docs/']
+
+/** Every `*.css` under a directory, recursively. */
+const cssFiles = (dir: string, out: string[] = []): string[] => {
+  if (!existsSync(dir)) return out
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    const full = join(dir, entry.name)
+    if (entry.isDirectory()) cssFiles(full, out)
+    else if (entry.name.endsWith('.css')) out.push(full)
+  }
+  return out
+}
+
+/**
+ * An `<a>`'s inner HTML with every `aria-hidden="true"` subtree removed, then
+ * with tags stripped and the arrow entities decoded.
+ *
+ * Anchors cannot nest, so a non-greedy `<a…>…</a>` match is exact. The
+ * `aria-hidden` removal is deliberately one level deep and non-nesting: every
+ * instance in this codebase is a leaf `<span>` around a glyph, and a regex that
+ * tried to balance arbitrary nesting would be the wrong tool. A nested case
+ * would leave the inner glyph visible to the scan — the gate would report a
+ * defect that is not one, which is the safe direction to be wrong in.
+ */
+const ARIA_HIDDEN_SUBTREE = /<([a-z][\w-]*)\b[^>]*\baria-hidden\s*=\s*(["'])\s*true\s*\2[^>]*>[\s\S]*?<\/\1\s*>/gi
+const ANCHOR = /<a\b([^>]*)>([\s\S]*?)<\/a\s*>/gi
+const TAGS = /<[^>]*>/g
+
+const linkText = (innerHtml: string): string =>
+  innerHtml
+    .replace(ARIA_HIDDEN_SUBTREE, '')
+    .replace(TAGS, '')
+    .replace(/&#(\d+);/g, (_, code: string) => String.fromCodePoint(Number(code)))
+    .replace(/&#x([0-9a-f]+);/gi, (_, code: string) => String.fromCodePoint(parseInt(code, 16)))
+
+const decorativeGlyphRows = (): Row[] => {
+  const rows: Row[] = []
+
+  /* ---- CSS half ---- */
+  const cssRoot = join(publicDir, 'css')
+  if (!existsSync(cssRoot)) {
+    rows.push({
+      label: 'gh#221 — served stylesheets present',
+      ok: false,
+      detail: `expected ${cssRoot} · actual missing — run \`npx nuxt generate\` first`
+    })
+  } else {
+    const sheets = cssFiles(cssRoot)
+      .map(file => file.slice(cssRoot.length + 1))
+      .filter(rel => !GLYPH_CSS_SKIP.some(prefix => rel.startsWith(prefix)))
+
+    const cssOffenders: string[] = []
+    let glyphDecls = 0
+
+    for (const rel of sheets) {
+      /* Comments first. Every one of these stylesheets documents its own rules,
+         and this file's prose quotes `content:` declarations verbatim — a scan
+         that read them would flag the explanation of the fix as the defect. */
+      const raw = readFileSync(join(cssRoot, rel), 'utf8').replace(CSS_COMMENT, '')
+      let match: RegExpExecArray | null
+      CONTENT_DECL.lastIndex = 0
+      while ((match = CONTENT_DECL.exec(raw)) !== null) {
+        const value = match[1].trim()
+        /* Two ways a declaration can put a glyph on the page. A literal quoted
+           string containing a non-ASCII character is the obvious one. The other
+           is a `var()` hook: the glyph lives on the custom property, so this
+           scan cannot see it and must not assume it is harmless — a `content`
+           assembled from a hook is required to state its alternative text here,
+           which is also what makes the hook safe to override. `attr()` values
+           and `content: ""` are neither, and are not judged. */
+        const fromHook = /\bvar\s*\(/.test(value)
+        if (!fromHook && !GLYPH_STRING.test(value)) continue
+        glyphDecls++
+        if (!CONTENT_ALT_FORM.test(value)) {
+          cssOffenders.push(`css/${rel} — content: ${value.slice(0, 60)}`)
+        }
+      }
+    }
+
+    const cssScope = `${sheets.length} served stylesheets, excluding ${GLYPH_CSS_SKIP.join(' and ')}`
+
+    rows.push({
+      label: `gh#221 — the build shipped glyph-emitting content declarations to inspect (${cssScope})`,
+      ok: glyphDecls > 0,
+      detail: glyphDecls > 0
+        ? `expected >= 1 · actual ${glyphDecls}`
+        : 'expected >= 1 · actual 0 — either the CSS never reached .output/public or this'
+          + ' walk no longer finds it, and in both cases the row below would pass by'
+          + ' finding nothing'
+    })
+
+    rows.push({
+      label: `gh#221 — every glyph-emitting content: carries the / "" alt form (${glyphDecls} declarations, ${cssScope})`,
+      ok: cssOffenders.length === 0,
+      detail: cssOffenders.length === 0
+        ? `expected 0 without the alt form · actual 0 of ${glyphDecls}`
+        : `expected 0 without the alt form · actual ${cssOffenders.length} of ${glyphDecls}: `
+          + `${cssOffenders.slice(0, 5).join(' , ')}${cssOffenders.length > 5 ? ' , …' : ''}`
+          + ' — generated content with no alternative text is appended to the accessible'
+          + ' name of the element that originates it; write `content: <value> / ""`'
+          + ' (gh#221, the idiom at nav/Dropdown.vue:189 and Breadcrumb.vue:207)'
+    })
+  }
+
+  /* ---- HTML half ---- */
+  if (!existsSync(publicDir)) {
+    rows.push({
+      label: 'gh#221 — prerendered output present',
+      ok: false,
+      detail: `expected ${publicDir} · actual missing — run \`npx nuxt generate\` first`
+    })
+    return rows
+  }
+
+  const pages = prerenderedHtmlFiles(publicDir)
+    .map(file => file.slice(publicDir.length + 1))
+    .filter(rel => !ARROW_HTML_SKIP.some(prefix => rel.startsWith(prefix)))
+
+  const htmlOffenders: string[] = []
+  let anchors = 0
+
+  for (const rel of pages) {
+    const raw = readFileSync(join(publicDir, rel), 'utf8')
+    let match: RegExpExecArray | null
+    ANCHOR.lastIndex = 0
+    while ((match = ANCHOR.exec(raw)) !== null) {
+      anchors++
+      const text = linkText(match[2])
+      if (ARROW_IN_TEXT.test(text)) {
+        htmlOffenders.push(`${rel} — <a>${text.trim().slice(0, 48)}</a>`)
+      }
+    }
+  }
+
+  const htmlScope = `${pages.length} pages, excluding ${ARROW_HTML_SKIP.join(' and ')}`
+
+  rows.push({
+    label: `gh#221 — the build emitted anchors to inspect (${htmlScope})`,
+    ok: anchors > 0,
+    detail: anchors > 0
+      ? `expected >= 1 anchor · actual ${anchors}`
+      : 'expected >= 1 · actual 0 — either the build is empty or this walk no longer'
+        + ' reaches the bf pages, and in both cases the row below would pass by'
+        + ' finding nothing'
+  })
+
+  rows.push({
+    label: `gh#221 — no un-aria-hidden arrow glyph inside <a> text (${anchors} anchors, ${htmlScope})`,
+    ok: htmlOffenders.length === 0,
+    detail: htmlOffenders.length === 0
+      ? `expected 0 bare arrows · actual 0 of ${anchors}`
+      : `expected 0 bare arrows · actual ${htmlOffenders.length} of ${anchors}: `
+        + `${htmlOffenders.slice(0, 5).join(' , ')}${htmlOffenders.length > 5 ? ' , …' : ''}`
+        + ' — an arrow in link text is a plain text node and is read out as part of the'
+        + ' link name; wrap it in <span aria-hidden="true"> (gh#221, the idiom at'
+        + ' CardProject.vue:194)'
+  })
+
+  return rows
+}
+
+/* ------------------------------------------------------------------ *
  * DoD-3 — every §7 route reachable from the menus
  * ------------------------------------------------------------------ */
 /**
@@ -1653,6 +1903,16 @@ const run = async (): Promise<void> => {
       )
       for (const row of hiddenFailing) console.log(`      ✗ ${row.label} — ${row.detail}`)
       if (verbose) for (const row of hiddenGate.filter(r => r.ok)) console.log(`      · ${row.label}`)
+
+      const glyphGate = decorativeGlyphRows()
+      const glyphFailing = glyphGate.filter(r => !r.ok)
+      results.push({ slug: 'decorative glyphs (gh#221)', rows: glyphGate, failing: glyphFailing })
+      console.log(
+        `${glyphFailing.length === 0 ? '  ✓ PASS' : '  ✗ FAIL'}  `
+        + `${'decorative glyphs (gh#221)'.padEnd(44)} ${glyphGate.length - glyphFailing.length}/${glyphGate.length} rows`
+      )
+      for (const row of glyphFailing) console.log(`      ✗ ${row.label} — ${row.detail}`)
+      if (verbose) for (const row of glyphGate.filter(r => r.ok)) console.log(`      · ${row.label}`)
 
       const navRows = homeLinks === undefined
         ? [{ label: 'DoD-3 — the home page rendered', ok: false, detail: 'expected / to hydrate · actual it did not, so reachability cannot be judged' }]

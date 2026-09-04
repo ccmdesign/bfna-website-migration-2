@@ -213,7 +213,7 @@ const insightChips = (i: Insight): string[] | undefined =>
           All {{ program.name }} insights ({{ insights.length }})
         </bfButton>
         <bfButton to="/archive">
-          Include archived ({{ archivedCount }}) →
+          Include archived ({{ archivedCount }})<span aria-hidden="true"> →</span>
         </bfButton>
       </div>
     </bfSection>
