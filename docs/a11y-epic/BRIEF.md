@@ -1,4 +1,9 @@
-# EPIC — Accessibility: the structure that survives the redesign
+# EPIC — Accessibility pass 1: code level
+
+**One review, two passes.** This is pass 1 — everything that is markup, semantics, data or
+behaviour. Pass 2 is [`docs/a11y-visual-pass/BRIEF.md`](../a11y-visual-pass/BRIEF.md) and owns
+everything that is a visual decision. The rule that divides them is D32; the audit behind both is
+the same one, run once, on the routes in §0.1.
 
 Input for lfg-ccm (BRIEF mode). Follows [`docs/site-epic/BRIEF.md`](../site-epic/BRIEF.md) and
 inherits its ground rules verbatim (§5 there, which in turn inherits BF-217 §5) unless a line below
@@ -37,7 +42,7 @@ places and not others.
 | Contact form | Semantics half-right: real `<form>`, `<fieldset>/<legend>`, three `label[for]`, `autocomplete="name"`/`"email"`. Measured: `required: false` and `aria-required: null` on all three fields, `aria-describedby: null`, `aria-invalid: null`, no `novalidate`, no status region. `bfFormField` already supports all of it (`FormField.vue:124-150,246-259`) and the call site uses none of it |
 | 404 | Correct title ("Page not found"), correct single `<h1>`, full chrome, `lang`, skip link. No `role="alert"`/`role="status"` on the empty state |
 | Detail 404s | `/insights/no-such-slug` → title "Insight \| …", `<h1>` "Insight not found". `/projects/no-such-project` → title "Project \| …", `<h1>` "Unknown project" |
-| Contrast | **Every measured foreground/background pair on `/` passes AA.** Lowest is **5.14:1**; see §6 V1 for the full table and why the prior study's weight-100 premise does not hold as a ratio failure |
+| Contrast | **Every measured foreground/background pair on `/` passes AA.** Lowest is **5.14:1**; full table and the reason the weight-100 premise does not hold as a ratio failure are pass-2 brief §0 V1 |
 | `/wireframes/**` | Structurally sound: `lang="en"`, skip link, `main#wf-main`, labelled navs, no heading skips, `robots: noindex`. Three `href="#"` placeholders. Frozen by BF-217 D2 — **not touched by this epic** |
 
 ### 0.1 Routes audited
@@ -61,18 +66,21 @@ Stated rather than guessed, per §5:
   repo, which is the evidence used.
 - **WCAG 2.5.8 target size and 1.4.12 text spacing.** Deliberately not measured — both are functions
   of the placeholder type scale and paddings, so any number taken now is discarded by the design
-  phase. Recorded as design-phase constraints (§6 V6, V9), not as findings.
+  phase. Recorded with their exact method as pass-2 brief §0 V6 and V9, and run there as issues 116
+  and 117.
 
 ## 1. Objective
 
 Fix the structural and semantic accessibility defects that a visual redesign cannot fix and cannot
 introduce: heading outline, landmark naming, list semantics, accessible names, image alternative
 text, focus management, live-region announcements, reduced-motion handling and dead controls. Every
-change in this epic is invisible to a designer and survives any decision they make about type,
-colour, border, shadow or radius.
+change in this pass is invisible to a sighted user and survives any decision the design phase makes
+about type, colour, border, shadow or radius.
 
-Colour and typography defects are **out of scope by design** — they are inputs to the design phase
-(§6), not fixes to make now.
+Contrast, type scale, link colour, target size and text spacing are **pass 2** (D32). They are not
+deferred findings — they are measured, and the measurements are the starting evidence in
+[`docs/a11y-visual-pass/BRIEF.md`](../a11y-visual-pass/BRIEF.md) §0. Nothing was dropped in the
+split.
 
 ## 2. Definition of done (EPIC)
 
@@ -105,19 +113,20 @@ secrets), `npx tsx scripts/check-routes.ts`, `npx tsx scripts/check-links.ts`. I
 `npm install` until site-epic #82 tracks the lockfile. Typecheck baseline at the branch point is
 **73 errors**, all outside bf scope.
 
-## 4. Decisions of record (D23–D31)
+## 4. Decisions of record (D23–D32)
 
 | ID | Rule |
 |---|---|
-| D23 | **Structural only.** An issue in this epic may not change a colour value, a font face, a font size, a font weight, a letter-spacing, a line-height, a border radius or a shadow. If a finding can only be fixed by changing one of those, it is not an issue — it goes in §6 and the designer owns it. Enforced by DoD-A10. |
+| D23 | **Structural only.** An issue in this pass may not change a colour value, a font face, a font size, a font weight, a letter-spacing, a line-height, a border radius or a shadow. If a finding can only be fixed by changing one of those, it is not an issue here — it is a pass-2 row. Enforced by DoD-A10. |
 | D24 | **Fix it once, in the component.** Where the same defect appears on three or more routes, the issue changes the shared component or the CSS floor, not the pages. The pages then consume the fix. This is why phase 16 lands before phase 17 and why no phase-17 row repeats a phase-16 change. |
 | D25 | **The contract carries the decision, not the default.** `MediaProps.alt` becomes required. A missing alt is a typecheck failure; `alt=""` stays legal but must be written deliberately at the call site. The dev-only `console.warn` at `Media.vue:152-161` is deleted with the coercion it was compensating for — a warning that does not run in production is not a gate. |
 | D26 | **`bfSection` is not changed; its call sites are.** `Section.vue:178-182` deliberately leaves a `label`-only band unnamed and says so. The defect is that five call sites read `label` as "this names the landmark" — including a comment at `about.vue:211` that asserts it outright and is wrong. #98 adds a dev-time warning; #105 fixes the call sites; the component's behaviour stands. |
-| D27 | **Reuse the repo's own idiom.** Three fixes in this epic already exist correctly elsewhere in the codebase and are being applied inconsistently: `role="list"` (`Breadcrumb.vue:238-240`, `nav/Dropdown.vue:109`), `content: "x" / ""` (`Breadcrumb.vue:207`, `nav/Dropdown.vue:189`) and slotted-heading + `aria-labelledby` (`projects/index.vue:173,183`). Each issue cites the existing instance and copies it rather than inventing a variant. |
+| D27 | **Reuse the repo's own idiom.** Three fixes in this pass already exist correctly elsewhere in the codebase and are being applied inconsistently: `role="list"` (`Breadcrumb.vue:238-240`, `nav/Dropdown.vue:109`), `content: "x" / ""` (`Breadcrumb.vue:207`, `nav/Dropdown.vue:189`) and slotted-heading + `aria-labelledby` (`projects/index.vue:173,183`). Each issue cites the existing instance and copies it rather than inventing a variant. |
 | D28 | **Alt text is content, not code.** #109 adds the field, the schema, the normaliser path and the importer path, and ships `null` for every row. The strings are Irene's. Until they arrive, `null` renders `alt=""` **only** where a call site has declared the image decorative; a content image with `alt: null` fails `check-routes.ts` on the routes it appears on. Tracked in `docs/questions-irene.md`. |
 | D29 | **Announce with a region that is always mounted.** Every result-count and empty-state announcement in this epic uses a `role="status"` element that exists in the idle state with empty text. `display: none` on a live region removes it from the accessibility tree; `search.vue:454-457` already documents this trade-off as a known gap and #108 closes it. |
 | D30 | **Native first for widgets.** The nav's `<details>/<summary>` is the model: no hand-rolled `aria-expanded`, no key handlers to get wrong. `bfFilterBar`'s roving tabindex is the one place a composite-widget pattern was adopted without the role that describes it; #103 either names it `role="toolbar"` or removes the roving tabindex. No new custom widget is built in this epic. |
-| D31 | **This epic is the complement of site-epic #84, not a replacement.** #84 runs axe-core and catches what axe catches. #110 asserts the invariants axe cannot see: a band with no accessible name, an `alt` that duplicates the `<h1>`, focus dropped to `<body>`, a live region hidden while idle. Both gates run in CI; neither subsumes the other. |
+| D31 | **This pass is the complement of site-epic #84, not a replacement.** #84 runs axe-core and catches what axe catches. #110 asserts the invariants axe cannot see: a band with no accessible name, an `alt` that duplicates the `<h1>`, focus dropped to `<body>`, a live region hidden while idle. Both gates run in CI; neither subsumes the other. |
+| D32 | **The split is by visual effect, not by file extension.** A change belongs to pass 2 if a sighted user can see the difference, or if making it requires a design decision. It belongs to pass 1 otherwise — *including when it edits a `.css` file*. Four pass-1 rows touch CSS and change nothing anyone can see: #93 (a `prefers-reduced-motion` media query — no designer decides whether to honour it, and putting the floor in first means whatever motion pass 2 adds inherits it), #94 (a visually-hidden utility, which renders nothing by definition), #96 (`content: "↗" / ""` — the glyph paints identically; only the accessible name changes) and #108 (emptying a live region's *text* while idle instead of `display:none`-ing the element, which is already visually empty). Anything whose appearance actually changes — the `forms.css` focus ring included — is pass 2. |
 
 ## 5. Ground rules
 
@@ -142,28 +151,27 @@ variables, `@layer`, one component/template per issue, both gates before PR, spe
 - **No new runtime dependency.** Nothing in this epic needs one. `axe-core` is pre-approved by
   site-epic §5 for #84 and is not used here.
 
-## 6. Design-phase constraints (bucket 2 — NOT issues)
+## 6. Visual findings — handed to pass 2
 
-These are the visual and typographic findings from the same audit. They are handed to the design
-phase as constraints on the decisions being made there. **No issue in this epic changes any of
-them** (D23). Every ratio below was computed; every size and weight was read from
-`getComputedStyle` at 1280×800 on `/`.
+The same audit produced nine visual and typographic findings, every one of them measured. They are
+**not** listed here, because a finding recorded in two places drifts. They are §0 of
+[`docs/a11y-visual-pass/BRIEF.md`](../a11y-visual-pass/BRIEF.md), where they are the baseline the
+design phase works against, and issues 111–118 there.
 
-| # | Constraint | Measured evidence |
-|---|---|---|
-| V1 | **Weight 100 is a legibility decision, not a contrast failure.** The prior study's premise does not hold as a WCAG ratio failure: weight does not enter the 1.4.3 calculation, and every measured pair on `/` passes AA. The thin stroke is still a real legibility question for the type phase — it is just not the one that was assumed | Lowest pair on `/`: **5.14:1** — `#306491` on the notice ground `rgb(227,234,237)`. Then **6.25:1** ×3 (`#306491` on white; white on the `#306491` button; white on the `#306491` skip link). Then **9.4:1** (`#0000EE` on white). Then **20.03:1** (`#080808` on white). Body copy, nav links, chips, `<time>` and card links all compute `font-weight: 100` |
-| V2 | **The type scale is placeholder and inverts at small sizes.** Headings are barely larger than body; chip text is under 10px | `/` at 1280px: `h1.bf-hero__heading` 19.22px/600, `h2.bf-section__heading` 15.19px/500, `h3` 13.50px/500, `p.bf-hero__description` 12px/100, `time.bf-time` 12px/100, **`span.bf-chip` 9.48px/100** |
-| V3 | **Three link colours on one page, one of them the browser default.** Any plain `<a>` outside a bf atom falls to the UA colour; the palette never claims it | Measured on `/`: card and grid links `rgb(0, 0, 238)` (UA default); `a.bf-nav__link` `rgb(8, 8, 8)`; `a.bf-button` / brand links `rgb(48, 100, 145)` |
-| V4 | **The focus ring's contrast is a constraint on every ground the skin phase introduces.** It currently passes with room, and it is painted with `--color-text` on the *page* ground (not `currentcolor` on the element), by deliberate choice | `2px solid rgb(8,8,8)`, `outline-offset: 2px`, **20.03:1** against `rgb(255,255,255)`. Rationale at `public/css/base/focus.css:41-55`. WCAG 1.4.11 needs ≥3:1 against whatever ground replaces white |
-| V5 | **`forms.css`'s alternate focus ring is 80% transparent and would not pass if exposed.** It is currently dead code on every bf route (see #104), but it is the shape a designer might reach for | `public/css/base/forms.css:38-39`: `box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 20%, transparent)` |
-| V6 | **Target sizes (WCAG 2.5.8, 24×24 CSS px) were not measured** — deliberately. Paddings and the type scale are both placeholder, so a measurement now is discarded. Chips at 9.48px text are the obvious risk to re-check once the scale is set | — |
-| V7 | **The nav wraps to three rows at 375px with no toggle.** Structurally this is fine — nothing is hidden from assistive technology and there is no horizontal overflow — so it is a design problem, not an accessibility one | 375×812: `document.documentElement.scrollWidth === innerWidth === 375`; all 8 top-level items pass `checkVisibility()`; `header button` count 0; `.hide-on-mobile` count 0 |
-| V8 | **No image declares intrinsic dimensions, and the lead image is lazy.** CLS/LCP, already owned by site-epic #70 — repeated here so the design phase knows the layout will shift until it lands | `/` 9/9 and `/about` 15/15 images have neither `width` nor `height`. `Media.vue:189,198` sets `loading="lazy"` unconditionally, including above the fold |
-| V9 | **Text spacing (WCAG 1.4.12) was not verified** — same reason as V6. Re-run it against the chosen scale: 1.5× line-height, 0.12em letter-spacing, 0.16em word-spacing, 2× paragraph spacing, checking for clipping and overlap | — |
+Two of them are worth knowing before reading §0 above, because they correct assumptions that were
+carried into this review:
 
-## 7. Not in this epic
+- **Weight 100 is not a contrast failure.** Every foreground/background pair measured on `/` passes
+  AA; the lowest is 5.14:1. Font weight does not enter the WCAG 1.4.3 calculation at all. The thin
+  stroke is a real legibility question — it is just a pass-2 question, not a 1.4.3 one.
+- **The focus ring is fine and stays fine only if pass 2 keeps it so.** It measures 20.03:1 against
+  today's white ground. Any darker ground the skin introduces has to hold ≥3:1 (WCAG 1.4.11), which
+  is pass-2 issue 115.
 
-- **Colour, type, spacing, radius, shadow.** §6 is the handoff; D23 is the fence.
+## 7. Not in this pass
+
+- **Colour, type, spacing, radius, shadow, target size, motion design.** Pass 2 owns them; D23 and
+  D32 are the fence; DoD-A10 is the gate that catches a violation.
 - **`/wireframes/**`.** Frozen by BF-217 D2 and byte-guarded by site-epic DoD-4. Audited for structure
   only (§0) and found sound; its three `href="#"` placeholders stay.
 - **`components/ds/**`.** Out of the bf stack and awaiting the site-epic #88 keep-or-delete call.
@@ -172,7 +180,8 @@ them** (D23). Every ratio below was computed; every size and weight was read fro
 - **Search behaviour, form behaviour, image dimensions, SEO, redirects.** Owned by site-epic
   #70/#72/#90. This epic touches their semantics only, and says so in each row's spec.
 - **WCAG AAA.** 2.3.3 (animation from interactions) is addressed by #93 because the fix is one media
-  query and the risk is vestibular; no other AAA criterion is in scope.
+  query, the risk is vestibular, and landing the floor first means whatever motion pass 2 introduces
+  inherits it (D32). No other AAA criterion is in scope for either pass.
 
 ## 8. Human / Plane tasks (NOT issues)
 
@@ -211,3 +220,8 @@ Plus the two manual passes in §8, which are the sign-off, not the gate.
 from site-epic's last row (91). Row order is execution order; no issue depends on a higher-numbered
 one. Phase 16 lands every shared-component and CSS-floor fix before phase 17 touches a page that
 consumes it (D24).
+
+Pass 2 continues the same sequence at 111:
+[`docs/a11y-visual-pass/issues.md`](../a11y-visual-pass/issues.md) — 8 issues in three phases,
+111–118. Pass 2 depends on pass 1 only through #110, whose gate it extends; the two can otherwise
+run independently, and pass 2 is additionally blocked on the design phase's own decisions.
