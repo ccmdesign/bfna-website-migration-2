@@ -26,9 +26,10 @@
  * synthesis in it.
  *
  * Everything drawn is a component that already exists: `bfPageHeader` (#38),
- * `bfSection` (#39), `bfAccordion` (#31) and `bfCardRow` (#27). This file
- * declares one CSS rule, and it is the two-property list reset that
- * `projects/[slug].vue` already ships for the same reason.
+ * `bfSection` (#39), `bfAccordion` (#31) and `bfCardRow` (#27), and this file
+ * declares **no stylesheet at all** — every value on the page comes from those
+ * four, from the `stack` primitive, or from `base/reset.css`, which already
+ * strips the markers and the marker gutter from any `ul[class]`.
  *
  * ## The disclosure is native, and stays native
  *
@@ -145,7 +146,14 @@ const oldestYear = computed<string | undefined>(
     both detail routes already build.
 
     The default slot carries the count/range line, exactly as the frozen source
-    does, at the `narrow` measure it uses.
+    does, at the `narrow` measure it uses — with the two guards the frozen
+    source has no need of, because it renders a fixed snapshot and this renders
+    whatever the collection holds. An empty archive prints no sentence rather
+    than "0 pieces of past work, –.", and the range clause appears only when
+    there are dated years to bound it, so an all-undated archive prints the
+    count alone. Neither branch is reachable with today's data (256 rows, all
+    dated); both are one `v-if` and remove a sentence that would otherwise be
+    false.
   -->
   <bfPageHeader
     label="Archive index"
@@ -157,8 +165,10 @@ const oldestYear = computed<string | undefined>(
     :heading="indexPage?.heading ?? 'Archive'"
     :tagline="indexPage?.description"
   >
-    <p data-measure="narrow">
-      {{ archived.length }} pieces of past work, {{ oldestYear }}–{{ newestYear }}.
+    <p v-if="archived.length" data-measure="narrow">
+      {{ archived.length }} pieces of past work<template
+        v-if="oldestYear && newestYear"
+      >, {{ oldestYear }}–{{ newestYear }}</template>.
     </p>
   </bfPageHeader>
 
@@ -191,56 +201,56 @@ const oldestYear = computed<string | undefined>(
       :open="year === years[0]"
     >
       <!--
-        `role="list"` is explicit because the rule below removes the markers,
-        and WebKit drops list semantics from a `list-style: none` list — so
-        VoiceOver would stop announcing "list, 27 items". The same
-        belt-and-braces `projects/[slug].vue` and `bfBreadcrumb` already put on
-        their own lists.
+        No `<li>` wrapper here, and that is the load-bearing detail of this
+        block: **`bfCard` renders the `<li>` itself** (its own comment explains
+        why — a group of cards is a list, so the count is announced before a
+        reader walks it), and it carries a dev-time guard that warns unless its
+        parent is a `<ul>`, an `<ol>` or a `role="list"` container. Wrapping
+        each row in an `<li>` of our own produced `<li><li class="bf-card
+        bf-card-row">`: invalid nesting, which the HTML parser silently repairs
+        into two siblings while Vue's client render keeps them nested — a
+        hydration mismatch on all 256 rows, and the warning on every one of
+        them. `bfSearchShell` puts `bfCard` straight into its `<ol>` for the
+        same reason. Found by the browser pass; see this issue's Decisions.
 
-        `stack` + `data-gap="xs"` is the frozen source's own primitive and step;
-        the block padding it also sets inline is `bfAccordion`'s job here and is
-        not restated.
+        `role="list"` is explicit because the list has no markers, and WebKit
+        drops list semantics from a marker-less list — so VoiceOver would stop
+        announcing "list, 27 items". The same belt-and-braces `bfBreadcrumb`
+        and `projects/[slug].vue` put on their own lists.
+
+        `stack` + `data-gap="xs"` is the frozen source's own primitive and
+        step. The frozen source also writes `list-style: none` and a zeroed
+        padding inline; neither is restated, because `base/reset.css` already
+        strips both from any `ul[class]` — which this is twice over. The block
+        padding it sets is `bfAccordion__body`'s here.
       -->
-      <ul class="bf-archive__list | stack" role="list" data-gap="xs">
-        <li v-for="item in year.items" :key="item.slug">
-          <!--
-            One `bfCardRow` replaces the frozen row's `wf-chip` + `NuxtLink` +
-            `<time>` composite. The chip is the format label and the date is a
-            real `<time datetime>`; both are the component's internal
-            composition, which is why nothing about either appears here.
+      <ul class="stack" role="list" data-gap="xs">
+        <!--
+          One `bfCardRow` replaces the frozen row's `wf-chip` + `NuxtLink` +
+          `<time>` composite. The chip is the format label and the date is a
+          real `<time datetime>`; both are the component's internal
+          composition, which is why nothing about either appears here.
 
-            `heading-level="3"` sits under the band's `<h2>` — the wrapper's
-            default (#128), stated so the next reader does not have to know
-            that. `variant="insight"` reaches the DOM as `data-variant` and
-            styles nothing by itself; it is the presentation hint the row's
-            contract asks callers to name.
-          -->
-          <bfCardRow :item="item" variant="insight" :heading-level="3" />
-        </li>
+          Keyed on `slug`, which is unique across this list — every row is an
+          insight, and the archived slugs are 256 distinct values since #151.
+          (`bfSearchShell` keys on `to` instead because its list is
+          deliberately cross-collection; this one is not.)
+
+          `heading-level="3"` sits under the band's `<h2>` — the wrapper's
+          default (#128), stated so the next reader does not have to know that.
+          `variant="insight"` reaches the DOM as `data-variant` and styles
+          nothing by itself; it is the presentation hint the row's contract
+          asks callers to name.
+        -->
+        <bfCardRow
+          v-for="item in year.items"
+          :key="item.slug"
+          :item="item"
+          variant="insight"
+          :heading-level="3"
+        />
       </ul>
     </bfAccordion>
   </bfSection>
 </template>
 
-<style scoped>
-/*
-  The one rule in this file, and it is a reset rather than a design: the `<ul>`
-  is a `.stack`, whose rhythm the composition layer owns, but the markers and
-  the marker gutter are the browser's and no primitive removes them. The frozen
-  source writes the same two properties as an inline `style` attribute; here
-  they are a class, which is the only difference.
-
-  `@layer overrides` for the same reason every page-level rule in this app
-  takes it — last in the house order (BRIEF §5 rule 4), so it outranks the
-  composition layer's own `.stack` declarations without an unlayered
-  declaration that nothing could ever outrank in turn.
-
-  No colour, no `--_bf-*` variable, no `:not()` (D-20.5).
-*/
-@layer overrides {
-  .bf-archive__list {
-    padding-inline-start: 0;
-    list-style: none;
-  }
-}
-</style>
