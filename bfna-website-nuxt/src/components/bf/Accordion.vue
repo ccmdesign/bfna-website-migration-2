@@ -23,7 +23,7 @@
  * | Not here | Why |
  * |---|---|
  * | `aria-expanded`, `role="button"`, `aria-controls` | The browser already maps `<details>`/`<summary>` onto exactly that. Writing them by hand does not add the semantics — it *duplicates* them, and a duplicate that can drift is worse than none. |
- * | An open-state `ref`, `v-model`, `@toggle` | The DOM element owns the state. Nothing here re-renders that node, so the user's click is never overwritten. |
+ * | An open-state `ref` inside this component | The DOM element still owns the state. The `toggle` listener below only *reports* it; it never sets it. |
  * | Enter/Space key handlers | Native. Both keys activate a focused `<summary>` with no script on the page. |
  * | `hidden` / `v-show` on the body | Native. A closed `<details>` takes its contents out of the tab order for free — the single hardest property of a hand-rolled disclosure to get right, and the one most often shipped broken. |
  * | A height animation | Spec § Out of scope. No wireframe evidence, and it needs a wrapper element whose only job is to be animated. |
@@ -53,26 +53,78 @@
  * stack of these reads as a list of bands inside a section without a pinned
  * pixel anywhere.
  *
- * Presentational-only (BRIEF D8): two props in, nothing out. No data access, no
- * store, no composable. `inheritAttrs` is left at its default — one root, so a
- * consumer's `class`, `style` and `data-*` land on the `<details>`, which is the
- * element a consumer would want to reach.
+ * ## `open` is two-way (gh#228)
+ *
+ * `:open` used to be a one-way binding with no emit, and the contract said so:
+ * "the user's interaction is the source of truth, and nothing re-renders the
+ * node to overwrite it". The first half is still true. The second half was a
+ * promise this component could not keep, because it is a promise about the
+ * *consumer's* render behaviour: a parent that re-creates this subtree — a
+ * keyed list whose keys move, a `v-if`, a consumer that does not memoise —
+ * mounts a fresh `<details>` and writes the *initial* state back over the
+ * reader's choice. A disclosure snapping shut under a reader who did not ask
+ * for it is WCAG 3.2.2 (On Input).
+ *
+ * The fix is the missing return channel and nothing else: a `toggle` listener
+ * that emits `update:open` with the value the element already has, so the
+ * consumer can hold the state and hand back the same answer on every render.
+ * `open` + `update:open` is `v-model:open` by convention, so a consumer gets
+ * the two-way form without this component growing a second prop.
+ *
+ * **This is still not a controlled disclosure.** Nothing here calls
+ * `preventDefault`, sets `el.open`, or refuses a toggle. The browser opens and
+ * closes the element; this listener reports what it did.
+ *
+ * **It cannot loop.** The browser fires `toggle` only when the `open`
+ * *property* actually changes. The emit carries the value the element already
+ * holds, so a consumer that stores it re-renders to the same value, and Vue's
+ * write of `el.open = <same>` changes nothing and fires no second `toggle`.
+ *
+ * Presentational-only (BRIEF D8): props in, one event out — and the event
+ * carries a DOM fact, not data. No data access, no store, no composable.
+ * `inheritAttrs` is left at its default — one root, so a consumer's `class`,
+ * `style` and `data-*` land on the `<details>`, which is the element a consumer
+ * would want to reach.
  */
 import type { AccordionProps } from '~/types/bf-contracts'
 
 defineOptions({ name: 'BfAccordion' })
 
 defineProps<AccordionProps>()
+
+const emit = defineEmits<{
+  /** The element's own `open` property, after the browser has changed it. */
+  'update:open': [value: boolean]
+}>()
+
+/**
+ * Report the native toggle.
+ *
+ * `currentTarget`, not `target`: `toggle` does not bubble, but a `<details>`
+ * nested in the default slot would still be `target` for its own event if it
+ * ever did, and `currentTarget` is the element this listener is attached to
+ * either way. Read from the element rather than tracked in a ref, so the value
+ * emitted is the browser's, not a guess about which direction it went.
+ */
+const onToggle = (event: Event): void => {
+  const details = event.currentTarget as HTMLDetailsElement | null
+  if (details === null) return
+  emit('update:open', details.open)
+}
 </script>
 
 <template>
   <!--
-    `:open` binds the **content attribute**, which is what makes this the
-    initial state rather than a controlled one: Vue writes it on the first
-    render and never touches the node again, so the `open` *property* the
-    browser flips on every toggle is left alone.
+    `:open` in, `@toggle` out — the pair that makes this `v-model:open`
+    (gh#228). The binding is still the *initial* state on first render; what
+    changed is that the browser's every subsequent flip is reported back, so a
+    consumer holding the value re-renders to the state the reader chose instead
+    of the state the page started in.
+
+    The listener never writes to the element. See the header: this is a report,
+    not a controlled disclosure, and it cannot loop.
   -->
-  <details class="bf-accordion" :open="open">
+  <details class="bf-accordion" :open="open" @toggle="onToggle">
     <!--
       The label is text, not markup. `archive.vue`'s per-year block wraps the year
       in a `<strong>`; that is a caller's typographic choice about a composed
