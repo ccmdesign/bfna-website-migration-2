@@ -57,14 +57,19 @@
  * retired (issue 10), so `item.excerpt` already arrives as plain text and
  * re-deriving the strip here would be a second, drifting copy of it.
  *
- * ## The one content delta from the wireframe
+ * ## The two content deltas from the wireframe
  *
- * The heading link points at `/insights/${slug}` — the bf-* site's route —
- * where `wfCardFeatured.vue:15` points at `/wireframes/insights/${slug}`. That
- * is the single deliberate divergence in this file, named by the spec, and the
- * probe asserts no rendered `href` contains `/wireframes/`.
+ * The heading link points at the row's `external_url` when it has one, and at
+ * `/insights/${slug}` — the bf-* site's route — when it does not, where
+ * `wfCardFeatured.vue:15` points unconditionally at
+ * `/wireframes/insights/${slug}`. Two deliberate divergences: the bf-* route
+ * is the one the spec names, and the external branch is residual
+ * [#187](https://github.com/ccmdesign/bfna-website-migration-2/issues/187) —
+ * see `externalHref` below for why every curated row takes it today. The probe
+ * asserts both branches, and that no rendered `href` contains `/wireframes/`.
  */
 import type { CardWrapperProps, Insight } from '~/types/bf-contracts'
+import { isExternal } from '~/utils/link'
 
 defineOptions({
   name: 'BfCardFeatured',
@@ -120,6 +125,48 @@ const headingText = computed(() => (props.item.heading ?? '').trim())
 const hasHeading = computed(() => headingText.value !== '')
 
 /**
+ * The row's off-site destination, trimmed — residual
+ * [#187](https://github.com/ccmdesign/bfna-website-migration-2/issues/187).
+ *
+ * Every curated `featured` row is a **pointer to another site**, not an
+ * insight page: all eight carry `content: null` and a populated
+ * `external_url`, which is why the normaliser never gave them a body, and why
+ * `useBfInsights` builds `items` as
+ * `all.filter(i => !i.featured && !i.retired_news)`. `bySlug` searches
+ * `items`, so `/insights/<slug>` resolves for **no** featured row and every
+ * card in the homepage strip used to 404.
+ *
+ * The fix is here rather than in `bySlug`, deliberately: widening that
+ * predicate would mint an `/insights/<slug>` route for a record with nothing
+ * to render on it — a 200 that is emptier than the 404 it replaced. The card
+ * links where the record actually points.
+ *
+ * Trimmed, so a whitespace-only value falls back to the internal route rather
+ * than producing an anchor to nowhere with the whole card stretched over it
+ * (#130's failure mode reached by a different road). `isExternal()` trims
+ * internally too, so the marker and the `href` cannot disagree about which
+ * string they are judging.
+ */
+const externalHref = computed(() => (props.item.external_url ?? '').trim())
+
+/**
+ * Which of the two branches the heading renders. `external_url` wins when it
+ * is present; a future featured row that *does* carry a body and no pointer
+ * still routes internally to `/insights/<slug>`, which is why the internal
+ * branch stays rather than being deleted as currently-unreachable.
+ */
+const hasExternalLink = computed(() => externalHref.value !== '')
+
+/**
+ * D-26.1. `|| undefined` so the attribute is **absent** rather than rendered
+ * as `data-external="false"` on a same-host URL — the shape `bfCardProduct`,
+ * `bfChip` and `bfButton` all use, and the one `external-link.css`'s own
+ * header comment relies on (`[data-external]` matches any value, `"false"`
+ * included). The `↗` is painted by that stylesheet, never by this file.
+ */
+const externalMarker = computed(() => isExternal(externalHref.value) || undefined)
+
+/**
  * The excerpt, whole. `?? ''` because `excerpt` is `string | null` in
  * `bfInsightSchema`; the empty string then fails the template's `v-if` and no
  * empty `<p>` is rendered — which matters in a flex column, where an empty
@@ -171,7 +218,26 @@ if (import.meta.dev) {
       is that decision, kept.
     -->
     <component :is="`h${headingLevel}`" v-if="hasHeading">
-      <NuxtLink :to="`/insights/${item.slug}`">{{ headingText }}</NuxtLink>
+      <!--
+        Two branches, one link either way (#187). A raw `<a>` when the row
+        carries an `external_url`: the destination is another site, and
+        `NuxtLink` would try to resolve it as a route. `rel="noopener"` because
+        a curated pointer is the one place on this card where the destination
+        is not ours. The `data-external` marker is the `↗`, painted by
+        `external-link.css`, and it is gated on `isExternal()` rather than set
+        unconditionally, so a `bfna.org` pointer does not claim to leave the
+        site.
+
+        `NuxtLink` to `/insights/<slug>` otherwise — kept for the featured row
+        that one day carries a body instead of a pointer.
+      -->
+      <a
+        v-if="hasExternalLink"
+        :href="externalHref"
+        :data-external="externalMarker"
+        rel="noopener"
+      >{{ headingText }}</a>
+      <NuxtLink v-else :to="`/insights/${item.slug}`">{{ headingText }}</NuxtLink>
     </component>
 
     <p v-if="excerptText">{{ excerptText }}</p>
