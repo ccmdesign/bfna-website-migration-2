@@ -114,12 +114,13 @@ function verifyStatic(): void {
 
 /* ── live half: the middleware, via a running server ────────────────────── */
 
-interface Response {
+/** Named `HttpResult`, not `Response`, so it does not shadow the global type. */
+interface HttpResult {
   status: number
   location: string | null
 }
 
-async function head(base: string, path: string): Promise<Response> {
+async function head(base: string, path: string): Promise<HttpResult> {
   const res = await fetch(`${base}${path}`, { redirect: 'manual' })
   // Drain so the socket is released; a redirect body is empty anyway.
   await res.arrayBuffer().catch(() => undefined)
@@ -169,6 +170,14 @@ async function verifyLive(base: string): Promise<void> {
     '/definitely-not-a-legacy-slug-zzz falls through',
     `got ${unknown.status} ${unknown.location}`
   )
+
+  // Inherited object keys are not slugs. A plain-object lookup answers for
+  // `constructor`, `toString`, `valueOf`… with a truthy native function, which
+  // would have been sent as a Location header; the middleware uses a `Map`.
+  for (const key of ['constructor', 'toString', 'valueOf', 'hasOwnProperty', 'isPrototypeOf']) {
+    const { status, location } = await head(base, `/${key}`)
+    assert(status < 300 || status >= 400, `/${key} is not a slug`, `got ${status} ${location}`)
+  }
 
   // Query strings survive, ahead of a fragment; a trailing slash normalises.
   await expectRedirect('/team?utm_source=x', '/about?utm_source=x#team')

@@ -43,8 +43,19 @@ import {
   LEGACY_UNTOUCHED_PREFIXES
 } from '../utils/legacy-redirect-rules'
 
-/** `Set` rather than `Array.includes` — this runs on every request. */
+/**
+ * The three tables as `Set`/`Map`, built once at module load.
+ *
+ * Not just for the O(1) lookup on a hot path — a plain object indexed by a
+ * user-supplied string answers for **inherited** keys too, and
+ * `LEGACY_SLUG_MAP['constructor']` is `Object`, which is truthy. A request for
+ * `/constructor`, `/toString`, `/valueOf`, `/hasOwnProperty` or
+ * `/isPrototypeOf` would otherwise have been 301'd to the source text of a
+ * native function. `Map` has no prototype chain to fall through to.
+ */
 const GONE = new Set(LEGACY_GONE_EXACT)
+const EXACT = new Map(Object.entries(LEGACY_REDIRECT_EXACT))
+const SLUGS = new Map(Object.entries(LEGACY_SLUG_MAP))
 
 export default defineEventHandler((event) => {
   const rawUrl = event.node.req.url || ''
@@ -67,7 +78,7 @@ export default defineEventHandler((event) => {
 
   // 3. Exact renames and absorptions. A target carrying a fragment (`/about#team`)
   //    keeps the query ahead of the hash, which is where a URL puts it.
-  const exact = LEGACY_REDIRECT_EXACT[path]
+  const exact = EXACT.get(path)
   if (exact) {
     return sendRedirect(event, withSearch(exact, search), 301)
   }
@@ -85,7 +96,7 @@ export default defineEventHandler((event) => {
   //    unknown slug falls through here regardless — the guard is about not paying
   //    for a lookup on every asset request.
   if (isCandidateSlugPath(path)) {
-    const target = LEGACY_SLUG_MAP[path.slice(1)]
+    const target = SLUGS.get(path.slice(1))
     if (target) {
       return sendRedirect(event, `${target}${search}`, 301)
     }

@@ -7,7 +7,8 @@ Residual folded in: https://github.com/ccmdesign/bfna-website-migration-2/issues
 
 ## Approach
 
-One file owns request-time routing (`src/server/middleware/redirects.ts`), and one
+One file owns request-time routing (`server/middleware/redirects.ts` — see the
+Files table and D-57.10 on why not `src/server/`), and one
 generated file owns deploy-time routing (`public/_redirects`). Both are emitted
 from the same source of truth so they cannot drift.
 

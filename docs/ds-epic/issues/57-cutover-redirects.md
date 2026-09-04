@@ -193,6 +193,17 @@ which matches **one** segment, so those two-segment targets 404. Preserving the
 splat is what the spec says; second-guessing it into a hub-root redirect would
 have thrown away the only information those URLs carry. Recorded as a residual.
 
+**D-57.11 — The slug lookup is a `Map`, because a plain object answers for
+inherited keys.** Found in review. `LEGACY_SLUG_MAP` is an object literal indexed
+by a user-supplied path segment, and `({})['constructor']` is `Object` — truthy.
+So `/constructor`, `/toString`, `/valueOf`, `/hasOwnProperty` and `/isPrototypeOf`
+each resolved to a native function and would have been passed to `sendRedirect`,
+putting `function Object() { [native code] }` into a `Location` header.
+(`__proto__` was already excluded by the leading-underscore guard, which is what
+made the rest easy to miss.) Both tables are now built into `Map`s at module load
+— no prototype chain to fall through to, and the same O(1) lookup — and
+`scripts/verify-legacy-redirects.ts` asserts all five paths fall through.
+
 **D-57.10 — The file the spec names, `src/server/middleware/redirects.ts`, was
 never running. The map lives at `server/middleware/redirects.ts`.** This repo is
 Nuxt **4.5.2** with `future.compatibilityVersion: 4`, and Nuxt 4 moved `serverDir`
