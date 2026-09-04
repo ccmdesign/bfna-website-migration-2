@@ -47,6 +47,8 @@ const passes = [
 ]
 
 let output = ''
+/** @type {{ name: string, status: number, text: string }[]} */
+const results = []
 for (const pass of passes) {
   console.log(`\n── ${pass.name} ─────────────────────────────`)
   const run = spawnSync(pass.bin, pass.argv, {
@@ -62,6 +64,7 @@ for (const pass of passes) {
   const text = `${run.stdout ?? ''}${run.stderr ?? ''}`
   process.stdout.write(text)
   output += `${text}\n`
+  results.push({ name: pass.name, status: run.status ?? 1, text })
 }
 
 /* ------------------------------------------------------------------ *
@@ -99,6 +102,23 @@ for (const d of diagnostics) {
 }
 
 const total = diagnostics.length
+
+/*
+ * A compiler that dies without emitting diagnostics — OOM, a missing binary, a
+ * broken vue-tsc plugin — would otherwise sail through: nothing is observed, so
+ * nothing exceeds the baseline, so the gate goes green on a typecheck that never
+ * happened. A non-zero exit with no parseable diagnostic is a crash, not a pass.
+ */
+for (const r of results) {
+  const parsed = diagnostics.filter(d => r.text.includes(d.line)).length
+  if (r.status !== 0 && parsed === 0) {
+    console.error(
+      `\nFAIL — \`${r.name}\` exited ${r.status} without emitting a single parseable`
+      + ' diagnostic. That is a crashed typecheck, not a clean one. See its output above.'
+    )
+    process.exit(1)
+  }
+}
 const serialise = () =>
   [...observed.keys()]
     .sort()
