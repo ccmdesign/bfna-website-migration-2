@@ -667,7 +667,46 @@ export interface HeroProps {
    * `null` renders no `<p>` at all — not an empty one.
    */
   description?: string | null
+  /**
+   * A photograph behind the band. gh#253.
+   *
+   * **Prefer a root-relative local path** — `/images/hero/homepage.jpg`.
+   * `bfMedia` routes those through `NuxtImg` and gets a real srcset, and
+   * hands an absolute `https://` URL to the browser untouched with none
+   * (`bfMedia`'s `isAbsolute` predicate), so a Directus URL here is a silent
+   * performance regression rather than an error.
+   *
+   * Absent or `null` and the band paints nothing at all — no scrim, no
+   * `data-scrim`, no colour — which is exactly what it did before this prop
+   * existed.
+   */
+  image?: string | null
+  /**
+   * The photograph's alternative text, `''` by default because a hero image
+   * is normally decorative: the `<h1>` carries the meaning and describing the
+   * scenery would announce it ahead of the page's own name. Pass a real
+   * string for a photograph that genuinely carries information.
+   */
+  imageAlt?: string
+  /**
+   * Which scrim treatment the band wears. Ignored without an `image`.
+   */
+  scrim?: ScrimMode
 }
+
+/**
+ * The two scrim treatments, on one `data-scrim` attribute. gh#253.
+ *
+ * - `full` — a flat `--color-scrim` (navy at 0.70) over the whole band. The
+ *   default, and the bold dark treatment: 0.70 is the first alpha at which
+ *   white clears 4.5:1 over a blown-out white photograph.
+ * - `panel` — `--color-scrim-panel` (0.94) as a near-opaque column behind the
+ *   copy, photograph uncovered either side.
+ *
+ * Shared by `HeroProps` and `bfPageHeader`'s local prop bag, which is why it
+ * is declared here rather than inline in either (BRIEF §5 rule 11).
+ */
+export type ScrimMode = 'full' | 'panel'
 
 /** One breadcrumb node. `to` omitted marks the current (non-linked) page. */
 export interface Crumb {

@@ -184,6 +184,16 @@ to a `string[]`. Probe 38's `chips-strings` case passes
 
 ### D-38.6 — no stylesheet at all
 
+> **Amended 2026-09-04, gh#253.** The design phase gives this band a photograph and a
+> scrim, so it now ships a small `<style scoped>` block — the containing block and
+> stacking context `bfHeroMedia` needs, the inverted text colour, the crumb-link colour
+> and the two control inversions a dark ground forces. Every rule is conditional on
+> `.bf-page-header--media`, so a header with no `image` still resolves to the empty
+> stylesheet this decision describes. Sanctioned by
+> `docs/plans/bf220-design-phase-wave-1-plan.md` Phase 2, which names this file and says
+> "adding one means adding an `@layer components { }` wrapper by hand". The decision text
+> below is kept rather than rewritten, per gh#249 §5.
+
 The component ships no `<style>` block. Not "no new custom properties" — no
 rule of any kind. Every value on the page comes from `bfSection`,
 `bfBreadcrumb` and `bfChip`'s own hooks, or from `@layer composition` resolving

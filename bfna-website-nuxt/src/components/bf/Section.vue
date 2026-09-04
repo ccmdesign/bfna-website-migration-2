@@ -64,6 +64,7 @@
  * band exists anywhere under `pages/wireframes/`. `switcher` covers it. See
  * `SectionLayout` in `types/bf-contracts.ts` and the spec's Decisions.
  */
+import type { VNode } from 'vue'
 import type { SectionProps } from '~/types/bf-contracts'
 
 defineOptions({
@@ -74,6 +75,32 @@ defineOptions({
    */
   inheritAttrs: false
 })
+
+/**
+ * The two slots, declared so the `bleed` contract is visible where a consumer
+ * looks — in the type surface — rather than only in the template's comments.
+ *
+ * Added with `bleed` in gh#253. This component previously declared none at
+ * all, which meant a mistyped slot name compiled and silently rendered
+ * nothing; `bfPageHeader` beside it has always declared its two.
+ */
+defineSlots<{
+  /** The band's content. Rendered **inside** `.center`, on the measure. */
+  default?: () => VNode[]
+  /**
+   * A full-bleed layer behind the content, outside the measure — a
+   * photograph, a scrim, a texture. See the template comment for why it
+   * cannot go through the default slot.
+   *
+   * **The consumer owns the containing block.** This component adds no rule
+   * for the slot, so a layer that positions itself absolutely needs the band
+   * root to establish one: declare `position: relative` (and, for a layer
+   * that paints behind the content with a negative `z-index`,
+   * `isolation: isolate`) on your own class on the root. `bfPageHeader` does
+   * exactly that on `.bf-page-header--media`.
+   */
+  bleed?: () => VNode[]
+}>()
 
 const props = withDefaults(defineProps<SectionProps>(), {
   gap: 'm',
@@ -202,6 +229,36 @@ const headingLabelledBy = computed(() => (props.heading ? headingId : undefined)
     :aria-labelledby="headingLabelledBy"
     v-bind="rootAttrs"
   >
+    <!--
+      A full-bleed layer, outside the measure. gh#253.
+
+      The default slot below renders **inside** `.center`, and `.center` is
+      `content-box` with `padding-inline` (`center.css:50-58`) — its rendered
+      width is `measure + 2 x padding`, and it is centred. So nothing passed
+      through the default slot can paint edge to edge, and a band that wants a
+      photograph behind its own copy has nowhere to put one.
+
+      This is that place: a direct child of the band root, before the column,
+      taking the band's whole box. `bfPageHeader` puts `bfHeroMedia` here.
+
+      Purely additive — unused, it renders **no element**, and the 25 call
+      sites that composed this component before gh#253 are untouched. Not
+      "byte for byte", though: an unfilled slot still emits Vue's pair of SSR
+      fragment-anchor comment nodes into the prerendered HTML. Comment nodes
+      are not elements, so `:first-child`, the sibling combinators and
+      `.stack`'s `> * + *` are all unaffected — but the markup is not
+      literally identical, and review was right to say so.
+
+      And deliberately unopinionated: this component adds **no rule** for it.
+      A layer here positions itself, and the *consumer* declares the
+      containing block it needs on the root — `bfPageHeader` writes
+      `position: relative; isolation: isolate` onto `.bf-page-header--media`,
+      which is this same `<section>` under the consumer's own class. A band
+      that has no bleed layer therefore keeps exactly the box model it had,
+      and this file keeps paying nothing for a feature one caller uses.
+    -->
+    <slot name="bleed" />
+
     <!--
       The wireframe's inner box, kept exactly: `.center` gives the column its
       measure and inline padding, the layout class lays the children out, and

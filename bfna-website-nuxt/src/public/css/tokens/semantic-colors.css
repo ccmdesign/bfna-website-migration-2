@@ -64,6 +64,51 @@
        * token is free to be added later without colliding with it.
        */
       --color-surface-page: var(--color-white);
+      /*
+       * ── The scrim pair ────────────────────────────────────────────────
+       *
+       * gh#253. The first scrim, overlay or opacity token in the system:
+       * before this there was no name for "the translucent ground that makes
+       * white type legible over a photograph", so a hero could only be built
+       * out of a hand-tuned gradient — which is exactly production's failure
+       * mode, where one tuned to a single photo degraded from 10.55:1 to
+       * 2.21:1 across one line of text.
+       *
+       * `0.70` is not a taste value. It is the **first alpha at which white
+       * clears 4.5:1 over the worst case**, and the worst case is a
+       * blown-out white photograph, which is BFNA's house style. Measured by
+       * `scripts/check-contrast.ts` (pair `white-on-scrim`, ground
+       * `--color-scrim` over `--color-surface-page`):
+       *
+       *   0.60 → #668A9D → 3.692  fail
+       *   0.65 → #598095 → 4.245  fail
+       *   0.70 → #4D778D → 4.840  PASS
+       *
+       * A flat alpha rather than a gradient on purpose: it is deterministic
+       * for *any* photograph, which is what makes the later video pass
+       * tractable — a fixed scrim over a moving image behaves exactly as it
+       * does over a still.
+       *
+       * The consequence is a rule, and the rule is enforced by arithmetic
+       * rather than by discipline: at this alpha the programme hues do not
+       * survive over media (on-dark teal 1.92, red 1.64, amber 1.87), and
+       * nothing in the palette but white can reach 4.5 over this ground at
+       * all — its ceiling is 4.840. **So over media, type is white;
+       * programme colour appears only as an opaque fill — a chip, a rule, a
+       * panel — never as text.** An opaque fill never composites with the
+       * photograph, so it is safe by construction.
+       *
+       * `--color-scrim-panel` is the second mode: `data-scrim="panel"` paints
+       * a near-opaque column behind the copy and leaves the photograph
+       * uncovered either side. 0.94 → #0F4866 → white at 9.817.
+       *
+       * Both splice `--hsl-navy` into a fourth argument, which is this
+       * file's own alpha idiom (the 21-step ladders below are built the same
+       * way). No new colour value: navy is already in this file's var()
+       * graph.
+       */
+      --color-scrim: hsl(var(--hsl-navy), 0.70);
+      --color-scrim-panel: hsl(var(--hsl-navy), 0.94);
       --color-link: var(--color-blue);
       --color-link-visited: var(--color-navy);
   
@@ -212,21 +257,28 @@
      *   --color-program-on-light  text on --color-surface-page, >= 4.5:1.
      *   --color-program-on-dark   text on a dark ground, >= 4.5:1.
      *
-     * Every ratio below is measured by `scripts/check-contrast.ts`. Six of
-     * the nine programme pairs it declares are asserted today; the three
-     * on-dark ones are pending (see below), and the `:root` defaults are not
-     * declared as pairs at all — #264 covers both gaps. Do not hand-edit a
-     * value without re-running `npm run check:contrast`; these comments are
-     * the only place the numbers are written down twice.
+     * Every ratio below is measured by `scripts/check-contrast.ts`. All nine
+     * programme pairs it declares are asserted as of gh#253; only the `:root`
+     * defaults are still not declared as pairs at all — the remaining half of
+     * #264. Do not hand-edit a value without re-running
+     * `npm run check:contrast`; these comments are the only place the numbers
+     * are written down twice.
      *
-     * The on-dark tier is the exception: its gate pair measures against
-     * `--color-scrim`, which does not exist until the hero phase, so those
-     * three pairs report `not yet defined`. The ratios recorded here are
-     * against `--color-surface-inverse` (#080808), taken with headroom
-     * because the scrim ground will composite lighter. Expect the hero
-     * phase to revisit them —
-     * `docs/plans/bf220-design-phase-wave-1-plan.md:171` already warns
-     * these hues do not survive over media at a workable alpha.
+     * The on-dark tier used to be the exception: its gate pair measured
+     * against `--color-scrim` over white, which did not exist until the hero
+     * phase, so those three pairs reported `not yet defined`. gh#253 supplied
+     * the scrim and settled the question the other way — **that pair could
+     * never have passed.** Over a 0.70 navy scrim on a white photograph the
+     * highest ratio anything in the palette can reach is 4.840, and pure
+     * white is what reaches it; these three measure 1.92 / 1.64 / 1.87 there.
+     * Red is unsatisfiable at *any* alpha over a navy scrim on a photograph
+     * no darker than navy: it needs a ground of luminance <= 0.0291 and navy
+     * at full opacity is 0.04004. The pair asserted precisely what the hero
+     * architecture forbids — programme colour as text over media — so it was
+     * re-pointed at the ground this tier is actually for,
+     * `--color-surface-inverse` (#080808), which is the ground the ratios
+     * below have always named. They are now checked rather than merely
+     * written down. See `docs/decisions/gh253-hero-scrim-architecture.md`.
      *
      * Seeded from the PRIMITIVES (`--hsl-green`, `--hsl-red`, and an amber
      * literal), never from `--color-success` / `--color-fail` /

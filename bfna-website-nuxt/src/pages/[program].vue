@@ -102,6 +102,49 @@ useHead({ title: () => program?.name })
 useProgramTheme(program?.slug)
 
 /**
+ * The hub's hero photograph, by slug. gh#253.
+ *
+ * ## Why a local file and not `program.image`
+ *
+ * Every `content/bf/programs/*.json` carries an `image`, and every one of them
+ * is an absolute Directus URL. `bfMedia` hands those to the browser verbatim
+ * and deliberately does **not** route them through `NuxtImg` (its `isAbsolute`
+ * predicate), because the module's `ipx` provider rewrites a URL into a
+ * `/_ipx/…` route. For a **local** file `nuxt generate` prerenders those
+ * variants into the static output, so they resolve; for a remote one there
+ * would be nothing to prerender. So a Directus URL here would mean one
+ * unsized bitmap and no srcset on the largest contentful paint of the route,
+ * while a local path plus `bfHeroMedia`'s `sizes="100vw"` gets width
+ * descriptors against `nuxt.config.ts`'s `screens` ladder. The files below
+ * are local, were already on disk, and were read by nothing until now.
+ *
+ * ## The filenames carry the OLD taxonomy — read the mapping, not the names
+ *
+ * `politics-society.jpg` is mapped to
+ * `transatlantic-relations-global-challenges` **deliberately**. Four topics
+ * collapsed into three Programs (BRIEF §8), and Politics & Society is the one
+ * that merged into Transatlantic Relations & Global Challenges; that file is
+ * the nearest asset on disk for the merged programme. It is a stand-in chosen
+ * on purpose, not a filename that happens to be close, and it is the one thing
+ * in this item a human should confirm rather than inherit — see
+ * `docs/decisions/gh253-hero-scrim-architecture.md`.
+ *
+ * ## Why it lives here
+ *
+ * `bfPageHeader` is presentational-only (D8) and takes a path; the mapping
+ * from a programme to its art direction is page-level composition, and this
+ * page is its only consumer. `Record<string, string>` rather than a
+ * `PROGRAM_SLUGS`-keyed type: a slug with no photograph yet must resolve to
+ * `undefined` and render a header with no band, which is what the other four
+ * `bfPageHeader` routes do today.
+ */
+const HERO_IMAGE: Readonly<Record<string, string>> = {
+  democracy: '/images/hero/democracy.jpg',
+  'future-leadership': '/images/hero/future-leadership.jpg',
+  'transatlantic-relations-global-challenges': '/images/hero/politics-society.jpg'
+}
+
+/**
  * Active, on-site projects in this program, in the client's grid order —
  * podcasts and external-only products are pruned inside the composable, not
  * here.
@@ -172,6 +215,14 @@ const insightChips = (i: Insight): string[] | undefined =>
       Zone 1 — the hub intro (GGS hub template). `paragraphs()` splits the
       stored `intro` on blank lines, one `<p data-measure="normal">` each.
 
+      The photograph is `HERO_IMAGE[program.slug]` (gh#253) — a local file, not
+      the programme document's own Directus `image`; see the record above for
+      why, and for why the Transatlantic hub is served by a file still named
+      after the old Politics & Society topic. `scrim` is left at its `full`
+      default: the flat 0.70 navy that makes white type clear 4.5:1 over any
+      photograph, and the only treatment under which programme colour is
+      allowed to appear here at all — as an opaque fill, never as text.
+
       The CTA is slot content, wrapped in a `<div>`: `bfPageHeader` composes
       `bfSection`, whose inner box is a `.stack`, and a bare anchor as a stack
       child stretches to the full measure. The wrapper is the frozen source's
@@ -183,6 +234,7 @@ const insightChips = (i: Insight): string[] | undefined =>
       :crumbs="[{ label: 'Home', to: '/' }, { label: 'Programs' }]"
       :heading="program.name"
       :tagline="paragraphs(program.intro)"
+      :image="HERO_IMAGE[program.slug]"
     >
       <div>
         <bfButton to="#projects" variant="primary">Explore our work</bfButton>
