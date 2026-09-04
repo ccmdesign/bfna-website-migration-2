@@ -1,13 +1,12 @@
-# EPIC — Accessibility pass 2: visual
+# Accessibility constraints for the design phase
 
-**One review, two passes.** This is pass 2 — everything a sighted user can see, and everything that
-needs a design decision before it can be written. Pass 1 is
-[`docs/a11y-epic/BRIEF.md`](../a11y-epic/BRIEF.md) and owns markup, semantics, data and behaviour.
-The rule that divides them is pass-1 D32: **by visual effect, not by file extension.**
+**This is not an epic. It is the measured baseline and the gates the visual work must hold.**
 
-Input for lfg-ccm (BRIEF mode). Follows [`docs/site-epic/BRIEF.md`](../site-epic/BRIEF.md) and
-inherits its ground rules (§5 there) unless a line below overrides one. Issue source:
-[`docs/a11y-visual-pass/issues.md`](./issues.md). Do not restate this brief in issue bodies; link it.
+The visual pass is owned by Plane epic **BF-220 — "Design phase wave 1: programme colour, hero/scrim, article flagship"** (GitHub issues #249-#254), which runs under the ds-epic brief. This document was originally written as a second epic with its own issue index; that index has been retired to avoid two epics changing the same properties. What survives is the part BF-220 does not have: **nine measured findings, the method that produced them, and the accessibility floor its issues must not fall through.**
+
+Pass 1 — the structural and semantic work — is [`docs/a11y-epic/BRIEF.md`](../a11y-epic/BRIEF.md), issues #217-#235. The rule that divided the two passes is pass-1 D32: by visual effect, not by file extension.
+
+**If you are implementing a BF-220 issue, the two sections you need are §2 (the gates) and §4 (D33-D34, how to measure without getting a wrong number).**
 
 ## 0. The nine measured findings
 
@@ -20,70 +19,65 @@ Nothing here is a ratio anyone eyeballed.
 which is the baseline the design phase works against and the "before" column every pass-2 issue
 re-measures against.
 
-| # | Finding | Measured evidence | Issue |
+| # | Finding | Measured evidence | BF-220 issue |
 |---|---|---|---|
-| V1 | **Weight 100 is a legibility decision, not a contrast failure.** The premise carried into this review does not hold as a WCAG ratio failure: font weight does not enter the 1.4.3 calculation, and **every measured pair on `/` passes AA**. The thin stroke is still a real legibility question — it is just this pass's question, not 1.4.3's | Lowest pair on `/`: **5.14:1** — `#306491` on the notice ground `rgb(227,234,237)`. Then **6.25:1** ×3 (`#306491` on white; white on the `#306491` button; white on the `#306491` skip link). Then **9.4:1** (`#0000EE` on white). Then **20.03:1** (`#080808` on white). Body copy, nav links, chips, `<time>` and card links all compute `font-weight: 100` | 111 |
-| V2 | **The type scale is placeholder and inverts at small sizes.** Headings are barely larger than body; chip text is under 10px | `/` at 1280px: `h1.bf-hero__heading` 19.22px/600, `h2.bf-section__heading` 15.19px/500, `h3` 13.50px/500, `p.bf-hero__description` 12px/100, `time.bf-time` 12px/100, **`span.bf-chip` 9.48px/100** | 111 |
-| V3 | **Three link colours on one page, one of them the browser default.** Any plain `<a>` outside a bf atom falls to the UA colour; the palette never claims it | `/`: card and grid links `rgb(0, 0, 238)` (UA default); `a.bf-nav__link` `rgb(8, 8, 8)`; `a.bf-button` and brand links `rgb(48, 100, 145)` | 112 |
-| V4 | **The focus ring passes today and is a constraint on every ground the skin introduces.** It is painted with `--color-text` on the *page* ground rather than `currentcolor` on the element, by deliberate choice — a light element would otherwise paint a light ring on a light page | `2px solid rgb(8,8,8)`, `outline-offset: 2px`, **20.03:1** against `rgb(255,255,255)`. Measured on a keyboard-focused `input[name=email]` and on `a.bf-skip-link`. Rationale at `public/css/base/focus.css:41-55`. WCAG 1.4.11 needs ≥3:1 against whatever ground replaces white | 115 |
-| V5 | **`forms.css`'s alternate focus ring is 80% transparent.** Dead code on every bf route today — every input on the site is a `bfFormField`, whose `@layer components` rule wins — but it is the shape a designer might reach for, and it is a live trap for the next non-`bfFormField` input | `public/css/base/forms.css:34-40`: `outline: none` replaced by `box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 20%, transparent)` | 115 |
-| V6 | **Target sizes (WCAG 2.5.8, 24×24 CSS px) were not measured** — deliberately. Paddings and the type scale are both placeholder, so a number taken now is discarded by the first design decision. Chips at 9.48px text are the obvious risk to re-check | — (see §0.1) | 116 |
-| V7 | **The nav wraps to three rows at 375px with no toggle.** Structurally this is sound — nothing is hidden from assistive technology, nothing overflows — which is exactly why it is a design problem and not a pass-1 one | 375×812: `document.documentElement.scrollWidth === innerWidth === 375`; all 8 top-level items pass `checkVisibility()`; `header button` count 0; `.hide-on-mobile` count 0 | 113 |
+| V1 | **Weight 100 is a legibility decision, not a contrast failure.** The premise carried into this review does not hold as a WCAG ratio failure: font weight does not enter the 1.4.3 calculation, and **every measured pair on `/` passes AA**. The thin stroke is still a real legibility question — it is just this pass's question, not 1.4.3's | Lowest pair on `/`: **5.14:1** — `#306491` on the notice ground `rgb(227,234,237)`. Then **6.25:1** ×3 (`#306491` on white; white on the `#306491` button; white on the `#306491` skip link). Then **9.4:1** (`#0000EE` on white). Then **20.03:1** (`#080808` on white). Body copy, nav links, chips, `<time>` and card links all compute `font-weight: 100` | #254 |
+| V2 | **The type scale is placeholder and inverts at small sizes.** Headings are barely larger than body; chip text is under 10px | `/` at 1280px: `h1.bf-hero__heading` 19.22px/600, `h2.bf-section__heading` 15.19px/500, `h3` 13.50px/500, `p.bf-hero__description` 12px/100, `time.bf-time` 12px/100, **`span.bf-chip` 9.48px/100** | #254 |
+| V3 | **Three link colours on one page, one of them the browser default.** Any plain `<a>` outside a bf atom falls to the UA colour; the palette never claims it | `/`: card and grid links `rgb(0, 0, 238)` (UA default); `a.bf-nav__link` `rgb(8, 8, 8)`; `a.bf-button` and brand links `rgb(48, 100, 145)` | #251 / #252 |
+| V4 | **The focus ring passes today and is a constraint on every ground the skin introduces.** It is painted with `--color-text` on the *page* ground rather than `currentcolor` on the element, by deliberate choice — a light element would otherwise paint a light ring on a light page | `2px solid rgb(8,8,8)`, `outline-offset: 2px`, **20.03:1** against `rgb(255,255,255)`. Measured on a keyboard-focused `input[name=email]` and on `a.bf-skip-link`. Rationale at `public/css/base/focus.css:41-55`. WCAG 1.4.11 needs ≥3:1 against whatever ground replaces white | #250 |
+| V5 | **`forms.css`'s alternate focus ring is 80% transparent.** Dead code on every bf route today — every input on the site is a `bfFormField`, whose `@layer components` rule wins — but it is the shape a designer might reach for, and it is a live trap for the next non-`bfFormField` input | `public/css/base/forms.css:34-40`: `outline: none` replaced by `box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 20%, transparent)` | #250 |
+| V6 | **Target sizes (WCAG 2.5.8, 24×24 CSS px) were not measured** — deliberately. Paddings and the type scale are both placeholder, so a number taken now is discarded by the first design decision. Chips at 9.48px text are the obvious risk to re-check | — (see §0.1) | — (unowned) |
+| V7 | **The nav wraps to three rows at 375px with no toggle.** Structurally this is sound — nothing is hidden from assistive technology, nothing overflows — which is exactly why it is a design problem and not a pass-1 one | 375×812: `document.documentElement.scrollWidth === innerWidth === 375`; all 8 top-level items pass `checkVisibility()`; `header button` count 0; `.hide-on-mobile` count 0 | — (unowned) |
 | V8 | **No image declares intrinsic dimensions, and the lead image is lazy.** CLS and LCP; **owned by site-epic #70**, listed here so this pass knows the layout shifts under it until #70 lands | `/` 9/9 and `/about` 15/15 images carry neither `width` nor `height`. `components/bf/Media.vue:189,198` sets `loading="lazy"` unconditionally, including above the fold | — (site#70) |
-| V9 | **Text spacing (WCAG 1.4.12) was not verified** — same reason as V6. Re-run against the chosen scale: 1.5× line-height, 0.12em letter-spacing, 0.16em word-spacing, 2× paragraph spacing, checking for clipping and overlap | — (see §0.1) | 117 |
+| V9 | **Text spacing (WCAG 1.4.12) was not verified** — same reason as V6. Re-run against the chosen scale: 1.5× line-height, 0.12em letter-spacing, 0.16em word-spacing, 2× paragraph spacing, checking for clipping and overlap | — (see §0.1) | — (unowned) |
 
 ### 0.1 Why two findings have no measurement
 
 V6 and V9 are the two WCAG criteria whose result is a pure function of the type scale and the
 paddings. Both are placeholder. Measuring them now produces a number that the first design decision
 invalidates, and a recorded number that is wrong is worse than a stated gap — so they are recorded
-as gaps with the exact method to run once the scale is set (issues 116 and 117). This is the same
+as gaps with the exact method to run once the scale is set — §2 DoD-V5 and DoD-V6 carry it. This is the same
 reasoning pass-1 §0.2 gives for the checks that needed a screen reader.
 
-### 0.2 What this pass cannot do yet
+### 0.2 Three findings no BF-220 issue currently owns
 
-Six of the eight issues are blocked on decisions nobody has made. A type scale, a link colour and a
-mobile-nav treatment are Aline's and Claudio's calls, not a runner's. The issue rows are written so
-that the **verification** half is runnable the moment the decision lands, and so the decision itself
-is a named Plane task (§8) rather than an implicit blocker. Nothing in phase 21 can start before
-phase 20 merges.
+V6 (target size), V7 (mobile nav) and V9 (text spacing) map to none of #249-#254. They are unowned,
+not dropped — each needs a home before the design phase closes, and each is only measurable once the
+type scale in #254 has landed. §8 carries them as tasks.
 
 ## 1. Objective
 
-Make the visual layer meet WCAG 2.1 AA on whatever the design phase decides, and prove it with the
-same measurement method that produced §0. This pass does not preserve the current values — the type
-scale, the faces and the link colour are all expected to change. It fixes the values that are
-accessibility-load-bearing regardless of taste (contrast ≥4.5:1, focus ring ≥3:1, targets ≥24px,
-1.4.12 spacing without clipping) and hands the rest to the designer as a constraint they must hold.
+BF-220 is free to change the type scale, the faces, the link colour and the hero treatment — none of
+those values is preserved here, and §0 is a "before" measurement, not a target. What this document
+fixes is the narrow set that is accessibility-load-bearing regardless of taste: contrast ≥4.5:1,
+focus ring ≥3:1 against its own ground, targets ≥24px, 1.4.12 spacing without clipping, and no
+regression of a pass-1 structural fix.
 
-The information architecture, page layout and palette *values* are settled and stay settled; this
-pass may not move them.
+One correction BF-220's brief does not carry: **weight 100 is not a contrast failure** (§0 V1).
+Every pair measured on `/` passes AA. If #254 changes the body weight, that is a legibility
+decision, and it should be made on legibility grounds rather than on a contrast argument that does
+not hold.
 
-## 2. Definition of done (EPIC)
+## 2. The gates BF-220 must hold
+
+These were written as an epic's definition of done. They are now the accessibility floor for the visual work: whatever type scale, palette pairing and hero treatment BF-220 lands, these have to be true of the result. #250's `check-contrast.ts` is the natural home for V1-V3.
 
 | # | Gate | Check |
 |---|---|---|
-| DoD-V1 | Contrast | Every text/background pair on the ten routes in pass-1 §0.1 computes ≥4.5:1 (≥3:1 for text ≥24px, or ≥18.66px bold); measured with the §0 method, asserted by `check-routes.ts` (#118) |
+| DoD-V1 | Contrast | Every text/background pair on the ten routes in pass-1 §0.1 computes ≥4.5:1 (≥3:1 for text ≥24px, or ≥18.66px bold); measured with the §0 method, asserted by `check-contrast.ts` (BF-220 #250) |
 | DoD-V2 | Non-text contrast | Every focus ring, form-control border and meaningful icon computes ≥3:1 against its own adjacent ground — not against the element's fill (WCAG 1.4.11) |
 | DoD-V3 | One link treatment | Zero computed link colours outside the token set; in particular zero occurrences of the UA default `rgb(0,0,238)` in `.output/public` |
 | DoD-V4 | Minimum size | No rendered text computes below the floor the type scale sets, and that floor is a named token, not a literal |
 | DoD-V5 | Target size | Every interactive target measures ≥24×24 CSS px, or meets the 2.5.8 spacing exception; measured at 1280×800 and 375×812 |
 | DoD-V6 | Text spacing | With 1.5× line-height, 0.12em letter-spacing, 0.16em word-spacing and 2× paragraph spacing applied, no content is clipped, overlapped or made unreachable on any of the ten routes |
 | DoD-V7 | Motion | Whatever motion this pass introduces is inside the `prefers-reduced-motion` floor pass-1 #93 lands; emulating the query produces no transition, animation or view transition anywhere |
-| DoD-V8 | Pass 1 holds | `npx tsx scripts/check-routes.ts` still passes every pass-1 assertion (DoD-A1…A9). A skin change may not reintroduce a structural defect |
+| DoD-V8 | Pass 1 holds | `npx tsx scripts/check-routes.ts` still passes every pass-1 assertion. A skin change may not reintroduce a structural defect — raising a heading's size is a visual change, changing which element it is is a pass-1 regression |
 
-## 3. Repo and run configuration
+## 3. Where the work happens
 
-Unchanged from pass-1 §3: repo `ccmdesign/bfna-website-migration-2`, app root `bfna-website-nuxt/`,
-`BASE_BRANCH=dev`, `MERGE_POLICY=auto`, sequential isolated runs, specs at
-`docs/a11y-visual-pass/issues/<NN>-<slug>.md`. **Numbering continues from pass 1 (last row 110); the
-first issue here is 111.**
+BF-220, in `ccmdesign/bfna-website-migration-2`, base `dev`, under `docs/plans/bf220-design-phase-wave-1-plan.md`. Nothing in this document is dispatched on its own.
 
-Dev server: `env NUXT_IMAGE_PROVIDER=none npx nuxt dev`. Gates per issue: `npm run typecheck`,
-`npx nuxt generate` exit 0 (**never** `npm run generate`), `npx tsx scripts/check-routes.ts`,
-`npx tsx scripts/check-links.ts`.
-
-## 4. Decisions of record (D33–D38)
+## 4. How to measure (D33–D38)
 
 | ID | Rule |
 |---|---|
@@ -130,17 +124,17 @@ pass can assume:
 - **WCAG AAA contrast (1.4.6) and AAA text presentation (1.4.8).** Worth reaching for if the scale
   allows; not a gate.
 
-## 8. Human / Plane tasks (NOT issues)
+## 8. Tasks this leaves open
 
 | Task | Owner | When |
 |---|---|---|
-| Decide the type scale, the faces and the weights. Everything currently in the repo is placeholder and arbitrary — h1 19.22px, chips 9.48px, body weight 100. Record it in `docs/questions-design.md` (D37) | Aline + Claudio | before #111 |
-| Decide the link treatment — colour, underline, hover and visited — so #112 has something to apply. Today there are three treatments, one of them the browser default | Aline | before #112 |
-| Decide the mobile nav treatment at ≤375px: keep the three-row wrap, or introduce a disclosure. If a disclosure, pass 1's `<details>`-based pattern is the one to reuse | Aline + Claudio | before #113 |
-| Manual low-vision review — 200% zoom, 400% reflow, Windows High Contrast — after #117 | Aline | after #117 |
-| Sign-off that the skin meets AA before it ships, on the deploy preview | Aline + Claudio | after #118 |
+| Decide the type scale, the faces and the weights — everything in the repo is placeholder (h1 19.22px, chips 9.48px, body weight 100). Note V1: the weight call is a legibility one, not a contrast one | Aline + Claudio | inside BF-220 #254 |
+| Decide the link treatment — colour, underline, hover, visited. Three exist today, one of them the browser default (V3) | Aline | inside BF-220 #251/#252 |
+| **Find a home for V6 (target size), V7 (mobile nav) and V9 (text spacing)** — no BF-220 issue covers them, and all three are only measurable once #254's scale lands | Claudio | before the design phase closes |
+| Manual low-vision review — 200% zoom, 400% reflow, Windows High Contrast | Aline | after BF-220's last issue merges |
+| Sign-off that the skin meets AA on the deploy preview | Aline + Claudio | before the skin ships |
 
-## 9. Epic-closing verification
+## 9. How to verify the gates
 
 ```bash
 cd bfna-website-nuxt
@@ -155,10 +149,8 @@ npx tsx scripts/check-links.ts
 # this pass added motion to, confirm none of it runs.
 ```
 
-Plus the two manual passes in §8, which are the sign-off, not the gate.
+Plus the manual passes in §8, which are the sign-off, not the gate.
 
-## 10. Issue source
+## 10. Status
 
-[`docs/a11y-visual-pass/issues.md`](./issues.md) — 8 issues in three phases, numbered 111–118,
-continuing from pass 1's last row (110). Row order is execution order. Phase 20 carries the three
-design decisions and must merge before phase 21 measures anything against them.
+Folded into BF-220 on 2026-09-04. The issue index that used to live at `docs/a11y-visual-pass/issues.md` (rows 111-118) has been deleted; §0's findings table maps each finding to the BF-220 issue that now owns it, and names the three that no issue currently covers — V7 (mobile nav), V6 (target size) and V9 (text spacing). Those three are unowned, not dropped: they need a home before the design phase closes.
