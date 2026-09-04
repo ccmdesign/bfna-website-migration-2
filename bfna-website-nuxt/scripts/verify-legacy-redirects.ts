@@ -16,7 +16,8 @@
  * ## Usage
  *
  * ```
- * npx tsx scripts/verify-legacy-redirects.ts --static-only     # no server needed
+ * npx tsx scripts/verify-legacy-redirects.ts --static-only               # no server needed
+ * npx tsx scripts/verify-legacy-redirects.ts --static-only --targets     # + after `npx nuxt generate`
  * npx nuxt dev &                                                # then, against it:
  * npx tsx scripts/verify-legacy-redirects.ts --base http://localhost:3000
  * ```
@@ -40,7 +41,7 @@
  * for residuals #206 and #208, and asserts them on both halves.
  */
 
-import { readFileSync } from 'node:fs'
+import { existsSync, readFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -56,6 +57,8 @@ import {
 
 const appRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const REDIRECTS_FILE = resolve(appRoot, 'public/_redirects')
+/** What Netlify publishes; `--targets` asks whether each destination is in it. */
+const PUBLIC_OUTPUT = resolve(appRoot, '.output/public')
 
 /** A slug used to prove a prefix family preserves its splat. */
 const SPLAT_PROBE = 'a-legacy-child-path'
@@ -117,6 +120,67 @@ function verifyStatic(): void {
     LEGACY_REDIRECT_COLLAPSE_PREFIXES.length +
     Object.keys(LEGACY_SLUG_MAP).length
   assert(rows.size === expectedCount, `no extra rules (${expectedCount})`, `file has ${rows.size}`)
+}
+
+/* ── target half: does the destination actually exist? (--targets) ──────── */
+
+/**
+ * Every `301` target must have a file behind it in `.output/public`.
+ *
+ * This is residual #210, and it is a different question from every other
+ * assertion in this file. Those ask whether the *rule* is right; this asks
+ * whether the place it sends people to was ever built. On `dev` before gh#68,
+ * **51 of 433** rows pointed at a target with no file: the old URL answered
+ * `301` and the destination then answered `404`.
+ *
+ * The cause was never the map. `generate-legacy-redirects.ts` builds it from
+ * `content/bf/**` on disk; the prerenderer reached detail pages only through
+ * `crawlLinks`, and a document that appears in no grid, no featured band and no
+ * related list is linked from nowhere and therefore never written. gh#68 seeds
+ * `nitro.prerender.routes` from that same content, which makes the two agree by
+ * construction — and this check is what keeps them agreeing.
+ *
+ * Off by default and behind an explicit `--targets`, because it needs a build:
+ * running it against a missing `.output/public` would report 433 failures on a
+ * perfectly good checkout. Asked for and absent is a hard error, never a skip.
+ */
+function verifyTargets(): void {
+  console.log(`\ntargets — every 301 destination exists in .output/public`)
+
+  if (!existsSync(PUBLIC_OUTPUT)) {
+    assert(false, 'a generated site to check against', `no ${PUBLIC_OUTPUT} — run \`npx nuxt generate\` first`)
+    return
+  }
+
+  /** Netlify serves `/x` from `x/index.html`, or from a literal file at `x`. */
+  const resolves = (target: string): boolean => {
+    const path = target.split('#')[0]!.split('?')[0]!
+    if (path === '/') return existsSync(resolve(PUBLIC_OUTPUT, 'index.html'))
+    const rel = path.replace(/^\/+/, '').replace(/\/+$/, '')
+    if (rel === '') return existsSync(resolve(PUBLIC_OUTPUT, 'index.html'))
+    return existsSync(resolve(PUBLIC_OUTPUT, rel, 'index.html')) || existsSync(resolve(PUBLIC_OUTPUT, rel))
+  }
+
+  const unresolved: string[] = []
+  let rows = 0
+
+  for (const [from, [to, status]] of parseRedirectsFile()) {
+    /* Only the 301s, and only the ones naming a concrete path: a `/*` splat
+       row's destination depends on the request, and a 410 has no destination. */
+    if (!status.startsWith('301')) continue
+    if (from.includes('*') || to.includes(':splat')) continue
+    rows += 1
+    if (!resolves(to)) unresolved.push(`${from} -> ${to}`)
+  }
+
+  assert(
+    unresolved.length === 0,
+    `all ${rows} concrete 301 targets are prerendered`,
+    unresolved.length === 0
+      ? ''
+      : `${unresolved.length} unresolved, e.g. ${unresolved.slice(0, 5).join(' , ')}`
+      + ' — seed them in nuxt.config.ts `nitro.prerender.routes` (residual #210)'
+  )
 }
 
 /* ── live half: the middleware, via a running server ────────────────────── */
@@ -206,6 +270,7 @@ async function main(): Promise<void> {
   const base = baseIndex === -1 ? 'http://localhost:3000' : args[baseIndex + 1]
 
   verifyStatic()
+  if (args.includes('--targets')) verifyTargets()
   if (!staticOnly) await verifyLive(base.replace(/\/$/, ''))
 
   console.log(

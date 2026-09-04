@@ -1,0 +1,43 @@
+{
+  /*
+   * Type coverage for `scripts/**` — residual #104.
+   *
+   * `tsconfig.json` extends `.nuxt/tsconfig.app`, whose `include` covers `src/`
+   * only. `scripts/` is a sibling of `src/`, so until this file existed no
+   * script here was type-checked by anything: they run under `tsx`, which uses
+   * esbuild to strip types without checking them.
+   *
+   * That mattered because the vitest harness on `dev` is broken (residual #86),
+   * which makes these scripts the epic's whole acceptance surface. A type error
+   * in a verification script does not fail a gate — it throws at runtime, or
+   * worse, quietly evaluates to something that still exits 0. A script that
+   * stops checking what it claims to check is exactly how a broken component
+   * ships green.
+   *
+   * A separate project rather than a widened `include`, per #104's own note:
+   * these are Node programs. Pulling them into the app's DOM-typed project
+   * would type `document` and `window` as available inside a build script, and
+   * `check-routes.ts` — which evaluates DOM expressions *as strings* inside a
+   * headless browser — is precisely the file that must not be told those
+   * globals exist locally.
+   *
+   * Run by `npm run typecheck:scripts`, chained into `npm run typecheck`.
+   * `npx nuxt typecheck` remains the app-only gate command the epic measures.
+   */
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2023"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "types": ["node"],
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": ["scripts/**/*.ts"],
+  "exclude": ["scripts/output/**"]
+}

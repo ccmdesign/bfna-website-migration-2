@@ -1,0 +1,1123 @@
+/**
+ * Route harness — gh#68, the successor to `check-probes.ts`.
+ *
+ *   npx nuxt generate
+ *   npx tsx scripts/check-routes.ts              # every route in BRIEF §7
+ *   npx tsx scripts/check-routes.ts --only /about
+ *
+ * ## Why this file has two names in its history
+ *
+ * It began as `scripts/check-probes.ts` (gh#109, residual #106): every `bf-*`
+ * probe page ran its load-bearing assertions in `onMounted` and painted a
+ * verdict nobody read, so half of every issue's acceptance ran only when a
+ * human opened the page. gh#200 then bolted a **smoke set** onto it — eight
+ * real routes, opened under a console gate — because #199 was a hydration
+ * mismatch in the shared shell that no probe could ever have caught: a probe
+ * composes `bf-probe`, not `bf-default`.
+ *
+ * gh#68 deletes `src/pages/bf-probe/` per BRIEF §5, which retires the probe
+ * half entirely. What is left is the half that was always about the shipped
+ * site, widened from eight routes to every route BRIEF §7 promises, plus the
+ * checks the probes used to make on the site's behalf. gh#200 was deliberately
+ * sequenced before the cutover so this gate would already exist at the commit
+ * that most needs it; `check-probes.ts` even said so in a comment. This is that
+ * commit.
+ *
+ * ## What each route must satisfy
+ *
+ * 1. **It hydrated.** `document.readyState === 'complete'` **and**
+ *    `document.getElementById('__nuxt').__vue_app__` exists. The second half is
+ *    load-bearing: a prerendered page whose entry chunk 404s stays as static
+ *    HTML, looks perfect, and would pass a console-only check by having nothing
+ *    to say.
+ * 2. **It said nothing at `error` level.** Both channels are read, and neither
+ *    is redundant — `Runtime.consoleAPICalled` for what the page says (Vue's
+ *    `Hydration completed but contains mismatches.` lands here, and it is a
+ *    `console.error` and nothing else: no build fails, no assertion breaks, and
+ *    the page still looks right while Vue throws the server markup away), and
+ *    `Log.entryAdded` for what the *browser* says (a 404 on a `/_nuxt/*.js`
+ *    chunk, which the page never hears about).
+ * 3. **Exactly one `<h1>`.** BRIEF §5 rule 9, WCAG 2.1 AA. Counted in the
+ *    hydrated DOM rather than by grepping the HTML, so a heading a component
+ *    renders only on the client is counted too.
+ * 4. **Every `/_ipx/…` URL in its prerendered HTML has a file behind it**
+ *    (gh#203) — `src` and `srcset` alike. `@nuxt/image` falls back to the `ipx`
+ *    provider whenever `NUXT_IMAGE_PROVIDER` is unset, and `ipx` is a runtime
+ *    image server this static deploy does not have. For a **local** source that
+ *    is harmless: the prerenderer transforms the file and writes the result to
+ *    disk, so the URL resolves. For a **remote** one it cannot — nothing is
+ *    written, the URL returns `200 text/plain` from the SPA fallback, and the
+ *    photo is simply broken. So the rule is existence, not absence: banning the
+ *    substring would ban the image module itself, while requiring a file
+ *    distinguishes the two cases exactly.
+ *
+ * ## What it reports without failing
+ *
+ * **Placeholder anchors.** `href="#…"` links that go nowhere — the site chrome
+ * still carries `#podcast-platform-url`, `#transponder-magazine-url` and
+ * `#bluesky-profile-url` because the real URLs are a content question waiting
+ * on the client (#160, #82). They are listed on every run, by route and by
+ * href, so they cannot be forgotten; they are **not** failures, because a gate
+ * that fails on work assigned to somebody else is a gate people learn to skip.
+ * A fragment that names a real element on the page is not reported at all — a
+ * program hub's `#projects` and `/about#board` are working in-page links, and a
+ * report that cried wolf about them would be one nobody read.
+ *
+ * ## The two gates that are not per-route
+ *
+ * **DoD-3 — every §7 route is reachable from the menus.** BRIEF §2 requires
+ * each route in §7 to be linked from `bfNav` or `bfFooter`, with no orphans.
+ * Asserted from the *rendered* home page rather than from `menus.json`, because
+ * the question is whether a visitor can get there: the two detail templates are
+ * reachable one hop further on, from their own list page, which is how a
+ * detail route is supposed to be reached and is checked as such.
+ *
+ * **The cascade-layer gate.** Every compiled stylesheet under
+ * `.output/public/_nuxt/` that carries a `bf-*` component rule must keep it
+ * inside an `@layer components { … }` block. This is residual #98 / gh#101:
+ * `postcss-preset-env` at `stage: 1` enables a cascade-layers polyfill that
+ * rewrites each SFC stylesheet in isolation, cannot see the layer-order
+ * statement in `public/css/styles.css`, and flattens the `@layer components`
+ * wrapper into unlayered rules — which outrank every layer, so a `utils` or
+ * `overrides` rule could never outrank a component. `nuxt.config.ts` sets
+ * `features: { 'cascade-layers': false }` for exactly that reason, and
+ * `verify-bf-logo.ts` §7 used to be what stopped anyone turning it back on.
+ * That script read a probe page and retired with the probes, so the guard moves
+ * here — generalised from `.bf-logo` to every `bf-*` rule, which is strictly
+ * stronger than what it replaces.
+ *
+ * ## Known limit, stated rather than rediscovered
+ *
+ * Vue hydrates a `createStaticVNode` subtree by advancing the node pointer
+ * without comparing its content, so a mismatch confined to compiler-hoisted
+ * static markup emits nothing on any channel. Verified while gh#200 built this
+ * gate: patching a static text node in a prerendered page produced silence,
+ * patching the adjacent dynamic one produced the message. The gate catches
+ * every mismatch that reaches a dynamic node, which is every mismatch #199 was
+ * about.
+ *
+ * ## Exit contract
+ *
+ * `0` only when every route hydrated, carried exactly one `h1`, had no dangling
+ * `/_ipx/` URL and logged no console error; when every §7 route is reachable
+ * from the menus; and when no compiled stylesheet lost its `@layer` wrapper.
+ * Placeholder anchors are reported and do not affect the exit code. A route
+ * that could not be evaluated is a **failure**, never a skip — a verification
+ * that quietly downgrades itself to "PASS (1 skipped)" is exactly how a broken
+ * page ships green.
+ *
+ * ## Driver
+ *
+ * Raw Chrome DevTools Protocol over Node's built-in global `WebSocket`, with no
+ * new dependency. Playwright and Puppeteer are absent from `package.json`, and
+ * `jsdom` — which is present — has no layout engine. The executable is resolved
+ * from `$CHROME_PATH`, then the local `ms-playwright` cache, then Chrome /
+ * Chromium / Edge. Rationale in `docs/decisions/probe-harness.md`.
+ *
+ * ## Flags
+ *
+ *   --only <route>     run a single route (`--only /about`)
+ *   --timeout <ms>     per-route budget for reaching a hydrated state
+ *   --port <n>         pin the static server port (default: a free one)
+ *   --viewport <WxH>   layout viewport (default 1280x1024)
+ *   --ignore-console   regex; console text matching it is not a failure
+ *   --verbose          print every row, not just the failing ones
+ */
+import { spawn, type ChildProcess } from 'node:child_process'
+import { createReadStream, existsSync, readFileSync, readdirSync, statSync } from 'node:fs'
+import { mkdtemp, rm } from 'node:fs/promises'
+import { createServer, type Server } from 'node:http'
+import { homedir, tmpdir } from 'node:os'
+import { dirname, extname, join, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
+
+const appRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..')
+const publicDir = join(appRoot, '.output/public')
+const contentDir = join(appRoot, 'content/bf')
+const builtCssDir = join(publicDir, '_nuxt')
+
+/* ------------------------------------------------------------------ *
+ * Arguments
+ * ------------------------------------------------------------------ */
+const argv = process.argv.slice(2)
+
+const flag = (name: string): string | undefined => {
+  const i = argv.indexOf(`--${name}`)
+  if (i === -1) return undefined
+  const value = argv[i + 1]
+  if (value === undefined || value.startsWith('--')) {
+    console.error(`--${name} needs a value`)
+    process.exit(2)
+  }
+  return value
+}
+
+const num = (raw: string | undefined, fallback: number): number => {
+  if (raw === undefined) return fallback
+  const value = Number(raw)
+  if (!Number.isFinite(value) || value < 0) {
+    console.error(`expected a number, got "${raw}"`)
+    process.exit(2)
+  }
+  return value
+}
+
+const only = flag('only')
+const timeoutMs = num(flag('timeout'), 20_000)
+const pinnedPort = num(flag('port'), 0)
+
+/**
+ * An escape hatch for console noise that is the *environment's*, not the
+ * build's — the shell links one third-party stylesheet
+ * (`fonts.googleapis.com`), and a gate with no way to say "not that one" turns
+ * a network hiccup on someone's laptop into a merge blocker.
+ *
+ * Empty by default, so the committed behaviour is strict and reaching for this
+ * is a visible act on a command line rather than a quiet default. Compiled
+ * without flags on purpose: a `/g/` regex carries `lastIndex` between calls and
+ * would match every *other* line.
+ */
+const ignoreConsole = (() => {
+  const raw = flag('ignore-console')
+  if (raw === undefined) return undefined
+  try {
+    return new RegExp(raw)
+  } catch (error) {
+    console.error(`--ignore-console is not a valid regex: ${(error as Error).message}`)
+    process.exit(2)
+  }
+})()
+
+/**
+ * The layout viewport, set explicitly rather than inherited from the browser's
+ * default window. A zero-size viewport — which some embedded browser panes
+ * report — collapses the nav into a state where its links are not rendered at
+ * all, which would fail the reachability gate on a build that is fine.
+ */
+const viewport = (() => {
+  const raw = flag('viewport') ?? '1280x1024'
+  const match = raw.match(/^(\d+)x(\d+)$/)
+  if (!match) {
+    console.error(`--viewport expects <width>x<height>, got "${raw}"`)
+    process.exit(2)
+  }
+  return { width: Number(match[1]), height: Number(match[2]) }
+})()
+const verbose = argv.includes('--verbose')
+
+if (!existsSync(publicDir)) {
+  console.error(`No prerendered output at ${publicDir}.\nRun \`npx nuxt generate\` first (not \`npm run generate\` — that one needs Directus secrets).`)
+  process.exit(1)
+}
+
+/* ------------------------------------------------------------------ *
+ * The route set — BRIEF §7
+ * ------------------------------------------------------------------ */
+/** The document stems of one `content/bf/*` collection; the stem is the slug. */
+const collectionSlugs = (collection: string): string[] => {
+  try {
+    return readdirSync(join(contentDir, collection), { withFileTypes: true })
+      .filter(entry => entry.isFile() && entry.name.endsWith('.json'))
+      .map(entry => entry.name.replace(/\.json$/, ''))
+      .sort()
+  } catch {
+    return []
+  }
+}
+
+/**
+ * The first alphabetical child of `<dir>` in the prerendered output that is a
+ * real page. Sorted, so two runs on the same build pick the same route and a
+ * failure is reproducible from its own output; `index.html` rather than mere
+ * directory existence, because `insights/` also holds `_payload.json` files.
+ */
+const firstPageUnder = (dir: string): string | undefined => {
+  const root = join(publicDir, dir)
+  if (!existsSync(root)) return undefined
+  return readdirSync(root)
+    .sort()
+    .find(name => existsSync(join(root, name, 'index.html')))
+}
+
+/**
+ * Every route BRIEF §7 promises, one representative per detail template.
+ *
+ * Deliberately not all 409 detail pages: opening each in a real browser would
+ * take twenty minutes to re-assert one template. Their *existence* is the
+ * prerender gate's job (`nuxt.config.ts` seeds them from the same content this
+ * reads, and `verify-legacy-redirects.ts --targets` asserts every redirect
+ * lands on a real file); their *rendering* is one template, exercised once.
+ *
+ * The two detail slugs come from `.output/public` rather than from a constant,
+ * for the reason the probe list used to be read from disk: a hard-coded slug
+ * rots the first time content moves, and it rots silently, as a 404 the gate
+ * would then dutifully report as a console error on a build that is fine.
+ */
+const routeSet = ((): string[] => {
+  const insight = firstPageUnder('insights')
+  const project = firstPageUnder('projects')
+  return [
+    '/',
+    ...collectionSlugs('programs').map(slug => `/${slug}`),
+    '/insights',
+    ...(insight === undefined ? [] : [`/insights/${insight}`]),
+    '/projects',
+    ...(project === undefined ? [] : [`/projects/${project}`]),
+    '/about',
+    '/search',
+    '/archive'
+  ]
+})()
+
+const routes = only === undefined ? routeSet : routeSet.filter(r => r === only)
+
+if (routes.length === 0) {
+  console.error(`--only ${only} matched no route. Available: ${routeSet.join(', ')}`)
+  process.exit(2)
+}
+
+/* ------------------------------------------------------------------ *
+ * Static server over .output/public
+ * ------------------------------------------------------------------ */
+const MIME: Record<string, string> = {
+  '.html': 'text/html; charset=utf-8',
+  '.js': 'text/javascript; charset=utf-8',
+  '.mjs': 'text/javascript; charset=utf-8',
+  '.css': 'text/css; charset=utf-8',
+  '.json': 'application/json; charset=utf-8',
+  '.svg': 'image/svg+xml',
+  '.png': 'image/png',
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.webp': 'image/webp',
+  '.avif': 'image/avif',
+  '.gif': 'image/gif',
+  '.ico': 'image/x-icon',
+  '.woff': 'font/woff',
+  '.woff2': 'font/woff2',
+  '.ttf': 'font/ttf',
+  '.txt': 'text/plain; charset=utf-8',
+  '.map': 'application/json; charset=utf-8'
+}
+
+/** Resolve a request path inside `.output/public`, refusing to escape it. */
+const resolveFile = (urlPath: string): string | undefined => {
+  const clean = decodeURIComponent(urlPath.split('?')[0]!.split('#')[0]!)
+  const candidate = resolve(publicDir, `.${clean}`)
+  if (candidate !== publicDir && !candidate.startsWith(`${publicDir}/`)) return undefined
+
+  for (const path of [candidate, join(candidate, 'index.html'), `${candidate}.html`]) {
+    if (existsSync(path) && statSync(path).isFile()) return path
+  }
+  return undefined
+}
+
+const server: Server = createServer((req, res) => {
+  const file = resolveFile(req.url ?? '/')
+  if (!file) {
+    res.writeHead(404, { 'content-type': 'text/plain' })
+    res.end('not found')
+    return
+  }
+  res.writeHead(200, {
+    'content-type': MIME[extname(file).toLowerCase()] ?? 'application/octet-stream',
+    'cache-control': 'no-store'
+  })
+  createReadStream(file).pipe(res)
+})
+
+const listen = (): Promise<number> =>
+  new Promise((ok, fail) => {
+    server.once('error', fail)
+    server.listen(pinnedPort, '127.0.0.1', () => {
+      const address = server.address()
+      if (address === null || typeof address === 'string') {
+        fail(new Error('static server bound to a non-TCP address'))
+        return
+      }
+      ok(address.port)
+    })
+  })
+
+/* ------------------------------------------------------------------ *
+ * Chrome
+ * ------------------------------------------------------------------ */
+/** Newest-first, so a cache holding several builds picks the current one. */
+const playwrightShells = (): string[] => {
+  const cache = join(homedir(), 'Library/Caches/ms-playwright')
+  const linux = join(homedir(), '.cache/ms-playwright')
+  const roots = [cache, linux].filter(d => existsSync(d))
+  const found: string[] = []
+  for (const root of roots) {
+    const dirs = readdirSync(root)
+      .filter(d => d.startsWith('chromium_headless_shell-') || d.startsWith('chromium-'))
+      .sort((a, b) => Number(b.split('-')[1]) - Number(a.split('-')[1]))
+    for (const d of dirs) {
+      found.push(
+        join(root, d, 'chrome-headless-shell-mac-arm64/chrome-headless-shell'),
+        join(root, d, 'chrome-headless-shell-linux/chrome-headless-shell'),
+        join(root, d, 'chrome-mac/Chromium.app/Contents/MacOS/Chromium'),
+        join(root, d, 'chrome-linux/chrome')
+      )
+    }
+  }
+  return found
+}
+
+const chromeCandidates = (): string[] =>
+  [
+    process.env.CHROME_PATH,
+    ...playwrightShells(),
+    '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+    '/Applications/Chromium.app/Contents/MacOS/Chromium',
+    '/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge',
+    '/usr/bin/google-chrome',
+    '/usr/bin/chromium',
+    '/usr/bin/chromium-browser'
+  ].filter((p): p is string => typeof p === 'string' && p.length > 0)
+
+const findChrome = (): string => {
+  const tried = chromeCandidates()
+  const hit = tried.find(p => existsSync(p))
+  if (hit === undefined) {
+    console.error(
+      'No headless Chrome found. Set $CHROME_PATH to a Chrome/Chromium binary.\nTried:\n'
+      + tried.map(p => `  ${p}`).join('\n')
+    )
+    process.exit(1)
+  }
+  return hit
+}
+
+const launchChrome = async (executable: string): Promise<{ child: ChildProcess, wsUrl: string, profile: string }> => {
+  const profile = await mkdtemp(join(tmpdir(), 'bf-routes-chrome-'))
+  const headlessShell = /headless-shell/.test(executable)
+  const args = [
+    ...(headlessShell ? [] : ['--headless=new']),
+    '--remote-debugging-port=0',
+    `--user-data-dir=${profile}`,
+    '--window-size=1280,1024',
+    '--disable-gpu',
+    '--no-sandbox',
+    '--no-first-run',
+    '--no-default-browser-check',
+    '--disable-extensions',
+    '--disable-background-networking',
+    '--disable-sync',
+    '--disable-default-apps',
+    '--hide-scrollbars',
+    '--mute-audio',
+    'about:blank'
+  ]
+
+  const child = spawn(executable, args, { stdio: ['ignore', 'ignore', 'pipe'] })
+
+  const wsUrl = await new Promise<string>((ok, fail) => {
+    let buffer = ''
+    const timer = setTimeout(() => fail(new Error(`Chrome did not report a DevTools endpoint within 20s.\n${buffer.slice(-500)}`)), 20_000)
+    child.stderr?.setEncoding('utf8')
+    child.stderr?.on('data', (chunk: string) => {
+      buffer += chunk
+      const match = buffer.match(/DevTools listening on (ws:\/\/\S+)/)
+      if (match) {
+        clearTimeout(timer)
+        ok(match[1]!)
+      }
+    })
+    child.once('error', err => { clearTimeout(timer); fail(err) })
+    child.once('exit', code => { clearTimeout(timer); fail(new Error(`Chrome exited with code ${code} before listening.\n${buffer.slice(-500)}`)) })
+  })
+
+  return { child, wsUrl, profile }
+}
+
+/* ------------------------------------------------------------------ *
+ * Minimal CDP client (Node 24 ships a global WebSocket)
+ * ------------------------------------------------------------------ */
+type Pending = { ok: (value: unknown) => void, fail: (reason: Error) => void }
+
+/** A CDP `RemoteObject`, in the one shape a console argument can arrive as. */
+type RemoteObject = { value?: unknown, description?: string, unserializableValue?: string, type?: string }
+
+/**
+ * One `console.error(...)` call, flattened to a line.
+ *
+ * Deliberately lossy: primitives print as themselves, objects as the
+ * `description` Chrome already computed (`Error: …`, `TypeError: …`), and
+ * anything else as its type name. Deep-previewing an argument would need
+ * `Runtime.getProperties` round-trips per object, and a gate whose failure
+ * message needs three more protocol calls is a gate that fails while the
+ * browser is dying.
+ */
+const describeConsoleArgs = (args: RemoteObject[]): string =>
+  args
+    .map(a =>
+      a.value !== undefined
+        ? String(a.value)
+        : a.description ?? a.unserializableValue ?? `<${a.type ?? 'unknown'}>`
+    )
+    .join(' ')
+    .trim()
+
+class Cdp {
+  private readonly socket: WebSocket
+  private nextId = 1
+  private readonly pending = new Map<number, Pending>()
+
+  /**
+   * Page-level exceptions, so a route that dies on load says why. Cleared
+   * between routes — a note quoting the *previous* page's exception is worse
+   * than no note at all.
+   */
+  exceptions: string[] = []
+
+  /**
+   * Console-level errors from the page under test (gh#200). Cleared between
+   * pages for the same reason `exceptions` is.
+   *
+   * Deduplicated on the way in. Vue logs its hydration message once, but a
+   * broken image in a 256-row list logs 256 identical lines, and a failure
+   * report that is 256 copies of one sentence hides the second, different one.
+   */
+  consoleErrors: string[] = []
+
+  /**
+   * The page currently under test.
+   *
+   * Events carry the session they came from; without this the client would
+   * attribute anything a *closing* target still flushes to whichever page is
+   * opened next. `undefined` means "listening to nothing", which is the honest
+   * state between pages.
+   */
+  watching: string | undefined
+
+  private note(text: string): void {
+    const clean = text.trim()
+    if (clean === '') return
+    if (ignoreConsole?.test(clean)) return
+    if (!this.consoleErrors.includes(clean)) this.consoleErrors.push(clean)
+  }
+
+  private constructor(socket: WebSocket) {
+    this.socket = socket
+    this.socket.addEventListener('message', event => {
+      const message = JSON.parse(String((event as MessageEvent).data)) as {
+        id?: number
+        result?: unknown
+        error?: { message: string }
+        method?: string
+        sessionId?: string
+        params?: Record<string, unknown>
+      }
+      if (typeof message.id === 'number') {
+        const waiter = this.pending.get(message.id)
+        this.pending.delete(message.id)
+        if (!waiter) return
+        if (message.error) waiter.fail(new Error(message.error.message))
+        else waiter.ok(message.result)
+        return
+      }
+      /* Only the page under test speaks; see `watching`. */
+      if (this.watching !== undefined && message.sessionId !== this.watching) return
+
+      if (message.method === 'Runtime.exceptionThrown') {
+        const details = (message.params?.exceptionDetails ?? {}) as { text?: string, exception?: { description?: string } }
+        this.exceptions.push(details.exception?.description ?? details.text ?? 'unknown exception')
+        return
+      }
+
+      /* What the page says — Vue's hydration message arrives here (gh#200). */
+      if (message.method === 'Runtime.consoleAPICalled') {
+        const params = (message.params ?? {}) as { type?: string, args?: RemoteObject[] }
+        if (params.type === 'error' || params.type === 'assert') {
+          this.note(describeConsoleArgs(params.args ?? []))
+        }
+        return
+      }
+
+      /*
+       * What the *browser* says — a 404 on a `/_nuxt/*.js` chunk, a blocked
+       * subresource, a CSP violation. The page never hears about any of them,
+       * so `Runtime.consoleAPICalled` alone would report a build with a missing
+       * entry chunk as perfectly quiet.
+       */
+      if (message.method === 'Log.entryAdded') {
+        const entry = ((message.params ?? {}).entry ?? {}) as { level?: string, text?: string, url?: string }
+        if (entry.level === 'error') {
+          this.note(`${entry.text ?? 'unknown log entry'}${entry.url === undefined ? '' : ` — ${entry.url}`}`)
+        }
+      }
+    })
+  }
+
+  static connect(url: string): Promise<Cdp> {
+    return new Promise((ok, fail) => {
+      const socket = new WebSocket(url)
+      socket.addEventListener('open', () => ok(new Cdp(socket)))
+      socket.addEventListener('error', () => fail(new Error(`could not open a CDP socket at ${url}`)))
+    })
+  }
+
+  /**
+   * Every call is bounded. Without this a Chrome that dies mid-run leaves the
+   * promise pending forever and the harness hangs instead of failing — the one
+   * outcome a verification script must never have.
+   */
+  send<T = Record<string, unknown>>(method: string, params: Record<string, unknown> = {}, sessionId?: string): Promise<T> {
+    const id = this.nextId++
+    const frame: Record<string, unknown> = { id, method, params }
+    if (sessionId) frame.sessionId = sessionId
+    return new Promise<T>((ok, fail) => {
+      const timer = setTimeout(() => {
+        this.pending.delete(id)
+        fail(new Error(`${method} did not answer within 30s — the browser is probably gone`))
+      }, 30_000)
+      this.pending.set(id, {
+        ok: value => { clearTimeout(timer); (ok as (v: unknown) => void)(value) },
+        fail: reason => { clearTimeout(timer); fail(reason) }
+      })
+      this.socket.send(JSON.stringify(frame))
+    })
+  }
+
+  close(): void {
+    this.socket.close()
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * The page-side reader
+ * ------------------------------------------------------------------ */
+/**
+ * Has this route hydrated, and what does its DOM say?
+ *
+ * `readyState` alone is not enough and `__vue_app__` alone is not enough. Vue
+ * sets `__vue_app__` on the mount container the moment the root `hydrate()`
+ * call returns, and a prerendered page whose entry chunk 404s never gets that
+ * far — it just sits there as static HTML, looking perfect and saying nothing,
+ * which is precisely how it would pass a console-only check.
+ *
+ * The heading count and the link inventory are read in the same round trip:
+ * they are questions about the *hydrated* DOM, and a second `Runtime.evaluate`
+ * would only widen the window in which the page could change underneath them.
+ */
+const READ_PAGE = `(() => {
+  const root = document.getElementById('__nuxt')
+  const hydrated = document.readyState === 'complete' && !!(root && root.__vue_app__)
+  const h1s = Array.from(document.querySelectorAll('h1')).map(el => (el.textContent || '').trim().slice(0, 80))
+  const anchors = Array.from(document.querySelectorAll('a[href]'))
+  return {
+    hydrated,
+    h1s,
+    /*
+      Absolute hrefs, so a relative link resolves the same way the browser
+      would. \`href\` on an <a> element is already the resolved URL; the literal
+      attribute is read separately because that is what a placeholder looks like
+      in the source and what a reviewer would grep for.
+    */
+    links: anchors.map(a => {
+      const href = a.getAttribute('href') || ''
+      const id = href.startsWith('#') ? href.slice(1) : ''
+      return {
+        href,
+        resolved: a.href,
+        /*
+          Does this fragment name something on the page? A real in-page anchor
+          (\`#board\`, \`#team\`, a program hub's \`#projects\`) resolves to an
+          element; a placeholder standing in for a URL nobody has supplied yet
+          resolves to nothing. Asked here rather than in Node because only the
+          hydrated document can answer it.
+        */
+        fragmentResolves: id !== '' && !!document.getElementById(id)
+      }
+    }),
+    width: window.innerWidth
+  }
+})()`
+
+type PageLink = { href: string, resolved: string, fragmentResolves: boolean }
+type PageRead = { hydrated: boolean, h1s: string[], links: PageLink[], width: number }
+
+const sleep = (ms: number) => new Promise(ok => setTimeout(ok, ms))
+
+/* ------------------------------------------------------------------ *
+ * The `/_ipx/` gate (gh#203) — see the header section of the same name
+ * ------------------------------------------------------------------ */
+/**
+ * Every `/_ipx/…` URL a page references, from `src` and from `srcset` alike.
+ *
+ * `srcset` is not optional here: `NuxtImg` emits the same URL twice, once as
+ * `src` and once inside `srcset="… 1x, … 2x"`, and a check that read only
+ * `src` would go green on a page whose `srcset` still pointed at a dead
+ * endpoint. Descriptors (` 1x`, ` 640w`) and the commas between candidates are
+ * stripped by the character class, which stops at the first space, quote or
+ * comma.
+ */
+const IPX_REFERENCES = /\/_ipx\/[^"'\s,)]+/g
+
+/**
+ * `route` → the file `resolveFile` would serve for it, read as text.
+ * `undefined` when there is no such file, which the caller reports as its own
+ * distinct failure rather than as a silent pass.
+ */
+const prerenderedHtml = (route: string): string | undefined => {
+  const file = resolveFile(route)
+  return file === undefined ? undefined : readFileSync(file, 'utf8')
+}
+
+/** The `/_ipx/` URLs in `html` that no file in `.output/public` answers. */
+const danglingIpx = (html: string): string[] => {
+  const seen = new Set<string>()
+  for (const url of html.match(IPX_REFERENCES) ?? []) {
+    if (resolveFile(url) === undefined) seen.add(url)
+  }
+  return [...seen]
+}
+
+/* ------------------------------------------------------------------ *
+ * Placeholder anchors — reported, never failed
+ * ------------------------------------------------------------------ */
+/**
+ * Fragments that are real markup rather than an unfinished link.
+ *
+ * `#main` is `bfSkipLink`'s target — excluded by name because the skip link is
+ * rendered before `<main>` exists in some client-render orders. A bare `#` is
+ * what `bfNav`'s disclosure triggers carry: they are buttons in behaviour and
+ * their `href` is never followed. Every other fragment is judged by whether it
+ * names an element on the page (`links[].fragmentResolves`), so a working
+ * in-page anchor like `/about#board` is not reported and a placeholder is.
+ * Today that leaves `#podcast-platform-url`, `#transponder-magazine-url` and
+ * `#bluesky-profile-url` (#160, #82 — waiting on the client).
+ */
+const REAL_FRAGMENTS = new Set(['#main', '#'])
+
+const placeholderHrefs = (links: PageLink[]): string[] => {
+  const seen = new Set<string>()
+  for (const { href, fragmentResolves } of links) {
+    if (!href.startsWith('#')) continue
+    if (REAL_FRAGMENTS.has(href)) continue
+    /* A fragment that names a real element is a working in-page link, not an
+       unfinished one — `/about#board`, a program hub's `#projects`. */
+    if (fragmentResolves) continue
+    seen.add(href)
+  }
+  return [...seen].sort()
+}
+
+/* ------------------------------------------------------------------ *
+ * The cascade-layer gate (residual #98 / gh#101, re-homed here in gh#68)
+ * ------------------------------------------------------------------ */
+/**
+ * CSS with string and comment contents masked out, so a brace inside either
+ * cannot be mistaken for structure. Length is preserved, so every offset a
+ * regex finds in the masked text is valid in the original.
+ */
+const maskLiterals = (raw: string): string => {
+  let out = ''
+  let i = 0
+  while (i < raw.length) {
+    const ch = raw[i]!
+    if (ch === '"' || ch === "'") {
+      out += ch
+      i += 1
+      while (i < raw.length && raw[i] !== ch) {
+        if (raw[i] === '\\' && i + 1 < raw.length) { out += 'xx'; i += 2; continue }
+        out += 'x'
+        i += 1
+      }
+      if (i < raw.length) { out += ch; i += 1 }
+      continue
+    }
+    if (ch === '/' && raw[i + 1] === '*') {
+      const end = raw.indexOf('*/', i + 2)
+      const stop = end === -1 ? raw.length : end + 2
+      out += '/*' + 'x'.repeat(Math.max(0, stop - i - 4)) + (end === -1 ? '' : '*/')
+      i = stop
+      continue
+    }
+    out += ch
+    i += 1
+  }
+  return out
+}
+
+/** The concatenated bodies of every `@layer components { … }` block in `raw`. */
+const layerComponentsBody = (raw: string): string => {
+  const css = maskLiterals(raw)
+  const opener = /@layer\s+components\s*\{/g
+  const bodies: string[] = []
+  let match: RegExpExecArray | null
+  while ((match = opener.exec(css)) !== null) {
+    let depth = 1
+    let i = match.index + match[0].length
+    const start = i
+    while (i < css.length && depth > 0) {
+      if (css[i] === '{') depth += 1
+      else if (css[i] === '}') depth -= 1
+      i += 1
+    }
+    bodies.push(raw.slice(start, depth === 0 ? i - 1 : css.length))
+  }
+  return bodies.join('\n')
+}
+
+/** A `bf-*` component class, with the letter→hyphen boundary respected. */
+const BF_RULE = /\.bf-[a-z][\w-]*/
+
+type Row = { label: string, ok: boolean, detail: string }
+
+/**
+ * Every compiled stylesheet carrying a `bf-*` rule keeps it inside
+ * `@layer components`. See the header section for why this matters.
+ */
+const cascadeLayerRows = (): Row[] => {
+  if (!existsSync(builtCssDir)) {
+    return [{
+      label: 'compiled stylesheets present',
+      ok: false,
+      detail: `expected ${builtCssDir} · actual missing`
+    }]
+  }
+
+  const sheets = readdirSync(builtCssDir)
+    .filter(f => f.endsWith('.css'))
+    .map(f => ({ name: f, css: readFileSync(join(builtCssDir, f), 'utf8') }))
+    .filter(s => BF_RULE.test(s.css))
+
+  if (sheets.length === 0) {
+    return [{
+      label: 'a compiled stylesheet carries bf-* component rules',
+      ok: false,
+      detail: 'expected >= 1 · actual 0 — has the component CSS stopped being emitted?'
+    }]
+  }
+
+  const unlayered = sheets.filter(s => !BF_RULE.test(layerComponentsBody(s.css)))
+
+  return [
+    {
+      label: `a compiled stylesheet carries bf-* component rules (${sheets.length} do)`,
+      ok: true,
+      detail: `expected >= 1 · actual ${sheets.length}`
+    },
+    {
+      label: 'every bf-* rule sits inside @layer components (postcss cascade-layers polyfill is off)',
+      ok: unlayered.length === 0,
+      detail: unlayered.length === 0
+        ? `expected 0 unlayered · actual 0`
+        : `expected 0 unlayered · actual ${unlayered.length}: ${unlayered.slice(0, 3).map(s => s.name).join(', ')}`
+          + " — re-enabling postcss-preset-env's cascade-layers polyfill flattens the wrapper,"
+          + ' and unlayered CSS outranks every layer (residual #98 / gh#101)'
+    }
+  ]
+}
+
+/* ------------------------------------------------------------------ *
+ * DoD-3 — every §7 route reachable from the menus
+ * ------------------------------------------------------------------ */
+/**
+ * The reachability gate, evaluated once against the links `/` actually rendered
+ * (`bfNav` + `bfFooter`, both fed the same `menus.json` by `bf-default`).
+ *
+ * A detail route is satisfied by its **list** page being in the menus rather
+ * than by the detail URL appearing there: `/insights/:slug` is reached from
+ * `/insights`, which is how a detail route is meant to be reached, and a menu
+ * naming 371 slugs would not be a menu. The list pages themselves are opened
+ * by this same run, so "reachable from the list" is not taken on trust — a
+ * grid that rendered no cards would fail the list route's own h1/console rows
+ * and, one layer up, the redirect-target check in
+ * `verify-legacy-redirects.ts --targets`.
+ */
+const NAV_REQUIRED = (): string[] => [
+  '/',
+  ...collectionSlugs('programs').map(slug => `/${slug}`),
+  '/insights',
+  '/projects',
+  '/about',
+  '/search',
+  '/archive'
+]
+
+const reachabilityRows = (homeLinks: PageLink[]): Row[] => {
+  /* Path only: `/insights?format=video` links `/insights`, and a fragment
+     (`/about#board`) links `/about`. */
+  const reached = new Set<string>()
+  for (const { resolved } of homeLinks) {
+    try {
+      const url = new URL(resolved)
+      if (url.origin !== new URL(homeLinks[0]?.resolved ?? 'http://127.0.0.1').origin) continue
+      reached.add(url.pathname.replace(/(.)\/$/, '$1'))
+    } catch {
+      /* a mailto:, tel: or malformed href is not a site route */
+    }
+  }
+
+  return NAV_REQUIRED().map(route => ({
+    label: `DoD-3 — ${route} is linked from bfNav or bfFooter`,
+    ok: reached.has(route),
+    detail: reached.has(route)
+      ? 'expected a link on / · actual present'
+      : 'expected a link on / · actual absent — the route is an orphan'
+  }))
+}
+
+/* ------------------------------------------------------------------ *
+ * Run
+ * ------------------------------------------------------------------ */
+type Result = { slug: string, rows: Row[], failing: Row[], note?: string }
+
+const results: Result[] = []
+const placeholders = new Map<string, string[]>()
+let chrome: { child: ChildProcess, wsUrl: string, profile: string } | undefined
+let cdp: Cdp | undefined
+
+/**
+ * How long to keep listening after a route reports hydration.
+ *
+ * Vue logs `Hydration completed but contains mismatches.` from
+ * `logMismatchError()` at the moment the mismatching node is hydrated — and
+ * this app's root is an async `<Suspense>` (the `bf-default` layout `await`s
+ * `useBfSite()`), so `hydrate()` returns, `__vue_app__` is assigned, and the
+ * layout's own subtree hydrates *after* that. Breaking out of the poll the
+ * instant `__vue_app__` appears would therefore stop listening one tick before
+ * the message this gate exists to catch.
+ *
+ * Deliberately generous. The failure mode of a value that is too small is a
+ * silent false green, which is the one outcome a gate must not have.
+ */
+const SETTLE_MS = 1_500
+
+/*
+ * Wrapped in a function rather than run at the top level: `package.json` has no
+ * `"type": "module"`, so `tsx` transforms these scripts to CJS and top-level
+ * `await` is a build error.
+ */
+const run = async (): Promise<void> => {
+  try {
+    const port = await listen()
+    const origin = `http://127.0.0.1:${port}`
+    const executable = findChrome()
+    chrome = await launchChrome(executable)
+    cdp = await Cdp.connect(chrome.wsUrl)
+
+    console.log(`check-routes — ${routes.length} route${routes.length === 1 ? '' : 's'} from ${publicDir}`)
+    console.log(`  server  ${origin}`)
+    console.log(`  chrome  ${executable}`)
+    console.log(`  viewport ${viewport.width}x${viewport.height}\n`)
+
+    let homeLinks: PageLink[] | undefined
+
+    for (const route of routes) {
+      const url = `${origin}${route}`
+      const { targetId } = await cdp.send<{ targetId: string }>('Target.createTarget', { url: 'about:blank' })
+      const { sessionId } = await cdp.send<{ sessionId: string }>('Target.attachToTarget', { targetId, flatten: true })
+
+      let page: PageRead | undefined
+      let note: string | undefined
+
+      try {
+        cdp.exceptions = []
+        cdp.consoleErrors = []
+        cdp.watching = sessionId
+        await cdp.send('Runtime.enable', {}, sessionId)
+        await cdp.send('Log.enable', {}, sessionId)
+        await cdp.send('Page.enable', {}, sessionId)
+        await cdp.send(
+          'Emulation.setDeviceMetricsOverride',
+          { width: viewport.width, height: viewport.height, deviceScaleFactor: 1, mobile: false },
+          sessionId
+        )
+        await cdp.send('Page.navigate', { url }, sessionId)
+
+        const deadline = Date.now() + timeoutMs
+        while (Date.now() < deadline) {
+          await sleep(150)
+          try {
+            const evaluated = await cdp.send<{ result: { value?: PageRead } }>(
+              'Runtime.evaluate',
+              { expression: READ_PAGE, returnByValue: true },
+              sessionId
+            )
+            if (evaluated.result?.value?.hydrated === true) {
+              page = evaluated.result.value
+              break
+            }
+          } catch {
+            /* navigation swaps the execution context; keep polling */
+          }
+        }
+
+        if (page === undefined) {
+          note = `never hydrated within ${timeoutMs}ms`
+            + (cdp.exceptions.length > 0 ? ` — page exception: ${cdp.exceptions[cdp.exceptions.length - 1]}` : '')
+        } else {
+          /* Keep listening past the mount — see SETTLE_MS — then re-read, so
+             anything the settled DOM changed is what gets asserted. */
+          await sleep(SETTLE_MS)
+          try {
+            const settled = await cdp.send<{ result: { value?: PageRead } }>(
+              'Runtime.evaluate',
+              { expression: READ_PAGE, returnByValue: true },
+              sessionId
+            )
+            if (settled.result?.value) page = settled.result.value
+          } catch {
+            /* keep the pre-settle read; it is still a hydrated one */
+          }
+        }
+      } finally {
+        await cdp.send('Target.closeTarget', { targetId }).catch(() => {})
+        /* After the close, so anything the dying target flushes still counts. */
+        cdp.watching = undefined
+      }
+
+      const rows: Row[] = [{
+        label: 'hydrated',
+        ok: page !== undefined,
+        detail: page !== undefined
+          ? 'expected #__nuxt.__vue_app__ · actual present'
+          : 'expected #__nuxt.__vue_app__ · actual absent'
+      }]
+
+      if (page !== undefined) {
+        if (route === '/') homeLinks = page.links
+
+        rows.push({
+          label: 'exactly one <h1>',
+          ok: page.h1s.length === 1,
+          detail: `expected 1 · actual ${page.h1s.length}`
+            + (page.h1s.length === 0 ? '' : ` — ${page.h1s.map(t => JSON.stringify(t)).join(', ')}`)
+        })
+
+        if (!page.width) {
+          /* A zero-width layout viewport collapses the nav and would fail
+             reachability on a build that is fine. Say so rather than blaming
+             the page. */
+          note = `the page reported a ${page.width}px viewport — check --viewport`
+        }
+
+        const found = placeholderHrefs(page.links)
+        if (found.length > 0) placeholders.set(route, found)
+      }
+
+      /*
+       * The `/_ipx/` gate (gh#203) — on the generated HTML, not the DOM.
+       * Placed before the console rows so a route that is broken in both ways
+       * reports the cause above the symptom.
+       */
+      const html = prerenderedHtml(route)
+      if (html === undefined) {
+        rows.push({
+          label: 'every /_ipx/ URL in the generated HTML has a file behind it',
+          ok: false,
+          detail: `expected a prerendered file for ${route} · actual none under .output/public`
+        })
+      } else {
+        const dangling = danglingIpx(html)
+        rows.push({
+          label: 'every /_ipx/ URL in the generated HTML has a file behind it',
+          ok: dangling.length === 0,
+          detail: dangling.length === 0
+            ? 'expected 0 dangling · actual 0'
+            : `expected 0 dangling · actual ${dangling.length}: ${dangling.slice(0, 3).join(' , ')}`
+              + ' — ipx is a server and this deploy is static, so these return the SPA fallback'
+              + ' as 200 text/plain; render absolute URLs as a plain <img> (gh#203)'
+        })
+      }
+
+      if (cdp.consoleErrors.length === 0) {
+        rows.push({ label: 'console clean', ok: true, detail: 'no error-level console output' })
+      } else {
+        for (const text of cdp.consoleErrors) {
+          rows.push({ label: 'console error', ok: false, detail: text })
+        }
+      }
+
+      const failing = rows.filter(r => !r.ok)
+      const ok = failing.length === 0 && note === undefined
+
+      results.push({ slug: route, rows, failing, note })
+
+      const headline = `${ok ? 'PASS' : 'FAIL'}  ${route.padEnd(44)} ${rows.length - failing.length}/${rows.length} rows`
+      console.log(ok ? `  ✓ ${headline}` : `  ✗ ${headline}`)
+      if (note) console.log(`      ${note}`)
+      for (const row of failing) console.log(`      ✗ ${row.label} — ${row.detail}`)
+      if (verbose) for (const row of rows.filter(r => r.ok)) console.log(`      · ${row.label}`)
+    }
+
+    /* ---------------------------------------------------------------- *
+     * The two whole-build gates
+     * ---------------------------------------------------------------- */
+    if (only === undefined) {
+      console.log('\nbuild gates\n')
+
+      const layerRows = cascadeLayerRows()
+      const layerFailing = layerRows.filter(r => !r.ok)
+      results.push({ slug: 'cascade layers', rows: layerRows, failing: layerFailing })
+      console.log(
+        `${layerFailing.length === 0 ? '  ✓ PASS' : '  ✗ FAIL'}  `
+        + `${'cascade layers'.padEnd(44)} ${layerRows.length - layerFailing.length}/${layerRows.length} rows`
+      )
+      for (const row of layerFailing) console.log(`      ✗ ${row.label} — ${row.detail}`)
+      if (verbose) for (const row of layerRows.filter(r => r.ok)) console.log(`      · ${row.label}`)
+
+      const navRows = homeLinks === undefined
+        ? [{ label: 'DoD-3 — the home page rendered', ok: false, detail: 'expected / to hydrate · actual it did not, so reachability cannot be judged' }]
+        : reachabilityRows(homeLinks)
+      const navFailing = navRows.filter(r => !r.ok)
+      results.push({ slug: 'nav reachability (DoD-3)', rows: navRows, failing: navFailing })
+      console.log(
+        `${navFailing.length === 0 ? '  ✓ PASS' : '  ✗ FAIL'}  `
+        + `${'nav reachability (DoD-3)'.padEnd(44)} ${navRows.length - navFailing.length}/${navRows.length} rows`
+      )
+      for (const row of navFailing) console.log(`      ✗ ${row.label} — ${row.detail}`)
+      if (verbose) for (const row of navRows.filter(r => r.ok)) console.log(`      · ${row.label}`)
+    }
+  } catch (error) {
+    console.error(`\ncheck-routes could not run: ${(error as Error).message}`)
+    process.exitCode = 1
+  } finally {
+    cdp?.close()
+    chrome?.child.kill('SIGKILL')
+    if (chrome) await rm(chrome.profile, { recursive: true, force: true }).catch(() => {})
+    await new Promise<void>(ok => server.close(() => ok()))
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Report
+ * ------------------------------------------------------------------ */
+const report = (): void => {
+  if (process.exitCode === 1) process.exit(1)
+
+  /*
+   * Placeholder anchors, listed before the verdict and outside it. They are
+   * #160 / #82 — real URLs the client still owes — and this harness's job is to
+   * make sure nobody forgets them, not to block a merge on somebody else's
+   * decision.
+   */
+  if (placeholders.size > 0) {
+    const distinct = new Set([...placeholders.values()].flat())
+    console.log(`\nplaceholder hrefs — ${distinct.size} distinct, on ${placeholders.size} route(s). NOT a failure (#160, #82 — waiting on the client):`)
+    for (const [route, hrefs] of [...placeholders].sort()) {
+      console.log(`  ${route}  ${hrefs.join('  ')}`)
+    }
+  }
+
+  const broken = results.filter(r => r.failing.length > 0 || r.note !== undefined || r.rows.length === 0)
+  const total = results.length
+
+  if (broken.length === 0) {
+    console.log(`\nPASS — ${total} check group${total === 1 ? '' : 's'}, ${results.reduce((n, r) => n + r.rows.length, 0)} rows, 0 failures`)
+    process.exit(0)
+  }
+
+  console.error(`\nFAIL — ${broken.length} of ${total} check group${total === 1 ? '' : 's'} failed:`)
+  for (const r of broken) {
+    console.error(`  ${r.slug}${r.note ? ` — ${r.note}` : ''}`)
+    for (const row of r.failing) console.error(`    row: ${row.label} — ${row.detail}`)
+  }
+  process.exit(1)
+}
+
+void run().then(report)

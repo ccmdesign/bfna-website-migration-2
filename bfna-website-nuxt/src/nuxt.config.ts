@@ -27,35 +27,83 @@ try {
 }
 
 /**
- * Every `/bf-probe/*` route, enumerated from disk (gh#28).
+ * The document stems of one `content/bf/*` collection, e.g. `insights`.
  *
- * Probes are never linked from anywhere — that is the point of them — so they
- * reach the prerenderer only through Nuxt's `prerender.server` plugin, which
- * hands the static route list to Nitro **ten at a time**, one batch per
- * successfully rendered page. A batch spliced during a render that ends in a
- * 500 is dropped with that response, and when this was written the app had
- * three pre-existing 500s during prerender (`/`, `/podcasts`, `/podcasts/` —
- * the last two retired with the legacy stack in gh#67). Which routes land in
- * the lost batches is a function of list order, so adding a page can silently
- * push an unrelated one out of the build — exactly what happened to
- * `/bf-probe/19-bf-skip-link`, whose HTML never reached `.output/public` while
- * probes 03–18 did.
+ * The stem **is** the route slug: `scripts/normalise-wireframe-data.ts` writes
+ * each document as `<slug>.json`, and `pages/insights/[slug].vue` /
+ * `pages/projects/[slug].vue` resolve `params.slug` against the same field.
+ * Reading the directory rather than parsing every file keeps this synchronous —
+ * a Nuxt config is evaluated before anything async is available — and it is the
+ * same source `scripts/generate-legacy-redirects.ts` builds the redirect map
+ * from, which is precisely why the two used to disagree (see below).
  *
- * Seeding them explicitly makes the probe suite independent of that ordering.
- * Read from the directory rather than listed by hand so a probe added by a
- * later issue is picked up with no edit here — the same rule
- * `scripts/check-probes.ts` follows when it enumerates what to check.
+ * A missing directory yields `[]` rather than throwing: a checkout without the
+ * generated content should still be able to load a config.
  */
-const probeRoutes: string[] = (() => {
+const collectionSlugs = (collection: string): string[] => {
   try {
-    return readdirSync(resolve(currentDir, 'pages/bf-probe'), { withFileTypes: true })
-      .filter(entry => entry.isFile() && entry.name.endsWith('.vue'))
-      .map(entry => `/bf-probe/${entry.name.replace(/\.vue$/, '')}`)
+    return readdirSync(resolve(projectRoot, 'content/bf', collection), { withFileTypes: true })
+      .filter(entry => entry.isFile() && entry.name.endsWith('.json'))
+      .map(entry => entry.name.replace(/\.json$/, ''))
       .sort()
   } catch {
     return []
   }
-})()
+}
+
+/**
+ * Every route BRIEF §7 promises, seeded explicitly rather than discovered by
+ * the crawler (gh#68, residuals #194 and #210).
+ *
+ * `crawlLinks` is still on and still does most of the work, but it can only
+ * reach a detail page that some other page links to — and a document that
+ * appears in no grid, no featured band and no related list is linked from
+ * nowhere. Three separate defects came out of that one gap:
+ *
+ * - **#194** — `/projects/wisdom-of-the-crowd` (external, not grid-eligible,
+ *   not featured, not in the nav) and `/projects/cepi-2011` (archived child of
+ *   an orphaned parent) answered correctly in dev and were simply absent from
+ *   `.output/public`, i.e. 404 on a static host.
+ * - **#210** — 51 of the 433 rows in the generated `public/_redirects` pointed
+ *   at a target with no file behind it, so a legacy URL answered `301` and the
+ *   destination then answered `404`. `generate-legacy-redirects.ts` builds the
+ *   map from `content/bf/**` on disk, which knows nothing about what got
+ *   crawled; seeding from the *same* source is what makes the two agree by
+ *   construction. `scripts/verify-legacy-redirects.ts --targets` asserts it.
+ * - the ordering fragility the retired `probeRoutes` block documented: Nitro
+ *   hands the seeded list to the crawler ten at a time, one batch per
+ *   successfully rendered page, so a batch spliced during a failing render is
+ *   dropped with that response. There are no failing renders left (#114 went
+ *   with the legacy pages in gh#67), and the `--targets` check is the standing
+ *   assertion that this stays true.
+ *
+ * Enumerated from the content, never hand-listed: the counts move whenever
+ * curation flags change, and a hand-written list of 371 slugs is a list that is
+ * wrong by the next content import.
+ *
+ * `/wireframes` is **kept** (D2 — the frozen prototype must still crawl), and
+ * its six static pages are seeded for the same robustness reason. The
+ * `/wireframes/{area}` hubs and the `wf-*` detail routes stay on the crawler,
+ * exactly as before: the prototype links the subset it means to show, and this
+ * config may not reach into that layer to decide otherwise.
+ */
+const prerenderRoutes: string[] = [
+  '/',
+  '/about',
+  '/archive',
+  '/insights',
+  '/projects',
+  '/search',
+  ...collectionSlugs('programs').map(slug => `/${slug}`),
+  ...collectionSlugs('insights').map(slug => `/insights/${slug}`),
+  ...collectionSlugs('projects').map(slug => `/projects/${slug}`),
+  '/wireframes',
+  '/wireframes/about',
+  '/wireframes/archive',
+  '/wireframes/insights',
+  '/wireframes/projects',
+  '/wireframes/search'
+]
 
 export default defineNuxtConfig({
   rootDir: projectRoot,
@@ -107,14 +155,20 @@ export default defineNuxtConfig({
       script: [],
     }
   },
-  css: [
-    // New Nuxt CSS - COMMENTED OUT for Phase 3 to use legacy CSS only
-    // '~/public/css/styles.css',
-    // Legacy CSS loaded via layout instead of here to ensure proper loading order
-    // '~/public/css-legacy/global.css',
-    // '~/public/css-legacy/fixes.css',
-    // '~/public/css-legacy/v2updates.css'
-  ],
+  /*
+   * Deliberately empty, and it is load-bearing that it stays that way.
+   *
+   * `layouts/bf-default.vue` is the only stylesheet injector at `/` — it links
+   * `/css/styles.css` and restates the `@layer` order ahead of it (residual
+   * #103). An entry here would inject the CUBE stack a second time, ahead of
+   * that statement, for every route including the frozen `wf-*` prototype.
+   *
+   * The three commented `css-legacy/*` entries that used to sit here went with
+   * `layouts/legacy-base.vue` in gh#67; the dead `/global.css`, `/fixes.css`
+   * and `/v2updates.css` copies under `public/` went with them in gh#68. The
+   * originals remain at `src/public/css-legacy/`, unserved, as reference.
+   */
+  css: [],
   postcss: {
     plugins: {
       'postcss-import': {},
@@ -138,7 +192,10 @@ export default defineNuxtConfig({
            * through Vite/PostCSS, so this changes nothing there — the
            * wireframe stylesheet included.
            *
-           * Guarded by `scripts/verify-bf-logo.ts` §7.
+           * Guarded by `scripts/check-routes.ts`, whose cascade-layer gate
+           * fails if any compiled stylesheet loses its `@layer components`
+           * wrapper. That guard was `scripts/verify-bf-logo.ts` §7 until
+           * gh#68, which retired the probe pages that script read.
            */
           'cascade-layers': false
         }
@@ -156,10 +213,9 @@ export default defineNuxtConfig({
   ssr: true,
   nitro: {
     prerender: {
-      // Wireframes aren't linked from the main site — seed them so the crawler finds them.
-      // Probes aren't linked from anywhere at all, and the batched hand-off that
-      // would otherwise carry them is lossy — see `probeRoutes` above.
-      routes: ['/wireframes', ...probeRoutes],
+      // Every BRIEF §7 route, enumerated from `content/bf/**` — see
+      // `prerenderRoutes` above for why the crawler alone is not enough.
+      routes: prerenderRoutes,
       failOnError: false
     }
   },

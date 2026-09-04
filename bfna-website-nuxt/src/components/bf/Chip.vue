@@ -145,10 +145,11 @@
  * Taken from the frozen rule rather than reinvented: the same `em`-relative
  * padding, a 1px border through `--border-width-thin`, and a fully rounded
  * end through `--radius-pill`, whose value is already the frozen rule's.
- * `scripts/verify-bf-chip.ts` parses those values back out of the frozen
- * stylesheet and the probe measures a real hidden wireframe chip against a
- * rendered `bf-chip`, so no number is typed twice and drift on either side
- * fails.
+ * `scripts/verify-bf-chip.ts` parsed those values back out of the frozen
+ * stylesheet and probe 16 measured a real hidden wireframe chip against a
+ * rendered `bf-chip`, so no number was typed twice. Both retired with the probe
+ * pages in gh#68 (BRIEF §5); the numbers below still come from the frozen rule
+ * and are not to be re-derived.
  *
  * Type is the existing Utopia step nearest the frozen size. The face is
  * **inherited**, not monospace: the mono face is the wireframe's lo-fi tell,
@@ -363,8 +364,10 @@ const onToggle = () => {
   gh#101: `postcss-preset-env`'s `stage: 1` enabled the cascade-layers
   polyfill, which rewrote each SFC stylesheet in isolation and flattened this
   wrapper into unlayered rules that then outranked every layer. The feature is
-  off in `nuxt.config.ts`; `scripts/verify-bf-chip.ts` §4 reads the emitted CSS
-  and the probe reads the live CSSOM, so a regression fails loudly.
+  off in `nuxt.config.ts`, and `scripts/check-routes.ts`'s cascade-layer gate
+  reads the emitted CSS, so a regression fails loudly. (That gate replaced
+  `verify-bf-chip.ts` §4 and probe 16's live-CSSOM read in gh#68, and covers
+  every `bf-*` rule rather than this one component's.)
 */
 @layer components {
   .bf-chip {

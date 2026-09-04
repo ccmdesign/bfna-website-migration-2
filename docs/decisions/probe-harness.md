@@ -290,3 +290,83 @@ false one about the probe.
 
 Enumerated from disk rather than listed by hand, so a probe added by a later
 issue is picked up with no edit there — the same rule `check-probes.ts` follows.
+
+---
+
+## Retirement — gh#68, the cutover issue
+
+**Status of everything above: superseded, kept as the record of why the harness
+was built and what it learned.** BRIEF §5 always said the final cutover issue
+deletes `src/pages/bf-probe/`; [gh#68](https://github.com/ccmdesign/bfna-website-migration-2/issues/68)
+is that issue. Probes are dev-only scaffolding and were never part of the
+shipped site.
+
+### What went
+
+- `src/pages/bf-probe/` — all 38 probe pages — and `src/layouts/bf-probe.vue`.
+- The four acceptance scripts that read a probe page and could not run without
+  one: `scripts/verify-bf-{button,card-insight,chip,logo}.ts`.
+- `probeRoutes` in `src/nuxt.config.ts`, and with it the prerender-seeding
+  section immediately above this one. The seeding *idea* survived and grew: the
+  config now seeds every BRIEF §7 route from `content/bf/**`, which is what
+  fixed residuals #194 and #210.
+- The DOM convention itself — `data-probe`, `data-probe-verdict`,
+  `data-probe-row`, `data-ok`, `data-probe-keys` — and the CDP key-dispatch
+  machinery that drove it. Nothing in the repo reads those attributes any more.
+
+Closing [#129](https://github.com/ccmdesign/bfna-website-migration-2/issues/129)
+came free: the probes' own sample links were being crawled into the build as
+thin pages (`/projects/the-transponder` and five insight slugs that exist in no
+collection). They are gone with the pages that linked them.
+
+### What survived, and why it had to
+
+`scripts/check-probes.ts` became **`scripts/check-routes.ts`** (`npm run
+check:routes`). The half of it that gh#200 added — the part that was never about
+probes — is the half that matters now:
+
+| Kept | Because |
+|---|---|
+| the static server over `.output/public` and the raw-CDP driver | Decision 2 above is unchanged: no new dependency, and `jsdom` has no layout engine |
+| the two-channel console gate | #199 was a hydration mismatch on the shared shell. A probe composes `bf-probe`, not `bf-default`, so **no probe could ever have caught it** — the gate's whole value was always on real routes |
+| the hydration assertion (`#__nuxt.__vue_app__`) | a prerendered page whose entry chunk 404s looks perfect and says nothing |
+| the `/_ipx/` existence gate (gh#203) | every image on `/` and `/about` once shipped pointing at a runtime image server this static deploy does not have |
+
+Three checks are new, and two of them are things the probes used to do on the
+site's behalf:
+
+1. **Exactly one `<h1>` per route** — BRIEF §5 rule 9, counted in the hydrated
+   DOM so a client-rendered heading counts too.
+2. **DoD-3 reachability** — every BRIEF §7 route must be linked from the menus
+   `bfNav` / `bfFooter` render on `/`. Asserted against the rendered page rather
+   than against `menus.json`, because the question is whether a visitor can get
+   there. Detail routes are satisfied by their list page: a menu naming 371
+   slugs would not be a menu.
+3. **The cascade-layer gate** — every compiled stylesheet under
+   `.output/public/_nuxt/` carrying a `.bf-*` rule must keep it inside
+   `@layer components`. This is residual #98 / gh#101, and `verify-bf-logo.ts`
+   §7 was what stopped anyone re-enabling `postcss-preset-env`'s cascade-layers
+   polyfill. That script read a probe page, so the guard moved here — and
+   widened from `.bf-logo` to every `bf-*` rule, which is strictly stronger than
+   what it replaces.
+
+**Placeholder anchors are reported, not failed.** The site chrome still carries
+`#podcast-platform-url`, `#transponder-magazine-url` and `#bluesky-profile-url`
+because the real URLs are a content decision waiting on the client
+([#160](https://github.com/ccmdesign/bfna-website-migration-2/issues/160),
+[#82](https://github.com/ccmdesign/bfna-website-migration-2/issues/82)). Every
+run lists them by route and by href, so they cannot be quietly forgotten; none
+of them affects the exit code, because a gate that fails on work assigned to
+somebody else is a gate people learn to skip.
+
+### And the gap it finally closed
+
+[#104](https://github.com/ccmdesign/bfna-website-migration-2/issues/104) — that
+`scripts/**` sat outside every tsconfig `include`, so the epic's entire
+acceptance surface was never type-checked. `tsconfig.scripts.json` covers it now
+(`npm run typecheck:scripts`, chained into `npm run typecheck`). It found three
+real errors on the first run, one of them a genuine bug: `verify-bf-logo.ts:272`
+referenced an identifier — `legacyGeometry` — that does not exist anywhere in
+the file, inside a branch that only ran when a prerendered probe page was
+present. Exactly the failure mode #104 predicted: a script that had quietly
+stopped being able to check what it claimed to check.
