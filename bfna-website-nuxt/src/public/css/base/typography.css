@@ -29,40 +29,78 @@
     margin-block: 0;
   }
 
+  /*
+   * gh#254. Every rank below used to declare a numeric literal — `600` on
+   * `h1`, `500` on the rest. Two things were wrong with that, and only the
+   * first is the one the issue names.
+   *
+   * 1. They were literals where the stack has tokens.
+   *
+   * 2. **`500` and `600` are not faces this site has.** `trade-gothic-next`
+   *    ships 300, 400, 700 and 800 (roman and italic) and nothing between;
+   *    `use.typekit.net/tsd2tcy.css` is the list. CSS font matching resolves a
+   *    desired weight of 500 by looking *down* first, so `500` was rendering
+   *    as the **400** face — the same face body copy uses. `h2` through `h6`
+   *    were therefore heading-sized body weight, whatever the computed style
+   *    said. `600` looks *up* and was already resolving to **700**, so `h1`'s
+   *    rendered face does not change here; only its declaration stops lying.
+   *
+   * So every rank takes `--font-weight-bold`: it is the next weight that
+   * actually exists, and giving the headings a real bold face is the "bolder
+   * typography" half of the brief. `--font-weight-medium` (500) and
+   * `--font-weight-semibold` (600) are left in `tokens/semantic-misc.css` —
+   * they are correct for a future family that ships those faces, and nothing
+   * here should pretend this one does.
+   *
+   * The display family is a separate, worse problem and deliberately not
+   * touched: `--font-family-display` names Sentinel SSm, and
+   * `cloud.typography.com/7264818/6341032/css/fonts.css` currently answers a
+   * single CSS comment reading DEACTIVATED and nothing else, so every heading
+   * on the site falls through to generic `sans-serif`. Raised as its own
+   * issue.
+   */
   h1,
   .h1 {
     font-size: var(--size-4);
-    font-weight: 600;
+    font-weight: var(--font-weight-bold);
   }
 
   h2,
   .h2 {
     font-size: var(--size-2);
-    font-weight: 500;
+    font-weight: var(--font-weight-bold);
   }
 
   h3,
   .h3 {
     font-size: var(--size-1);
-    font-weight: 500;
+    font-weight: var(--font-weight-bold);
   }
 
   h4,
   .h4 {
     font-size: var(--size-0);
-    font-weight: 500;
+    font-weight: var(--font-weight-bold);
   }
 
+  /*
+   * `--size--1`, not `--size-0`: `h4` and `h5` were the same size and the same
+   * weight, i.e. the same heading twice, and a rank that cannot be seen is not
+   * a rank. `h6` shares this step but is uppercased below, so all three stay
+   * mutually distinguishable. `--size--2` was considered for `h6` and
+   * rejected — 12.5px at its maximum, on a site whose accessibility pass
+   * already flags sub-10px chip text.
+   */
   h5,
   .h5 {
-    font-size: var(--size-0);
-    font-weight: 500;
+    font-size: var(--size--1);
+    font-weight: var(--font-weight-bold);
   }
 
   h6,
   .h6 {
     font-size: var(--size--1);
-    font-weight: 500;
+    font-weight: var(--font-weight-bold);
     text-transform: uppercase;
   }
 
