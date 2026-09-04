@@ -159,15 +159,35 @@
     border-left: 0;
   }
 
+  /*
+   * gh#254. `100` was below every `--font-weight-*` token and below hairline.
+   * `trade-gothic-next` has no 100 face — it ships 300, 400, 700, 800 — so
+   * this resolved to **300**, and the whole site read in Light. That is a
+   * legibility decision, not a contrast one: font weight does not enter the
+   * WCAG 1.4.3 calculation at all, and every pair the accessibility pass
+   * measured already clears AA. Body copy is now the 400 face the `:root`
+   * rule at the top of this file already names.
+   *
+   * `strong` moves with it, and has to. Its emphasis was carried entirely by
+   * the 100-against-400 gap; leaving it at 400 while body copy rose to 400
+   * would have deleted inline emphasis from every page on the site. 700 is a
+   * real face here — see the heading block above for why 500 and 600 are not.
+   *
+   * The brace at the end of this file has NOT moved. These rules stay inside
+   * `@layer defaults`, which is the whole point of the note at the top of this
+   * block: outside a layer they outranked every `bf-*` component's
+   * `font: inherit` and beat `.bf-chip` on its `<a>` and `<button>` branches
+   * (gh#116, residual #113). Only the values changed.
+   */
   p,
   li,
   input,
   button,
   a {
-    font-weight: 100;
+    font-weight: var(--font-weight-normal);
   }
 
   strong {
-    font-weight: 400;
+    font-weight: var(--font-weight-bold);
   }
 }
