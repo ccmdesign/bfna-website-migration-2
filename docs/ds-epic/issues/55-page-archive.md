@@ -196,3 +196,76 @@ this was checked and not the reason to add a config line that is not needed.
 (`docs/plans/gh64-plan.md`) and the implementation were written inline, the
 sanctioned fallback, to keep every step inside the runner's turn. Review was
 the inline diff read (STEP 3).
+
+### D-55.9 — `bfCard` renders its own `<li>`, and the first draft wrapped it in another
+
+The review's one P1, and it is recorded here because it is a trap the next
+template issue will walk into.
+
+`bfCard` is an `<li>` (`Card.vue`'s "## The card is an `<li>`" — a group of
+cards is a *list*, so a reader is told how many there are before walking them),
+and it carries a dev-time guard that warns unless its parent is a `<ul>`, an
+`<ol>` or a `role="list"` container. `bfCardRow` composes `bfCard`, so it is an
+`<li>` too. The first draft of this page ported the frozen source's
+`<li class="cluster">` wrapper literally and put the row inside it:
+
+```html
+<li><li class="bf-card bf-card-row">…</li></li>
+```
+
+Invalid nesting, and the failure mode is worse than the invalidity: the HTML
+parser repairs the pair into two **siblings** while Vue's client render keeps
+them **nested**, so the two DOMs disagree structurally. The generated file held
+256 `bf-card-row` strings and the hydrated document held 381 elements with that
+class — the discrepancy that exposed it. Every row also fired the guard's
+warning in a dev build.
+
+The row now sits directly in the `<ul>`, which is what `bfSearchShell` already
+does with `bfCard` in its `<ol>`. The frozen source's wrapper does not port
+because the thing it wrapped is now the list item itself.
+
+Two smaller findings applied in the same pass:
+
+- **The scoped list reset was redundant.** `base/reset.css` already zeroes
+  `list-style`, `margin` and `padding-inline-start` for `ul[class]` *and*
+  `ul[role="list"]`, and this list matches both. The `<style scoped>` block and
+  its class are gone; the page now declares no CSS at all.
+- **The count/range sentence could state something false.** An empty archive
+  printed "0 pieces of past work, –." and an all-undated one "N pieces of past
+  work, –.". The count and the range clause are now separately guarded.
+  Neither branch is reachable with today's data; both are one `v-if`.
+
+### D-55.10 — Browser pass, and the one thing it could not assert
+
+`/archive` was driven headlessly against the generated output
+(`npx serve .output/public`). Results:
+
+| Check | Result |
+|---|---|
+| route | `/archive`, title "Archive \| Bertelsmann Foundation North America" |
+| bands / open | 11 `<details>`, only index 0 (`2023 (27)`) open |
+| labels vs live row counts | 27, 21, 28, 40, 32, 21, 10, 34, 27, 15, 1 — **sum 256**, identical to the labels |
+| nested `<li>` inside the archive | **0** (`details.bf-accordion li li` → 0; `li > li` → 0 page-wide) |
+| outline | `h1` "Archive", `h2` "By year", 256 × `h3` |
+| breadcrumb | Home → Insights → **Archive** (current, unlinked) |
+| count sentence | "256 pieces of past work, 2007–2023." |
+| every summary focusable | 11/11 |
+| closed bands out of the tab order | 0 reachable links across the 10 closed bands; opening band 1 exposes exactly its 21 and closing hides them again |
+
+Visibility is read with `el.checkVisibility()`, never a bounding rect — Chrome
+hides closed `<details>` content with `content-visibility: hidden`, not
+`display: none` (D-31.6).
+
+**Not asserted here: a trusted Enter/Space on a `<summary>`.** The synthetic key
+press did not reach the page in this session's driver, and a
+programmatically-dispatched event asks an easier question than the one that
+matters. It is not left uncovered: probe `31-bf-accordion` asserts the
+disclosure's keyboard contract against the same component (51/51 rows, green in
+this branch's full run), and this page adds no script, no handler and no
+`tabindex` to the element — the contract it relies on is the browser's.
+
+**One pre-existing defect found and handed off:** every page logs
+`Hydration completed but contains mismatches`, including `/insights` (gh#62)
+and `/about` (gh#59), which this branch does not touch. Filed as
+[#199](https://github.com/ccmdesign/bfna-website-migration-2/issues/199),
+`residual-review`. It is shared chrome, not this template.
