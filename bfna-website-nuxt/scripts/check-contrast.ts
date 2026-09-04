@@ -7,9 +7,8 @@
  * "add no colour that **fails its measured floor**". This script is the thing
  * that measures. Before it, there was no contrast function and no colour
  * utility anywhere in the repository: every ratio in the codebase
- * (`src/components/Button.vue:61`, `docs/ds-epic/issues/41-bf-notice.md:141`)
- * was a hand-written comment that nothing recomputed, so a palette edit could
- * not be caught.
+ * (`src/components/bf/Button.vue:61`, `docs/ds-epic/issues/41-bf-notice.md:141`)
+ * was a hand-written comment that nothing recomputed.
  *
  * Modelled on `scripts/validate-tokens.ts` — same regex-parse-then-assert
  * shape, same reporting style, same exit-code discipline.
@@ -36,13 +35,25 @@
  *   `hsl()` only, per the brief. Any `oklch()` / `lab()` / `lch()` value in the
  *   token files is a hard resolve error, not a silently skipped token.
  *
+ * THE BIAS THROUGHOUT IS FAIL-LOUD
+ *   Every ambiguity resolves to an error rather than a pass. A gate's worst
+ *   defect is a false green, so: a translucent colour is an error rather than
+ *   being measured as opaque, a pair may only be excused as "not yet defined"
+ *   for a token it names itself, a programme-scoped token that resolved from
+ *   `:root` is an error rather than being reported under the programme's
+ *   label, and an unknown argument is an error rather than a default.
+ *
  * Usage:
  *   npx tsx scripts/check-contrast.ts                  # strict — non-zero today
  *   npx tsx scripts/check-contrast.ts --allow-known    # CI — known failures excused
  *   npx tsx scripts/check-contrast.ts --self-check     # prove the gate can bite
  *   npx tsx scripts/check-contrast.ts --tokens-dir <d> # point at another css/ root
  *
- * Exit codes: 0 clean · 1 contrast findings · 2 fatal (parse/resolve/self-check)
+ * Exit codes:
+ *   0  every declared pair clears its floor (known failures excused, if asked)
+ *   1  contrast findings
+ *   2  fatal — parse, resolve, stale allowlist, bad arguments, or a failed
+ *      self-check. The gate could not be trusted to answer.
  */
 
 import fs from 'fs'
@@ -61,33 +72,33 @@ interface Rgba {
   a: number
 }
 
+function clamp01(n: number): number {
+  return n < 0 ? 0 : n > 1 ? 1 : n
+}
+
 /**
- * HSL → sRGB, rounded to 8-bit.
+ * HSL → sRGB, rounded to 8-bit. The `f(n)` formulation is css-color-4's own
+ * reference algorithm; the piecewise sector form differs from it by ±1/255 on
+ * a handful of hues where a channel lands exactly on .5, and this gate should
+ * not disagree with the browser about the colour it is judging.
  *
  * The rounding is deliberate and load-bearing, not incidental: a browser
  * paints 8-bit channels, so the ratio a user actually experiences is the ratio
  * of the rounded colour. Amber is the case that proves it — unrounded it
- * measures 1.9748 and rounded 1.9751, either side of the 1.98 the issue
+ * measures 1.9736 and rounded 1.9751, either side of the 1.98 this gate
  * records. Measure what ships.
  */
 function hslToRgba(h: number, s: number, l: number, a: number): Rgba {
-  const c = (1 - Math.abs(2 * l - 1)) * s
-  const hp = ((((h % 360) + 360) % 360)) / 60
-  const x = c * (1 - Math.abs((hp % 2) - 1))
-  const m = l - c / 2
-
-  let base: readonly [number, number, number]
-  if (hp < 1) base = [c, x, 0]
-  else if (hp < 2) base = [x, c, 0]
-  else if (hp < 3) base = [0, c, x]
-  else if (hp < 4) base = [0, x, c]
-  else if (hp < 5) base = [x, 0, c]
-  else base = [c, 0, x]
-
+  const hue = ((h % 360) + 360) % 360
+  const chroma = s * Math.min(l, 1 - l)
+  const f = (n: number): number => {
+    const k = (n + hue / 30) % 12
+    return l - chroma * Math.max(-1, Math.min(k - 3, 9 - k, 1))
+  }
   return {
-    r: Math.round((base[0] + m) * 255),
-    g: Math.round((base[1] + m) * 255),
-    b: Math.round((base[2] + m) * 255),
+    r: Math.round(f(0) * 255),
+    g: Math.round(f(8) * 255),
+    b: Math.round(f(4) * 255),
     a
   }
 }
@@ -106,13 +117,19 @@ function relativeLuminance(c: Rgba): number {
   )
 }
 
+/**
+ * WCAG 2.x contrast ratio. Both arguments must be opaque — alpha is not a
+ * factor in the formula, and silently measuring a translucent colour as if it
+ * were solid is the single easiest way for this gate to report a false green.
+ * `evaluate()` refuses translucent operands before reaching here.
+ */
 function contrastRatio(a: Rgba, b: Rgba): number {
   const la = relativeLuminance(a)
   const lb = relativeLuminance(b)
   return (Math.max(la, lb) + 0.05) / (Math.min(la, lb) + 0.05)
 }
 
-/** Source-over composite of a translucent colour onto an opaque ground. */
+/** Source-over composite of a translucent colour onto a ground. */
 function compositeOver(top: Rgba, bottom: Rgba): Rgba {
   const a = top.a + bottom.a * (1 - top.a)
   if (a === 0) return { r: 0, g: 0, b: 0, a: 0 }
@@ -151,7 +168,7 @@ function splitTopLevel(input: string, sep: string): string[] {
   let buf = ''
   for (const ch of input) {
     if (ch === '(') depth++
-    else if (ch === ')') depth--
+    else if (ch === ')') depth = Math.max(0, depth - 1)
     if (ch === sep && depth === 0) {
       out.push(buf.trim())
       buf = ''
@@ -163,18 +180,34 @@ function splitTopLevel(input: string, sep: string): string[] {
   return out
 }
 
+/** Index of the `)` matching the `(` at `open`, or -1. */
+function matchParen(s: string, open: number): number {
+  let depth = 0
+  for (let i = open; i < s.length; i++) {
+    const ch = s[i]
+    if (ch === '(') depth++
+    else if (ch === ')') {
+      depth--
+      if (depth === 0) return i
+    }
+  }
+  return -1
+}
+
 function parsePercent(raw: string, what: string): number {
   const m = raw.trim().match(/^([\d.]+)%$/)
-  if (!m || m[1] === undefined) throw new ResolveError(`expected a percentage for ${what}, got "${raw}"`)
+  if (!m || m[1] === undefined) {
+    throw new ResolveError(`expected a percentage for ${what}, got "${raw}"`)
+  }
   return parseFloat(m[1]) / 100
 }
 
 function parseAlpha(raw: string): number {
   const t = raw.trim()
-  if (t.endsWith('%')) return parsePercent(t, 'alpha')
+  if (t.endsWith('%')) return clamp01(parsePercent(t, 'alpha'))
   const n = Number(t)
   if (!Number.isFinite(n)) throw new ResolveError(`expected an alpha value, got "${raw}"`)
-  return Math.max(0, Math.min(1, n))
+  return clamp01(n)
 }
 
 function parseHue(raw: string): number {
@@ -196,7 +229,9 @@ const FORBIDDEN_SPACES = ['oklch', 'oklab', 'lab', 'lch', 'color(']
  *
  * Handles `#rgb` / `#rrggbb` / `#rrggbbaa`, `hsl()` / `hsla()` (comma or space
  * separated, with or without alpha), `rgb()` / `rgba()`, `color-mix(in srgb,
- * …)`, and the `white` / `black` / `transparent` keywords.
+ * …)`, and the `white` / `black` / `transparent` keywords. Everything else —
+ * including the other CSS named colours and `currentColor` — is an error, on
+ * the principle that a gate should not guess.
  */
 function parseColor(raw: string): Rgba {
   const value = raw.trim()
@@ -210,12 +245,13 @@ function parseColor(raw: string): Rgba {
     }
   }
 
-  const named = NAMED[lower]
-  if (named) return { ...named }
+  // `Object.hasOwn`, not `NAMED[lower]`: a token whose value is the literal
+  // string `constructor` would otherwise pick up `Object` and spread to NaN.
+  if (Object.hasOwn(NAMED, lower)) return { ...(NAMED[lower] as Rgba) }
 
   if (value.startsWith('#')) return parseHex(value)
 
-  const fn = value.match(/^([a-z-]+)\((.*)\)$/is)
+  const fn = value.match(/^([a-z-]+)\(([\s\S]*)\)$/i)
   if (!fn || fn[1] === undefined || fn[2] === undefined) {
     if (/^[\d.]+\s*,\s*[\d.]+%\s*,\s*[\d.]+%$/.test(value)) {
       throw new ResolveError(
@@ -237,6 +273,7 @@ function parseColor(raw: string): Rgba {
 
 function parseHex(value: string): Rgba {
   const hex = value.slice(1)
+  if (!/^[0-9a-f]+$/i.test(hex)) throw new ResolveError(`malformed hex colour: "${value}"`)
   const expand = (s: string): number => parseInt(s.length === 1 ? s + s : s, 16)
   if (hex.length === 3 || hex.length === 4) {
     return {
@@ -293,9 +330,10 @@ function parseRgbFn(inner: string): Rgba {
  * `color-mix(in srgb, A p%, B q%)`.
  *
  * The `srgb` space interpolates in gamma-encoded sRGB — a straight channel
- * lerp, premultiplied by alpha, per css-color-5. Every mix in the token files
- * is opaque, but the premultiply is what makes it correct if one stops being
- * so.
+ * lerp, premultiplied by alpha, per css-color-5. Percentages that sum to less
+ * than 100% also *reduce the result's alpha* by that sum, which is the part
+ * that is easy to miss; every mix in the token files sums to 100%, but a
+ * future one that does not would otherwise be over-reported as opaque.
  */
 function parseColorMix(inner: string): Rgba {
   const parts = splitTopLevel(inner, ',')
@@ -315,8 +353,8 @@ function parseColorMix(inner: string): Rgba {
   if (p === null && q === null) {
     p = 0.5
     q = 0.5
-  } else if (p === null) p = 1 - (q as number)
-  else if (q === null) q = 1 - p
+  } else if (p === null) p = Math.max(0, 1 - (q as number))
+  else if (q === null) q = Math.max(0, 1 - p)
 
   const total = p + q
   if (total <= 0) throw new ResolveError(`color-mix() percentages sum to zero: "${inner}"`)
@@ -326,16 +364,21 @@ function parseColorMix(inner: string): Rgba {
   const ca = parseColor(left.color)
   const cb = parseColor(right.color)
 
-  const a = p * ca.a + q * cb.a
-  if (a === 0) return { r: 0, g: 0, b: 0, a: 0 }
+  const mixedAlpha = p * ca.a + q * cb.a
+  if (mixedAlpha === 0) return { r: 0, g: 0, b: 0, a: 0 }
   const mix = (x: number, y: number): number =>
-    Math.round((p * ca.a * (x / 255) + q * cb.a * (y / 255)) / a * 255)
+    Math.round(((p * ca.a * (x / 255) + q * cb.a * (y / 255)) / mixedAlpha) * 255)
 
-  return { r: mix(ca.r, cb.r), g: mix(ca.g, cb.g), b: mix(ca.b, cb.b), a }
+  return {
+    r: mix(ca.r, cb.r),
+    g: mix(ca.g, cb.g),
+    b: mix(ca.b, cb.b),
+    a: clamp01(mixedAlpha * Math.min(1, total))
+  }
 }
 
 function splitColorAndPercent(s: string): { color: string; pct: number | null } {
-  const m = s.trim().match(/^(.*?)\s+([\d.]+)%$/)
+  const m = s.trim().match(/^([\s\S]*?)\s+([\d.]+)%$/)
   if (m && m[1] !== undefined && m[2] !== undefined) {
     return { color: m[1].trim(), pct: parseFloat(m[2]) / 100 }
   }
@@ -359,6 +402,33 @@ interface Declaration {
   line: number
 }
 
+interface Hit {
+  decl: Declaration
+  /** The scope key the declaration was found under. */
+  selector: string
+}
+
+const ROOT_KEY = ':root'
+
+/**
+ * Normalise a selector to a stable lookup key.
+ *
+ * Attribute values are re-quoted to one form, because `[data-program='x']` and
+ * `[data-program="x"]` are the same selector to a browser and were two
+ * different map keys here — and a key that misses falls through the scope
+ * chain to `:root`, which is exactly the silent wrong answer this class exists
+ * to prevent.
+ */
+function normaliseSelector(raw: string): string {
+  const s = raw.replace(/\s+/g, ' ').trim()
+  if (s === '') return ROOT_KEY
+  return s.replace(
+    /\[\s*([\w-]+)\s*([~|^$*]?=)\s*(?:"([^"]*)"|'([^']*)'|([^\]\s]+))\s*\]/g,
+    (_match: string, attr: string, op: string, dq?: string, sq?: string, bare?: string): string =>
+      `[${attr}${op}"${dq ?? sq ?? bare ?? ''}"]`
+  )
+}
+
 /**
  * Declarations indexed by selector, not flattened into one map.
  *
@@ -367,6 +437,12 @@ interface Declaration {
  * `[data-program="…"]` block plus a `:root` default — and a flat map keeps
  * whichever came last, so the gate would silently measure one programme's
  * colour and report it as all three.
+ *
+ * KNOWN LIMITATION: this is a brace-walker, not a CSS tokenizer. A `;` or a
+ * brace inside a quoted string or a `url()` will corrupt the declaration it
+ * sits in, and an unterminated `/*` swallows the rest of the file. Neither
+ * shape occurs in a colour token sheet, and both fail loudly rather than
+ * silently, so a real parser is not worth the dependency here.
  */
 class TokenSheet {
   private readonly scopes = new Map<string, Map<string, Declaration>>()
@@ -409,6 +485,9 @@ class TokenSheet {
         buf = ''
         declLine = line
       } else if (ch === '}') {
+        // A final declaration with no trailing `;` is legal CSS and a common
+        // formatter output. Record it before popping, or it is silently lost.
+        this.record(buf.trim(), stack, file, declLine)
         stack.pop()
         buf = ''
         declLine = line
@@ -430,11 +509,21 @@ class TokenSheet {
 
     const name = decl.slice(0, colon).trim()
     const value = decl.slice(colon + 1).trim()
-    const selector = stack[stack.length - 1] ?? ':root'
 
-    // `:root, [data-program]` declares into both scopes.
-    for (const part of selector.split(',').map(s => s.replace(/\s+/g, ' ').trim())) {
-      const key = part === '' || part.startsWith('@') ? ':root' : part
+    // Conditional at-rules key apart from the unconditional cascade. `@media
+    // (prefers-contrast: more) { :root { --color-link: … } }` must not
+    // overwrite the `:root` value every screen actually sees.
+    const conditional = stack.filter(frame => frame.startsWith('@') && !/^@layer\b/.test(frame))
+    const prefix = conditional.length > 0 ? `${conditional.join(' ')} ‖ ` : ''
+
+    const innermost = stack[stack.length - 1] ?? ROOT_KEY
+    const selectorText = innermost.startsWith('@') ? ROOT_KEY : innermost
+
+    // `:root, [data-program]` declares into both scopes. Split at the top level
+    // so a comma inside `:is()` / `:where()` / `:not()` does not shear the
+    // selector into two keys that match nothing.
+    for (const part of splitTopLevel(selectorText, ',')) {
+      const key = prefix + normaliseSelector(part)
       let scope = this.scopes.get(key)
       if (!scope) {
         scope = new Map<string, Declaration>()
@@ -444,43 +533,70 @@ class TokenSheet {
     }
   }
 
-  lookup(name: string, chain: readonly string[]): Declaration | undefined {
+  lookup(name: string, chain: readonly string[]): Hit | undefined {
     for (const selector of chain) {
-      const hit = this.scopes.get(selector)?.get(name)
-      if (hit) return hit
+      const decl = this.scopes.get(selector)?.get(name)
+      if (decl) return { decl, selector }
     }
     return undefined
   }
 
-  /** Replace every `var(--x)` with the text it resolves to, recursively. */
+  /**
+   * Replace every `var()` with the text it resolves to, recursively.
+   *
+   * Scans for the balanced closing paren rather than regex-matching, so a
+   * fallback that is itself a function — `var(--a, var(--b))`, the obvious way
+   * to write a programme fallback chain — resolves instead of erroring.
+   */
   private expand(value: string, chain: readonly string[], trail: readonly string[]): string {
-    const VAR = /var\(\s*(--[\w-]+)\s*(?:,\s*([^()]*))?\)/
-    let out = value
-    let guard = 0
+    if (trail.length > 64) {
+      throw new ResolveError(`var() nesting too deep: ${trail.join(' → ')}`)
+    }
 
-    while (VAR.test(out)) {
-      if (++guard > 128) {
-        throw new ResolveError(`var() expansion did not terminate for "${value}"`)
+    let out = ''
+    let i = 0
+    while (i < value.length) {
+      const at = value.indexOf('var(', i)
+      if (at === -1) {
+        out += value.slice(i)
+        break
       }
-      out = out.replace(VAR, (_match: string, rawName: string, fallback?: string): string => {
-        if (trail.includes(rawName)) {
-          throw new ResolveError(`circular var() reference: ${[...trail, rawName].join(' → ')}`)
-        }
-        const decl = this.lookup(rawName, chain)
-        if (!decl) {
-          if (fallback !== undefined) return fallback.trim()
-          throw new MissingTokenError(rawName)
-        }
-        return this.expand(decl.value, chain, [...trail, rawName])
-      })
+      out += value.slice(i, at)
+
+      const close = matchParen(value, at + 3)
+      if (close === -1) throw new ResolveError(`unbalanced var() in "${value}"`)
+
+      const args = splitTopLevel(value.slice(at + 4, close), ',')
+      const name = (args[0] ?? '').trim()
+      const fallback = args.length > 1 ? args.slice(1).join(',').trim() : undefined
+
+      if (!/^--[\w-]+$/.test(name)) {
+        throw new ResolveError(`malformed var() reference "${name}" in "${value}"`)
+      }
+      if (trail.includes(name)) {
+        throw new ResolveError(`circular var() reference: ${[...trail, name].join(' → ')}`)
+      }
+
+      const hit = this.lookup(name, chain)
+      if (hit) out += this.expand(hit.decl.value, chain, [...trail, name])
+      else if (fallback !== undefined) out += this.expand(fallback, chain, trail)
+      else throw new MissingTokenError(name)
+
+      i = close + 1
     }
     return out
   }
 
   resolve(name: string, chain: readonly string[]): Rgba {
-    const decl = this.lookup(name, chain)
-    if (!decl) throw new MissingTokenError(name)
-    return parseColor(this.expand(decl.value, chain, [name]))
+    const hit = this.lookup(name, chain)
+    if (!hit) throw new MissingTokenError(name)
+    try {
+      return parseColor(this.expand(hit.decl.value, chain, [name]))
+    } catch (error) {
+      if (error instanceof MissingTokenError) throw error
+      const message = error instanceof Error ? error.message : String(error)
+      throw new ResolveError(`${name} (${hit.decl.file}:${hit.decl.line}): ${message}`)
+    }
   }
 }
 
@@ -501,12 +617,19 @@ interface Pair {
   floor: number
   /** Scope chain, most specific first. */
   scope: readonly string[]
+  /**
+   * Tokens that must resolve from a scope other than `:root`. Without this a
+   * missing `[data-program="…"]` block falls through to the `:root` default
+   * and one programme's colour is reported under another's label — the exact
+   * failure the scope-aware parser exists to prevent.
+   */
+  requireScoped?: readonly string[]
   /** Issue that introduces the tokens this pair needs, when they do not exist yet. */
   pendingFrom?: string
   note?: string
 }
 
-const ROOT: readonly string[] = [':root']
+const ROOT: readonly string[] = [ROOT_KEY]
 
 /**
  * Programme slugs, from `content/bf/programs/*.json`, with the primitive each
@@ -521,7 +644,21 @@ const PROGRAMS: ReadonlyArray<{ slug: string; primitive: string; hue: string }> 
 const WHITE: ColorRef = { kind: 'literal', value: '#FFFFFF' }
 
 function programScope(slug: string): readonly string[] {
-  return [`[data-program="${slug}"]`, '[data-program]', ':root']
+  return [
+    normaliseSelector(`[data-program="${slug}"]`),
+    normaliseSelector('[data-program]'),
+    ROOT_KEY
+  ]
+}
+
+/** Every token a pair names directly, including through an `over` composite. */
+function ownTokens(ref: ColorRef, into: string[] = []): string[] {
+  if (ref.kind === 'token') into.push(ref.name)
+  else if (ref.kind === 'over') {
+    ownTokens(ref.top, into)
+    ownTokens(ref.under, into)
+  }
+  return into
 }
 
 function buildPairs(): Pair[] {
@@ -575,6 +712,7 @@ function buildPairs(): Pair[] {
       bg: { kind: 'token', name: '--color-surface-page' },
       floor: 4.5,
       scope,
+      requireScoped: ['--color-program-on-light'],
       pendingFrom: '#251'
     })
     pairs.push({
@@ -588,6 +726,7 @@ function buildPairs(): Pair[] {
       },
       floor: 4.5,
       scope,
+      requireScoped: ['--color-program-on-dark'],
       pendingFrom: '#251'
     })
     pairs.push({
@@ -597,6 +736,7 @@ function buildPairs(): Pair[] {
       bg: { kind: 'token', name: '--color-program' },
       floor: 4.5,
       scope,
+      requireScoped: ['--color-program'],
       pendingFrom: '#251'
     })
   }
@@ -639,6 +779,10 @@ interface KnownFailure {
  * cannot delete a row without repairing the colour.
  *
  * Nothing may be added to this list without an issue that removes it.
+ *
+ * gh#251 MUST update SHIPPED_BASELINE below in the same commit — the
+ * self-check locks the resolver against those exact values, so a palette
+ * repair that leaves them stale fails the self-check rather than the gate.
  */
 const KNOWN_FAILURES: readonly KnownFailure[] = [
   {
@@ -656,6 +800,20 @@ const KNOWN_FAILURES: readonly KnownFailure[] = [
   }
 ]
 
+/**
+ * The palette as it stands, asserted by `--self-check`.
+ *
+ * This is a resolver lock, not a policy: it ties HSL→sRGB, `var()` following
+ * and 8-bit rounding together so any one of them drifting is caught. It
+ * describes what ships today and must be updated by whichever change moves
+ * these colours — gh#251, for red and amber.
+ */
+const SHIPPED_BASELINE: ReadonlyArray<{ id: string; hex: string; ratio: number }> = [
+  { id: 'white-on-teal', hex: '#027A8D', ratio: 5.03 },
+  { id: 'white-on-red', hex: '#D0495B', ratio: 4.39 },
+  { id: 'white-on-amber', hex: '#EEAC49', ratio: 1.98 }
+]
+
 /* ------------------------------------------------------------------ *
  * The run
  * ------------------------------------------------------------------ */
@@ -668,6 +826,8 @@ interface Result {
   ratio?: number
   fgHex?: string
   bgHex?: string
+  /** Set whenever the pair appears in KNOWN_FAILURES, in either mode. */
+  knownIssue?: string
   detail?: string
 }
 
@@ -685,17 +845,17 @@ function fmt(n: number): string {
 class ContrastGate {
   private readonly sheet: TokenSheet
 
-  constructor(private readonly cssDir: string) {
+  constructor(cssDir: string) {
     this.sheet = new TokenSheet(cssDir)
   }
 
-  run(): RunReport {
+  run(allowKnown: boolean): RunReport {
     const errors: string[] = []
     this.sheet.load()
 
     const results: Result[] = []
     for (const pair of buildPairs()) {
-      results.push(this.evaluate(pair, errors))
+      results.push(this.evaluate(pair, errors, allowKnown))
     }
 
     return {
@@ -712,7 +872,13 @@ class ContrastGate {
     return compositeOver(this.resolveRef(ref.top, scope), this.resolveRef(ref.under, scope))
   }
 
-  private evaluate(pair: Pair, errors: string[]): Result {
+  private evaluate(pair: Pair, errors: string[], allowKnown: boolean): Result {
+    const known = KNOWN_FAILURES.find(k => k.pairId === pair.id)
+    const fail = (message: string): Result => {
+      errors.push(`${pair.id}: ${message}`)
+      return { pair, verdict: 'error', detail: message, knownIssue: known?.issue }
+    }
+
     let fg: Rgba
     let bg: Rgba
     try {
@@ -720,28 +886,69 @@ class ContrastGate {
       bg = this.resolveRef(pair.bg, pair.scope)
     } catch (error) {
       if (error instanceof MissingTokenError) {
-        if (pair.pendingFrom) {
+        // A pair may only be excused for a token it names ITSELF. Excusing any
+        // miss anywhere in the var chain turns a typo inside a token that DOES
+        // exist into a cheerful "not yet defined" and a green run.
+        const named = [...ownTokens(pair.fg), ...ownTokens(pair.bg)]
+        if (pair.pendingFrom && named.includes(error.token)) {
           return {
             pair,
             verdict: 'pending',
-            detail: `${error.token} not yet defined — lands in ${pair.pendingFrom}`
+            detail: `${error.token} not yet defined — lands in ${pair.pendingFrom}`,
+            knownIssue: known?.issue
           }
         }
-        errors.push(`${pair.id}: ${error.message} (this token is expected to exist today)`)
-        return { pair, verdict: 'error', detail: error.message }
+        if (pair.pendingFrom) {
+          return fail(
+            `${error.token} is undefined, reached through ${named.join(' / ')}. ` +
+              `A pair is only excused as "not yet defined" for a token it names directly.`
+          )
+        }
+        return fail(`${error.message} (this token is expected to exist today)`)
       }
-      const message = error instanceof Error ? error.message : String(error)
-      errors.push(`${pair.id}: ${message}`)
-      return { pair, verdict: 'error', detail: message }
+      return fail(error instanceof Error ? error.message : String(error))
+    }
+
+    // A translucent operand has no defined contrast ratio. Measuring it as
+    // opaque scores `transparent` text at 21:1 — the worst false green
+    // available. Declare it as `{ kind: 'over' }` against a real ground.
+    for (const [role, colour] of [
+      ['foreground', fg],
+      ['background', bg]
+    ] as const) {
+      if (colour.a !== 1) {
+        return fail(
+          `${role} resolves to alpha ${colour.a} — a translucent colour has no ` +
+            `contrast ratio on its own. Declare it as a composite over a ground.`
+        )
+      }
+    }
+
+    for (const name of pair.requireScoped ?? []) {
+      const hit = this.sheet.lookup(name, pair.scope)
+      if (!hit || hit.selector === ROOT_KEY) {
+        return fail(
+          `${name} resolved from ${hit?.selector ?? 'nowhere'} rather than a scope in ` +
+            `[${pair.scope.slice(0, -1).join(', ')}]. This pair would report the ` +
+            `default colour under a scoped label.`
+        )
+      }
     }
 
     const ratio = contrastRatio(fg, bg)
-    const known = KNOWN_FAILURES.find(k => k.pairId === pair.id)
     let verdict: Verdict
     if (ratio >= pair.floor) verdict = 'pass'
-    else verdict = known ? 'known-fail' : 'fail'
+    else if (known && allowKnown) verdict = 'known-fail'
+    else verdict = 'fail'
 
-    return { pair, verdict, ratio, fgHex: toHex(fg), bgHex: toHex(bg) }
+    return {
+      pair,
+      verdict,
+      ratio,
+      fgHex: toHex(fg),
+      bgHex: toHex(bg),
+      knownIssue: known?.issue
+    }
   }
 }
 
@@ -749,37 +956,40 @@ class ContrastGate {
  * Reporting
  * ------------------------------------------------------------------ */
 
-function report(run: RunReport, allowKnown: boolean): number {
-  console.log(`✅ Parsed ${run.tokenCount} tokens from ${run.fileCount} files\n`)
-  console.log('🎨 Measuring declared pairs against their WCAG floors...\n')
+function report(run: RunReport, allowKnown: boolean, quiet = false): number {
+  const say = (line: string): void => {
+    if (!quiet) console.log(line)
+  }
+
+  say(`✅ Parsed ${run.tokenCount} tokens from ${run.fileCount} files\n`)
+  say('🎨 Measuring declared pairs against their WCAG floors...\n')
 
   const live = run.results.filter(r => r.verdict !== 'pending' && r.verdict !== 'error')
   const pending = run.results.filter(r => r.verdict === 'pending')
   const failures = live.filter(r => r.verdict === 'fail')
-  const knownFailures = live.filter(r => r.verdict === 'known-fail')
+  const excused = live.filter(r => r.verdict === 'known-fail')
+  const knownBelowFloor = live.filter(r => r.verdict !== 'pass' && r.knownIssue !== undefined)
 
   for (const r of live) {
     const ratio = `${fmt(r.ratio as number)}:1`.padStart(8)
     const floor = `(floor ${fmt(r.pair.floor)})`
     const swatch = `${r.fgHex} on ${r.bgHex}`
+    const owner = r.knownIssue !== undefined ? `  [${r.knownIssue}]` : ''
     if (r.verdict === 'pass') {
-      console.log(`  ✅ PASS       ${ratio} ${floor}  ${swatch}  ${r.pair.label}`)
+      say(`  ✅ PASS       ${ratio} ${floor}  ${swatch}  ${r.pair.label}`)
     } else if (r.verdict === 'known-fail') {
-      const known = KNOWN_FAILURES.find(k => k.pairId === r.pair.id)
-      console.log(
-        `  🟡 KNOWN FAIL ${ratio} ${floor}  ${swatch}  ${r.pair.label}  [${known?.issue ?? '?'}]`
-      )
+      say(`  🟡 KNOWN FAIL ${ratio} ${floor}  ${swatch}  ${r.pair.label}${owner}`)
     } else {
-      console.log(`  ❌ FAIL       ${ratio} ${floor}  ${swatch}  ${r.pair.label}`)
+      say(`  ❌ FAIL       ${ratio} ${floor}  ${swatch}  ${r.pair.label}${owner}`)
     }
-    if (r.pair.note) console.log(`               ↳ ${r.pair.note}`)
+    if (r.pair.note) say(`               ↳ ${r.pair.note}`)
   }
 
   if (pending.length > 0) {
-    console.log('\n⏳ Not yet defined — these go live when their tokens land:')
+    say('\n⏳ Not yet defined — these go live when their tokens land:')
     for (const r of pending) {
-      console.log(`  ·  ${r.pair.label}`)
-      console.log(`     ${r.detail}`)
+      say(`  ·  ${r.pair.label}`)
+      say(`     ${r.detail}`)
     }
   }
 
@@ -801,65 +1011,63 @@ function report(run: RunReport, allowKnown: boolean): number {
     }
   }
 
-  console.log('\n' + '='.repeat(72))
-  console.log('📊 Contrast Gate Summary')
-  console.log('='.repeat(72))
-  console.log(`Pairs measured:     ${live.length}`)
-  console.log(`Passing:            ${live.filter(r => r.verdict === 'pass').length}`)
-  console.log(`Failing:            ${failures.length}`)
-  console.log(`Known failing:      ${knownFailures.length}${allowKnown ? ' (excused by --allow-known)' : ''}`)
-  console.log(`Pending definition: ${pending.length}`)
-  console.log(`Resolve errors:     ${run.errors.length}`)
+  say('\n' + '='.repeat(60))
+  say('📊 Contrast Gate Summary')
+  say('='.repeat(60))
+  say(`Pairs measured:     ${live.length}`)
+  say(`Passing:            ${live.filter(r => r.verdict === 'pass').length}`)
+  say(`Failing:            ${failures.length}`)
+  say(`Known failing:      ${knownBelowFloor.length}${allowKnown ? ` (${excused.length} excused by --allow-known)` : ''}`)
+  say(`Pending definition: ${pending.length}`)
+  say(`Resolve errors:     ${run.errors.length}`)
 
-  if (knownFailures.length > 0) {
-    console.log('\n🟡 Known failures — shipped colour that does not clear AA:')
-    for (const r of knownFailures) {
+  if (knownBelowFloor.length > 0) {
+    say('\n🟡 Known failures — shipped colour that does not clear AA:')
+    for (const r of knownBelowFloor) {
       const known = KNOWN_FAILURES.find(k => k.pairId === r.pair.id)
-      console.log(`  - ${r.pair.label} — ${fmt(r.ratio as number)}:1 [${known?.issue ?? '?'}]`)
-      if (known) console.log(`    ${known.why}`)
+      say(`  - ${r.pair.label} — ${fmt(r.ratio as number)}:1 [${r.knownIssue ?? '?'}]`)
+      if (known) say(`    ${known.why}`)
     }
   }
 
   if (failures.length > 0) {
-    console.log('\n❌ Failures:')
+    say('\n❌ Failures:')
     for (const r of failures) {
-      console.log(
-        `  - ${r.pair.label} — ${fmt(r.ratio as number)}:1, needs ${fmt(r.pair.floor)}:1`
-      )
+      say(`  - ${r.pair.label} — ${fmt(r.ratio as number)}:1, needs ${fmt(r.pair.floor)}:1`)
     }
   }
 
   if (stale.length > 0) {
-    console.log('\n❌ Stale allowlist entries:')
-    for (const s of stale) console.log(`  - ${s}`)
+    say('\n❌ Stale allowlist entries:')
+    for (const s of stale) say(`  - ${s}`)
   }
 
   if (run.errors.length > 0) {
-    console.log('\n❌ Resolve errors:')
-    for (const e of run.errors) console.log(`  - ${e}`)
+    say('\n❌ Resolve errors:')
+    for (const e of run.errors) say(`  - ${e}`)
   }
 
-  const hard = failures.length + stale.length + run.errors.length
-  const total = hard + (allowKnown ? 0 : knownFailures.length)
+  const fatal = stale.length + run.errors.length
+  const total = fatal + failures.length
 
   if (total === 0) {
-    if (knownFailures.length > 0) {
-      console.log('\n🟡 Gate green with known failures excused. They are still real.')
+    if (excused.length > 0) {
+      say('\n🟡 Gate green with known failures excused. They are still real.')
     } else {
-      console.log('\n✅ Every declared pair clears its floor.')
+      say('\n✅ Every declared pair clears its floor.')
     }
     return 0
   }
 
-  console.log(`\n❌ Contrast gate failed: ${total} finding(s).`)
-  if (!allowKnown && knownFailures.length > 0 && failures.length + stale.length === 0) {
-    console.log(
+  say(`\n❌ Contrast gate failed: ${total} finding(s).`)
+  if (fatal === 0 && failures.length === knownBelowFloor.length && knownBelowFloor.length > 0) {
+    say(
       '   These are the known, owned failures. CI runs with --allow-known so\n' +
         '   the fix is not blocked by the gate that asked for it — see\n' +
         '   docs/decisions/gh250-contrast-gate-known-failures.md.'
     )
   }
-  return run.errors.length > 0 || stale.length > 0 ? 2 : 1
+  return fatal > 0 ? 2 : 1
 }
 
 /* ------------------------------------------------------------------ *
@@ -873,15 +1081,18 @@ interface Assertion {
 }
 
 /**
- * Three things have to hold, and only the third is about this palette:
+ * Four things have to hold, and only the third is about this palette:
  *
  *  1. The maths matches published WCAG reference values, so a broken luminance
  *     formula is caught independently of any token.
- *  2. The resolver reproduces the baseline the issue records exactly. This
- *     locks hsl→rgb, var() following and 8-bit rounding together — any one of
- *     them drifting moves these numbers.
+ *  2. The resolver reproduces SHIPPED_BASELINE exactly. This locks hsl→rgb,
+ *     var() following and 8-bit rounding together — any one of them drifting
+ *     moves these numbers.
  *  3. Editing a token below its floor makes the gate report a failure. A gate
  *     that cannot fail is not a gate.
+ *  4. `report()`'s EXIT CODE, not just the evaluator's verdicts, responds to
+ *     all of the above. An evaluator that finds a failure and an exit code
+ *     that ignores it is still a green CI run.
  */
 function selfCheck(cssDir: string): number {
   console.log('🧪 Contrast gate self-check\n')
@@ -915,37 +1126,51 @@ function selfCheck(cssDir: string): number {
     detail: 'fg/bg order does not change the ratio'
   })
 
-  // 2 — the baseline the issue records, resolved from the real token graph.
-  const baseline: ReadonlyArray<{ id: string; hex: string; ratio: number }> = [
-    { id: 'white-on-teal', hex: '#027A8D', ratio: 5.03 },
-    { id: 'white-on-red', hex: '#D0495B', ratio: 4.39 },
-    { id: 'white-on-amber', hex: '#EEAC49', ratio: 1.98 }
-  ]
-  const live = new ContrastGate(cssDir).run()
-  for (const expected of baseline) {
-    const actual = live.results.find(r => r.pair.id === expected.id)
+  // 2 — SHIPPED_BASELINE, resolved from the real token graph.
+  const strictRun = new ContrastGate(cssDir).run(false)
+  for (const expected of SHIPPED_BASELINE) {
+    const actual = strictRun.results.find(r => r.pair.id === expected.id)
     const okHex = actual?.bgHex === expected.hex
     const okRatio = actual?.ratio !== undefined && fmt(actual.ratio) === fmt(expected.ratio)
     assertions.push({
       name: `baseline: ${expected.id} resolves to ${expected.hex} at ${fmt(expected.ratio)}:1`,
       ok: okHex && okRatio,
-      detail: `${actual?.bgHex ?? 'unresolved'} at ${actual?.ratio !== undefined ? fmt(actual.ratio) : '—'}:1`
+      detail:
+        okHex && okRatio
+          ? `${actual?.bgHex} at ${fmt(actual?.ratio as number)}:1`
+          : `got ${actual?.bgHex ?? 'unresolved'} at ${actual?.ratio !== undefined ? fmt(actual.ratio) : '—'}:1 — ` +
+            `if a palette change moved this deliberately, update SHIPPED_BASELINE`
     })
   }
   assertions.push({
-    name: 'baseline: the strict run is non-zero today',
-    ok:
-      live.results.some(r => r.verdict === 'known-fail' || r.verdict === 'fail') &&
-      live.errors.length === 0,
-    detail: `${live.results.filter(r => r.verdict === 'known-fail' || r.verdict === 'fail').length} failing pair(s), ${live.errors.length} resolve error(s)`
+    name: 'baseline: the token graph resolves with no errors',
+    ok: strictRun.errors.length === 0,
+    detail: `${strictRun.errors.length} resolve error(s)`
   })
 
-  // 3 — mutate a token below its floor and confirm the gate notices.
+  // 4a — exit codes on the real palette, stated relative to the allowlist so a
+  // palette repair does not have to edit this assertion.
+  const strictExit = report(strictRun, false, true)
+  const ciExit = report(new ContrastGate(cssDir).run(true), true, true)
+  const expectedStrict = KNOWN_FAILURES.length > 0 ? 1 : 0
+  assertions.push({
+    name: `exit code: strict run returns ${expectedStrict} (${KNOWN_FAILURES.length} allowlisted pair(s))`,
+    ok: strictExit === expectedStrict,
+    detail: `strict exit ${strictExit}`
+  })
+  assertions.push({
+    name: 'exit code: --allow-known run returns 0',
+    ok: ciExit === 0,
+    detail: `ci exit ${ciExit}`
+  })
+
+  // 3 + 4b — mutate a token below its floor and confirm the gate notices, and
+  // that the EXIT CODE notices too, in both modes.
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'check-contrast-selfcheck-'))
   try {
     fs.cpSync(path.join(cssDir, 'tokens'), path.join(tmp, 'tokens'), { recursive: true })
-    const mutated = path.join(tmp, 'tokens', 'primitive-colors.css')
-    const before = fs.readFileSync(mutated, 'utf-8')
+    const mutatedFile = path.join(tmp, 'tokens', 'primitive-colors.css')
+    const before = fs.readFileSync(mutatedFile, 'utf-8')
     // `--color-text` resolves through `--hsl-base` → `--hsl-black`. Lift the
     // black to near-white and `--color-text` on `--color-surface-page` collapses.
     const after = before.replace('--hsl-black: 0, 0%, 3%;', '--hsl-black: 0, 0%, 92%;')
@@ -956,19 +1181,55 @@ function selfCheck(cssDir: string): number {
         detail: 'the anchor string was not found in primitive-colors.css — update the self-check'
       })
     } else {
-      fs.writeFileSync(mutated, after, 'utf-8')
-      const mutatedRun = new ContrastGate(tmp).run()
-      const target = mutatedRun.results.find(r => r.pair.id === 'text-on-page')
+      fs.writeFileSync(mutatedFile, after, 'utf-8')
+      const mutatedStrict = new ContrastGate(tmp).run(false)
+      const target = mutatedStrict.results.find(r => r.pair.id === 'text-on-page')
       assertions.push({
         name: 'mutation: text-on-page fails once --hsl-black is lifted to 92% lightness',
         ok: target?.verdict === 'fail',
         detail: `verdict "${target?.verdict ?? 'missing'}" at ${target?.ratio !== undefined ? fmt(target.ratio) : '—'}:1`
       })
+      const mutatedStrictExit = report(mutatedStrict, false, true)
+      const mutatedCiExit = report(new ContrastGate(tmp).run(true), true, true)
       assertions.push({
-        name: 'mutation: the mutated palette is not excused by the allowlist',
-        ok: mutatedRun.results.some(r => r.verdict === 'fail'),
-        detail: 'a new failure is a hard failure, not a known one'
+        name: 'mutation: the strict exit code is non-zero',
+        ok: mutatedStrictExit !== 0,
+        detail: `exit ${mutatedStrictExit}`
       })
+      assertions.push({
+        name: 'mutation: --allow-known does NOT excuse the new failure',
+        ok: mutatedCiExit !== 0,
+        detail: `exit ${mutatedCiExit} — a new failure is a hard failure, not a known one`
+      })
+    }
+
+    // The ratchet, end to end: repair an allowlisted colour and the stale entry
+    // must be fatal even under --allow-known.
+    const ratchetDir = fs.mkdtempSync(path.join(os.tmpdir(), 'check-contrast-ratchet-'))
+    try {
+      fs.cpSync(path.join(cssDir, 'tokens'), path.join(ratchetDir, 'tokens'), { recursive: true })
+      const primitives = path.join(ratchetDir, 'tokens', 'primitive-colors.css')
+      const src = fs.readFileSync(primitives, 'utf-8')
+      const repaired = src
+        .replace('--hsl-red: 352, 59%, 55%;', '--hsl-red: 352, 59%, 30%;')
+        .replace('--hsl-yellow: 36, 83%, 61%;', '--hsl-yellow: 36, 83%, 30%;')
+      if (repaired === src) {
+        assertions.push({
+          name: 'ratchet: the allowlisted primitives could be repaired',
+          ok: false,
+          detail: 'anchor strings not found in primitive-colors.css — update the self-check'
+        })
+      } else {
+        fs.writeFileSync(primitives, repaired, 'utf-8')
+        const ratchetExit = report(new ContrastGate(ratchetDir).run(true), true, true)
+        assertions.push({
+          name: 'ratchet: repairing an allowlisted colour is fatal until its entry is deleted',
+          ok: ratchetExit === 2,
+          detail: `exit ${ratchetExit} under --allow-known`
+        })
+      }
+    } finally {
+      fs.rmSync(ratchetDir, { recursive: true, force: true })
     }
   } finally {
     fs.rmSync(tmp, { recursive: true, force: true })
@@ -980,9 +1241,9 @@ function selfCheck(cssDir: string): number {
   }
 
   const failed = assertions.filter(a => !a.ok)
-  console.log('\n' + '='.repeat(72))
+  console.log('\n' + '='.repeat(60))
   console.log(`Self-check: ${assertions.length - failed.length}/${assertions.length} assertions passed`)
-  console.log('='.repeat(72))
+  console.log('='.repeat(60))
 
   if (failed.length > 0) {
     console.log('\n❌ The gate does not behave as claimed. Do not trust its verdicts.')
@@ -996,31 +1257,49 @@ function selfCheck(cssDir: string): number {
  * Entry point
  * ------------------------------------------------------------------ */
 
-function main(): void {
+const FLAGS = new Set(['--allow-known', '--self-check', '--tokens-dir'])
+
+function main(): number {
   const args = process.argv.slice(2)
-  const allowKnown = args.includes('--allow-known')
-  const wantsSelfCheck = args.includes('--self-check')
 
-  const dirFlag = args.indexOf('--tokens-dir')
-  const cssDir =
-    dirFlag !== -1 && args[dirFlag + 1] !== undefined
-      ? path.resolve(args[dirFlag + 1] as string)
-      : path.join(process.cwd(), 'src', 'public', 'css')
+  let cssDir = path.join(process.cwd(), 'src', 'public', 'css')
+  let allowKnown = false
+  let wantsSelfCheck = false
 
-  if (wantsSelfCheck) {
-    process.exit(selfCheck(cssDir))
+  for (let i = 0; i < args.length; i++) {
+    const arg = args[i] as string
+    if (arg === '--allow-known') allowKnown = true
+    else if (arg === '--self-check') wantsSelfCheck = true
+    else if (arg === '--tokens-dir') {
+      const next = args[i + 1]
+      if (next === undefined || next.startsWith('--')) {
+        console.error('--tokens-dir needs a directory argument')
+        return 2
+      }
+      cssDir = path.resolve(next)
+      i++
+    } else {
+      console.error(`Unknown argument: ${arg}`)
+      console.error(`Expected one of: ${[...FLAGS].join(', ')}`)
+      return 2
+    }
   }
+
+  if (wantsSelfCheck) return selfCheck(cssDir)
 
   console.log('🔍 Checking colour contrast against WCAG floors...\n')
   console.log(`   tokens: ${cssDir}`)
   console.log(`   mode:   ${allowKnown ? '--allow-known (CI)' : 'strict'}\n`)
 
-  process.exit(report(new ContrastGate(cssDir).run(), allowKnown))
+  return report(new ContrastGate(cssDir).run(allowKnown), allowKnown)
 }
 
 try {
-  main()
+  // `process.exitCode`, not `process.exit()`: stdout is async on a pipe, which
+  // is what Actions gives it, and an immediate exit can truncate the summary
+  // this gate exists to print.
+  process.exitCode = main()
 } catch (error) {
-  console.error('Fatal error:', error instanceof Error ? error.message : String(error))
-  process.exit(2)
+  console.error('Fatal error:', error)
+  process.exitCode = 2
 }

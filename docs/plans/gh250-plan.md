@@ -10,7 +10,7 @@ Phase 1 § "The gate — this is what makes the tiers real".
 rule stated there is "add no colour that **fails its measured floor**". That rule is
 currently unenforceable: there is no contrast function and no colour utility anywhere
 in the repository. Every ratio in the codebase is a hand-written comment
-(`src/components/Button.vue:61`, `docs/ds-epic/issues/41-bf-notice.md:141-143`) that
+(`src/components/bf/Button.vue:61`, `docs/ds-epic/issues/41-bf-notice.md:141-143`) that
 nothing recomputes, so a palette edit cannot be caught.
 
 This change adds the measuring instrument. It does **not** fix the palette — the
@@ -53,7 +53,7 @@ inline, per the acceptance criteria.
 ### Scope-aware parsing
 
 `validate-tokens.ts` flattens every declaration into one `Map`, which is fine for its
-checks. It is **not** fine here: #251 introduces `--hsl-program` three times over, once
+checks. It is **not** fine here: #251 declares `--hsl-program` four times over — once
 per `[data-program="…"]` block, plus a `:root` default. A flat map would keep only the
 last one and silently assert the wrong programme.
 
@@ -65,8 +65,10 @@ gate correct for #251 the day #251 lands, with no second edit here.
 
 ## The assertion table
 
-A declarative list, one row per pair: foreground, background, floor, label, and an
-`optional` flag for tokens that do not exist yet.
+A declarative list, one row per pair: foreground, background, floor, label, a scope
+chain, and a `pendingFrom` marker naming the issue that introduces tokens which do not
+exist yet. Nine archetypes below; the programme rows are generated per programme, so the
+gate runs **16** pairs — 6 live and 10 pending.
 
 | # | foreground | background | floor | today |
 |---|---|---|---|---|
@@ -78,13 +80,19 @@ A declarative list, one row per pair: foreground, background, floor, label, and 
 | 6 | `#FFFFFF` | `--color-yellow` (amber `#EEAC49`) | 4.5 | **1.98 FAIL** — the chip case |
 | 7 | `--color-program-on-light` | `--color-surface-page` | 4.5 | *not yet defined* (#251) |
 | 8 | `--color-program-on-dark` | `--color-scrim` over `--color-surface-page` | 4.5 | *not yet defined* (#251) |
-| 9 | `#FFFFFF` | `--color-scrim` over `#FFFFFF` | 4.5 | *not yet defined* (#251) |
+| 9 | `#FFFFFF` | `--color-scrim` over `#FFFFFF` | 4.5 | *not yet defined* (hero + scrim phase) |
 
 Rows 4-6 are the acceptance baseline and are verified by hand-computed arithmetic
-before a line of code is written: 5.035, 4.388, 1.975 respectively.
+before a line of code is written: 5.0343, 4.3872, 1.9751 respectively.
 
-Rows 7-9 reference tokens #251 creates. They report **`not yet defined — #251`** as a
-notice, not a failure. When #251 lands they become live with no edit to the table.
+Rows 7-9 reference tokens that land later — #251 for the programme trio, the hero +
+scrim phase for `--color-scrim`. They report **`not yet defined`** as a notice, not a
+failure, and become live with no edit to the table.
+
+Rows 7-9 also carry `requireScoped`: once the programme tokens exist they must resolve
+from a `[data-program="…"]` scope, not the `:root` default. Otherwise a missing or
+mistyped programme block measures the neutral default and reports it under the
+programme's label — three programmes all reporting the same ratio.
 
 Row 9's background is a translucent scrim composited over an opaque ground — the
 resolver's alpha-compositing path, exercised by the pair table rather than only by
@@ -99,9 +107,10 @@ fixes them — from merging.
 **Decision: a dated known-failing allowlist, not report-only.** Recorded in
 `docs/decisions/gh250-contrast-gate-known-failures.md`.
 
-- The default invocation — `npm run check:contrast` — is **strict**. It ignores the
-  allowlist and exits non-zero today, reporting `red 4.39` and `amber 1.98`. This is
-  what the issue's acceptance criterion measures.
+- The default invocation — `npm run check:contrast` — is **strict**. An allowlisted pair
+  is verdicted `FAIL` like any other and counts toward the exit code; the allowlist
+  survives only as the `[#251]` annotation. It exits 1 today, reporting `red 4.39 FAIL`
+  and `amber 1.98 FAIL` — the issue's acceptance wording, verbatim.
 - CI runs `npm run check:contrast:ci`, which passes `--allow-known`. Allowlisted pairs
   are printed as `KNOWN FAIL (#251)` and do not set the exit code. Everything outside
   the allowlist fails hard from day one.
@@ -115,7 +124,7 @@ Report-only-on-dev was rejected: it makes the gate decorative, gives no signal w
 ## Proving the gate bites
 
 `--self-check` is a mode of the same script, wired as
-`npm run check:contrast:self-check`. Three assertions:
+`npm run check:contrast:self-check`. Fourteen assertions in four groups:
 
 1. **Maths against reference values.** `#000` on `#FFF` = 21.00, `#FFF` on `#FFF` =
    1.00, `#777777` on `#FFF` = 4.48 — published WCAG figures, so a broken luminance
@@ -126,10 +135,17 @@ Report-only-on-dev was rejected: it makes the gate decorative, gives no signal w
 3. **It fails when a value is edited below its floor.** Copies the token directory to
    a temp dir, rewrites `--hsl-black` to a light value so `--color-text` vs
    `--color-surface-page` collapses, re-runs the full pipeline against the copy via a
-   `--tokens-dir` override, and asserts the run reports a failure. If the mutated
-   palette still comes back clean, the self-check exits non-zero.
+   `--tokens-dir` override, and asserts the run reports a failure — and that
+   `--allow-known` does not excuse it.
+4. **The exit code, not just the verdict.** Asserting verdicts alone leaves the hole
+   where the evaluator finds a failure and the exit arithmetic ignores it: still a green
+   CI run. So the self-check calls `report()` and asserts what it returns — 1 strict, 0
+   under `--allow-known`, non-zero in both modes on the mutated palette, and 2 on a
+   fixture where an allowlisted colour is repaired but its row not deleted. The strict
+   assertion is written relative to `KNOWN_FAILURES.length`, so #251 need not edit it.
 
-The `--tokens-dir` override is what makes (3) possible without mutating the real tree.
+The `--tokens-dir` override is what makes (3) and (4) possible without mutating the real
+tree.
 
 ## Files
 
@@ -144,21 +160,25 @@ The `--tokens-dir` override is what makes (3) possible without mutating the real
 ## Constraints
 
 - `tsconfig.scripts.json` runs `strict: true` over `scripts/**/*.ts` and the CI
-  typecheck gate compares against a 37-row baseline. The new script must add **zero**
-  new diagnostics — no implicit `any`, every array index access guarded.
+  typecheck gate compares against a 28-row baseline (`.github/typecheck-baseline.txt`,
+  37 lines of which 9 are comments). The new script must add **zero** new diagnostics —
+  no implicit `any`, every array index access guarded.
 - No new dependency. `fs`, `path`, `os` only.
 - Node 24, run under `tsx`, ESM.
-- The issue text says "add to `verify.yml` alongside the existing `validate:tokens`".
-  `validate:tokens` is **not** in `verify.yml` today — the workflow runs typecheck,
-  build, `check-routes` and `check-links` only. Adding `validate:tokens` is out of
-  scope for this issue; flagged as a residual rather than fixed here.
+- The parent plan says to wire the gate "as `npm run check:contrast`, alongside the
+  existing `npm run validate:tokens`, and add to `.github/workflows/verify.yml`". Both
+  halves are satisfied: the npm script sits beside `validate:tokens`, and the workflow
+  gains two steps. Separately and truly, `verify.yml` does not run `validate:tokens` at
+  all — that gap is a residual, not this issue's work.
 
 ## Verification
 
-1. `npm run check:contrast` → non-zero, reports teal 5.03 PASS / red 4.39 FAIL /
-   amber 1.98 FAIL, and rows 7-9 as `not yet defined — #251`.
+1. `npm run check:contrast` → exit 1, reports teal 5.03 PASS / red 4.39 FAIL /
+   amber 1.98 FAIL, and rows 7-9 as `not yet defined`.
 2. `npm run check:contrast:ci` → exit 0, the two known failures printed as
-   `KNOWN FAIL (#251)`.
-3. `npm run check:contrast:self-check` → exit 0.
-4. `npm run typecheck:scripts` → no new diagnostics vs baseline.
-5. `node .github/typecheck-gate.mjs` → passes.
+   `🟡 KNOWN FAIL … [#251]`.
+3. `npm run check:contrast:self-check` → exit 0, 14/14 assertions.
+4. A fixture with red and amber repaired but `KNOWN_FAILURES` untouched → exit 2,
+   `Stale allowlist entries`.
+5. `tsc --noEmit -p tsconfig.scripts.json` → no new diagnostics vs baseline
+   (`<project> TS2688 1` only).

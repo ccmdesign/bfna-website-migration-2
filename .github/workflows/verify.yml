@@ -78,7 +78,7 @@ jobs:
       - name: Contrast gate self-check
         run: npm run check:contrast:self-check
 
-      - name: Contrast gate (check:contrast)
+      - name: Contrast gate (check:contrast:ci)
         run: npm run check:contrast:ci
 
       # `scripts/check-routes.ts` drives headless Chrome over CDP, resolving a
