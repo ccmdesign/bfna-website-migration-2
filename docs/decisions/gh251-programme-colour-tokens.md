@@ -209,3 +209,35 @@ than that #251 fixes both. Prose only.
 | #264 | The `:root` programme default and the on-dark tier ship unmeasured (§4, §7.3) |
 | #265 | Two ADRs still record `--hsl-red` at 55% / `#D0495B` / 4.39 (§2) |
 | #266 | `validate-tokens.ts:240` omits the `composition` layer (§8) |
+
+---
+
+## Addendum — mapping ratified 2026-09-04, against the legacy source
+
+§3 above records a conflict: `css-legacy/global.css:274-289` maps `.democracy` → yellow
+(`33, 100%, 49%` = `#FA8900`) and `.politics-society` → green (`153, 28%, 43%` =
+`#4F8C71`). Both hexes match the live production site exactly, so the legacy block is
+authoritative and the live-site *design review* that reported the reverse was wrong. This
+file shipped Democracy on teal and Transatlantic on the amber lineage — i.e. **swapped
+relative to production**.
+
+That was an error in the issue spec, not in the implementation. It was put to the client
+with the correction costed, and **the shipped mapping was kept deliberately**:
+
+| Programme | v2 hue | Production ancestor |
+| --- | --- | --- |
+| `democracy` | teal | orange — **deliberately reassigned** |
+| `future-leadership` | red | red — unchanged |
+| `transatlantic-relations-global-challenges` | amber/ochre | green — **deliberately reassigned** |
+
+Rationale: with four topics collapsing to three Programs the mapping could not survive
+intact anyway, and the contrast gate forces amber to a deep ochre (`#A3680F`) that reads
+poorly on the flagship programme. Teal on Democracy is the better result and the
+reassignment is now on the record as a choice.
+
+Consequence: this is a **partial rebrand of programme identity**, not pure evolution. Two
+of three programme colours change hue family from production. Anything downstream that
+assumes continuity with the live site — redirects, print collateral, social templates —
+should be checked against this table rather than against `css-legacy`.
+
+Future Leadership is the only programme whose colour carries across unchanged.
