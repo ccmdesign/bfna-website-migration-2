@@ -40,12 +40,67 @@
  * run no assertions, and baking `FAIL` into it would read as a regression to
  * the next issue that greps the file.
  *
+ * ## The console gate (gh#200, from residual #199)
+ *
+ * Every page this harness opens — probe or smoke route — must reach the end of
+ * its budget with an **empty console at `error` level**. One console error is
+ * one failing row, quoted verbatim.
+ *
+ * The gate exists because #199 was a hydration mismatch on the shared shell
+ * that nobody could see except by opening a page by hand:
+ * `Hydration completed but contains mismatches.` is a `console.error` and
+ * nothing else — it fails no build, breaks no assertion, and the page it ruins
+ * still looks right. Vue discards the server markup for the mismatching subtree
+ * and re-renders it, so the cost is real and entirely invisible to a harness
+ * that reads only verdict rows.
+ *
+ * Two channels, and neither is redundant:
+ *
+ *   - `Runtime.consoleAPICalled` (`type: 'error' | 'assert'`) — everything the
+ *     page itself says, which is where Vue's hydration message lands;
+ *   - `Log.entryAdded` (`entry.level === 'error'`) — everything the *browser*
+ *     says, which is where a 404 on a `/_nuxt/*.js` chunk lands, and the page
+ *     never hears about that one.
+ *
+ * **Known limit, stated rather than discovered later.** Vue hydrates a
+ * `createStaticVNode` subtree by advancing the node pointer without comparing
+ * its content, so a mismatch confined to compiler-hoisted static markup emits
+ * nothing on any channel. Verified while building this gate: patching a static
+ * text node in a prerendered page produced silence, patching the adjacent
+ * dynamic one produced the message above. The gate catches every mismatch that
+ * reaches a dynamic node, which is every mismatch #199 was about.
+ *
+ * ## Smoke routes (gh#200)
+ *
+ * Probe pages exercise one component each against sample data. They cannot
+ * catch a defect in the *shell* — #199 was on `bf-default`, visible on every
+ * real route and on none of the probes, because a probe page composes
+ * `bf-probe`, not `bf-default`.
+ *
+ * So a full run also opens the real site: `/`, `/insights`, `/about`,
+ * `/archive`, `/projects`, `/search`, one insight detail and one project
+ * detail. They carry no verdict convention and assert nothing about layout —
+ * the contract is only *"this page hydrates and says nothing"*, which is
+ * exactly the contract #199 broke.
+ *
+ * The two detail slugs are **derived from `.output/public`** — first
+ * alphabetical child directory holding an `index.html` — for the same reason
+ * the probe list is read from the pages directory: a hard-coded slug rots the
+ * first time content moves, and it rots silently, as a 404 that the gate would
+ * then dutifully report as a console error on a build that is fine.
+ *
+ * A page is "hydrated" when `document.readyState === 'complete'` **and**
+ * `document.getElementById('__nuxt').__vue_app__` exists. The second half is
+ * load-bearing: a page whose entry chunk 404s stays as static prerendered HTML,
+ * looks perfect, and passes a console-only check by having nothing to say.
+ *
  * ## Exit contract
  *
- * `0` only when every probe reported `PASS` with zero failing rows. A probe
- * still `PENDING` when the timeout expires is a **failure**, not a skip: a
- * verification that quietly downgrades itself to "PASS (1 skipped)" is exactly
- * how a broken component ships green (`verify-bf-*.ts`'s contract, kept).
+ * `0` only when every probe reported `PASS` with zero failing rows, every smoke
+ * route hydrated, and no page logged a console error. A probe still `PENDING`
+ * when the timeout expires is a **failure**, not a skip: a verification that
+ * quietly downgrades itself to "PASS (1 skipped)" is exactly how a broken
+ * component ships green (`verify-bf-*.ts`'s contract, kept).
  *
  * ## Driver
  *
@@ -59,9 +114,11 @@
  * ## Flags
  *
  *   --only <nn|slug>   run a single probe (`--only 16`, `--only 16-bf-chip`)
+ *   --only smoke       run the real-route smoke set alone, no probes
  *   --timeout <ms>     per-probe budget for reaching a non-PENDING verdict
  *   --port <n>         pin the static server port (default: a free one)
  *   --viewport <WxH>   layout viewport (default 1280x1024)
+ *   --ignore-console   regex; console text matching it is not a failure
  *   --verbose          print every row, not just the failing ones
  */
 import { spawn, type ChildProcess } from 'node:child_process'
@@ -107,6 +164,28 @@ const timeoutMs = num(flag('timeout'), 20_000)
 const pinnedPort = num(flag('port'), 0)
 
 /**
+ * An escape hatch for console noise that is the *environment's*, not the
+ * build's — the shell links one third-party stylesheet
+ * (`fonts.googleapis.com`), and a gate with no way to say "not that one" turns
+ * a network hiccup on someone's laptop into a merge blocker.
+ *
+ * Empty by default, so the committed behaviour is strict and reaching for this
+ * is a visible act on a command line rather than a quiet default. Compiled
+ * without flags on purpose: a `/g/` regex carries `lastIndex` between calls and
+ * would match every *other* line.
+ */
+const ignoreConsole = (() => {
+  const raw = flag('ignore-console')
+  if (raw === undefined) return undefined
+  try {
+    return new RegExp(raw)
+  } catch (error) {
+    console.error(`--ignore-console is not a valid regex: ${(error as Error).message}`)
+    process.exit(2)
+  }
+})()
+
+/**
  * The layout viewport, set explicitly rather than inherited from the browser's
  * default window. Probe assertions measure real boxes — probe 16 compares the
  * rendered height of all five chip modes, probe 03 derives an expected grid
@@ -129,7 +208,25 @@ const verbose = argv.includes('--verbose')
 /* ------------------------------------------------------------------ *
  * Which probes
  * ------------------------------------------------------------------ */
-if (!existsSync(probeDir)) {
+/**
+ * Does this invocation include the real-route smoke set?
+ *
+ * A probe-scoped `--only` skips it, so the epic's per-issue acceptance
+ * (`--only <nn>`) keeps its current cost. Declared here rather than beside the
+ * routes because the guards below need it.
+ */
+const runSmoke = only === undefined || only === 'smoke'
+
+/**
+ * A missing probe directory is fatal only when there is nothing else to run.
+ *
+ * Issue #68 deletes `src/pages/bf-probe/` at cutover, and gh#200 is sequenced
+ * *before* the cutover issues precisely so the shell has a console gate while
+ * they land. A harness that refused to start without probe pages would stop
+ * existing at the commit that most needs it, so the smoke set outlives the
+ * directory it never depended on.
+ */
+if (!existsSync(probeDir) && !runSmoke) {
   console.error(`No probe pages at ${probeDir}. Nothing to check.`)
   process.exit(1)
 }
@@ -140,17 +237,23 @@ if (!existsSync(probeDir)) {
  * whole point of a harness (#115's "hard-coded totals" complaint, applied here
  * before it can be made).
  */
-const allProbes = readdirSync(probeDir)
-  .filter(f => f.endsWith('.vue'))
-  .map(f => f.replace(/\.vue$/, ''))
-  .sort()
+const allProbes = existsSync(probeDir)
+  ? readdirSync(probeDir)
+    .filter(f => f.endsWith('.vue'))
+    .map(f => f.replace(/\.vue$/, ''))
+    .sort()
+  : []
 
 const probes = only === undefined
   ? allProbes
-  : allProbes.filter(slug => slug === only || slug.startsWith(`${only}-`))
+  : only === 'smoke'
+    ? []
+    : allProbes.filter(slug => slug === only || slug.startsWith(`${only}-`))
 
-if (probes.length === 0) {
-  console.error(`--only ${only} matched no probe. Available: ${allProbes.join(', ')}`)
+/* Only a `--only` that named something can match nothing; a full run with no
+   probe pages left (post-#68) is the smoke set on its own, not an error. */
+if (probes.length === 0 && only !== undefined && only !== 'smoke') {
+  console.error(`--only ${only} matched no probe. Available: ${allProbes.join(', ')}, smoke`)
   process.exit(2)
 }
 
@@ -158,6 +261,47 @@ if (!existsSync(publicDir)) {
   console.error(`No prerendered output at ${publicDir}.\nRun \`npx nuxt generate\` first (not \`npm run generate\` — that one needs Directus secrets).`)
   process.exit(1)
 }
+
+/* ------------------------------------------------------------------ *
+ * The smoke set — real routes, not probes (gh#200)
+ * ------------------------------------------------------------------ */
+/**
+ * The first alphabetical child of `<dir>` in the prerendered output that is a
+ * real page. Sorted, so two runs on the same build pick the same route and a
+ * failure is reproducible from its own output; `index.html` rather than mere
+ * directory existence, because `insights/` also holds `_payload.json` files and
+ * a `_nuxt`-style sibling would otherwise be "the first detail page".
+ */
+const firstPageUnder = (dir: string): string | undefined => {
+  const root = join(publicDir, dir)
+  if (!existsSync(root)) return undefined
+  return readdirSync(root)
+    .sort()
+    .find(name => existsSync(join(root, name, 'index.html')))
+}
+
+/**
+ * `/` plus every list template plus one of each detail template — the eight
+ * routes gh#200's acceptance names. Deliberately small: this is a smoke set,
+ * not a crawl, and its whole job is to put the **shell** under the same
+ * console gate the probes are under. A detail route that has not been
+ * prerendered is dropped rather than requested, so the harness reports a
+ * missing page as a missing page and not as a 404 on a build that is fine.
+ */
+const smokeRoutes = ((): string[] => {
+  const insight = firstPageUnder('insights')
+  const project = firstPageUnder('projects')
+  return [
+    '/',
+    '/insights',
+    '/about',
+    '/archive',
+    '/projects',
+    '/search',
+    ...(insight === undefined ? [] : [`/insights/${insight}`]),
+    ...(project === undefined ? [] : [`/projects/${project}`])
+  ]
+})()
 
 /* ------------------------------------------------------------------ *
  * Static server over .output/public
@@ -319,6 +463,29 @@ const launchChrome = async (executable: string): Promise<{ child: ChildProcess, 
  * ------------------------------------------------------------------ */
 type Pending = { ok: (value: unknown) => void, fail: (reason: Error) => void }
 
+/** A CDP `RemoteObject`, in the one shape a console argument can arrive as. */
+type RemoteObject = { value?: unknown, description?: string, unserializableValue?: string, type?: string }
+
+/**
+ * One `console.error(...)` call, flattened to a line.
+ *
+ * Deliberately lossy: primitives print as themselves, objects as the
+ * `description` Chrome already computed (`Error: …`, `TypeError: …`), and
+ * anything else as its type name. Deep-previewing an argument would need
+ * `Runtime.getProperties` round-trips per object, and a gate whose failure
+ * message needs three more protocol calls is a gate that fails while the
+ * browser is dying.
+ */
+const describeConsoleArgs = (args: RemoteObject[]): string =>
+  args
+    .map(a =>
+      a.value !== undefined
+        ? String(a.value)
+        : a.description ?? a.unserializableValue ?? `<${a.type ?? 'unknown'}>`
+    )
+    .join(' ')
+    .trim()
+
 class Cdp {
   private readonly socket: WebSocket
   private nextId = 1
@@ -330,6 +497,37 @@ class Cdp {
    */
   exceptions: string[] = []
 
+  /**
+   * Console-level errors from the page under test (gh#200). Cleared between
+   * pages for the same reason `exceptions` is: a failure quoting the
+   * *previous* page's console is worse than no quote at all.
+   *
+   * Deduplicated on the way in. Vue logs its hydration message once, but a
+   * broken image in a 256-row list logs 256 identical lines, and a failure
+   * report that is 256 copies of one sentence hides the second, different one.
+   */
+  consoleErrors: string[] = []
+
+  /**
+   * The page currently under test.
+   *
+   * Events carry the session they came from; without this the client would
+   * attribute anything a *closing* target still flushes to whichever page is
+   * opened next. Pages are visited sequentially and both buffers are cleared
+   * per page, so that window is narrow — but a gate whose entire value is
+   * quoting the right page's console should not have that shape at all.
+   * `undefined` means "listening to nothing", which is the honest state
+   * between pages.
+   */
+  watching: string | undefined
+
+  private note(text: string): void {
+    const clean = text.trim()
+    if (clean === '') return
+    if (ignoreConsole?.test(clean)) return
+    if (!this.consoleErrors.includes(clean)) this.consoleErrors.push(clean)
+  }
+
   private constructor(socket: WebSocket) {
     this.socket = socket
     this.socket.addEventListener('message', event => {
@@ -338,6 +536,7 @@ class Cdp {
         result?: unknown
         error?: { message: string }
         method?: string
+        sessionId?: string
         params?: Record<string, unknown>
       }
       if (typeof message.id === 'number') {
@@ -348,9 +547,35 @@ class Cdp {
         else waiter.ok(message.result)
         return
       }
+      /* Only the page under test speaks; see `watching`. */
+      if (this.watching !== undefined && message.sessionId !== this.watching) return
+
       if (message.method === 'Runtime.exceptionThrown') {
         const details = (message.params?.exceptionDetails ?? {}) as { text?: string, exception?: { description?: string } }
         this.exceptions.push(details.exception?.description ?? details.text ?? 'unknown exception')
+        return
+      }
+
+      /* What the page says — Vue's hydration message arrives here (gh#200). */
+      if (message.method === 'Runtime.consoleAPICalled') {
+        const params = (message.params ?? {}) as { type?: string, args?: RemoteObject[] }
+        if (params.type === 'error' || params.type === 'assert') {
+          this.note(describeConsoleArgs(params.args ?? []))
+        }
+        return
+      }
+
+      /*
+       * What the *browser* says — a 404 on a `/_nuxt/*.js` chunk, a blocked
+       * subresource, a CSP violation. The page never hears about any of them,
+       * so `Runtime.consoleAPICalled` alone would report a build with a missing
+       * entry chunk as perfectly quiet.
+       */
+      if (message.method === 'Log.entryAdded') {
+        const entry = ((message.params ?? {}).entry ?? {}) as { level?: string, text?: string, url?: string }
+        if (entry.level === 'error') {
+          this.note(`${entry.text ?? 'unknown log entry'}${entry.url === undefined ? '' : ` — ${entry.url}`}`)
+        }
       }
     })
   }
@@ -536,6 +761,45 @@ const dispatchKeys = async (cdp: Cdp, sessionId: string, sequence: string, slug:
 }
 
 /* ------------------------------------------------------------------ *
+ * The smoke reader (gh#200)
+ * ------------------------------------------------------------------ */
+/**
+ * Has this real route hydrated?
+ *
+ * `readyState` alone is not enough and `__vue_app__` alone is not enough. Vue
+ * sets `__vue_app__` on the mount container the moment the root `hydrate()`
+ * call returns, and a prerendered page whose entry chunk 404s never gets that
+ * far — it just sits there as static HTML, looking perfect and saying nothing,
+ * which is precisely how it would pass a console-only check.
+ */
+const SMOKE_READY = `(() => {
+  const root = document.getElementById('__nuxt')
+  return document.readyState === 'complete' && !!(root && root.__vue_app__)
+})()`
+
+/**
+ * How long to keep listening after a smoke route reports hydration.
+ *
+ * Vue logs `Hydration completed but contains mismatches.` from
+ * `logMismatchError()` at the moment the mismatching node is hydrated — and
+ * this app's root is an async `<Suspense>` (the `bf-default` layout `await`s
+ * `useBfSite()`), so `hydrate()` returns, `__vue_app__` is assigned, and the
+ * layout's own subtree hydrates *after* that. Breaking out of the poll the
+ * instant `__vue_app__` appears would therefore stop listening one tick before
+ * the message this gate exists to catch.
+ *
+ * Probes need no equivalent: their verdict is painted in `onMounted`, which
+ * runs after their subtree has hydrated, so a probe that reports a verdict has
+ * already emitted whatever it was going to emit.
+ *
+ * Deliberately generous. The failure mode of a value that is too small is a
+ * silent false green, which is the one outcome a gate must not have; the cost
+ * of one that is too large is a few seconds on a run that already loads 46
+ * pages.
+ */
+const SMOKE_SETTLE_MS = 1_500
+
+/* ------------------------------------------------------------------ *
  * Run
  * ------------------------------------------------------------------ */
 type Result = { slug: string, verdict: string, rows: Row[], failing: Row[], note?: string }
@@ -558,7 +822,11 @@ const run = async (): Promise<void> => {
     chrome = await launchChrome(executable)
     cdp = await Cdp.connect(chrome.wsUrl)
 
-    console.log(`check-probes — ${probes.length} probe${probes.length === 1 ? '' : 's'} from ${publicDir}`)
+    console.log(
+      `check-probes — ${probes.length} probe${probes.length === 1 ? '' : 's'}`
+      + (runSmoke ? ` + ${smokeRoutes.length} smoke route${smokeRoutes.length === 1 ? '' : 's'}` : '')
+      + ` from ${publicDir}`
+    )
     console.log(`  server  ${origin}`)
     console.log(`  chrome  ${executable}`)
     console.log(`  viewport ${viewport.width}x${viewport.height}\n`)
@@ -578,7 +846,11 @@ const run = async (): Promise<void> => {
 
       try {
         cdp.exceptions = []
+        cdp.consoleErrors = []
+        cdp.watching = sessionId
         await cdp.send('Runtime.enable', {}, sessionId)
+        /* The console gate's browser-side channel (gh#200). */
+        await cdp.send('Log.enable', {}, sessionId)
         await cdp.send('Page.enable', {}, sessionId)
         await cdp.send(
           'Emulation.setDeviceMetricsOverride',
@@ -651,6 +923,18 @@ const run = async (): Promise<void> => {
         }
       } finally {
         await cdp.send('Target.closeTarget', { targetId }).catch(() => {})
+        /* After the close, so anything the dying target flushes still counts. */
+        cdp.watching = undefined
+      }
+
+      /*
+       * The console gate (gh#200), applied to probes as well as to smoke
+       * routes. Appended as rows rather than folded into `note`, because
+       * `note` holds one string and a page can have several distinct errors —
+       * and because a row is what the report already knows how to quote.
+       */
+      for (const text of cdp.consoleErrors) {
+        verdict.rows.push({ label: 'console error', ok: false, detail: text })
       }
 
       const failing = verdict.rows.filter(r => !r.ok)
@@ -664,6 +948,93 @@ const run = async (): Promise<void> => {
       if (note) console.log(`      ${note}`)
       for (const row of failing) console.log(`      ✗ ${row.label} — ${row.detail}`)
       if (verbose) for (const row of verdict.rows.filter(r => r.ok)) console.log(`      · ${row.label}`)
+    }
+
+    /* ---------------------------------------------------------------- *
+     * The smoke set — real routes on the real shell (gh#200)
+     * ---------------------------------------------------------------- */
+    if (runSmoke) {
+      console.log(`\nsmoke — ${smokeRoutes.length} real route${smokeRoutes.length === 1 ? '' : 's'} on the site shell\n`)
+
+      for (const route of smokeRoutes) {
+        const url = `${origin}${route}`
+        const { targetId } = await cdp.send<{ targetId: string }>('Target.createTarget', { url: 'about:blank' })
+        const { sessionId } = await cdp.send<{ sessionId: string }>('Target.attachToTarget', { targetId, flatten: true })
+
+        let hydrated = false
+        let note: string | undefined
+
+        try {
+          cdp.exceptions = []
+          cdp.consoleErrors = []
+          cdp.watching = sessionId
+          await cdp.send('Runtime.enable', {}, sessionId)
+          await cdp.send('Log.enable', {}, sessionId)
+          await cdp.send('Page.enable', {}, sessionId)
+          await cdp.send(
+            'Emulation.setDeviceMetricsOverride',
+            { width: viewport.width, height: viewport.height, deviceScaleFactor: 1, mobile: false },
+            sessionId
+          )
+          await cdp.send('Page.navigate', { url }, sessionId)
+
+          const deadline = Date.now() + timeoutMs
+          while (Date.now() < deadline) {
+            await sleep(150)
+            try {
+              const evaluated = await cdp.send<{ result: { value?: boolean } }>(
+                'Runtime.evaluate',
+                { expression: SMOKE_READY, returnByValue: true },
+                sessionId
+              )
+              if (evaluated.result?.value === true) {
+                hydrated = true
+                break
+              }
+            } catch {
+              /* navigation swaps the execution context; keep polling */
+            }
+          }
+
+          if (hydrated) {
+            /* Keep listening past the mount — see SMOKE_SETTLE_MS. */
+            await sleep(SMOKE_SETTLE_MS)
+          } else {
+            note = `never hydrated within ${timeoutMs}ms`
+              + (cdp.exceptions.length > 0 ? ` — page exception: ${cdp.exceptions[cdp.exceptions.length - 1]}` : '')
+          }
+        } finally {
+          await cdp.send('Target.closeTarget', { targetId }).catch(() => {})
+          cdp.watching = undefined
+        }
+
+        const rows: Row[] = [{
+          label: 'hydrated',
+          ok: hydrated,
+          detail: hydrated
+            ? 'expected #__nuxt.__vue_app__ · actual present'
+            : 'expected #__nuxt.__vue_app__ · actual absent'
+        }]
+
+        if (cdp.consoleErrors.length === 0) {
+          rows.push({ label: 'console clean', ok: true, detail: 'no error-level console output' })
+        } else {
+          for (const text of cdp.consoleErrors) {
+            rows.push({ label: 'console error', ok: false, detail: text })
+          }
+        }
+
+        const failing = rows.filter(r => !r.ok)
+        const ok = failing.length === 0 && note === undefined
+
+        results.push({ slug: `smoke ${route}`, verdict: ok ? 'PASS' : 'FAIL', rows, failing, note })
+
+        const headline = `${ok ? 'PASS' : 'FAIL'}  ${`smoke ${route}`.padEnd(34)} ${rows.length - failing.length}/${rows.length} rows`
+        console.log(ok ? `  ✓ ${headline}` : `  ✗ ${headline}`)
+        if (note) console.log(`      ${note}`)
+        for (const row of failing) console.log(`      ✗ ${row.label} — ${row.detail}`)
+        if (verbose) for (const row of rows.filter(r => r.ok)) console.log(`      · ${row.label}`)
+      }
     }
   } catch (error) {
     console.error(`\ncheck-probes could not run: ${(error as Error).message}`)
@@ -684,12 +1055,15 @@ const report = (): void => {
 
   const broken = results.filter(r => r.verdict !== 'PASS' || r.failing.length > 0 || r.note !== undefined || r.rows.length === 0)
 
+  /* "page" rather than "probe": since gh#200 the list also holds smoke routes. */
+  const total = results.length
+
   if (broken.length === 0) {
-    console.log(`\nPASS — ${results.length} probe${results.length === 1 ? '' : 's'}, ${results.reduce((n, r) => n + r.rows.length, 0)} rows, 0 failures`)
+    console.log(`\nPASS — ${total} page${total === 1 ? '' : 's'}, ${results.reduce((n, r) => n + r.rows.length, 0)} rows, 0 failures`)
     process.exit(0)
   }
 
-  console.error(`\nFAIL — ${broken.length} of ${results.length} probe${results.length === 1 ? '' : 's'} failed:`)
+  console.error(`\nFAIL — ${broken.length} of ${total} page${total === 1 ? '' : 's'} failed:`)
   for (const r of broken) {
     console.error(`  ${r.slug} (${r.verdict})${r.note ? ` — ${r.note}` : ''}`)
     for (const row of r.failing) console.error(`    row: ${row.label} — ${row.detail}`)
