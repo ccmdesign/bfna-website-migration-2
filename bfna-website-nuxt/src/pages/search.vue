@@ -400,31 +400,41 @@ const rows = computed<SearchResultRow[]>(() =>
     an attribute, not a prop: it falls through `$attrs` onto the shell's single
     root, which is exactly what that root is documented to do.
   -->
-  <bfSearchShell
-    class="bf-search"
-    :data-bf-search="hasQuery ? 'active' : 'idle'"
-    :query="query"
-    :filters="hasQuery ? filters : []"
-    :selected-filters="selectedFilters"
-    :results="rows"
-    :result-count="results.length"
-    label="Search insights, projects and people"
-    @update:query="onQuery"
-    @update:selected-filters="onFilters"
-  />
-
   <!--
-    The idle prompt. The shell's count line is a persistent live region by
-    design (residual #169) and would otherwise announce “0 results, ranked by
-    relevance” to a reader who has not typed anything — a failed search
-    reported before one was made. So the idle state hides the count line and
-    the empty state (below) and says this instead.
+    `.center` — same utility and class token `bfSection` gives the heading
+    above (and every sibling page's content bands): caps this band's measure
+    and inline padding so the search control and results line up with the top
+    bar, the footer and the heading instead of running full-bleed. One wrapper
+    element, so it becomes this stack's second band rather than collapsing the
+    header band into it.
   -->
-  <p v-if="!hasQuery" class="bf-search__prompt" data-measure="normal">
-    Start typing above to search across insights, projects and people. Results
-    are ranked by relevance, and the query lives in the URL — so a search can
-    be bookmarked or shared.
-  </p>
+  <bfSection label="Search">
+    <bfSearchShell
+      class="bf-search"
+      :data-bf-search="hasQuery ? 'active' : 'idle'"
+      :query="query"
+      :filters="hasQuery ? filters : []"
+      :selected-filters="selectedFilters"
+      :results="rows"
+      :result-count="results.length"
+      label="Search insights, projects and people"
+      @update:query="onQuery"
+      @update:selected-filters="onFilters"
+    />
+
+    <!--
+      The idle prompt. The shell's count line is a persistent live region by
+      design (residual #169) and would otherwise announce “0 results, ranked by
+      relevance” to a reader who has not typed anything — a failed search
+      reported before one was made. So the idle state hides the count line and
+      the empty state (below) and says this instead.
+    -->
+    <p v-if="!hasQuery" class="bf-search__prompt" data-measure="normal">
+      Start typing above to search across insights, projects and people. Results
+      are ranked by relevance, and the query lives in the URL — so a search can
+      be bookmarked or shared.
+    </p>
+  </bfSection>
 </template>
 
 <style scoped>
