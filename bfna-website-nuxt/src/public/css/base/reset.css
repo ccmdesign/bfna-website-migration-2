@@ -29,11 +29,13 @@
     Four choices worth stating:
 
     - **Same nesting context as the rule it overrides.** The `@view-transition`
-      above is inside `@layer reset`; so is this one. Whatever a browser does
-      with a layer-nested `@view-transition` it does with both, and the later
-      one wins by document order. Hoisting the first out of the layer to "make
-      it valid" would be a behaviour change — it could switch view transitions
-      *on* where they are currently dropped — and that is not this row's job.
+      above is inside `@layer reset`; so is this one, and the later one wins by
+      document order. Measured rather than assumed (gh#218, Chrome 152, CDP
+      `pagereveal`): a layer-nested `@view-transition` *is* honoured, and this
+      guard does override it — a cross-document `/` → `/about` reports
+      `event.viewTransition != null` normally and `== null` under
+      `Emulation.setEmulatedMedia` reduce. Hoisting the rule above out of the
+      layer would therefore change nothing except the risk, so it stays put.
 
     - **`!important`, and it has to be.** `@layer reset` is the first layer
       declared in `styles.css:2`, so a normal declaration here loses to every

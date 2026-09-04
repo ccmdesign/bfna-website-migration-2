@@ -98,10 +98,15 @@ that it contains a `prefers-reduced-motion: reduce` block, that the block neutra
 
 ## Risks
 
-- **A layer-nested `@view-transition` may be ignored by the browser entirely.** Then the
-  `navigation: auto` at `:11` never applied either, and the acceptance ("emulating the query
-  produces no view transition") holds trivially. Measured in step 6 and recorded either way
-  rather than assumed.
+- ~~**A layer-nested `@view-transition` may be ignored by the browser entirely.**~~
+  **Measured and closed.** Chrome 152, CDP `pagereveal`, three minimal fixtures: top-level,
+  layer-nested, and layer-nested-plus-guard. A layer-nested `@view-transition` *is* honoured
+  (`event.viewTransition != null`), an `@import`ed one is too, and the guard overrides it under
+  emulation (`== null`). Confirmed on the real build as well — see the step-6 evidence on the
+  issue. The one trap: on this site every rendered `<a>` is a `NuxtLink`, so a link click is a
+  vue-router push and never a cross-document navigation at all. The measurement has to append a
+  fresh anchor the router has never seen, or it silently reads the *previous* document's
+  `pagereveal` and reports "no transition" for both arms.
 - **The `!important` floor is broad by design.** A future essential animation (a progress
   indicator) would be capped with everything else. That is the correct default; the escape hatch
   is an explicit `@media (prefers-reduced-motion: reduce)` opt-back-in at the component, which is
