@@ -18,7 +18,13 @@
       --hsl-white: 255, 100%, 100%;
       --hsl-black: 0, 0%, 3%;
       --hsl-base: var(--hsl-black);
-      --hsl-red: 352, 59%, 55%;
+      /*
+       * gh#251: 55% -> 54%. `#D0495B` measured 4.39:1 on white and failed
+       * WCAG AA as text, which `--color-fail` / `--color-error` are. One
+       * point of lightness moves it to `#CF4457` at 4.55:1 — a change no
+       * eye resolves, asserted by `scripts/check-contrast.ts`.
+       */
+      --hsl-red: 352, 59%, 54%;
       --hsl-yellow: 36, 83%, 61%;
       --hsl-blue: 208, 50%, 38%;
       --hsl-navy: 201, 100%, 18%;

@@ -182,4 +182,115 @@
       --color-accent-alpha-90: hsl(var(--hsl-accent), 0.9);
       --color-accent-alpha-95: hsl(var(--hsl-accent), 0.95);
     }
+
+    /*
+     * ── Programme colour ──────────────────────────────────────────────
+     *
+     * gh#251. Production's defining mechanism is colour carried by topic:
+     * one custom property, set high in the tree, recolours every component
+     * below it. In v2 that survived only in dead code
+     * (`css-legacy/global.css:274-289`). This is the hook, keyed to
+     * `[data-program]` on the route wrapper.
+     *
+     * Three tiers, because one colour cannot do three jobs:
+     *
+     *   --color-program           the programme's identity colour — fills,
+     *                             rules, chip grounds. Carries white text.
+     *   --color-program-on-light  text on --color-surface-page, >= 4.5:1.
+     *   --color-program-on-dark   text on a dark ground, >= 4.5:1.
+     *
+     * Every ratio below is measured by `scripts/check-contrast.ts`, which
+     * asserts nine of these pairs in CI. Do not hand-edit a value without
+     * re-running `npm run check:contrast` — the numbers in these comments
+     * are the only place they are written down twice.
+     *
+     * The on-dark tier is the exception: its gate pair measures against
+     * `--color-scrim`, which does not exist until the hero phase, so those
+     * three pairs report `not yet defined`. The ratios recorded here are
+     * against `--color-surface-inverse` (#080808), taken with headroom
+     * because the scrim ground will composite lighter. Expect the hero
+     * phase to revisit them —
+     * `docs/plans/bf220-design-phase-wave-1-plan.md:171` already warns
+     * these hues do not survive over media at a workable alpha.
+     *
+     * Seeded from the PRIMITIVES (`--hsl-green`, `--hsl-red`, and an amber
+     * literal), never from `--color-success` / `--color-fail` /
+     * `--color-warning`. Aliasing the status roles would weld the
+     * programme axis to the status axis permanently.
+     *
+     * `--hsl-*` stay bare comma triplets. The 21-step alpha ladder is built
+     * by splicing one into a fourth argument — `hsl(var(--hsl-x), 0.4)` —
+     * so an `hsl()` wrapper here breaks 63 shipped tokens silently.
+     *
+     * Not `--theme-*`: that namespace belongs to the composition
+     * primitives' config hooks (`composition/stack.css:7`,
+     * `center.css:51`, `box.css:3-4`).
+     *
+     * The neutral default is declared first on purpose. `:root` and
+     * `[data-program="x"]` have equal specificity, so if the attribute
+     * ever lands on `<html>` itself, source order is what decides — and
+     * the programme must win.
+     */
+    :root {
+      --hsl-program: var(--hsl-navy); /* #003C5C — 11.66:1 on white */
+      --hsl-program-on-light: var(--hsl-navy); /* 11.66:1 on --color-surface-page */
+      --hsl-program-on-dark: 201, 100%, 45%; /* #0095E6 — 6.14:1 on --color-surface-inverse */
+    }
+
+    /* Democracy — teal. Production's Democracy was green. */
+    [data-program="democracy"] {
+      --hsl-program: var(--hsl-green); /* #027A8D — white on it, 5.03:1 */
+      --hsl-program-on-light: 188, 97%, 29%; /* #027F92 — 4.72:1 on --color-surface-page */
+      --hsl-program-on-dark: 188, 97%, 41%; /* #03B3CE — 7.96:1 on --color-surface-inverse */
+    }
+
+    /* Future Leadership — red. Production's Future Leadership was red. */
+    [data-program="future-leadership"] {
+      --hsl-program: var(--hsl-red); /* #CF4457 — white on it, 4.55:1 */
+      --hsl-program-on-light: 352, 59%, 54%; /* #CF4457 — 4.55:1 on --color-surface-page */
+      --hsl-program-on-dark: 352, 59%, 67%; /* #DC7986 — 6.79:1 on --color-surface-inverse */
+    }
+
+    /*
+     * Transatlantic Relations & Global Challenges — amber. Merged from
+     * Politics & Society, which production painted orange.
+     *
+     * The raw tier is a literal `36, 83%, 35%` rather than
+     * `var(--hsl-yellow)`, and this is the one deliberate divergence in
+     * the mapping. Bright amber (`--hsl-yellow`, `36, 83%, 61%`,
+     * `#EEAC49`) measures 1.98:1 against white — the worst pair in the
+     * palette — so a chip filled with it cannot carry white text, and the
+     * gate asserts exactly that at 4.5:1. `36, 83%, 35%` is the deepest
+     * amber that clears it, which is why the raw and on-light tiers
+     * coincide here and nowhere else. That is a fact about amber, not a
+     * modelling slip.
+     *
+     * The bright primitive is NOT touched: it stays `--color-yellow` /
+     * `--color-tertiary` / `--color-warning`, and `white on
+     * --color-yellow` remains an allowlisted known failure in
+     * `check-contrast.ts` because repairing it means repainting the whole
+     * amber ladder — `bf/Notice.vue:52-60` records a measurement that
+     * would silently invalidate. That is token-hygiene work with its own
+     * blast radius; see `docs/decisions/gh251-programme-colour-tokens.md`.
+     */
+    [data-program="transatlantic-relations-global-challenges"] {
+      --hsl-program: 36, 83%, 35%; /* #A3680F — white on it, 4.62:1 */
+      --hsl-program-on-light: 36, 83%, 35%; /* #A3680F — 4.62:1 on --color-surface-page */
+      --hsl-program-on-dark: 36, 83%, 48%; /* #E08F15 — 7.73:1 on --color-surface-inverse */
+    }
+
+    /*
+     * Resolved into both scopes deliberately. The gate's `requireScoped`
+     * refuses a programme pair whose token resolved from `:root` — that is
+     * how a mistyped programme block would otherwise report the neutral
+     * default under a programme's label. Declaring here means the lookup
+     * chain hits `[data-program]` first and the scoped `--hsl-program`
+     * above supplies the hue.
+     */
+    :root,
+    [data-program] {
+      --color-program: hsl(var(--hsl-program));
+      --color-program-on-light: hsl(var(--hsl-program-on-light));
+      --color-program-on-dark: hsl(var(--hsl-program-on-dark));
+    }
 }
