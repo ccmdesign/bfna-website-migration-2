@@ -109,7 +109,14 @@
  *   DOM already containing its message is not reliably announced, so the `<p
  *   role="status">` is in the DOM in every state, including the empty one —
  *   which is what makes "0 results for …" the announcement, and lets
- *   `bfEmptyState` stay outside the region as ordinary page content.
+ *   `bfEmptyState` stay outside the region as ordinary page content. Since
+ *   gh#226 the element is `bfResultCount` rather than a local `<p>`: this was
+ *   the only correct instance of the pattern in the codebase, three call sites
+ *   in the accessibility epic need the same guarantee, and each one that
+ *   hand-rolls it is a place the guarantee can be dropped by a `v-if` that
+ *   looks like a tidy-up. The markup, the role and the dropped-when-empty query
+ *   clause moved across unchanged (D27); this component's behaviour did not
+ *   change at all.
  * - The meter bar is `aria-hidden`: it is a picture of the percentage in the
  *   text label beside it, and announcing it twice is worse than once. The
  *   frozen source made the same call.
@@ -231,8 +238,6 @@ const meterStyle = (row: SearchResultRow): Record<string, string> => ({
  * `SearchResultRow.heading` is a non-nullable `string` that can still be `''`.
  */
 const headingOf = (row: SearchResultRow): string => (row.heading ?? '').trim()
-
-const countLabel = computed(() => (props.resultCount === 1 ? 'result' : 'results'))
 </script>
 
 <template>
@@ -282,28 +287,33 @@ const countLabel = computed(() => (props.resultCount === 1 ? 'result' : 'results
     />
 
     <!--
-      The count line, and the live region (residual #169). Rendered in EVERY
-      state — including zero results — rather than `v-if`-ed alongside the
-      list: a region that enters the DOM already containing its message is not
-      reliably announced, so the element persists and only its text changes.
+      The count line, and the live region (residual #169) — `bfResultCount`
+      since gh#226, which is the same markup with the same guarantee lifted out
+      of here so `/insights` and `/search` can hold it too (#233). The element
+      is still rendered in EVERY state, including zero results, and it is still
+      the atom's whole reason for existing: a region that enters the DOM already
+      containing its message is not reliably announced, so it persists and only
+      its text changes. `role="status"` alone — no `aria-live`, no
+      `aria-atomic` — is the atom's too, for the same reason it was written
+      here.
 
-      `role="status"` alone, not `role="status" aria-live="polite"`: the role
-      carries the implicit `aria-live="polite"` and `aria-atomic="true"`, and
-      writing both invites them to drift apart.
+      `class` and `data-bf-search-shell` fall through `$attrs` onto the atom's
+      single `<p>` root, so both hooks stay exactly where they were. The
+      `data-` one is load-bearing rather than decorative: `pages/search.vue`
+      addresses it by name to hide this line while the page is idle, and
+      dropping it here would silently un-hide the idle count — which would
+      *look* like #233 had landed.
+
+      `suffix` carries the comma. How the trailing clause joins the sentence is
+      this caller's sentence to write, not the atom's to guess.
     -->
-    <p
+    <bfResultCount
       class="bf-search-shell__count"
       data-bf-search-shell="count"
-      role="status"
-    >
-      <strong>{{ resultCount }}</strong> {{ countLabel }}<!--
-        The query clause is dropped when there is no query, rather than the
-        whole line: the region must persist (#169), but “0 results for
-        “”” is a sentence nobody wrote, and it is what an unqueried shell
-        would announce on mount. The count itself stays — a consumer that
-        renders the shell unfiltered has a real number to report.
-      --><template v-if="query"> for “{{ query }}”</template>, ranked by relevance
-    </p>
+      :count="resultCount"
+      :query="query"
+      suffix=", ranked by relevance"
+    />
 
     <!--
       The results. `<ol>` — the order is the ranking, which is the one fact

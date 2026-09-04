@@ -181,6 +181,20 @@
  * items`. A non-vacuity row fails the group if the walk never found an
  * interactive button to click.
  *
+ * **D29 — the result-count region is mounted and exposed** (a11y epic, gh#226).
+ * `bfSearchShell`'s count line became the `bfResultCount` atom, and the
+ * property that made it worth extracting is asserted on `/search?q=democracy`:
+ * one `[data-bf-search-shell="count"]`, which is the atom and still carries the
+ * shell's class, `role="status"` with **neither** `aria-live` nor
+ * `aria-atomic`, not `display: none` / `visibility: hidden` / `[hidden]`, and
+ * the sentence unchanged with its noun agreeing with its number. A non-vacuity
+ * row fails the group if the probe's query matched nothing, because every row
+ * above it would pass against an empty result set. Idle `/search` is read for
+ * one thing only — the region is still **mounted** with `role="status"` — and
+ * its computed `display` is printed rather than judged: it is `none` because
+ * `pages/search.vue` says so, and removing that override is **#233's** row, not
+ * this gate's.
+ *
  * **DoD-A8 — the reduced-motion floor** (a11y epic, gh#218). The served
  * `.output/public/css/base/reset.css` must carry a `prefers-reduced-motion:
  * reduce` block that sets `@view-transition { navigation: none }` and caps
@@ -2443,6 +2457,294 @@ const loadMoreFocusRows = async (cdp: Cdp, origin: string): Promise<Row[]> => {
 }
 
 /* ------------------------------------------------------------------ *
+ * D29 — the result-count region is a mounted, exposed live region (gh#226)
+ * ------------------------------------------------------------------ */
+/**
+ * `bfResultCount` is the count line lifted out of `bfSearchShell` (gh#226).
+ * The one property it exists to hold is that the `role="status"` element is in
+ * the DOM — and in the accessibility tree — in every state, so that the first
+ * count is a *mutation observed inside* a region that was already there rather
+ * than a region arriving with its message pre-loaded, which announces nothing.
+ *
+ * ## What this group asserts, and where
+ *
+ * `/search?q=democracy` — the state this row owns. The region must be the sole
+ * `[data-bf-search-shell="count"]` on the page, must be the atom (`.bf-result-
+ * count`) while still carrying the shell's own class hook, must be exposed
+ * (not `display: none`, not `visibility: hidden`, no `hidden` attribute), must
+ * carry `role="status"` and **neither** `aria-live` **nor** `aria-atomic`, and
+ * must read the sentence the shell read before the extraction — with the noun
+ * agreeing with the number, which is the pluralisation that moved into the
+ * atom.
+ *
+ * The `aria-live`/`aria-atomic` rows are not pedantry. `role="status"` already
+ * implies both, and an extraction is exactly the moment someone adds them
+ * "for safety" — after which the two can drift apart silently. `bfLoadMore`
+ * writes all three deliberately and says why in its own comment; that is a
+ * different, visually-hidden region and a different call.
+ *
+ * ## What it does not assert, and why that is not a hole
+ *
+ * `/search` **idle** is read too, but only for the half this row owns: the
+ * region is still mounted and still carries `role="status"`. Its computed
+ * `display` is *printed, not judged*. It is `none` today because
+ * `pages/search.vue`'s `@layer overrides` rule says so, deliberately and with
+ * the trade-off written out at the rule — and removing that override is
+ * **#233**, which also wires `:count="null"` so the idle region is empty rather
+ * than reading "0 results". Failing that here would be a gate that cannot pass
+ * on the branch that adds it (a11y BRIEF §5). The printed value is the
+ * before-measurement #233 inherits.
+ *
+ * It asserts nothing about what a screen reader says. There is no assistive
+ * technology on this runner (a11y BRIEF §0.2); the announcement itself is the
+ * manual pass in §8.
+ */
+const RESULT_COUNT_QUERY = 'democracy'
+const RESULT_COUNT_ROUTE = `/search?q=${RESULT_COUNT_QUERY}`
+const RESULT_COUNT_IDLE_ROUTE = '/search'
+
+/**
+ * The sentence `bfSearchShell` composed before gh#226, and must still.
+ *
+ * The query is escaped into the pattern rather than interpolated raw: it is a
+ * constant today and a word, but a later probe query containing `.`, `?` or `+`
+ * would otherwise widen this assertion silently instead of failing loudly,
+ * which is the one failure mode a gate must not have.
+ */
+const COUNT_SENTENCE = new RegExp(
+  `^(\\d+) (results?) for “${RESULT_COUNT_QUERY.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}”, ranked by relevance$`
+)
+
+/**
+ * The count region as the browser sees it.
+ *
+ * `getComputedStyle` rather than a look at the style attribute: the rule that
+ * hides this element on idle `/search` is a page-scoped `@layer overrides`
+ * rule addressing a `data-` hook, which no attribute read would ever find.
+ *
+ * `role`, `aria-live` and `aria-atomic` are read as literal attributes rather
+ * than through their IDL reflections — the attribute is what the markup has to
+ * carry, and the reflections are not in every engine this script may be pointed
+ * at (the same call `READ_PAGE`'s list gate makes).
+ */
+const READ_RESULT_COUNT = `(() => {
+  const nodes = Array.from(document.querySelectorAll('[data-bf-search-shell="count"]'))
+  const el = nodes[0] || null
+  const style = el ? getComputedStyle(el) : null
+  return {
+    matches: nodes.length,
+    tag: el ? el.tagName.toLowerCase() : null,
+    isAtom: el ? el.classList.contains('bf-result-count') : false,
+    keepsShellHook: el ? el.classList.contains('bf-search-shell__count') : false,
+    role: el ? el.getAttribute('role') : null,
+    ariaLive: el ? el.getAttribute('aria-live') : null,
+    ariaAtomic: el ? el.getAttribute('aria-atomic') : null,
+    hiddenAttr: el ? el.hasAttribute('hidden') : false,
+    display: style ? style.display : null,
+    visibility: style ? style.visibility : null,
+    text: el ? (el.textContent || '').replace(/\\s+/g, ' ').trim() : null
+  }
+})()`
+
+type ResultCountRead = {
+  matches: number
+  tag: string | null
+  isAtom: boolean
+  keepsShellHook: boolean
+  role: string | null
+  ariaLive: string | null
+  ariaAtomic: string | null
+  hiddenAttr: boolean
+  display: string | null
+  visibility: string | null
+  text: string | null
+}
+
+const resultCountRows = async (cdp: Cdp, origin: string): Promise<Row[]> => {
+  const { targetId } = await cdp.send<{ targetId: string }>('Target.createTarget', { url: 'about:blank' })
+  const { sessionId } = await cdp.send<{ sessionId: string }>('Target.attachToTarget', { targetId, flatten: true })
+
+  let queried: ResultCountRead | undefined
+  let idle: ResultCountRead | undefined
+  let reached: string | undefined
+
+  try {
+    /* Cleared and restored for the reason gh#224's probe gives: with
+       `watching` unset the client files every target's console output into the
+       shared arrays the per-route rows are judged on. */
+    cdp.exceptions = []
+    cdp.consoleErrors = []
+    cdp.watching = sessionId
+    await cdp.send('Runtime.enable', {}, sessionId)
+    await cdp.send('Page.enable', {}, sessionId)
+    await cdp.send(
+      'Emulation.setDeviceMetricsOverride',
+      { width: viewport.width, height: viewport.height, deviceScaleFactor: 1, mobile: false },
+      sessionId
+    )
+
+    /**
+     * Navigate, wait for hydration, read the region.
+     *
+     * A full `Page.navigate` for the idle route rather than a router push:
+     * `?q=` → no query is exactly the transition a bookmarked search and a
+     * back-navigation make, and it re-runs the page's own setup, which is what
+     * decides `data-bf-search`.
+     */
+    const visit = async (route: string): Promise<ResultCountRead | undefined> => {
+      await cdp.send('Page.navigate', { url: `${origin}${route}` }, sessionId)
+
+      const deadline = Date.now() + timeoutMs
+      let hydrated = false
+      while (Date.now() < deadline) {
+        await sleep(150)
+        try {
+          const evaluated = await cdp.send<{ result: { value?: PageRead } }>(
+            'Runtime.evaluate',
+            { expression: READ_PAGE, returnByValue: true },
+            sessionId
+          )
+          if (evaluated.result?.value?.hydrated === true) { hydrated = true; break }
+        } catch {
+          /* navigation swaps the execution context; keep polling */
+        }
+      }
+      if (!hydrated) {
+        reached = route
+        return undefined
+      }
+
+      /* One settle after hydration: the ranking is a computed over the payload
+         and lands in the same tick, but the region's text is what is being
+         judged and a read racing the first patch would report the SSR string. */
+      await sleep(250)
+      const evaluated = await cdp.send<{ result: { value?: ResultCountRead } }>(
+        'Runtime.evaluate',
+        { expression: READ_RESULT_COUNT, returnByValue: true },
+        sessionId
+      )
+      return evaluated.result?.value
+    }
+
+    queried = await visit(RESULT_COUNT_ROUTE)
+    if (queried !== undefined) idle = await visit(RESULT_COUNT_IDLE_ROUTE)
+  } finally {
+    await cdp.send('Target.closeTarget', { targetId }).catch(() => {})
+    /* After the close, so anything the dying target flushes still counts. */
+    cdp.watching = undefined
+  }
+
+  if (queried === undefined || idle === undefined) {
+    return [{
+      label: `gh#226 — ${reached ?? RESULT_COUNT_ROUTE} hydrated, so its count region can be read`,
+      ok: false,
+      detail: `expected #__nuxt.__vue_app__ within ${timeoutMs}ms · actual absent`
+        + ' — without a running app there is no live region to judge, so this group is'
+        + ' untested rather than green'
+    }]
+  }
+
+  const rows: Row[] = []
+
+  rows.push({
+    label: `gh#226 — ${RESULT_COUNT_ROUTE} exposes exactly one count region`,
+    ok: queried.matches === 1,
+    detail: queried.matches === 1
+      ? 'expected 1 [data-bf-search-shell="count"] · actual 1'
+      : `expected exactly 1 [data-bf-search-shell="count"] · actual ${queried.matches}`
+        + ' — 0 means the extraction dropped the hook pages.search.vue addresses by name;'
+        + ' more than 1 means two regions announce the same count over each other'
+  })
+
+  const isTheAtom = queried.tag === 'p' && queried.isAtom && queried.keepsShellHook
+  rows.push({
+    label: 'gh#226 — the region is bfResultCount and still carries bfSearchShell\'s class',
+    ok: isTheAtom,
+    detail: isTheAtom
+      ? 'expected p.bf-result-count.bf-search-shell__count · actual it is'
+      : `expected p.bf-result-count.bf-search-shell__count · actual <${queried.tag ?? '—'}>,`
+        + ` .bf-result-count ${queried.isAtom ? 'yes' : 'no'},`
+        + ` .bf-search-shell__count ${queried.keepsShellHook ? 'yes' : 'no'}`
+        + ' — $attrs must fall through to the atom\'s single root so both hooks survive'
+  })
+
+  const exposed = queried.display !== 'none' && queried.visibility !== 'hidden' && !queried.hiddenAttr
+  rows.push({
+    label: 'gh#226 — D29: the queried region is in the accessibility tree, not display:none',
+    ok: exposed,
+    detail: exposed
+      ? `expected display ≠ none · actual display ${queried.display}, visibility ${queried.visibility},`
+        + ' no [hidden]'
+      : `expected an exposed region · actual display ${queried.display},`
+        + ` visibility ${queried.visibility}, [hidden] ${queried.hiddenAttr ? 'present' : 'absent'}`
+        + ' — each of those removes the live region from the tree, which is the defect D29 forbids'
+  })
+
+  const roleAlone = queried.role === 'status' && queried.ariaLive === null && queried.ariaAtomic === null
+  rows.push({
+    label: 'gh#226 — role="status" alone, with no aria-live and no aria-atomic beside it',
+    ok: roleAlone,
+    detail: roleAlone
+      ? 'expected role="status", no aria-live, no aria-atomic · actual exactly that'
+      : `expected role="status" alone · actual role ${JSON.stringify(queried.role)},`
+        + ` aria-live ${JSON.stringify(queried.ariaLive)}, aria-atomic ${JSON.stringify(queried.ariaAtomic)}`
+        + ' — the role implies both; stating them alongside it creates two things that can drift'
+  })
+
+  const sentence = COUNT_SENTENCE.exec(queried.text ?? '')
+  const counted = sentence === null ? Number.NaN : Number(sentence[1])
+  const agrees = sentence !== null && sentence[2] === (counted === 1 ? 'result' : 'results')
+  rows.push({
+    label: 'gh#226 — the extracted sentence is unchanged, and the noun agrees with the number',
+    ok: sentence !== null && agrees,
+    detail: sentence !== null && agrees
+      ? `expected /${COUNT_SENTENCE.source}/ · actual ${JSON.stringify(queried.text)}`
+      : `expected /${COUNT_SENTENCE.source}/ · actual ${JSON.stringify(queried.text)}`
+        + ' — the extraction must carry the count, the pluralisation, the query clause and'
+        + ' the caller\'s suffix across character-for-character'
+  })
+
+  /* Non-vacuity, the same shape as gh#225's "the walk found a button": a query
+     that matched nothing would still render a well-formed "0 results for …",
+     and every row above would pass while testing a page with no results on it. */
+  rows.push({
+    label: `gh#226 — non-vacuity: “${RESULT_COUNT_QUERY}” matched something to count`,
+    ok: Number.isFinite(counted) && counted > 0,
+    detail: Number.isFinite(counted) && counted > 0
+      ? `expected > 0 · actual ${counted}`
+      : `expected > 0 · actual ${Number.isFinite(counted) ? counted : 'unreadable'}`
+        + ' — the rows above would all pass against an empty result set, so this one'
+        + ' fails the group rather than let the probe go quietly vacuous'
+  })
+
+  const idleMounted = idle.matches === 1 && idle.role === 'status' && idle.isAtom
+  rows.push({
+    label: `gh#226 — ${RESULT_COUNT_IDLE_ROUTE} idle still MOUNTS the region with role="status"`,
+    ok: idleMounted,
+    detail: idleMounted
+      ? 'expected the region present in the DOM while idle · actual present, role="status"'
+      : `expected 1 mounted p.bf-result-count[role=status] · actual ${idle.matches} match(es),`
+        + ` role ${JSON.stringify(idle.role)}, .bf-result-count ${idle.isAtom ? 'yes' : 'no'}`
+        + ' — a v-if here is the one thing this component exists to prevent (D29)'
+  })
+
+  /* Reported, never failed — see the header. The override is pages/search.vue's
+     and removing it is #233's row, not this one's. */
+  rows.push({
+    label: `gh#226 — idle computed display is “${idle.display}” (reported for #233, not judged here)`,
+    ok: true,
+    detail: idle.display === 'none'
+      ? 'display: none while idle — pages/search.vue\'s @layer overrides rule, which takes the'
+        + ' region out of the accessibility tree so the FIRST count may not be announced.'
+        + ' #233 removes it and passes :count="null" so the idle region is empty instead'
+      : `display: ${idle.display} — the page-level override is gone, so #233 has landed;`
+        + ' promote this row to a failure if it ever reads none again'
+  })
+
+  return rows
+}
+
+/* ------------------------------------------------------------------ *
  * DoD-3 — every §7 route reachable from the menus
  * ------------------------------------------------------------------ */
 /**
@@ -2790,6 +3092,16 @@ const run = async (): Promise<void> => {
       )
       for (const row of loadMoreFailing) console.log(`      ✗ ${row.label} — ${row.detail}`)
       if (verbose) for (const row of loadMoreGate.filter(r => r.ok)) console.log(`      · ${row.label}`)
+
+      const resultCountGate = await resultCountRows(cdp, origin)
+      const resultCountFailing = resultCountGate.filter(r => !r.ok)
+      results.push({ slug: 'result-count region (gh#226)', rows: resultCountGate, failing: resultCountFailing })
+      console.log(
+        `${resultCountFailing.length === 0 ? '  ✓ PASS' : '  ✗ FAIL'}  `
+        + `${'result-count region (gh#226)'.padEnd(44)} ${resultCountGate.length - resultCountFailing.length}/${resultCountGate.length} rows`
+      )
+      for (const row of resultCountFailing) console.log(`      ✗ ${row.label} — ${row.detail}`)
+      if (verbose) for (const row of resultCountGate.filter(r => r.ok)) console.log(`      · ${row.label}`)
 
       const navRows = homeLinks === undefined
         ? [{ label: 'DoD-3 — the home page rendered', ok: false, detail: 'expected / to hydrate · actual it did not, so reachability cannot be judged' }]

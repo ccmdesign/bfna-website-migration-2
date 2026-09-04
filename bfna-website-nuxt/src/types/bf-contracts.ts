@@ -1276,6 +1276,101 @@ export interface SearchShellProps extends Pick<CardWrapperProps, 'headingLevel'>
 }
 
 /* ---------------------------------------------------------------------------
+ * Result-count atom (a11y epic, gh#226)
+ * ------------------------------------------------------------------------- */
+
+/**
+ * Props of `bfResultCount` — the always-mounted result-count live region.
+ *
+ * Extracted from `bfSearchShell`, which had the only correct instance of this
+ * pattern in the codebase (`SearchShell.vue:294-301` before gh#226) and is now
+ * its first consumer. Nothing was redesigned on the way out: D27 says reuse the
+ * repo's own idiom, and the idiom was already here.
+ *
+ * ## The one rule this component exists to hold
+ *
+ * **The region is mounted in every state, including the one with nothing to
+ * say.** `display: none`, `visibility: hidden`, the `hidden` attribute and a
+ * `v-if` all remove an element from the accessibility tree, and a live region
+ * that is inserted into the tree *already holding* its message is not reliably
+ * announced — the update the assistive technology would have observed happened
+ * before there was anything to observe it in. So "no count yet" renders the
+ * same `<p role="status">` with **no text nodes inside it**, and the first real
+ * count is a text mutation inside a region that was already there.
+ *
+ * That is a11y BRIEF D29 in one component. It is also the precise defect #233
+ * fixes on `/search`, where `search.vue`'s `@layer overrides` rule
+ * `display: none`-s this very element while the page is idle — a page-level
+ * override this atom cannot and does not try to defeat.
+ *
+ * ## `role="status"` alone
+ *
+ * No `aria-live`, no `aria-atomic`. The role carries the implicit
+ * `aria-live="polite"` and `aria-atomic="true"`; writing both invites them to
+ * drift apart, and the drift is silent. `bfLoadMore` writes all three
+ * deliberately and says why (`LoadMore.vue`, the belt-and-braces note on a
+ * **visually hidden** region); this one is visible text a sighted user reads,
+ * and it keeps the shell's original spelling.
+ *
+ * ## What it does not do
+ *
+ * It does not count anything. `count` is a number a page computed — on
+ * `/search` deliberately *not* `results.length`, because the line reports the
+ * whole matched set while the list draws the first twenty (see
+ * `SearchShellProps.resultCount`). It also carries no styling: the markup it
+ * was extracted from had no CSS rule of its own, and this pass may not invent
+ * one (a11y BRIEF D23/D32).
+ */
+export interface ResultCountProps {
+  /**
+   * How many results there are, or `null` for "nothing to report yet".
+   *
+   * `null` — the default — is the idle state, and it renders an **empty**
+   * region rather than no region. See the note above on why that distinction is
+   * the whole component.
+   *
+   * `0` is a real count and reads *"0 results"*. A caller that wants an idle
+   * shell to say nothing passes `null`, not `0`; a caller that has genuinely
+   * searched and found nothing passes `0` and gets the announcement.
+   */
+  count?: number | null
+  /**
+   * The singular noun. Defaults to `'result'`.
+   *
+   * Pluralised by appending `s`, which is right for `result`, `item`, `insight`
+   * and `project`. A noun that pluralises otherwise passes `nounPlural`.
+   */
+  noun?: string
+  /**
+   * The plural noun, when `noun + 's'` is wrong. Defaults to `noun + 's'`.
+   *
+   * Present because the alternative — a caller pre-formatting the whole
+   * sentence and passing it as one string — would put the pluralisation
+   * decision back at every call site, which is what extracting this component
+   * was for.
+   */
+  nounPlural?: string
+  /**
+   * The query the count is *of*. When non-empty, renders ` for “<query>”`.
+   *
+   * Only the clause is dropped when this is empty, never the line: the region
+   * must persist (see above), but *"0 results for “”"* is a sentence nobody
+   * wrote and is exactly what an unqueried shell would otherwise announce on
+   * mount. `bfSearchShell` has behaved this way since gh#52; the behaviour
+   * moved here unchanged.
+   */
+  query?: string
+  /**
+   * A trailing clause, appended verbatim after the noun and the query clause.
+   *
+   * `bfSearchShell` passes `', ranked by relevance'` — the leading comma
+   * included, because how the clause joins the sentence is the caller's
+   * sentence to write, not this component's to guess.
+   */
+  suffix?: string
+}
+
+/* ---------------------------------------------------------------------------
  * Prose organism (issue 45 / gh#54)
  * ------------------------------------------------------------------------- */
 
