@@ -155,13 +155,26 @@ useHead({ title: () => about?.heading ?? 'About Us' })
     `:heading-level="3"` keeps each person's name under the band's `<h2>`
     (BRIEF §5 rule 9); it is also `bfCardPerson`'s default, stated so the next
     reader does not have to know that.
+
+    `role="list"` is not redundant: `base/reset.css:95-103` strips `list-style`
+    from every `ul[class]`, and WebKit reads that declaration as the author no
+    longer meaning a list — VoiceOver stops saying "list, N items" and stops
+    offering list navigation. Restating the implicit role puts the semantics
+    back without putting the bullets back. Same fix and same reason as
+    `nav/Dropdown.vue:109` and `Breadcrumb.vue:238-240` (gh#220, D27). The Team
+    list below carries it for the same reason.
   -->
   <bfSection
     id="board"
     label="Board of Directors"
     heading="Board of Directors"
   >
-    <ul class="grid" data-min-width="m" data-gap="m">
+    <ul
+      class="grid"
+      role="list"
+      data-min-width="m"
+      data-gap="m"
+    >
       <bfCardPerson
         v-for="p in board"
         :key="p.slug"
@@ -186,7 +199,12 @@ useHead({ title: () => about?.heading ?? 'About Us' })
     label="Team"
     heading="Team"
   >
-    <ul class="grid" data-min-width="m" data-gap="m">
+    <ul
+      class="grid"
+      role="list"
+      data-min-width="m"
+      data-gap="m"
+    >
       <bfCardPerson
         v-for="p in team"
         :key="p.slug"

@@ -147,9 +147,18 @@ const year = new Date().getFullYear()
         count is derived, never authored — see the table in the script block for
         why the floor is `s`. A `<ul>` because it is a list of navigation
         groups; `ul[class]` is already unstyled by `base/reset.css`.
+
+        `role="list"` is not redundant: `base/reset.css:95-103` strips
+        `list-style` from every `ul[class]`, and WebKit reads that
+        declaration as the author no longer meaning a list — VoiceOver stops
+        saying "list, N items" and stops offering list navigation. Restating
+        the implicit role puts the semantics back without putting the bullets
+        back. Same fix and same reason as `nav/Dropdown.vue:109` and
+        `Breadcrumb.vue:238-240` (gh#220, D27).
       -->
       <ul
         class="bf-footer__menus | grid"
+        role="list"
         data-min-width="s"
         data-gap="l"
       >
@@ -180,9 +189,19 @@ const year = new Date().getFullYear()
               <strong v-else>{{ m.label }}</strong>
             </p>
 
+            <!--
+              `role="list"` is not redundant: `base/reset.css:95-103` strips
+              `list-style` from every `ul[class]`, and WebKit reads that
+              declaration as the author no longer meaning a list — VoiceOver stops
+              saying "list, N items" and stops offering list navigation. Restating
+              the implicit role puts the semantics back without putting the bullets
+              back. Same fix and same reason as `nav/Dropdown.vue:109` and
+              `Breadcrumb.vue:238-240` (gh#220, D27).
+            -->
             <ul
               v-if="m.items"
               class="bf-footer__items"
+              role="list"
             >
               <li
                 v-for="i in m.items"
@@ -195,8 +214,22 @@ const year = new Date().getFullYear()
         </li>
       </ul>
 
+      <!--
+        `role="list"` is not redundant: `base/reset.css:95-103` strips
+        `list-style` from every `ul[class]`, and WebKit reads that
+        declaration as the author no longer meaning a list — VoiceOver stops
+        saying "list, N items" and stops offering list navigation. Restating
+        the implicit role puts the semantics back without putting the bullets
+        back. Same fix and same reason as `nav/Dropdown.vue:109` and
+        `Breadcrumb.vue:238-240` (gh#220, D27).
+
+        Load-bearing twice over here: `aria-label` is only exposed on an element
+        with a role that supports a name, so without the role the label goes as
+        well as the list.
+      -->
       <ul
         class="bf-footer__social | cluster"
+        role="list"
         data-gap="s"
         aria-label="Social media"
       >

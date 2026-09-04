@@ -308,10 +308,20 @@ const countLabel = computed(() => (props.resultCount === 1 ? 'result' : 'results
     <!--
       The results. `<ol>` — the order is the ranking, which is the one fact
       about this list that a `<ul>` would throw away.
+
+      `role="list"` is not redundant: this element sets its own
+      `list-style: none` at the foot of this file, and `base/reset.css:95-103`
+      sets it again for `ol[class]`. WebKit reads that declaration as the author
+      no longer meaning a list — VoiceOver stops saying "list, N items" and
+      stops offering list navigation, which on a ranked result set is the whole
+      point of the `<ol>`. Restating the implicit role puts the semantics back
+      without putting the markers back. Same fix and same reason as
+      `nav/Dropdown.vue:109` and `Breadcrumb.vue:238-240` (gh#220, D27).
     -->
     <ol
       v-if="results.length"
       class="bf-search-shell__results | stack"
+      role="list"
       data-gap="s"
       data-bf-search-shell="results"
     >
@@ -435,8 +445,13 @@ const countLabel = computed(() => (props.resultCount === 1 ? 'result' : 'results
       inline (`style="list-style: none; padding: 0"`). Stated here as ordinary
       rules so a consumer can still put them back.
 
-      `base/reset.css` covers `ul[class]`; this list is an `<ol>`, so it is not
-      reached by that rule and must say so itself.
+      `base/reset.css` covers `ol[class]` as well as `ul[class]`, so this list
+      is reached by that rule too; the declarations are restated here anyway so
+      the component reads on its own and does not silently depend on a global
+      whose selector list could change. (An earlier version of this comment said
+      the reset did *not* reach an `<ol>`. It does — `reset.css:95-103` lists
+      all four selectors. Corrected in gh#220, which is the issue that had to
+      read the rule carefully.)
     */
     list-style: none;
     padding-inline-start: 0;

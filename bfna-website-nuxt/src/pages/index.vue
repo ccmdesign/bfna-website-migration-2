@@ -151,9 +151,22 @@ const insightChips = (i: Insight): string[] | undefined =>
     inner box with the slot, so a `switcher` layout would lay the heading out
     as a flex item beside the cards — and `bfCard` renders an `<li>`, which
     needs a real list parent. This is also the frozen wireframe's own shape.
+
+    `role="list"` is what keeps that announcement, and it is not
+    redundant: `base/reset.css:95-103` strips `list-style` from every
+    `ul[class]`, and WebKit reads that declaration as the author no longer
+    meaning a list — VoiceOver stops saying "list, N items" and stops
+    offering list navigation. Restating the implicit role puts the
+    semantics back without putting the bullets back. Same fix and same
+    reason as `nav/Dropdown.vue:109` and `Breadcrumb.vue:238-240`
+    (gh#220, D27).
   -->
   <bfSection label="Programs" heading="Our Programs">
-    <ul class="switcher" data-gap="m">
+    <ul
+      class="switcher"
+      role="list"
+      data-gap="m"
+    >
       <!--
         The whole `Program` entity, not the `{ slug, name, short, tagline }`
         literal the wireframe built: `tagline` is a stored field since the
@@ -184,9 +197,18 @@ const insightChips = (i: Insight): string[] | undefined =>
     this file to prove it). Per D-42.2's measured table a 400px track floor
     resolves **2 tracks** at a desktop width and collapses to one below, which
     is the pinned layout's intent plus the reflow it never had.
+
+    `role="list"` for the reason given at the Programs list above: the reset
+    strips the marker from every `ul[class]` and WebKit drops the implicit list
+    role with it (gh#220).
   -->
   <bfSection label="Featured projects" heading="Projects">
-    <ul class="grid" data-min-width="xl" data-gap="m">
+    <ul
+      class="grid"
+      role="list"
+      data-min-width="xl"
+      data-gap="m"
+    >
       <bfCardProject
         v-for="p in projectCards"
         :key="p.slug"
@@ -212,10 +234,15 @@ const insightChips = (i: Insight): string[] | undefined =>
     at all — which is the point of the wrapper owning it.
 
     Same `data-min-width="xl"` as the band above, same reason, replacing the
-    same inline `repeat(2, 1fr)`.
+    same inline `repeat(2, 1fr)`. `role="list"` likewise (gh#220).
   -->
   <bfSection label="Insights" heading="Insights">
-    <ul class="grid" data-min-width="xl" data-gap="m">
+    <ul
+      class="grid"
+      role="list"
+      data-min-width="xl"
+      data-gap="m"
+    >
       <bfCardProduct
         v-for="prod in products"
         :key="prod.slug"
