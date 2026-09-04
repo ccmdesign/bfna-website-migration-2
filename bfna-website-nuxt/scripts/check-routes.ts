@@ -1039,6 +1039,132 @@ const reducedMotionRows = (): Row[] => {
 }
 
 /* ------------------------------------------------------------------ *
+ * DoD-A7 — the visually-hidden utility (gh#219)
+ * ------------------------------------------------------------------ */
+/**
+ * `.visually-hidden` exists, hides by clipping, and `bfLoadMore` uses it.
+ *
+ * Read from `.output/public/css/utils/utils.css` — the served copy — for the
+ * same reason `reducedMotionRows()` gives: the stylesheet reaches the build
+ * through a copy step and through the `bfna-website-nuxt/public/css` symlink,
+ * so a grep over a source file could stay green through a build that shipped
+ * none of it.
+ *
+ * The mechanism is the assertion, not the class name. Every live region this
+ * epic adds (#224, #225, #226, #229) hangs off this one rule, and a
+ * `display: none` or a `visibility: hidden` sneaking into it would take the
+ * element out of the accessibility tree on every one of them at once — which
+ * is the exact defect #233 exists to fix on `/search`, arrived at from the
+ * other direction (D29). Four separable halves, four rows, so a failure says
+ * which one broke: the rule exists, it is in `@layer utils`, it clips, and it
+ * does not hide.
+ *
+ * Deliberately silent about the clip *value*. `inset(50%)` is what the utility
+ * writes; a later `inset(100%)`, or `rect(0 0 0 0)` alone, would meet the
+ * requirement just as well, and a gate pinning the exact value would be
+ * asserting the implementation rather than the requirement. The one value it
+ * does insist on is a non-zero box: a zero-sized element is not rendered, and
+ * an unrendered element is not in the tree either.
+ */
+const VISUALLY_HIDDEN_OPENER = /(?:^|[},;/])\s*\.visually-hidden\s*\{/g
+
+/** The same pattern without `/g`, so `.test()` carries no `lastIndex` state. */
+const VISUALLY_HIDDEN_RULE = /(?:^|[},;/])\s*\.visually-hidden\s*\{/
+
+const visuallyHiddenRows = (): Row[] => {
+  const served = join(publicDir, 'css/utils/utils.css')
+
+  if (!existsSync(served)) {
+    return [{
+      label: 'DoD-A7 — the utils stylesheet shipped to .output/public',
+      ok: false,
+      detail: `expected ${served.slice(publicDir.length + 1)} in the build · actual missing`
+        + ' — run `npx nuxt generate` first; if the build ran, the public/ copy step is broken'
+    }]
+  }
+
+  const css = readFileSync(served, 'utf8')
+  const bodies = blockBodies(css, VISUALLY_HIDDEN_OPENER)
+
+  const rows: Row[] = [{
+    label: 'DoD-A7 — public/css/utils/utils.css declares .visually-hidden',
+    ok: bodies.length > 0,
+    detail: bodies.length > 0
+      ? `expected >= 1 rule · actual ${bodies.length}`
+      : 'expected >= 1 · actual 0 — every live region in this epic consumes this one'
+        + ' utility; without it each component hand-rolls the clip again (gh#219)'
+  }]
+
+  if (bodies.length === 0) return rows
+
+  /* Masked, so the rationale comment inside the rule — which names both
+     `display: none` and `visibility: hidden` in order to reject them — cannot
+     be read as a declaration by the two regexes below. */
+  const body = maskLiterals(bodies.join('\n'))
+
+  const inUtilsLayer = blockBodies(css, /@layer\s+utils\s*\{/g)
+    .some(layer => VISUALLY_HIDDEN_RULE.test(maskLiterals(layer)))
+  rows.push({
+    label: 'DoD-A7 — .visually-hidden is in @layer utils',
+    ok: inUtilsLayer,
+    detail: inUtilsLayer
+      ? 'expected @layer utils · actual it is'
+      : 'expected the rule inside @layer utils · actual it is not — `utils` is declared'
+        + ' after `components` in styles.css, and a utility outside it loses to any'
+        + ' component rule that sets position or block-size on the same element'
+  })
+
+  const clips = /\bclip-path\s*:/.test(body) || /\bclip\s*:/.test(body)
+  rows.push({
+    label: 'DoD-A7 — .visually-hidden hides by clipping',
+    ok: clips,
+    detail: clips
+      ? 'expected clip-path (or the legacy clip) · actual present'
+      : 'expected clip-path (or the legacy clip) in the rule · actual absent'
+  })
+
+  const hides = /\bdisplay\s*:\s*none\b/.test(body)
+    || /\bvisibility\s*:\s*hidden\b/.test(body)
+  rows.push({
+    label: 'DoD-A7 — .visually-hidden does not remove the element from the a11y tree',
+    ok: !hides,
+    detail: hides
+      ? 'expected no display: none and no visibility: hidden · actual one of them is set'
+        + ' — either removes the element from the accessibility tree, which silences every'
+        + ' live region that consumes this utility (D29)'
+      : 'expected no display: none and no visibility: hidden · actual neither is set'
+  })
+
+  /* The consumer. `bfLoadMore` is the component the utility was lifted out of,
+     so a regression that deletes the class from its template — or restores the
+     scoped copy — is the one this gate is most likely to meet. Read from the
+     prerendered `/insights`, the route that renders it. */
+  const insights = prerenderedHtml('/insights')
+  if (insights === undefined) {
+    rows.push({
+      label: 'DoD-A7 — bfLoadMore consumes .visually-hidden on /insights',
+      ok: false,
+      detail: 'expected a prerendered /insights · actual missing — run `npx nuxt generate` first'
+    })
+    return rows
+  }
+
+  const consumes = /<span[^>]*\bclass="[^"]*\bvisually-hidden\b[^"]*"[^>]*\brole="status"/.test(insights)
+    || /<span[^>]*\brole="status"[^>]*\bclass="[^"]*\bvisually-hidden\b[^"]*"/.test(insights)
+  rows.push({
+    label: 'DoD-A7 — bfLoadMore consumes .visually-hidden on /insights',
+    ok: consumes,
+    detail: consumes
+      ? 'expected a role="status" span carrying the class · actual present'
+      : 'expected a role="status" span carrying .visually-hidden in the prerendered /insights'
+        + ' · actual absent — the count region is either unstyled (visible) or hidden by'
+        + ' something other than the shared utility'
+  })
+
+  return rows
+}
+
+/* ------------------------------------------------------------------ *
  * DoD-3 — every §7 route reachable from the menus
  * ------------------------------------------------------------------ */
 /**
@@ -1309,6 +1435,16 @@ const run = async (): Promise<void> => {
       )
       for (const row of motionFailing) console.log(`      ✗ ${row.label} — ${row.detail}`)
       if (verbose) for (const row of motionGate.filter(r => r.ok)) console.log(`      · ${row.label}`)
+
+      const hiddenGate = visuallyHiddenRows()
+      const hiddenFailing = hiddenGate.filter(r => !r.ok)
+      results.push({ slug: 'visually-hidden utility (DoD-A7)', rows: hiddenGate, failing: hiddenFailing })
+      console.log(
+        `${hiddenFailing.length === 0 ? '  ✓ PASS' : '  ✗ FAIL'}  `
+        + `${'visually-hidden utility (DoD-A7)'.padEnd(44)} ${hiddenGate.length - hiddenFailing.length}/${hiddenGate.length} rows`
+      )
+      for (const row of hiddenFailing) console.log(`      ✗ ${row.label} — ${row.detail}`)
+      if (verbose) for (const row of hiddenGate.filter(r => r.ok)) console.log(`      · ${row.label}`)
 
       const navRows = homeLinks === undefined
         ? [{ label: 'DoD-3 — the home page rendered', ok: false, detail: 'expected / to hydrate · actual it did not, so reachability cannot be judged' }]

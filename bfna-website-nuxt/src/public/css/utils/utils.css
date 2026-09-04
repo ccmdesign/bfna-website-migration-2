@@ -71,4 +71,40 @@
     grid-template-columns: subgrid;
     grid-column: inherit;
   }
+
+  /*
+    The standard visually-hidden clip (gh#219). Reachable by assistive
+    technology and invisible to everyone else.
+
+    `display: none` and `visibility: hidden` are both wrong here, and the
+    distinction is the whole point of this utility: either one removes the
+    element from the accessibility tree, which silences a live region exactly
+    when it has something to say (a11y-epic D29). The 1px box — not zero — keeps
+    the element renderable, which is what keeps it in the tree.
+
+    `clip-path` and the legacy `clip` are both written: `clip` is deprecated but
+    is still the property some older AT/browser pairs honour, and the pair is
+    the well-worn recipe rather than a novelty.
+
+    Lives in `@layer utils`, which sits after `components` in the order declared
+    at the top of `styles.css` — so this wins over a component rule that would
+    otherwise lay a `position` or a `block-size` on the same element. Moved here
+    from `bf/LoadMore.vue`, which hand-rolled it for its one `role="status"`
+    span; every live region in the accessibility epic consumes this copy.
+
+    Declares nothing visible by definition — no colour, font, size, weight,
+    letter-spacing, line-height, radius or shadow (D23 / D32).
+  */
+  .visually-hidden {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
 }
