@@ -76,8 +76,21 @@ const props = withDefaults(defineProps<GridProjectsProps>(), {
     kept from the frozen source. `data-gap="m"` matches it exactly; the column
     policy is `data-min-width`, there is no `style` binding on this element,
     and nothing in this file names a column template.
+
+    `role="list"` is not redundant: `base/reset.css:95-103` strips `list-style` from every
+    `ul[class]`, and WebKit reads that declaration as the author no longer
+    meaning a list — VoiceOver stops saying "list, N items" and stops
+    offering list navigation. Restating the implicit role puts the
+    semantics back without putting the bullets back. Same fix and same
+    reason as `nav/Dropdown.vue:109` and `Breadcrumb.vue:238-240`
+    (gh#220, D27).
   -->
-  <ul class="grid" :data-min-width="props.minWidth" data-gap="m">
+  <ul
+    class="grid"
+    role="list"
+    :data-min-width="props.minWidth"
+    data-gap="m"
+  >
     <bfCardProject
       v-for="p in props.projects"
       :key="p.slug"

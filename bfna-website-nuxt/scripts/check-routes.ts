@@ -95,6 +95,37 @@
  * that happened to set it. It now lives in `nuxt.config.ts` `app.head`, and this
  * gate is what stops it drifting back out.
  *
+ * **DoD-A4 — lists are lists** (a11y epic, gh#220). Two halves, because the
+ * acceptance sentence has two. The **per-route** half runs in the browser and
+ * is the accurate one: every `ul`/`ol` in the hydrated DOM whose *computed*
+ * `list-style-type` is `none` must carry `role="list"`. Computed, not grepped —
+ * `public/css/base/reset.css` strips the marker from every `ul[class]`/
+ * `ol[class]` today, but a component that reaches the same state some other way
+ * (`SearchShell.vue` sets `list-style: none` on its own `<ol>`) is the same
+ * defect and this notices it without being told. The **whole-build** half is
+ * the wide net: every prerendered `*.html` is scanned for an opening
+ * `<ul>`/`<ol>` that carries a `class` and no `role`, which is exactly the
+ * selector `reset.css` matches, across all ~430 bf pages rather than the nine
+ * the browser loop visits. Both rows print how many lists they inspected, so
+ * neither can pass by finding nothing.
+ *
+ * Why the role is needed at all: WebKit treats an author `list-style: none` as
+ * a statement that the element is no longer meant as a list and drops the
+ * implicit `list` role, so VoiceOver stops announcing "list, N items" and stops
+ * offering list navigation. That behaviour **is not verifiable from this
+ * harness** — there is no Safari and no screen reader on the runner (a11y BRIEF
+ * §0.2). What is asserted here is the structural condition only; the
+ * announcement is the manual AT pass in BRIEF §8. The diagnosis is the repo's
+ * own, written at `Breadcrumb.vue:238-240` and `nav/Dropdown.vue:109-117`.
+ *
+ * `/wireframes/**` and `/docs/**` are excluded from the whole-build half, and
+ * the exclusion is a scope fact rather than a convenience: the wireframes are
+ * frozen by BF-217 D2 and byte-guarded by site-epic DoD-4, so a gate that
+ * failed on them would fail on markup no issue is allowed to change; `/docs/**`
+ * renders `components/ds/**`, which a11y BRIEF §7 puts out of this epic pending
+ * the site-epic #88 keep-or-delete call. Both are named in the row's own detail
+ * string so the exclusion is visible on every run.
+ *
  * **DoD-A8 — the reduced-motion floor** (a11y epic, gh#218). The served
  * `.output/public/css/base/reset.css` must carry a `prefers-reduced-motion:
  * reduce` block that sets `@view-transition { navigation: none }` and caps
@@ -118,8 +149,9 @@
  * `0` only when every route hydrated, carried exactly one `h1`, had no dangling
  * `/_ipx/` URL and logged no console error; when every §7 route is reachable
  * from the menus; when no compiled stylesheet lost its `@layer` wrapper; when
- * every prerendered page carries a non-empty `lang`; and when the served
- * reset stylesheet carries the reduced-motion floor.
+ * every prerendered page carries a non-empty `lang`; when the served
+ * reset stylesheet carries the reduced-motion floor; and when no marker-less
+ * `ul`/`ol` is missing its `role="list"`, per route and across the build.
  * Placeholder anchors are reported and do not affect the exit code. A route
  * that could not be evaluated is a **failure**, never a skip — a verification
  * that quietly downgrades itself to "PASS (1 skipped)" is exactly how a broken
@@ -135,8 +167,8 @@
  *
  * ## Flags
  *
- *   --only <route>     run a single route (`--only /about`). Skips the three
- *                      whole-build gates below — they are statements about the
+ *   --only <route>     run a single route (`--only /about`). Skips every
+ *                      whole-build gate below — they are statements about the
  *                      build, not about a route, and a one-route run is a
  *                      debugging tool rather than the gate.
  *   --timeout <ms>     per-route budget for reaching a hydrated state
@@ -653,12 +685,47 @@ const READ_PAGE = `(() => {
         fragmentResolves: id !== '' && !!document.getElementById(id)
       }
     }),
+    /*
+      DoD-A4 (gh#220) — lists that no longer look like lists.
+
+      Classified by the *computed* \`list-style-type\`, which is the acceptance
+      condition verbatim and is strictly wider than the class-based scan the
+      build gate runs: it catches a list whose marker was removed by a scoped
+      component rule, by a utility, or by anything a future stylesheet invents,
+      none of which a selector match on \`[class]\` would see.
+
+      \`role\` is read as the literal attribute rather than as
+      \`el.role\` — the IDL reflection is not in every engine this script may be
+      pointed at, and the attribute is what the markup has to carry anyway.
+
+      \`markerless\` is reported even when there are no offenders: a row that
+      says "0 of 0" is a row that found nothing to check, and that is a
+      different fact from a clean page.
+    */
+    lists: (() => {
+      const all = Array.from(document.querySelectorAll('ul, ol'))
+      const markerless = all.filter(el => getComputedStyle(el).listStyleType === 'none')
+      return {
+        total: all.length,
+        markerless: markerless.length,
+        offenders: markerless
+          .filter(el => el.getAttribute('role') !== 'list')
+          .map(el => {
+            const cls = (el.getAttribute('class') || '').trim()
+            const role = el.getAttribute('role')
+            return el.tagName.toLowerCase()
+              + (cls === '' ? '' : '.' + cls.split(/\\s+/).join('.'))
+              + ' (' + el.children.length + ' items, role=' + (role === null ? 'unset' : role) + ')'
+          })
+      }
+    })(),
     width: window.innerWidth
   }
 })()`
 
 type PageLink = { href: string, resolved: string, fragmentResolves: boolean }
-type PageRead = { hydrated: boolean, h1s: string[], links: PageLink[], width: number }
+type PageLists = { total: number, markerless: number, offenders: string[] }
+type PageRead = { hydrated: boolean, h1s: string[], links: PageLink[], lists: PageLists, width: number }
 
 const sleep = (ms: number) => new Promise(ok => setTimeout(ok, ms))
 
@@ -1039,6 +1106,117 @@ const reducedMotionRows = (): Row[] => {
 }
 
 /* ------------------------------------------------------------------ *
+ * DoD-A4 — lists are lists (gh#220)
+ * ------------------------------------------------------------------ */
+/**
+ * An opening `<ul …>` / `<ol …>` tag, and the two attributes that decide it.
+ *
+ * A tag match rather than a whole-file search, for the reason `HTML_OPEN_TAG`
+ * gives: `class=` and `role=` appear all over an inlined Nuxt payload, and a
+ * naive search would go green on a page whose lists carry neither. The `role`
+ * alternates are the three legal quotings, and the value has to be `list`
+ * exactly — `role="presentation"` is the author saying the opposite.
+ *
+ * Both attribute patterns anchor on whitespace-or-tag-start rather than on
+ * `\\b`, and that is the difference between a gate and a hole: `\\brole` matches
+ * inside `data-role="list"` — `-` is a non-word character, so the boundary is
+ * there — which would let a `data-role` attribute satisfy an ARIA requirement.
+ * Review finding on this PR (gh#220 P2-1).
+ */
+const LIST_OPEN_TAG = /<(ul|ol)\b([^>]*)>/gi
+const LIST_CLASS_ATTR = /(?:^|\s)class\s*=/i
+const LIST_ROLE_IS_LIST = /(?:^|\s)role\s*=\s*(?:"\s*list\s*"|'\s*list\s*'|list(?=[\s>]|$))/i
+
+/**
+ * Prerendered trees this gate does not judge, and why. Stated as data rather
+ * than buried in a condition so the row can print them: an exclusion nobody can
+ * see on a green run is an exclusion that quietly widens.
+ *
+ * - `wireframes/` — frozen by BF-217 D2 and byte-guarded by site-epic DoD-4.
+ *   It carries ~2,000 classed lists with no role. Failing on them would fail on
+ *   markup no issue in this epic is permitted to change, and a gate that can
+ *   only be satisfied by breaking a rule is a gate people learn to skip.
+ * - `docs/` — renders `components/ds/**`, which a11y BRIEF §7 places outside
+ *   this epic pending the site-epic #88 keep-or-delete call.
+ */
+const LIST_ROLE_SKIP = ['wireframes/', 'docs/']
+
+/**
+ * DoD-A4: no classed `ul`/`ol` in the prerendered output is missing
+ * `role="list"`.
+ *
+ * The wide, static half of the gate — see the header section of the same name
+ * for why there are two halves and what each one is for. This one matches the
+ * `public/css/base/reset.css` selector (`ul[class]`, `ol[class]`) rather than a
+ * computed style, because it reads files rather than a rendered page; the
+ * browser row on each route is what covers the marker-less list that carries no
+ * class at all.
+ *
+ * The count of lists inspected is part of the label. A build that emitted no
+ * list at all, or a future refactor that renamed the trees this walks, would
+ * otherwise report the same "0 offenders" as a build that is genuinely clean —
+ * so a zero denominator is its own failure row rather than a silent pass.
+ */
+const listRoleRows = (): Row[] => {
+  if (!existsSync(publicDir)) {
+    return [{
+      label: 'DoD-A4 — prerendered output present',
+      ok: false,
+      detail: `expected ${publicDir} · actual missing — run \`npx nuxt generate\` first`
+    }]
+  }
+
+  const files = prerenderedHtmlFiles(publicDir)
+    .map(file => file.slice(publicDir.length + 1))
+    .filter(rel => !LIST_ROLE_SKIP.some(prefix => rel.startsWith(prefix)))
+
+  const offenders: string[] = []
+  let inspected = 0
+
+  for (const rel of files) {
+    const raw = readFileSync(join(publicDir, rel), 'utf8')
+    let match: RegExpExecArray | null
+    /* `LIST_OPEN_TAG` is `/g`, so `lastIndex` has to be reset per file or the
+       second file would resume where the first left off. */
+    LIST_OPEN_TAG.lastIndex = 0
+    while ((match = LIST_OPEN_TAG.exec(raw)) !== null) {
+      const [, tag, attrs] = match
+      if (!LIST_CLASS_ATTR.test(attrs)) continue
+      inspected++
+      if (!LIST_ROLE_IS_LIST.test(attrs)) {
+        const cls = /(?:^|\s)class\s*=\s*"([^"]*)"/i.exec(attrs)?.[1] ?? '?'
+        offenders.push(`${rel} — <${tag.toLowerCase()} class="${cls}">`)
+      }
+    }
+  }
+
+  const scope = `${files.length} pages, excluding ${LIST_ROLE_SKIP.join(' and ')}`
+
+  return [
+    {
+      label: `DoD-A4 — the build emitted classed lists to inspect (${scope})`,
+      ok: inspected > 0,
+      detail: inspected > 0
+        ? `expected >= 1 classed ul/ol · actual ${inspected}`
+        : 'expected >= 1 · actual 0 — either the build is empty or this walk no longer'
+          + ' reaches the bf pages, and in both cases the row below would pass by'
+          + ' finding nothing'
+    },
+    {
+      label: `DoD-A4 — every classed ul/ol carries role="list" (${inspected} lists, ${scope})`,
+      ok: offenders.length === 0,
+      detail: offenders.length === 0
+        ? `expected 0 without role="list" · actual 0 of ${inspected}`
+        : `expected 0 without role="list" · actual ${offenders.length} of ${inspected}: `
+          + `${offenders.slice(0, 5).join(' , ')}${offenders.length > 5 ? ' , …' : ''}`
+          + ' — base/reset.css strips list-style from every ul[class]/ol[class] and WebKit'
+          + ' drops the implicit list role when it does; restate role="list" on the element'
+          + ' (gh#220, the idiom at nav/Dropdown.vue:109)'
+    }
+  ]
+}
+
+/* ------------------------------------------------------------------ *
  * DoD-A7 — the visually-hidden utility (gh#219)
  * ------------------------------------------------------------------ */
 /**
@@ -1347,6 +1525,23 @@ const run = async (): Promise<void> => {
             + (page.h1s.length === 0 ? '' : ` — ${page.h1s.map(t => JSON.stringify(t)).join(', ')}`)
         })
 
+        /*
+         * DoD-A4 (gh#220) — the computed half. The offender strings come back
+         * already formatted from the page, because only the document can say
+         * how many children a list has or what its computed marker resolved
+         * to; Node would be guessing at both.
+         */
+        rows.push({
+          label: `DoD-A4 — every marker-less list carries role="list" (${page.lists.markerless} of ${page.lists.total} lists have list-style-type: none)`,
+          ok: page.lists.offenders.length === 0,
+          detail: page.lists.offenders.length === 0
+            ? `expected 0 without role="list" · actual 0 of ${page.lists.markerless}`
+            : `expected 0 without role="list" · actual ${page.lists.offenders.length} of ${page.lists.markerless}: `
+              + `${page.lists.offenders.slice(0, 5).join(' , ')}${page.lists.offenders.length > 5 ? ' , …' : ''}`
+              + ' — WebKit drops the implicit list role from a list whose marker the author'
+              + ' removed; restate role="list" (gh#220, the idiom at nav/Dropdown.vue:109)'
+        })
+
         if (!page.width) {
           /* A zero-width layout viewport collapses the nav and would fail
              reachability on a build that is fine. Say so rather than blaming
@@ -1438,6 +1633,16 @@ const run = async (): Promise<void> => {
       )
       for (const row of motionFailing) console.log(`      ✗ ${row.label} — ${row.detail}`)
       if (verbose) for (const row of motionGate.filter(r => r.ok)) console.log(`      · ${row.label}`)
+
+      const listGate = listRoleRows()
+      const listFailing = listGate.filter(r => !r.ok)
+      results.push({ slug: 'lists are lists (DoD-A4)', rows: listGate, failing: listFailing })
+      console.log(
+        `${listFailing.length === 0 ? '  ✓ PASS' : '  ✗ FAIL'}  `
+        + `${'lists are lists (DoD-A4)'.padEnd(44)} ${listGate.length - listFailing.length}/${listGate.length} rows`
+      )
+      for (const row of listFailing) console.log(`      ✗ ${row.label} — ${row.detail}`)
+      if (verbose) for (const row of listGate.filter(r => r.ok)) console.log(`      · ${row.label}`)
 
       const hiddenGate = visuallyHiddenRows()
       const hiddenFailing = hiddenGate.filter(r => !r.ok)
