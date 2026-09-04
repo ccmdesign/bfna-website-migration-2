@@ -12,6 +12,67 @@
     navigation: auto;
   }
 
+  /*
+    The reduced-motion floor — a11y epic DoD-A8, gh#218, WCAG 2.3.3.
+
+    Everything above this point declares motion for every visitor with no way
+    out: `@view-transition` cross-fades every same-document navigation, and
+    `transition-behavior: allow-discrete` (:8) *widens* what may animate rather
+    than narrowing it. Nothing else in `public/css/**` asks whether the visitor
+    wanted any of it — the only two reduced-motion guards in the repo are in
+    components (`bf/Accordion.vue:238`, `ds/molecules/ccmTabs.vue:626`), which
+    leaves every other transition on the site unguarded.
+
+    So the guard goes here, once, rather than into each component that animates
+    (D24). Anything pass 2 adds inherits it without having to remember to.
+
+    Four choices worth stating:
+
+    - **Same nesting context as the rule it overrides.** The `@view-transition`
+      above is inside `@layer reset`; so is this one, and the later one wins by
+      document order. Measured rather than assumed (gh#218, Chrome 152, CDP
+      `pagereveal`): a layer-nested `@view-transition` *is* honoured, and this
+      guard does override it — a cross-document `/` → `/about` reports
+      `event.viewTransition != null` normally and `== null` under
+      `Emulation.setEmulatedMedia` reduce. Hoisting the rule above out of the
+      layer would therefore change nothing except the risk, so it stays put.
+
+    - **`!important`, and it has to be.** `@layer reset` is the first layer
+      declared in `styles.css:2`, so a normal declaration here loses to every
+      component rule. For *important* declarations the layer order reverses:
+      important-in-`reset` outranks important-in-`components` and outranks
+      unlayered author styles too. That is the position a floor needs.
+
+    - **`0.01ms`, not `none`.** A near-zero duration still fires
+      `transitionend`/`animationend`; `transition: none` does not, and JS
+      waiting on those events would hang. Nothing here does that today; the
+      floor is written to survive whatever does later.
+
+    - **`animation-iteration-count: 1`** guards the one thing a duration cap
+      makes *worse*: an `infinite` animation at `0.01ms` an iteration is a
+      strobe. No served route has one today (the `infinite` in
+      `css-legacy/v2updates.css:123` is unserved — nuxt.config.ts:192), which
+      makes this future-proofing rather than a fix.
+
+    `scroll-behavior: auto` is deliberately absent: the canonical floor carries
+    it, but nothing under `src/**` sets `scroll-behavior` at all, so the line
+    would assert nothing.
+  */
+  @media (prefers-reduced-motion: reduce) {
+    @view-transition {
+      navigation: none;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      transition-behavior: normal !important;
+    }
+  }
+
   /* Prevent font size inflation */
   html {
     text-size-adjust: none;
