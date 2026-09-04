@@ -86,14 +86,47 @@ export const LEGACY_REDIRECT_EXACT: Readonly<Record<string, string>> = {
 /**
  * Prefix (splat) families: `<from>/<rest>` → `<to>/<rest>`, `rest` preserved.
  *
- * The first two already existed in this file before gh#66 and are re-pointed, not
- * removed (02 §D, spec 57 scope). The third carries `/podcasts/:slug` to
- * `/projects/:slug`, which is where a podcast's episodes now live.
+ * Only one family can honestly preserve its splat. `/podcasts/:slug` →
+ * `/projects/:slug` lands on `pages/projects/[slug].vue`, a route that really
+ * takes a second segment, and a podcast's episodes really are on its parent
+ * project page.
+ *
+ * The other two families that lived here — `/digital-economy/*` and
+ * `/future-of-work/*` — moved to `LEGACY_REDIRECT_COLLAPSE_PREFIXES` below in
+ * gh#67; see that comment for why.
  */
 export const LEGACY_REDIRECT_PREFIXES: readonly (readonly [from: string, to: string])[] = [
-  ['/digital-economy', '/transatlantic-relations-global-challenges'],
-  ['/future-of-work', '/future-leadership'],
   ['/podcasts', '/projects']
+]
+
+/**
+ * Prefix families whose splat is **dropped**: `<from>/<rest>` → `<to>`.
+ *
+ * Added by gh#67, closing residuals #206 and #208.
+ *
+ * #206: gh#66 implemented `/digital-economy/*` → `/transatlantic-relations-global-challenges/:splat`
+ * and `/future-of-work/*` → `/future-leadership/:splat` exactly as 02 §D and spec
+ * 57 §E ask, and measured them working — but the targets do not resolve. Program
+ * hubs are served by `src/pages/[program].vue`, which compiles to `/:program()`:
+ * **one** segment. There is no `pages/[program]/` directory, so every two-segment
+ * program path 404s, and an old link was getting one 301 followed by a 404. The
+ * sub-path those URLs carry has no destination in the `bf-*` site, so the honest
+ * answer is the hub itself — one hop that always resolves — rather than a 301
+ * into a 404 or a guess through the slug map, whose entries are already reachable
+ * at their own one-segment URLs.
+ *
+ * #208: `/blog` → `/insights` was a §E row; `/blog/:slug*` was not, so gh#66 added
+ * no rule for it and `/blog/anything` went on rendering the legacy blog template —
+ * a 200 saying "Post not found", under a parent that redirects away. gh#67 deletes
+ * `pages/blog/`, and this row keeps the family consistent with its parent instead
+ * of letting it fall to the 404. The splat is dropped because the `blog`
+ * collection has zero documents (02 §A), so no `/insights/<blog-slug>` exists to
+ * point at.
+ */
+export const LEGACY_REDIRECT_COLLAPSE_PREFIXES: readonly (readonly [from: string, to: string])[] = [
+  ['/blog', '/insights'],
+  ['/digital-economy', '/transatlantic-relations-global-challenges'],
+  ['/future-of-work', '/future-leadership']
 ]
 
 /**

@@ -40,7 +40,7 @@ npx eslint src --ext .ts,.vue    # lint application code
   - `blog/`: Blog posts
   - `docs/`: Documentation (including component specs)
 - `src/public/`: Static assets + layered CSS directory structure
-- `src/server/`: Nitro API routes (e.g., `api/contact.post.ts`)
+- `server/` (repo-app root, **not** `src/server/`): Nitro API routes, middleware and utils. Nuxt 4 resolves `serverDir` to `<rootDir>/server` while `srcDir` is `<rootDir>/src`, so a handler under `src/server/` is never scanned. The dead `src/server/` tree was deleted in gh#67 (residual #207)
 - `src/tests/`: Vitest specs organized by feature (`config/`, `tokens/`)
 - `_process/`: Planning, specs, and project management
   - `_process/spec-drafts/`: Active specification documents

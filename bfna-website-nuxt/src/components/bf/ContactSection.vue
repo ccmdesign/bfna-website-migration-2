@@ -316,12 +316,13 @@ const messageValue = ref('')
     the two columns is not the only rhythm on the page.
 
     It is fixed HERE and not THERE on purpose. `forms.css` is a defaults-layer
-    file serving every `<fieldset>` in the app, including the ones still
-    rendered under `layouts/legacy-base.vue`; changing it is a defaults-layer
-    decision that wants a sweep of those pages first, which is out of scope for
-    a component issue (the residual says exactly this, and gh#43 declined it for
-    the same reason). Neutralising it locally leaves that decision open and
-    leaves every other fieldset rendering as it does today.
+    file serving every `<fieldset>` in the app — when this was written, that
+    included the ones rendered under `layouts/legacy-base.vue`, since retired
+    by gh#67. Changing it is a defaults-layer decision that wants a sweep of the
+    remaining fieldsets first, which is out of scope for a component issue (the
+    residual says exactly this, and gh#43 declined it for the same reason).
+    Neutralising it locally leaves that decision open and leaves every other
+    fieldset rendering as it does today.
 
     `margin-block-end`, not `margin-bottom`: this file is logical-property
     throughout, and the two cascade together — the logical and physical

@@ -7,8 +7,9 @@
 # CDN. Both are generated from server/utils/legacy-redirect-rules.ts.
 #
 # Every rule is forced (`!`) because Netlify serves a matching static file
-# ahead of an unforced rule, and the legacy page files these rules replace are
-# deleted by issue #58, not this one — until then they still prerender.
+# ahead of an unforced rule. The legacy page files these rules replace are gone
+# as of issue #58 (gh#67), but `!` is kept: it states the intent independently
+# of what happens to be in .output/public on any given build.
 #
 # Absent below by design: /docs and any sub-path.
 # 02 §E marks them explicitly unchanged, and "no rule" is how that is expressed.
@@ -32,9 +33,12 @@
 /updates                                                                 /insights                                                301!
 
 # --- prefix families (splat preserved) ---
-/digital-economy/*                                                       /transatlantic-relations-global-challenges/:splat        301!
-/future-of-work/*                                                        /future-leadership/:splat                                301!
 /podcasts/*                                                              /projects/:splat                                         301!
+
+# --- prefix families (splat dropped: the target takes no second segment) ---
+/blog/*                                                                  /insights                                                301!
+/digital-economy/*                                                       /transatlantic-relations-global-challenges               301!
+/future-of-work/*                                                        /future-leadership                                       301!
 
 # --- one-segment legacy content slugs (415) ---
 /100-questions                                                           /projects/100-questions                                  301!

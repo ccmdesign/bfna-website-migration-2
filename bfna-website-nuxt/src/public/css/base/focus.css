@@ -63,11 +63,12 @@
      beats the rule below and keeps writing `outline: none`. Only a
      `@layer components` rule can win there, which is exactly what
      `bfFormField` declares. Left alone rather than fought: rewriting
-     `base/forms.css` is a change to the form baseline of every legacy route
-     and belongs in its own issue.
+     `base/forms.css` is a change to the form baseline of every route that
+     still uses it and belongs in its own issue.
   2. **Unlayered author CSS (#116).** Unlayered styles beat *every* cascade
-     layer, so a scoped SFC `<style>` block or one of the three legacy sheets
-     `layouts/legacy-base.vue` links can still override this. Under the
+     layer, so a scoped SFC `<style>` block can still override this. (The three
+     `css-legacy/*` sheets `layouts/legacy-base.vue` linked went with that
+     layout in gh#67, so scoped SFC styles are now the whole risk.) Under the
      `bf-probe` layout — the sole stylesheet injector for probe routes, and the
      shape the real shell (#55) must reproduce — `/css/styles.css` is the only
      sheet on the page, so the rule applies with nothing above it.

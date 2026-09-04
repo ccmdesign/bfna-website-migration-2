@@ -15,10 +15,14 @@
  * 1. **Untouched prefixes.** `/docs` and `/docs/*` return immediately (02 §E).
  * 2. **Exact 410s** — dev scaffolding and legacy indexes with no successor.
  * 3. **Exact 301s** — one-for-one renames and absorptions.
- * 4. **Prefix families** — `<from>/<rest>` → `<to>/<rest>`.
+ * 4. **Prefix families** — `<from>/<rest>` → `<to>/<rest>`, splat preserved.
+ * 4b. **Collapsing prefix families** — `<from>/<rest>` → `<to>`, splat dropped,
+ *    because the target route takes no second segment (gh#67, residuals #206/#208).
  * 5. **One-segment slug map** — legacy content URLs into `/insights` / `/projects`.
  * 6. Anything else falls through untouched, including every unknown one-segment
- *    path, which still reaches the 404 rather than being guessed at.
+ *    path, which still reaches the 404 rather than being guessed at. Since gh#67
+ *    deleted `pages/[...slug].vue`, that 404 is `src/error.vue` under the
+ *    `bf-default` shell rather than the legacy catch-all's "not found" body.
  *
  * Exact rules are checked before prefix rules because `/podcasts` (410) and
  * `/podcasts/:slug` (301 to `/projects/:slug`) share a stem and disagree, and
@@ -38,6 +42,7 @@
 import { LEGACY_SLUG_MAP } from '../utils/legacy-slug-map'
 import {
   LEGACY_GONE_EXACT,
+  LEGACY_REDIRECT_COLLAPSE_PREFIXES,
   LEGACY_REDIRECT_EXACT,
   LEGACY_REDIRECT_PREFIXES,
   LEGACY_UNTOUCHED_PREFIXES
@@ -87,6 +92,16 @@ export default defineEventHandler((event) => {
   for (const [from, to] of LEGACY_REDIRECT_PREFIXES) {
     if (path.startsWith(`${from}/`)) {
       return sendRedirect(event, `${to}${path.slice(from.length)}${search}`, 301)
+    }
+  }
+
+  // 4b. Prefix families whose splat is dropped (gh#67, residuals #206/#208). The
+  //     two sets are disjoint by construction, so the order between 4 and 4b is
+  //     not load-bearing; they are separate tables because the target of a
+  //     collapsing family is a whole route, not a stem to append to.
+  for (const [from, to] of LEGACY_REDIRECT_COLLAPSE_PREFIXES) {
+    if (path.startsWith(`${from}/`)) {
+      return sendRedirect(event, withSearch(to, search), 301)
     }
   }
 

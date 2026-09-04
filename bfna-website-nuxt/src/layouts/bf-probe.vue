@@ -24,10 +24,10 @@
     commented out, `~/public/css/styles.css` and the three `css-legacy/*` files
     alike. Nothing is injected globally.
   - There is no `src/app.vue`, so no app-level `useHead` exists either.
-  - `layouts/default.vue` links nothing (its legacy chrome comes from the
-    `ccm-*` components it mounts); `layouts/legacy-base.vue` is what pulls
-    `/global.css`, `/fixes.css` and `/v2updates.css`, and it reaches only the
-    routes that name it.
+  - `layouts/default.vue` links nothing (its chrome comes from the `ccm-*`
+    components it mounts). `layouts/legacy-base.vue` was what pulled
+    `/global.css`, `/fixes.css` and `/v2updates.css`, and it reached only the
+    routes that named it; gh#67 retired it along with those routes.
 
   So a page's layout is the only injector left, and a probe that names this one
   gets the CUBE stack alone. That is the property #103 wants and the real shell

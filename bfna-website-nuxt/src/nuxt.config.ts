@@ -33,10 +33,11 @@ try {
  * reach the prerenderer only through Nuxt's `prerender.server` plugin, which
  * hands the static route list to Nitro **ten at a time**, one batch per
  * successfully rendered page. A batch spliced during a render that ends in a
- * 500 is dropped with that response, and this app has three pre-existing 500s
- * (`/`, `/podcasts`, `/podcasts/`) during prerender. Which routes land in the
- * lost batches is a function of list order, so adding a page can silently push
- * an unrelated one out of the build — exactly what happened to
+ * 500 is dropped with that response, and when this was written the app had
+ * three pre-existing 500s during prerender (`/`, `/podcasts`, `/podcasts/` —
+ * the last two retired with the legacy stack in gh#67). Which routes land in
+ * the lost batches is a function of list order, so adding a page can silently
+ * push an unrelated one out of the build — exactly what happened to
  * `/bf-probe/19-bf-skip-link`, whose HTML never reached `.output/public` while
  * probes 03–18 did.
  *
@@ -177,14 +178,6 @@ export default defineNuxtConfig({
     },
     {
       path: resolve(currentDir, 'components/docs'),
-      pathPrefix: false
-    },
-    {
-      path: resolve(currentDir, 'components/templates'),
-      pathPrefix: false
-    },
-    {
-      path: resolve(currentDir, 'components/legacy'),
       pathPrefix: false
     },
     {
