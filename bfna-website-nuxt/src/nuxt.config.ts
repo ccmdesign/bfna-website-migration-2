@@ -155,8 +155,13 @@ export default defineNuxtConfig({
        * It used to live in `layouts/bf-default.vue` and `layouts/wireframe.vue`
        * and only there, which meant `/docs/**` — whose layout makes no `useHead`
        * call — shipped `<html>` with no `lang` and no way for a screen reader to
-       * pick a pronunciation dictionary. Both layout copies were deleted with
-       * this line's arrival; a route must not be able to opt out by omission.
+       * pick a pronunciation dictionary. `bf-default`'s copy went with this
+       * line's arrival; a route must not be able to opt out by omission.
+       *
+       * `layouts/wireframe.vue` still restates it, and deliberately: site-epic
+       * DoD-4 byte-guards that path against f757a64 and the guard diff is empty
+       * on `dev`. Its line is now redundant with this one rather than load-
+       * bearing, and comes out when the wireframe freeze lifts.
        *
        * `app.head` is unhead's lowest-priority source, so a page that genuinely
        * needs another language can still declare its own `htmlAttrs.lang`.

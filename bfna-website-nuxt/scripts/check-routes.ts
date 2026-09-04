@@ -63,7 +63,7 @@
  * program hub's `#projects` and `/about#board` are working in-page links, and a
  * report that cried wolf about them would be one nobody read.
  *
- * ## The two gates that are not per-route
+ * ## The three gates that are not per-route
  *
  * **DoD-3 — every §7 route is reachable from the menus.** BRIEF §2 requires
  * each route in §7 to be linked from `bfNav` or `bfFooter`, with no orphans.
@@ -86,6 +86,15 @@
  * here — generalised from `.bf-logo` to every `bf-*` rule, which is strictly
  * stronger than what it replaces.
  *
+ * **DoD-A9 — `lang` on every prerendered page** (a11y epic, gh#217). Every
+ * `*.html` under `.output/public` must carry a non-empty `lang` on its `<html>`
+ * element. Not a per-route row, because the route list above is the nine BRIEF
+ * §7 routes and the acceptance is phrased over *every* prerendered route:
+ * `/docs/**` renders `layouts/docs-layout.vue`, which makes no `useHead` call,
+ * and shipped no `lang` at all while the declaration lived in the two layouts
+ * that happened to set it. It now lives in `nuxt.config.ts` `app.head`, and this
+ * gate is what stops it drifting back out.
+ *
  * ## Known limit, stated rather than rediscovered
  *
  * Vue hydrates a `createStaticVNode` subtree by advancing the node pointer
@@ -100,7 +109,8 @@
  *
  * `0` only when every route hydrated, carried exactly one `h1`, had no dangling
  * `/_ipx/` URL and logged no console error; when every §7 route is reachable
- * from the menus; and when no compiled stylesheet lost its `@layer` wrapper.
+ * from the menus; when no compiled stylesheet lost its `@layer` wrapper; and
+ * when every prerendered page carries a non-empty `lang`.
  * Placeholder anchors are reported and do not affect the exit code. A route
  * that could not be evaluated is a **failure**, never a skip — a verification
  * that quietly downgrades itself to "PASS (1 skipped)" is exactly how a broken
@@ -116,7 +126,7 @@
  *
  * ## Flags
  *
- *   --only <route>     run a single route (`--only /about`). Skips the two
+ *   --only <route>     run a single route (`--only /about`). Skips the three
  *                      whole-build gates below — they are statements about the
  *                      build, not about a route, and a one-route run is a
  *                      debugging tool rather than the gate.
@@ -127,7 +137,7 @@
  *   --verbose          print every row, not just the failing ones
  */
 import { spawn, type ChildProcess } from 'node:child_process'
-import { createReadStream, existsSync, readFileSync, readdirSync, statSync } from 'node:fs'
+import { createReadStream, existsSync, readFileSync, readdirSync, realpathSync, statSync } from 'node:fs'
 import { mkdtemp, rm } from 'node:fs/promises'
 import { createServer, type Server } from 'node:http'
 import { homedir, tmpdir } from 'node:os'
@@ -818,24 +828,47 @@ const cascadeLayerRows = (): Row[] => {
 /* ------------------------------------------------------------------ *
  * DoD-A9 — `lang` is a config default (a11y epic, gh#217)
  * ------------------------------------------------------------------ */
-/** Every `*.html` file under `.output/public`, absolute paths, depth-first. */
-const prerenderedHtmlFiles = (dir: string): string[] => {
+/**
+ * Every `*.html` file under `.output/public`, absolute paths, depth-first.
+ *
+ * `statSync` rather than the `Dirent`'s own `isFile()`/`isDirectory()`: a
+ * symlink is *neither* of those, so a `Dirent`-only walk would skip a symlinked
+ * page and never recurse into a symlinked directory — silently, which is the
+ * one failure mode a gate must not have (see the header). `.output/public`
+ * carries no symlinks today, but `bfna-website-nuxt/public/css` is one in the
+ * source tree, so the shape is not hypothetical. `statSync` follows the link
+ * and reports what is on the other end; `seen` stops a link that points at an
+ * ancestor from looping forever.
+ */
+const prerenderedHtmlFiles = (dir: string, seen = new Set<string>()): string[] => {
+  const real = realpathSync(dir)
+  if (seen.has(real)) return []
+  seen.add(real)
+
   const out: string[] = []
-  for (const entry of readdirSync(dir, { withFileTypes: true })) {
-    const path = join(dir, entry.name)
-    if (entry.isDirectory()) out.push(...prerenderedHtmlFiles(path))
-    else if (entry.isFile() && entry.name.toLowerCase().endsWith('.html')) out.push(path)
+  for (const entry of readdirSync(dir)) {
+    const path = join(dir, entry)
+    let stat
+    try {
+      stat = statSync(path)
+    } catch {
+      /* a broken symlink is not a page; the link check owns dead targets */
+      continue
+    }
+    if (stat.isDirectory()) out.push(...prerenderedHtmlFiles(path, seen))
+    else if (stat.isFile() && entry.toLowerCase().endsWith('.html')) out.push(path)
   }
   return out
 }
 
 /**
- * The opening `<html …>` tag of `html`, or `undefined` if there is none.
+ * The opening `<html …>` tag, and a `lang` attribute within one.
  *
  * Deliberately a tag match rather than a `lang="…"` search anywhere in the
  * document: `lang` appears on `<code lang>` samples and inside inlined payload
  * JSON, and a naive whole-file search would go green on a page whose root
- * element carries nothing.
+ * element carries nothing. The three `LANG_ATTR` alternates are the three legal
+ * quotings — double, single, bare.
  */
 const HTML_OPEN_TAG = /<html\b([^>]*)>/i
 const LANG_ATTR = /\blang\s*=\s*("([^"]*)"|'([^']*)'|([^\s"'>]+))/i
