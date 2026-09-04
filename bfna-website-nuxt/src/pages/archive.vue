@@ -154,12 +154,24 @@ const oldestYear = computed<string | undefined>(
 const openYears = ref<Record<string, boolean>>({})
 
 /**
- * `??`, not `||`: `false` is a value the reader chose, and the whole point is
- * that it outranks the default. The default is the frozen source's
- * `:open="y === years[0]"` — identity against the first bucket, unchanged.
+ * A stored `false` is a value the reader chose and must outrank the default, so
+ * this cannot be a `||`.
+ *
+ * Nor a bare `??`. `openYears` is an object indexed by an arbitrary content
+ * string, and `years` above is a `Map` for exactly this reason — "so the keys
+ * stay strings and cannot collide with anything on `Object.prototype`". A bucket
+ * called `toString` would make `openYears.value[year.year]` a *function*, which
+ * `??` passes straight through as the band's `open`. Reading the type instead of
+ * the nullishness closes that off: only a boolean this page wrote is a stored
+ * answer, and everything else falls back.
+ *
+ * The default is the frozen source's `:open="y === years[0]"` — identity against
+ * the first bucket, unchanged.
  */
-const isYearOpen = (year: ArchiveYear): boolean =>
-  openYears.value[year.year] ?? (year === years.value[0])
+const isYearOpen = (year: ArchiveYear): boolean => {
+  const stored = openYears.value[year.year]
+  return typeof stored === 'boolean' ? stored : year === years.value[0]
+}
 
 /**
  * A new object rather than a mutation, so the `v-for` re-renders and every
