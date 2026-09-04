@@ -54,20 +54,44 @@ jobs:
       - name: Install (npm ci)
         run: npm ci
 
-      # `scripts/check-routes.ts` drives headless Chrome over CDP. It resolves a
+      # `scripts/check-routes.ts` drives headless Chrome over CDP, resolving a
       # binary from $CHROME_PATH, then the ms-playwright cache, then
-      # /usr/bin/google-chrome. `ubuntu-latest` ships Chrome stable at that path;
-      # the fallback populates the ms-playwright cache the script also probes, so
-      # the step keeps working if the runner image ever drops it.
-      - name: Resolve headless Chrome
+      # /usr/bin/google-chrome.
+      #
+      # It must be the **headless shell**, not the Chrome stable that
+      # `ubuntu-latest` ships at /usr/bin/google-chrome. Full Chrome under
+      # `--headless=new` requests /favicon.ico on navigation and logs the 404 as
+      # a browser-level error, which check-routes reads through `Log.entryAdded`
+      # and — correctly — fails on. The shell does not ask, so a developer running
+      # the harness locally out of their ms-playwright cache never sees it. Two
+      # different verdicts for one commit is a broken gate, so CI runs the same
+      # browser every developer does. (The 404 is real and is filed separately;
+      # gh#236 is not allowed to fix what CI finds.)
+      #
+      # The symlink is not decoration: check-routes only skips `--headless=new`
+      # when the executable path matches /headless-shell/, and playwright's own
+      # directory spells it with underscores.
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ms-playwright-headless-shell-${{ runner.os }}-v1
+
+      - name: Resolve headless Chrome shell
+        working-directory: .
         run: |
-          if [ -x /usr/bin/google-chrome ]; then
-            echo "CHROME_PATH=/usr/bin/google-chrome" >> "$GITHUB_ENV"
-            /usr/bin/google-chrome --version
-          else
-            echo "::warning::/usr/bin/google-chrome missing on this runner image; falling back to a playwright chromium download"
-            npx --yes playwright@1 install --with-deps chromium
+          npx --yes playwright@1 install --with-deps chromium-headless-shell
+          bin="$(find "$HOME/.cache/ms-playwright" -type f \
+            \( -name 'chrome-headless-shell' -o -name 'headless_shell' \) \
+            -perm -u+x | head -n1)"
+          if [ -z "$bin" ]; then
+            echo "no headless shell under $HOME/.cache/ms-playwright after install:"
+            ls -R "$HOME/.cache/ms-playwright" | head -50
+            exit 1
           fi
+          mkdir -p "$HOME/chrome-headless-shell-linux"
+          ln -sf "$bin" "$HOME/chrome-headless-shell-linux/chrome-headless-shell"
+          echo "CHROME_PATH=$HOME/chrome-headless-shell-linux/chrome-headless-shell" >> "$GITHUB_ENV"
+          "$bin" --version
 
       # Not `exit 0` — see the header. The gate runs `nuxt typecheck` and
       # `typecheck:scripts` itself (npm chains them with `&&`, so the second

@@ -56,11 +56,32 @@ it is noise in the log, not a gate failure.
 The issue anticipated that the CDP harness might not survive the runner. It does.
 `scripts/check-routes.ts` brings its own static server over `.output/public` and
 resolves a browser from `$CHROME_PATH` → the `ms-playwright` cache →
-`/usr/bin/google-chrome`. `ubuntu-latest` ships Chrome stable at that path, so the
-workflow just points `CHROME_PATH` at it. If a future runner image drops it, the step
-falls back to `npx playwright@1 install --with-deps chromium`, which populates the
-`ms-playwright` cache the script already probes — so the fallback needs no change to
-the script.
+`/usr/bin/google-chrome`.
+
+**But it has to be the headless *shell*, not Chrome stable.** The first CI run pointed
+`CHROME_PATH` at `/usr/bin/google-chrome`, which `ubuntu-latest` ships, and `/` failed
+on:
+
+```
+✗ console error — Failed to load resource: the server responded with a status of 404
+  (Not Found) — http://127.0.0.1:43807/favicon.ico
+```
+
+Full Chrome under `--headless=new` requests `/favicon.ico` on navigation; the headless
+shell does not. Every developer running the harness locally gets the shell out of their
+`ms-playwright` cache and therefore never sees it. One commit producing two verdicts
+depending on which browser happened to be on the machine is a broken gate, so CI
+installs and pins the same shell: `npx playwright@1 install --with-deps
+chromium-headless-shell`, cached across runs, with the resolved binary symlinked into a
+directory whose name contains `headless-shell` — `check-routes` only skips passing
+`--headless=new` when the executable path matches `/headless-shell/`, and playwright's
+own directory spells it with underscores.
+
+**The 404 is real and is not fixed here.** `bfna-website-nuxt/public/` — the canonical
+public dir since the consolidation — has no `favicon.ico`; the only copy left in the
+tree is the unserved `src/public/favicon.ico`. So the deployed static site 404s on
+`/favicon.ico` for every visitor using a real browser. Filed as a residual: this issue
+adds CI and is explicitly not allowed to fix what CI finds.
 
 Locally: 13 check groups, 55 rows, 0 failures, ~20s.
 
