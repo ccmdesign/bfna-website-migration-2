@@ -57,7 +57,7 @@
  * retired (issue 10), so `item.excerpt` already arrives as plain text and
  * re-deriving the strip here would be a second, drifting copy of it.
  *
- * ## The one content delta from the wireframe
+ * ## The two content deltas from the wireframe
  *
  * The heading link points at the row's `external_url` when it has one, and at
  * `/insights/${slug}` — the bf-* site's route — when it does not, where

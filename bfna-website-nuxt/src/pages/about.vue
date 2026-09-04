@@ -79,10 +79,17 @@ const board = boardMembers()
 const team = teamMembers()
 
 /**
- * The Stiftung body, split on blank lines. `paragraphs()` is the shared
- * formatter in `~/utils/format`, the bf-side of the frozen source's
+ * The two bodies, split on blank lines. `paragraphs()` is the shared formatter
+ * in `~/utils/format`, the bf-side of the frozen source's
  * `useWfContent().paragraphs` — the split is not re-implemented here.
+ *
+ * Hoisted out of the template for the reason the two people lists are, one
+ * paragraph up: a call in a template re-runs on every render and hands the
+ * consumer a fresh array whose `:key`/prop identity has changed for no reason.
+ * The frozen source calls `paragraphs()` inline in both places; that is the one
+ * shape not carried over.
  */
+const aboutTagline = computed(() => paragraphs(about?.description))
 const stiftungParagraphs = computed(() => paragraphs(stiftung?.description))
 
 /**
@@ -115,14 +122,14 @@ useHead({ title: () => about?.heading ?? 'About Us' })
     and puts `aria-current="page"` where it belongs. Same two-then-current
     shape `/projects` and `/insights/<slug>` already build.
 
-    `paragraphs()` splits the stored body on blank lines; `bfPageHeader`
+    `aboutTagline` is the stored body split on blank lines; `bfPageHeader`
     renders a `string[]` tagline as one `<p>` per entry.
   -->
   <bfPageHeader
     label="Mission"
     :crumbs="[{ label: 'Home', to: '/' }, { label: 'About' }]"
     :heading="about?.heading ?? 'About Us'"
-    :tagline="paragraphs(about?.description)"
+    :tagline="aboutTagline"
   />
 
   <!--
