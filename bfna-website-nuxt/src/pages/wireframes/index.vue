@@ -10,8 +10,8 @@
 
       <!-- `home` row in pages.json: GGS value prop + Irene's About Us opening (placeholder until Irene confirms) -->
       <wf-hero :heading="home?.heading" :description="home?.description">
+        <!-- "Get our newsletter" removed — no newsletter exists (Irene, Aug 5) -->
         <NuxtLink to="/wireframes/democracy" class="wf-button" data-variant="primary">Explore our programs</NuxtLink>
-        <NuxtLink to="#subscribe" class="wf-button">Get our newsletter</NuxtLink>
       </wf-hero>
     </template>
 

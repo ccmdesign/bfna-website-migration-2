@@ -9,10 +9,11 @@
     <main id="wf-main" class="stack" data-gap="xl">
       <slot name="hero" />
       <slot />
-      <!-- Global conversion band (copy = current site, pending Irene rewrite) -->
+      <!-- Global conversion band. "newsletters" dropped from the heading —
+           no newsletter exists (Irene, Aug 5 widget feedback). -->
       <wf-cta-section
         id="subscribe" label="Subscribe CTA" form
-        heading="Subscribe to receive our updates & newsletters"
+        heading="Subscribe to receive our updates"
         message="Enter your email and customize your preferences."
         :ctas="[{ label: 'Subscribe' }]"
       />

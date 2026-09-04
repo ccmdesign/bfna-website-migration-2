@@ -1,8 +1,8 @@
 {
  "generated": "2026-07-31",
- "note": "Union of Directus people (15, rich: bio/title/socials — wins conflicts) and Contentful person (17, name+image only). external_collaborators not included.",
+ "note": "Union of Directus people (15, rich: bio/title/socials — wins conflicts) and Contentful person (17, name+image only). external_collaborators not included. Aug 31: removed Bohrn/Ladd/Sullivan/Sava and flagged Irene Braam board=true per Irene widget feedback (Aug 5).",
  "counts": {
-  "total": 17,
+  "total": 13,
   "directus": 15,
   "contentful": 17,
   "contentful_only": 2
@@ -22,38 +22,6 @@
    "legacy": {
     "directus_id": 1,
     "contentful_id": "79TlHrTCF8bmvOY05rJh16"
-   }
-  },
-  {
-   "slug": "brandon-bohrn",
-   "name": "Brandon Bohrn",
-   "job_title": "Project Manager, USA/Transatlantic Relations, Europe Program, Bertelsmann Stiftung",
-   "bio": null,
-   "email": "brandon.bohrn@bertelsmann-stiftung.de",
-   "linkedin": "https://de.linkedin.com/in/brandon-bohrn-16643b82?challengeId=AQF6rgb3-4vHrgAAAXKFuTpYznS3jq8bfydMtsqNPuwpTpnb2B8K_A7svRXnCC5GvLjFkwhS4TbFoPmfwfiGwJfo_j9PgjKrCw&submissionId=db2e9f7d-f5b8-1516-d069-ea1cdf3a9f74",
-   "twitter": null,
-   "image": "https://bfna.simplyas.com/assets/8f95d89b-3adf-46dc-a0cc-9f90b8dfb8c1",
-   "status": "published",
-   "source": "both",
-   "legacy": {
-    "directus_id": 2,
-    "contentful_id": "5zKkCH6sLktnfMoBem9ELl"
-   }
-  },
-  {
-   "slug": "chloe-ladd",
-   "name": "Chloe Ladd",
-   "job_title": "Senior Manager, Transatlantic Relations",
-   "bio": "Chloe Ladd joined the Bertelsmann Foundation in June of 2021. She is the Senior Manager of Transatlantic Relations. Her research at BFNA primarily focuses on France and the implications of current French policy in the United States and Germany. She is also in charge of the Bertelsmann Foundation Fellowship, a program bringing together policy makers on both sides of the Atlantic.\n\nA graduate of Georgetown University’s Master of German and European Studies in the School of Foreign Service, her focus was on France and its role in transatlantic security. She received her undergraduate degree in Spanish and International Relations at the University of Virginia.\n\nOriginally from France, she speaks fluent French and, having spent time in Valencia, Spain during her undergraduate experience, she also speaks Spanish.",
-   "email": null,
-   "linkedin": "https://www.linkedin.com/in/chloe-alexandra-laird-/",
-   "twitter": null,
-   "image": "https://bfna.simplyas.com/assets/920e0b09-611e-4736-b561-c6e2570ad109",
-   "status": "published",
-   "source": "both",
-   "legacy": {
-    "directus_id": 3,
-    "contentful_id": "Vg1vnuTlu9lmSnAs8bQmR"
    }
   },
   {
@@ -89,22 +57,6 @@
    }
   },
   {
-   "slug": "heaven-sullivan",
-   "name": "Heaven Sullivan",
-   "job_title": null,
-   "bio": null,
-   "email": null,
-   "linkedin": null,
-   "twitter": null,
-   "image": "https://bfna.simplyas.com/assets/d0f5f1b6-e2b5-4f10-ad02-ab087af00bdc",
-   "status": "published",
-   "source": "both",
-   "legacy": {
-    "directus_id": 6,
-    "contentful_id": "15DW5PUatI3Imp31LcVLaP"
-   }
-  },
-  {
    "slug": "irene-braam",
    "name": "Irene Braam",
    "job_title": "Executive Director",
@@ -118,23 +70,8 @@
    "legacy": {
     "directus_id": 7,
     "contentful_id": "O8ELy84NEZ6PYpq0WODE7"
-   }
-  },
-  {
-   "slug": "iulia-sava",
-   "name": "Iulia Sava",
-   "job_title": null,
-   "bio": null,
-   "email": null,
-   "linkedin": null,
-   "twitter": null,
-   "image": "https://images.ctfassets.net/9vgcz0fppkl3/1VVeyPnTgbJxynbgzZUIrv/487afb7046e7316ea848c60021b57c26/BlueLogoBertelsmannFoundation-05.jpg",
-   "status": null,
-   "source": "contentful-only",
-   "legacy": {
-    "directus_id": null,
-    "contentful_id": "5WrDFg4AlGNrHL1NR7uD20"
-   }
+   },
+   "board": true
   },
   {
    "slug": "liz-mohn",

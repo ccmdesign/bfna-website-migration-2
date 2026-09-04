@@ -4,7 +4,7 @@
   "copy_sources": {
     "irene-docx-2026-07-29": "BFNA website_text.docx — Irene Braam, Jul 29 2026 (About, 3 program intros, 13 project descriptions; HTFD buttons: Apple Podcasts / Spotify / podcast site + featured episodes strip)"
   },
-  "note": "New-taxonomy PROJECTS (per Irene Jul 31: 3 top-level Programs contain Projects). Deduped: Contentful rename-dupes merged into canonical rows (`aka`). `parent_project` (Directus: M2O self-relation) nests cohort/year pages under Fellowship and SES. Episode/issue/report rows moved to insights.json with `projects` refs (Directus: M2M insights<->projects). Irene's copy = new descriptions on existing rows (copy_source). PENDING copy: bfna-documentaries (Q7); transponder-magazine row exists, Irene copy pending Q6. CEPI 2010/2011 left unparented (predecessor of BFF, Irene's call).",
+  "note": "New-taxonomy PROJECTS (per Irene Jul 31: 3 top-level Programs contain Projects). Deduped: Contentful rename-dupes merged into canonical rows (`aka`). `parent_project` (Directus: M2O self-relation) nests cohort/year pages under Fellowship and SES. Episode/issue/report rows moved to insights.json with `projects` refs (Directus: M2M insights<->projects). Irene's copy = new descriptions on existing rows (copy_source). PENDING copy: bfna-documentaries (Q7); transponder-magazine row exists, Irene copy pending Q6. CEPI 2010/2011 left unparented (predecessor of BFF, Irene's call). Aug 31: indo-pacific-nexus + astropolitics flagged as external microsites per Irene widget feedback (Aug 5) — URLs are PLACEHOLDERS pending Irene.",
   "count": 37,
   "top_level_count": 19,
   "pending_copy": [
@@ -1087,7 +1087,7 @@
       "image": null,
       "video_url": null,
       "download": null,
-      "external_url": null,
+      "external_url": "#astropolitics-microsite-url",
       "publish_date": null,
       "format": null,
       "kind": "research-initiative",
@@ -1108,7 +1108,8 @@
           "Subscribe for updates",
           "Read the latest"
         ]
-      }
+      },
+      "microsite_cta": "The complete experience lives on the Astropolitics microsite."
     },
     {
       "slug": "indo-pacific-nexus",
@@ -1120,7 +1121,7 @@
       "image": null,
       "video_url": null,
       "download": null,
-      "external_url": null,
+      "external_url": "#ipn-microsite-url",
       "publish_date": null,
       "format": null,
       "kind": "research-initiative",
@@ -1160,7 +1161,8 @@
             "description": "[Description pending extraction from Irene's May 11 docx]"
           }
         ]
-      }
+      },
+      "microsite_cta": "The complete experience lives on the Indo-Pacific Nexus microsite."
     },
     {
       "slug": "critical-minerals",

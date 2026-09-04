@@ -43,13 +43,15 @@
 <script setup lang="ts">
 const { menus } = useWfContent()
 
-// Real social profiles (static-content.json, legacy Frame)
+// Real social profiles (static-content.json, legacy Frame).
+// Order + Twitter→Bluesky swap per Irene (widget feedback, Aug 5).
+// NOTE: Bluesky profile URL is a PLACEHOLDER — Irene to supply the real one.
 const socials = [
-  { name: 'Facebook', url: 'https://www.facebook.com/BertelsmannFoundation/' },
-  { name: 'Twitter', url: 'https://twitter.com/BertelsmannFdn' },
-  { name: 'YouTube', url: 'https://www.youtube.com/channel/UCZZdgI5F7KjUCW0fCKUOAAg' },
+  { name: 'LinkedIn', url: 'https://www.linkedin.com/company/bertelsmann-foundation-north-america-inc.' },
   { name: 'Instagram', url: 'https://www.instagram.com/bertelsmannfoundation/' },
-  { name: 'Vimeo', url: 'https://vimeo.com/bfna' },
-  { name: 'LinkedIn', url: 'https://www.linkedin.com/company/bertelsmann-foundation-north-america-inc.' }
+  { name: 'Bluesky', url: '#bluesky-profile-url' },
+  { name: 'Facebook', url: 'https://www.facebook.com/BertelsmannFoundation/' },
+  { name: 'YouTube', url: 'https://www.youtube.com/channel/UCZZdgI5F7KjUCW0fCKUOAAg' },
+  { name: 'Vimeo', url: 'https://vimeo.com/bfna' }
 ]
 </script>

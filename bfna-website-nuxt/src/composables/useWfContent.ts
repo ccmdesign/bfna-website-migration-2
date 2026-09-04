@@ -90,6 +90,7 @@ export interface WfPerson {
   job_title: string | null
   bio: string | null
   image: string | null
+  board?: boolean  // listed under Board of Directors regardless of job_title
 }
 
 // ---- Snapshot access -------------------------------------------------------
@@ -125,6 +126,19 @@ const topProjects = projectsAll.filter(p => !p.parent_project)
 // prunes the program-page grid — reusable across every program page ([area].vue).
 const inProjectGrid = (p: WfProject) =>
   !p.archived && !p.exclude_from_grid && !p.external_only && p.kind !== 'podcast'
+
+// Client-specified program-grid ordering (Irene, Aug 5 widget feedback).
+// Unlisted programs/slugs keep dataset order; unlisted slugs sort after listed ones.
+const GRID_ORDER: Record<string, string[]> = {
+  'Democracy': ['graphic-images', 'city-solutions-series', 'how-to-fix-democracy', 'election-analysis'],
+  'Future Leadership': ['the-bertelsmann-foundation-fellowship', 'summer-enrichment-series', 'leadership-in-action']
+}
+const gridSort = (program: string, list: WfProject[]) => {
+  const order = GRID_ORDER[program]
+  if (!order) return list
+  const rank = (p: WfProject) => { const i = order.indexOf(p.slug); return i === -1 ? order.length : i }
+  return [...list].sort((a, b) => rank(a) - rank(b))
+}
 
 // Homepage + nav curation (IA decision, not data): flagship projects
 const FEATURED_SLUGS = ['transatlantic-barometer', 'transatlantic-periscope', 'how-to-fix-democracy', 'the-bertelsmann-foundation-fellowship']
@@ -214,7 +228,7 @@ export function useWfContent() {
     // Program-page grid = active, on-site projects only (see `inProjectGrid`).
     // TR&GC resolves to the Aug 4 six; podcasts + external products drop out.
     gridProjectsByProgram: (program: string) =>
-      topProjects.filter(p => p.program === program && inProjectGrid(p)),
+      gridSort(program, topProjects.filter(p => p.program === program && inProjectGrid(p))),
     // External-only "products" within a program (e.g. The Transponder): rendered as
     // their own band on the program page, not as grid cards. Data-driven via
     // `external_only`, so any program can carry a product with no page edits.
@@ -240,8 +254,12 @@ export function useWfContent() {
     featuredProjects: () => FEATURED_SLUGS.map(s => projectsAll.find(p => p.slug === s)!).filter(Boolean),
     // people / page copy / announcement
     people: () => people,
-    boardMembers: () => people.filter(p => /board/i.test(p.job_title ?? '')),
-    teamMembers: () => people.filter(p => !/board/i.test(p.job_title ?? '')),
+    // `board` flag: Irene Braam joins the board while staying Executive Director
+    // in Team (Irene, Aug 5 widget feedback)
+    boardMembers: () => people.filter(p => p.board || /board/i.test(p.job_title ?? '')),
+    // Alphabetical by last name (Irene, Aug 5 widget feedback)
+    teamMembers: () => people.filter(p => !/board/i.test(p.job_title ?? ''))
+      .toSorted((a, b) => (a.name.split(' ').at(-1) ?? '').localeCompare(b.name.split(' ').at(-1) ?? '')),
     aboutPage: () => aboutPage,
     stiftungPage: () => stiftungPage,
     homePage: () => homePage,
