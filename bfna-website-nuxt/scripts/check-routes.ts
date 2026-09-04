@@ -206,10 +206,11 @@
  * input events: a mouse press to focus, `Input.insertText` with **no** Enter to
  * prove the debounced live filtering still writes `?q=`, then a real Enter
  * keypress that must fire exactly one `submit`, be `defaultPrevented`, leave a
- * `window` marker alive (a full navigation would clear it), and carry the typed
- * text into the URL. No `el.click()` and no programmatic `.focus()` anywhere
- * (a11y BRIEF §5). A non-vacuity row fails the group if the press never
- * focused the input.
+ * `window` marker alive (a full navigation would clear it), carry the typed
+ * text into the URL, and leave focus still in the query field (DoD-A6 on the
+ * one transition this row adds). No `el.click()` and no programmatic `.focus()`
+ * anywhere (a11y BRIEF §5). A non-vacuity row fails the group if the press
+ * never focused the input.
  *
  * **DoD-A8 — the reduced-motion floor** (a11y epic, gh#218). The served
  * `.output/public/css/base/reset.css` must carry a `prefers-reduced-motion:
@@ -2806,8 +2807,13 @@ const resultCountRows = async (cdp: Cdp, origin: string): Promise<Row[]> => {
  *    would clear it — the form must have fired exactly **one** `submit` event,
  *    that event's default must have been **prevented**, and the URL must carry
  *    the text that was typed.
- * 9. Non-vacuity: the probe actually focused the input. Without it, rows 7 and
- *    8 would pass green against a page the probe never touched.
+ * 9. **Focus survives the submit** (DoD-A6, on the one transition this row
+ *    adds): `document.activeElement` is still the query input. `onSubmit`
+ *    touches focus not at all, and this is the row that keeps it that way — a
+ *    blur on submit, or a re-render that replaced the control, would drop the
+ *    reader who just pressed Enter onto `<body>`.
+ * 10. Non-vacuity: the probe actually focused the input. Without it, rows 7–9
+ *    would pass green against a page the probe never touched.
  *
  * It asserts nothing about what a screen reader announces for the landmark.
  * There is no assistive technology on this runner (a11y BRIEF §0.2); that is
@@ -2894,13 +2900,22 @@ const ARM_SEARCH_SUBMIT = `(() => {
   return true
 })()`
 
-const READ_SEARCH_SUBMIT = `(() => ({
-  marker: window.__gh227Marker || null,
-  submits: typeof window.__gh227Submits === 'number' ? window.__gh227Submits : null,
-  prevented: window.__gh227Prevented,
-  search: location.search,
-  value: (el => el ? el.value : null)(document.querySelector('.bf-search-shell input[type="search"]'))
-}))()`
+const READ_SEARCH_SUBMIT = `(() => {
+  const input = document.querySelector('.bf-search-shell input[type="search"]')
+  return {
+    marker: window.__gh227Marker || null,
+    submits: typeof window.__gh227Submits === 'number' ? window.__gh227Submits : null,
+    prevented: window.__gh227Prevented,
+    search: location.search,
+    value: input ? input.value : null,
+    activeIsInput: !!input && document.activeElement === input,
+    activeIsBody: document.activeElement === document.body,
+    active: document.activeElement
+      ? document.activeElement.tagName.toLowerCase()
+        + (document.activeElement.id === '' ? '' : '#' + document.activeElement.id)
+      : null
+  }
+})()`
 
 type SearchSubmitRead = {
   marker: string | null
@@ -2908,6 +2923,9 @@ type SearchSubmitRead = {
   prevented: boolean | null
   search: string
   value: string | null
+  activeIsInput: boolean
+  activeIsBody: boolean
+  active: string | null
 }
 
 const searchLandmarkRows = async (cdp: Cdp, origin: string): Promise<Row[]> => {
@@ -3160,6 +3178,22 @@ const searchLandmarkRows = async (cdp: Cdp, origin: string): Promise<Row[]> => {
         + ` search ${JSON.stringify(enterSearch)}`
         + ' — a lost marker means the document navigated, which is exactly what @submit.prevent'
         + ' is there to stop'
+  })
+
+  /* DoD-A6, on the one transition gh#227 adds. Submitting re-renders the
+     results band under the field; a handler that blurred, or a re-render that
+     replaced the input, would leave the reader who just pressed Enter standing
+     on <body>. `onSubmit` deliberately touches focus not at all, and this row
+     is what keeps it that way. */
+  const focusKept = afterEnter !== undefined && afterEnter.activeIsInput && !afterEnter.activeIsBody
+  rows.push({
+    label: 'gh#227 — DoD-A6: after Enter, focus is still in the query field, not on <body>',
+    ok: focusKept,
+    detail: focusKept
+      ? 'expected document.activeElement === the query input after submit · actual it is'
+      : `expected focus still in the query input after Enter · actual`
+        + ` ${JSON.stringify(afterEnter?.active ?? null)}`
+        + ' — onSubmit must not blur, and the re-render under it must not replace the control'
   })
 
   return rows
