@@ -96,6 +96,49 @@
  *
  * ## Accessibility
  *
+ * - The root is a `<search>` element carrying `role="search"` (gh#227). Before
+ *   it, `/search` measured `document.querySelectorAll('[role=search],search').
+ *   length === 0`: there was no landmark to jump to, and the query control had
+ *   no form owner at all, so Enter in the field did nothing. The role is
+ *   written **alongside** the element rather than instead of it — `<search>`
+ *   maps to the `search` role in every engine that knows the element and in
+ *   none that does not, and the explicit role is the floor for the second
+ *   kind. Exactly one element carries it, so the page gets exactly one search
+ *   landmark; the top bar's search entry is an ordinary `<a href="/search">`
+ *   link, not a second region.
+ *
+ *   Vue 3.5.40's tag table does not contain `search`
+ *   (`isHTMLTag('search') === false`, measured), so `nuxt.config.ts` names it
+ *   in `vue.compilerOptions.isCustomElement`. See the comment there.
+ * - The control is inside a real `<form>` (gh#227), so Enter has a defined
+ *   result instead of no result. `@submit.prevent` — the form never navigates;
+ *   `onSubmit` cancels the pending debounce and publishes the draft on the
+ *   spot, which makes submitting a *flush* of the live filtering rather than a
+ *   second, competing way to search. The live filtering is unchanged: this is
+ *   additive.
+ *
+ *   No `action`. This organism is presentational (BRIEF D8) and does not know
+ *   the route it is mounted on; `pages/search.vue` owns the URL and writes it
+ *   through `navigateTo`. Hard-coding `/search` here would put a route inside a
+ *   component that has none, and taking one as a prop would widen the pinned
+ *   `SearchShellProps` contract for a no-JS fallback nothing else in this
+ *   prerendered app offers.
+ *
+ *   The submit control is `visually-hidden` (the shared utility, gh#219, used
+ *   exactly as `bf/LoadMore.vue:271` uses it — D27) and `tabindex="-1"`. Two
+ *   separate calls:
+ *
+ *   1. **Hidden**, because pass 1 changes nothing a sighted user can see
+ *      (a11y BRIEF §1) and a visible search button is a design decision —
+ *      which variant, which size, which side of the field — i.e. a pass-2 row
+ *      under D23/D32. It still does both jobs the row asks of it: it is the
+ *      form's **default button**, which is what gives Enter a defined result,
+ *      and it is a named `submit` control in the accessibility tree.
+ *   2. **Out of the tab order**, because a focusable control that renders
+ *      nothing is an invisible tab stop, which is a WCAG 2.4.7 failure of its
+ *      own. It costs nothing: Enter still submits (the button is still the
+ *      default button, and HTML's implicit submission applies to a form with
+ *      one text field regardless), and a virtual-cursor user still reaches it.
  * - `bfFormField` renders a real `<label for>`/`id` pair, so the search
  *   control's accessible name is *visible text* rather than the frozen
  *   source's `aria-label` on a bare input. It also declares its own
@@ -184,6 +227,25 @@ const onQueryInput = (value: string): void => {
   }, props.debounceMs)
 }
 
+/**
+ * The form's submit (gh#227), reached by Enter in the field or by activating
+ * the submit control.
+ *
+ * A **flush**, not a second search path: cancel whatever the debounce has
+ * pending and publish the draft now. Submitting a query that is already the
+ * page's — Enter pressed twice, or after the window closed — re-emits it, and
+ * `pages/search.vue` answers with a `navigateTo` to the URL it is already on,
+ * which the router resolves to nothing. Harmless, and cheaper than a guard
+ * that would have to reason about the watcher's echo rule above.
+ *
+ * Nothing here moves focus. The caret stays in the field it was typed in —
+ * blurring on submit is exactly the focus loss DoD-A6 is about.
+ */
+const onSubmit = (): void => {
+  cancel()
+  publish(draft.value)
+}
+
 watch(
   () => props.query,
   incoming => {
@@ -248,24 +310,71 @@ const headingOf = (row: SearchResultRow): string => (row.heading ?? '').trim()
     composition layer's `.stack` — which is why the gap is written as a
     `data-gap` attribute here rather than as a declaration in this file's own
     layer, where it would outrank the consumer (the `bfByline` lesson, gh#38).
+
+    `<search>` **and** `role="search"` (gh#227) — see the block comment's
+    §Accessibility for why both, why exactly one element carries the role, and
+    why `nuxt.config.ts` has to tell Vue 3.5 that this tag is an element.
+
+    A tag swap and nothing else: `<search>` is `display: block`, like the `div`
+    it replaces, and `.stack`/`.stack > *`/`.stack > * + *` are class selectors
+    (`public/css/composition/stack.css:2,10,14`), so no rule that matched
+    before stops matching now. `<search>` carries no UA margin or padding.
   -->
-  <div class="bf-search-shell | stack" data-gap="m">
+  <search class="bf-search-shell | stack" role="search" data-gap="m">
     <!--
-      The query control. `type="search"` needs no widening: `FormFieldProps.
-      type` is a deliberately open `string` handed straight to
-      `<input :type="type">`, so the platform resolves it — see the field's own
-      contract note. `placeholder` falls through `bfFormField`'s `$attrs` onto
-      the control, which is the one element it can usefully land on.
+      The form (gh#227). It is the query control's owner, which is the fact
+      Enter actually depends on — before this, the input had no form at all and
+      Enter did nothing.
+
+      `@submit.prevent`: the default action is cancelled, so submitting never
+      navigates the document. `onSubmit` flushes the debounce instead; the live
+      filtering above it is untouched.
+
+      A block box that becomes the stack's **first** child, so `.stack > * + *`
+      still draws the same gap between the same visible boxes as before, and
+      `.bf-form-field`'s own root rule (`FormField.vue:290`) declares no block
+      margin for `.stack > * { margin-block: 0 }` to have been zeroing. No
+      layout rule of its own is needed and none is written — D23/D32: this pass
+      adds no visual property.
     -->
-    <bfFormField
-      class="bf-search-shell__query"
-      data-bf-search-shell="query"
-      type="search"
-      :label="label"
-      :model-value="draft"
-      :placeholder="placeholder"
-      @update:model-value="onQueryInput"
-    />
+    <form class="bf-search-shell__form" @submit.prevent="onSubmit">
+      <!--
+        The query control. `type="search"` needs no widening: `FormFieldProps.
+        type` is a deliberately open `string` handed straight to
+        `<input :type="type">`, so the platform resolves it — see the field's own
+        contract note. `placeholder` falls through `bfFormField`'s `$attrs` onto
+        the control, which is the one element it can usefully land on.
+
+        The `label` prop is untouched by gh#227 and must stay that way: it is a
+        real visible `<label for>` ("Search insights, projects and people" on
+        `/search`), not an `aria-label` and not the placeholder.
+      -->
+      <bfFormField
+        class="bf-search-shell__query"
+        data-bf-search-shell="query"
+        type="search"
+        :label="label"
+        :model-value="draft"
+        :placeholder="placeholder"
+        @update:model-value="onQueryInput"
+      />
+
+      <!--
+        The submit control: hidden, out of the tab order, and load-bearing
+        anyway. The block comment's §Accessibility has the two reasons in full.
+        `visually-hidden` is the shared utility in `public/css/utils/utils.css`
+        (gh#219), consumed rather than restated (D27) — so this component
+        declares no rule for it and adds no visual property.
+      -->
+      <button
+        type="submit"
+        class="bf-search-shell__submit | visually-hidden"
+        tabindex="-1"
+        data-bf-search-shell="submit"
+      >
+        Search
+      </button>
+    </form>
 
     <!--
       The facet row. Rendered only when there is a vocabulary to render: an
@@ -428,7 +537,7 @@ const headingOf = (row: SearchResultRow): string => (row.heading ?? '').trim()
       message="No records matched — try fewer or different words."
       :heading-level="2"
     />
-  </div>
+  </search>
 </template>
 
 <style scoped>

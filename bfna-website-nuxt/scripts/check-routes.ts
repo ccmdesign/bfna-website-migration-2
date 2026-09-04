@@ -195,6 +195,23 @@
  * `pages/search.vue` says so, and removing that override is **#233's** row, not
  * this gate's.
  *
+ * **The search landmark and its form** (a11y epic, gh#227). `/search` measured
+ * zero `[role=search],search` elements and zero `<form>`s, so the region was
+ * unreachable by landmark and Enter in the query field did nothing. The group
+ * asserts the structure — exactly one landmark, and it is `bfSearchShell`'s
+ * `<search role="search">.bf-search-shell` root; exactly one non-nested
+ * `<form>`; the query input's form **owner** is that form (ownership, not
+ * containment, is what implicit submission is defined against); the visible
+ * `<label for>` survives; one `[type="submit"]` — and then drives it with real
+ * input events: a mouse press to focus, `Input.insertText` with **no** Enter to
+ * prove the debounced live filtering still writes `?q=`, then a real Enter
+ * keypress that must fire exactly one `submit`, be `defaultPrevented`, leave a
+ * `window` marker alive (a full navigation would clear it), carry the typed
+ * text into the URL, and leave focus still in the query field (DoD-A6 on the
+ * one transition this row adds). No `el.click()` and no programmatic `.focus()`
+ * anywhere (a11y BRIEF §5). A non-vacuity row fails the group if the press
+ * never focused the input.
+ *
  * **DoD-A8 — the reduced-motion floor** (a11y epic, gh#218). The served
  * `.output/public/css/base/reset.css` must carry a `prefers-reduced-motion:
  * reduce` block that sets `@view-transition { navigation: none }` and caps
@@ -2780,6 +2797,444 @@ const resultCountRows = async (cdp: Cdp, origin: string): Promise<Row[]> => {
 }
 
 /* ------------------------------------------------------------------ *
+ * The search landmark and its form (a11y epic, gh#227)
+ * ------------------------------------------------------------------ */
+/**
+ * `/search` had no search landmark and no `<form>` at all. Measured before the
+ * fix: `document.querySelectorAll('[role=search],search').length === 0` and
+ * `document.querySelectorAll('form').length === 0` — so a screen-reader user
+ * could not jump to the search region, and Enter in the query field did
+ * nothing, because an input with no form owner has no implicit submission.
+ *
+ * ## What this group asserts
+ *
+ * Structure, read once from the hydrated page:
+ *
+ * 1. Exactly **one** `[role="search"], search` element. One, not "at least
+ *    one": the top bar's search entry is an ordinary `<a href="/search">`, and
+ *    a second region would make "jump to search" ambiguous rather than useful.
+ * 2. That element is `bfSearchShell`'s root — `<search>`, `role="search"`,
+ *    `.bf-search-shell`. Both halves, because the element alone is invisible to
+ *    an engine whose tag table predates it and the role alone throws away the
+ *    native semantics.
+ * 3. Exactly one `<form>`, and no `<form>` inside another.
+ * 4. The search input's **form owner** is that form — `input.form === theForm`,
+ *    not `form.contains(input)`. Form ownership is the property implicit
+ *    submission is defined against, and a `form=` attribute can move it
+ *    somewhere the containment test would still be happy with.
+ * 5. The visible label survives: a real `<label for>` pointing at the input,
+ *    carrying the caller's text, computed `display` not `none`. This is the
+ *    half of the row most easily lost by "tidying" the field into a
+ *    placeholder or an `aria-label`, and the audit measured it as already
+ *    correct — so it is a regression guard, not a fix.
+ * 6. Exactly one `[type="submit"]` control inside the form.
+ *
+ * Behaviour, driven with **real input events** — never `el.click()`, never a
+ * programmatic `.focus()` (a11y BRIEF §5):
+ *
+ * 7. **Live filtering still works.** A real mouse press focuses the field,
+ *    `Input.insertText` types into it, no Enter is pressed, and `?q=` appears
+ *    in the URL once the debounce window has closed. gh#227 is additive; a
+ *    form that replaced the live filtering would be a regression this row
+ *    catches.
+ * 8. **A real Enter keypress submits, and nothing reloads.** A marker set on
+ *    `window` before the keypress must survive it — a full document navigation
+ *    would clear it — the form must have fired exactly **one** `submit` event,
+ *    that event's default must have been **prevented**, and the URL must carry
+ *    the text that was typed.
+ * 9. **Focus survives the submit** (DoD-A6, on the one transition this row
+ *    adds): `document.activeElement` is still the query input. `onSubmit`
+ *    touches focus not at all, and this is the row that keeps it that way — a
+ *    blur on submit, or a re-render that replaced the control, would drop the
+ *    reader who just pressed Enter onto `<body>`.
+ * 10. Non-vacuity: the probe actually focused the input. Without it, rows 7–9
+ *    would pass green against a page the probe never touched.
+ *
+ * It asserts nothing about what a screen reader announces for the landmark.
+ * There is no assistive technology on this runner (a11y BRIEF §0.2); that is
+ * the manual pass in §8.
+ */
+const SEARCH_LANDMARK_ROUTE = '/search'
+/** The label `pages/search.vue:420` passes, which must stay a visible one. */
+const SEARCH_LABEL = 'Search insights, projects and people'
+/** Typed live-filter term, then the word Enter has to carry into the URL. */
+const SEARCH_TYPED = 'democracy'
+const SEARCH_SUBMITTED = 'democracy now'
+
+/**
+ * The structural read. Attributes rather than IDL reflections, the same call
+ * `READ_PAGE`'s list gate and gh#226's count read both make.
+ */
+const READ_SEARCH_STRUCTURE = `(() => {
+  const landmarks = Array.from(document.querySelectorAll('[role="search"], search'))
+  const root = landmarks[0] || null
+  const forms = Array.from(document.querySelectorAll('form'))
+  const form = forms[0] || null
+  const input = document.querySelector('.bf-search-shell input[type="search"]')
+  const label = input && input.id
+    ? document.querySelector('label[for="' + CSS.escape(input.id) + '"]')
+    : null
+  const labelStyle = label ? getComputedStyle(label) : null
+  return {
+    landmarks: landmarks.length,
+    rootTag: root ? root.tagName.toLowerCase() : null,
+    rootRole: root ? root.getAttribute('role') : null,
+    rootIsShell: root ? root.classList.contains('bf-search-shell') : false,
+    forms: forms.length,
+    nestedForms: forms.filter(f => f.parentElement && f.parentElement.closest('form')).length,
+    hasInput: !!input,
+    inputOwnedByForm: !!(input && form && input.form === form),
+    inputInsideLandmark: !!(input && root && root.contains(input)),
+    labelText: label ? (label.textContent || '').replace(/\\s+/g, ' ').trim() : null,
+    labelDisplay: labelStyle ? labelStyle.display : null,
+    labelVisibility: labelStyle ? labelStyle.visibility : null,
+    submits: form ? form.querySelectorAll('[type="submit"]').length : 0,
+    inputRect: input ? (r => ({ x: r.x, y: r.y, width: r.width, height: r.height }))(input.getBoundingClientRect()) : null
+  }
+})()`
+
+type SearchStructureRead = {
+  landmarks: number
+  rootTag: string | null
+  rootRole: string | null
+  rootIsShell: boolean
+  forms: number
+  nestedForms: number
+  hasInput: boolean
+  inputOwnedByForm: boolean
+  inputInsideLandmark: boolean
+  labelText: string | null
+  labelDisplay: string | null
+  labelVisibility: string | null
+  submits: number
+  inputRect: { x: number, y: number, width: number, height: number } | null
+}
+
+/**
+ * Instrumentation, installed **before** the Enter keypress.
+ *
+ * The `submit` listener is a capture-phase one so it runs whether or not Vue's
+ * bubble-phase handler stops propagation; `defaultPrevented` is read one macro
+ * task later, by which time the whole dispatch — Vue's handler and its
+ * `.prevent` modifier included — has finished.
+ *
+ * `window.__gh227Marker` is the reload detector. A full document navigation
+ * builds a new `window`, so the marker is simply gone; a router `replace` — the
+ * transition `pages/search.vue` actually performs — leaves it in place.
+ */
+const ARM_SEARCH_SUBMIT = `(() => {
+  const form = document.querySelector('form')
+  if (!form) return false
+  window.__gh227Marker = 'alive'
+  window.__gh227Submits = 0
+  window.__gh227Prevented = null
+  form.addEventListener('submit', event => {
+    window.__gh227Submits += 1
+    setTimeout(() => { window.__gh227Prevented = event.defaultPrevented }, 0)
+  }, true)
+  return true
+})()`
+
+const READ_SEARCH_SUBMIT = `(() => {
+  const input = document.querySelector('.bf-search-shell input[type="search"]')
+  return {
+    marker: window.__gh227Marker || null,
+    submits: typeof window.__gh227Submits === 'number' ? window.__gh227Submits : null,
+    prevented: window.__gh227Prevented,
+    search: location.search,
+    value: input ? input.value : null,
+    activeIsInput: !!input && document.activeElement === input,
+    activeIsBody: document.activeElement === document.body,
+    active: document.activeElement
+      ? document.activeElement.tagName.toLowerCase()
+        + (document.activeElement.id === '' ? '' : '#' + document.activeElement.id)
+      : null
+  }
+})()`
+
+type SearchSubmitRead = {
+  marker: string | null
+  submits: number | null
+  prevented: boolean | null
+  search: string
+  value: string | null
+  activeIsInput: boolean
+  activeIsBody: boolean
+  active: string | null
+}
+
+const searchLandmarkRows = async (cdp: Cdp, origin: string): Promise<Row[]> => {
+  const { targetId } = await cdp.send<{ targetId: string }>('Target.createTarget', { url: 'about:blank' })
+  const { sessionId } = await cdp.send<{ sessionId: string }>('Target.attachToTarget', { targetId, flatten: true })
+
+  let structure: SearchStructureRead | undefined
+  let focused = false
+  let afterTyping: SearchSubmitRead | undefined
+  let afterEnter: SearchSubmitRead | undefined
+  let armed = false
+  let note: string | undefined
+
+  try {
+    /* Cleared and restored for gh#224's reason: with `watching` unset the
+       client files every target's console output into the shared arrays the
+       per-route rows are judged on. */
+    cdp.exceptions = []
+    cdp.consoleErrors = []
+    cdp.watching = sessionId
+    await cdp.send('Runtime.enable', {}, sessionId)
+    await cdp.send('Page.enable', {}, sessionId)
+    await cdp.send(
+      'Emulation.setDeviceMetricsOverride',
+      { width: viewport.width, height: viewport.height, deviceScaleFactor: 1, mobile: false },
+      sessionId
+    )
+    await cdp.send('Page.navigate', { url: `${origin}${SEARCH_LANDMARK_ROUTE}` }, sessionId)
+
+    const deadline = Date.now() + timeoutMs
+    let hydrated = false
+    while (Date.now() < deadline) {
+      await sleep(150)
+      try {
+        const evaluated = await cdp.send<{ result: { value?: PageRead } }>(
+          'Runtime.evaluate',
+          { expression: READ_PAGE, returnByValue: true },
+          sessionId
+        )
+        if (evaluated.result?.value?.hydrated === true) { hydrated = true; break }
+      } catch {
+        /* navigation swaps the execution context; keep polling */
+      }
+    }
+
+    if (hydrated) {
+      await sleep(250)
+      const read = await cdp.send<{ result: { value?: SearchStructureRead } }>(
+        'Runtime.evaluate',
+        { expression: READ_SEARCH_STRUCTURE, returnByValue: true },
+        sessionId
+      )
+      structure = read.result?.value
+
+      const rect = structure?.inputRect ?? null
+      if (
+        rect !== null
+        && rect.width > 0
+        && rect.height > 0
+        && rect.y >= 0
+        && rect.y + rect.height <= viewport.height
+      ) {
+        /* A real press, not `.focus()` — a11y BRIEF §5. */
+        const x = Math.round(rect.x + rect.width / 2)
+        const y = Math.round(rect.y + rect.height / 2)
+        await cdp.send('Input.dispatchMouseEvent', { type: 'mousePressed', x, y, button: 'left', buttons: 1, clickCount: 1 }, sessionId)
+        await cdp.send('Input.dispatchMouseEvent', { type: 'mouseReleased', x, y, button: 'left', buttons: 0, clickCount: 1 }, sessionId)
+
+        const active = await cdp.send<{ result: { value?: boolean } }>(
+          'Runtime.evaluate',
+          { expression: `document.activeElement === document.querySelector('.bf-search-shell input[type="search"]')`, returnByValue: true },
+          sessionId
+        )
+        focused = active.result?.value === true
+
+        if (focused) {
+          /* Typing only. No Enter — this half is the live filtering, which the
+             form must not have replaced. One settle past the 250ms debounce. */
+          await cdp.send('Input.insertText', { text: SEARCH_TYPED }, sessionId)
+          await sleep(900)
+          afterTyping = (await cdp.send<{ result: { value?: SearchSubmitRead } }>(
+            'Runtime.evaluate',
+            { expression: READ_SEARCH_SUBMIT, returnByValue: true },
+            sessionId
+          )).result?.value
+
+          /* Now the submit half. Armed after the live-filter navigation so the
+             marker is set on the window the keypress will be judged against. */
+          armed = (await cdp.send<{ result: { value?: boolean } }>(
+            'Runtime.evaluate',
+            { expression: ARM_SEARCH_SUBMIT, returnByValue: true },
+            sessionId
+          )).result?.value === true
+
+          await cdp.send('Input.insertText', { text: ' now' }, sessionId)
+          await cdp.send('Input.dispatchKeyEvent', {
+            type: 'rawKeyDown', windowsVirtualKeyCode: 13, nativeVirtualKeyCode: 13, key: 'Enter', code: 'Enter'
+          }, sessionId)
+          await cdp.send('Input.dispatchKeyEvent', {
+            type: 'char', windowsVirtualKeyCode: 13, nativeVirtualKeyCode: 13, key: 'Enter', code: 'Enter', text: '\r', unmodifiedText: '\r'
+          }, sessionId)
+          await cdp.send('Input.dispatchKeyEvent', {
+            type: 'keyUp', windowsVirtualKeyCode: 13, nativeVirtualKeyCode: 13, key: 'Enter', code: 'Enter'
+          }, sessionId)
+
+          await sleep(900)
+          afterEnter = (await cdp.send<{ result: { value?: SearchSubmitRead } }>(
+            'Runtime.evaluate',
+            { expression: READ_SEARCH_SUBMIT, returnByValue: true },
+            sessionId
+          )).result?.value
+        }
+      } else {
+        note = `the query input's rect is ${JSON.stringify(rect)},`
+          + ` which is not inside the ${viewport.width}x${viewport.height} viewport — nothing to press`
+      }
+    }
+
+    if (!hydrated) note = `expected #__nuxt.__vue_app__ within ${timeoutMs}ms · actual absent`
+  } finally {
+    await cdp.send('Target.closeTarget', { targetId }).catch(() => {})
+    /* After the close, so anything the dying target flushes still counts. */
+    cdp.watching = undefined
+  }
+
+  if (structure === undefined) {
+    return [{
+      label: `gh#227 — ${SEARCH_LANDMARK_ROUTE} hydrated, so its landmark and form can be read`,
+      ok: false,
+      detail: `${note ?? 'the page did not answer'}`
+        + ' — without a running app there is no landmark to judge, so this group is'
+        + ' untested rather than green'
+    }]
+  }
+
+  const rows: Row[] = []
+
+  rows.push({
+    label: `gh#227 — ${SEARCH_LANDMARK_ROUTE} exposes exactly one search landmark`,
+    ok: structure.landmarks === 1,
+    detail: structure.landmarks === 1
+      ? 'expected 1 [role="search"], search · actual 1'
+      : `expected exactly 1 [role="search"], search · actual ${structure.landmarks}`
+        + ' — 0 is the defect gh#227 fixes; more than 1 makes "jump to search" ambiguous,'
+        + ' and the top bar\'s search entry is a plain <a href="/search"> that must not become one'
+  })
+
+  const rootOk = structure.rootTag === 'search' && structure.rootRole === 'search' && structure.rootIsShell
+  rows.push({
+    label: 'gh#227 — the landmark is bfSearchShell\'s root: <search role="search">.bf-search-shell',
+    ok: rootOk,
+    detail: rootOk
+      ? 'expected <search role="search" class="bf-search-shell"> · actual it is'
+      : `expected <search role="search"> carrying .bf-search-shell · actual <${structure.rootTag ?? '—'}>,`
+        + ` role ${JSON.stringify(structure.rootRole)}, .bf-search-shell ${structure.rootIsShell ? 'yes' : 'no'}`
+        + ' — the element alone is invisible to an engine whose tag table predates it, and'
+        + ' the role alone throws the native semantics away; gh#227 writes both'
+  })
+
+  const formsOk = structure.forms === 1 && structure.nestedForms === 0
+  rows.push({
+    label: 'gh#227 — exactly one <form> on the page, and none nested inside another',
+    ok: formsOk,
+    detail: formsOk
+      ? 'expected 1 form, 0 nested · actual 1, 0'
+      : `expected 1 form and 0 nested · actual ${structure.forms} form(s),`
+        + ` ${structure.nestedForms} nested — a nested form is dropped by the HTML parser,`
+        + ' which silently takes the inner control\'s owner away again'
+  })
+
+  const ownershipOk = structure.hasInput && structure.inputOwnedByForm && structure.inputInsideLandmark
+  rows.push({
+    label: 'gh#227 — the query input\'s form OWNER is that form, and it sits inside the landmark',
+    ok: ownershipOk,
+    detail: ownershipOk
+      ? 'expected input.form === the form · actual it is, and the landmark contains it'
+      : `expected input.form === the page's form · actual input ${structure.hasInput ? 'present' : 'absent'},`
+        + ` owned ${structure.inputOwnedByForm ? 'yes' : 'no'},`
+        + ` inside the landmark ${structure.inputInsideLandmark ? 'yes' : 'no'}`
+        + ' — ownership, not containment, is what implicit submission is defined against'
+  })
+
+  const labelVisible = structure.labelText === SEARCH_LABEL
+    && structure.labelDisplay !== 'none'
+    && structure.labelVisibility !== 'hidden'
+  rows.push({
+    label: `gh#227 — the input keeps its VISIBLE <label for>: “${SEARCH_LABEL}”`,
+    ok: labelVisible,
+    detail: labelVisible
+      ? `expected a rendered label[for] reading ${JSON.stringify(SEARCH_LABEL)} · actual exactly that`
+      : `expected a rendered label[for] reading ${JSON.stringify(SEARCH_LABEL)} · actual`
+        + ` ${JSON.stringify(structure.labelText)}, display ${structure.labelDisplay},`
+        + ` visibility ${structure.labelVisibility}`
+        + ' — the audit measured this as already correct, so this row is the regression guard:'
+        + ' a placeholder or an aria-label is not a replacement for it'
+  })
+
+  rows.push({
+    label: 'gh#227 — the form carries exactly one submit control',
+    ok: structure.submits === 1,
+    detail: structure.submits === 1
+      ? 'expected 1 [type="submit"] inside the form · actual 1'
+      : `expected exactly 1 [type="submit"] inside the form · actual ${structure.submits}`
+        + ' — 0 leaves Enter\'s result to the implicit-submission fallback alone, which no'
+        + ' markup states; more than 1 makes the default button a question of DOM order'
+  })
+
+  /* Non-vacuity first, so a failure here explains the two behaviour rows
+     below rather than letting them read as product defects. */
+  rows.push({
+    label: 'gh#227 — non-vacuity: a real mouse press focused the query input',
+    ok: focused,
+    detail: focused
+      ? 'expected document.activeElement === the input after a real press · actual it is'
+      : `expected a real press to focus the input · actual it did not`
+        + `${note === undefined ? '' : ` (${note})`}`
+        + ' — the two behaviour rows below would otherwise pass against a field nothing typed into'
+  })
+
+  const typedSearch = afterTyping?.search ?? ''
+  const liveOk = focused && /(?:^|[?&])q=/.test(typedSearch) && decodeURIComponent(typedSearch).includes(SEARCH_TYPED)
+  rows.push({
+    label: `gh#227 — live filtering survives the form: typing “${SEARCH_TYPED}” alone writes ?q=`,
+    ok: liveOk,
+    detail: liveOk
+      ? `expected ?q=${SEARCH_TYPED} after the debounce, with no Enter · actual ${JSON.stringify(typedSearch)}`
+      : `expected ?q=${SEARCH_TYPED} after the debounce, with no Enter pressed · actual`
+        + ` ${JSON.stringify(typedSearch)} — gh#227 is additive; a form that replaced the`
+        + ' debounced @update:query would be the regression this row exists for'
+  })
+
+  const enterSearch = afterEnter?.search ?? ''
+  const enterOk = armed
+    && afterEnter !== undefined
+    && afterEnter.marker === 'alive'
+    && afterEnter.submits === 1
+    && afterEnter.prevented === true
+    && decodeURIComponent(enterSearch.replace(/\+/g, ' ')).includes(SEARCH_SUBMITTED)
+  rows.push({
+    label: 'gh#227 — a real Enter keypress submits once, is prevented, and reloads nothing',
+    ok: enterOk,
+    detail: enterOk
+      ? `expected 1 prevented submit, the window marker alive and ?q=${SEARCH_SUBMITTED}`
+        + ` · actual exactly that — ${JSON.stringify(enterSearch)}`
+      : `expected the form armed, 1 submit event, defaultPrevented true, window.__gh227Marker`
+        + ` still "alive" and ?q=${SEARCH_SUBMITTED} · actual armed ${armed},`
+        + ` submits ${JSON.stringify(afterEnter?.submits ?? null)},`
+        + ` prevented ${JSON.stringify(afterEnter?.prevented ?? null)},`
+        + ` marker ${JSON.stringify(afterEnter?.marker ?? null)},`
+        + ` search ${JSON.stringify(enterSearch)}`
+        + ' — a lost marker means the document navigated, which is exactly what @submit.prevent'
+        + ' is there to stop'
+  })
+
+  /* DoD-A6, on the one transition gh#227 adds. Submitting re-renders the
+     results band under the field; a handler that blurred, or a re-render that
+     replaced the input, would leave the reader who just pressed Enter standing
+     on <body>. `onSubmit` deliberately touches focus not at all, and this row
+     is what keeps it that way. */
+  const focusKept = afterEnter !== undefined && afterEnter.activeIsInput && !afterEnter.activeIsBody
+  rows.push({
+    label: 'gh#227 — DoD-A6: after Enter, focus is still in the query field, not on <body>',
+    ok: focusKept,
+    detail: focusKept
+      ? 'expected document.activeElement === the query input after submit · actual it is'
+      : `expected focus still in the query input after Enter · actual`
+        + ` ${JSON.stringify(afterEnter?.active ?? null)}`
+        + ' — onSubmit must not blur, and the re-render under it must not replace the control'
+  })
+
+  return rows
+}
+
+/* ------------------------------------------------------------------ *
  * DoD-3 — every §7 route reachable from the menus
  * ------------------------------------------------------------------ */
 /**
@@ -3137,6 +3592,16 @@ const run = async (): Promise<void> => {
       )
       for (const row of resultCountFailing) console.log(`      ✗ ${row.label} — ${row.detail}`)
       if (verbose) for (const row of resultCountGate.filter(r => r.ok)) console.log(`      · ${row.label}`)
+
+      const searchLandmarkGate = await searchLandmarkRows(cdp, origin)
+      const searchLandmarkFailing = searchLandmarkGate.filter(r => !r.ok)
+      results.push({ slug: 'search landmark + form (gh#227)', rows: searchLandmarkGate, failing: searchLandmarkFailing })
+      console.log(
+        `${searchLandmarkFailing.length === 0 ? '  ✓ PASS' : '  ✗ FAIL'}  `
+        + `${'search landmark + form (gh#227)'.padEnd(44)} ${searchLandmarkGate.length - searchLandmarkFailing.length}/${searchLandmarkGate.length} rows`
+      )
+      for (const row of searchLandmarkFailing) console.log(`      ✗ ${row.label} — ${row.detail}`)
+      if (verbose) for (const row of searchLandmarkGate.filter(r => r.ok)) console.log(`      · ${row.label}`)
 
       const navRows = homeLinks === undefined
         ? [{ label: 'DoD-3 — the home page rendered', ok: false, detail: 'expected / to hydrate · actual it did not, so reachability cannot be judged' }]
