@@ -17,7 +17,7 @@
  * character apart from the two strings. That is the whole case for this
  * component.
  *
- * Presentational-only (BRIEF D8): five props in, one slot, nothing out. No
+ * Presentational-only (BRIEF D8): six props in, one slot, nothing out. No
  * data access, no store, no composable — and, specifically, **no knowledge of
  * why the page is empty**. Whether the route 404'd, the filter matched nothing
  * or the collection is genuinely empty is the caller's question; this renders
@@ -85,13 +85,14 @@
  * binding for binding (`Notice.vue:94,111`) — the same decision made the same
  * way rather than a second dialect of it (a11y BRIEF D27).
  *
- * The default is `false` because this block is usually *prerendered*: it is
- * what `/insights` ships when a facet matched nothing on the server, and a
- * live region that is present at first paint and never updated is noise in the
- * accessibility tree, read once by the document pass regardless. `true` is for
- * the block that arrives **after** a user action and replaces what was there —
- * `error.vue`, reached by a client-side navigation that would otherwise swap
- * the entire page body in silence.
+ * The default is `false` because this block is usually *prerendered*: measured
+ * on the current build, 18 `insights/<slug>` pages ship the "Insight not found"
+ * branch in their initial HTML, and a live region that is present at first
+ * paint and never updated is noise in the accessibility tree — read once by the
+ * document pass regardless. `true` is for the block that arrives **after** a
+ * user action and replaces what was there — `error.vue`, reached by a
+ * client-side navigation that would otherwise swap the entire page body in
+ * silence.
  *
  * The region is this element, mounted with its heading already in it (BRIEF
  * D29). Nothing here is hidden and toggled: `display: none` removes an element

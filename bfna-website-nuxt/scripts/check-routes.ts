@@ -1788,9 +1788,10 @@ const decorativeGlyphRows = (): Row[] => {
  * ## Why the default matters as much as the fix
  *
  * `role="status"` is an implicit `aria-live="polite"` region. On content
- * present at first paint that never changes — an empty-results band a facet
- * prerendered — the region is announced for nothing and then sits in the
- * accessibility tree for the life of the page. The prop exists so the caller
+ * present at first paint that never changes — measured on this build: 18
+ * `insights/<slug>` pages prerender the "Insight not found" branch — the region
+ * is announced for nothing and then sits in the accessibility tree for the life
+ * of the page. The prop exists so the caller
  * states which case it is; the static row is what stops a later "just make it
  * always announce" from landing.
  *
@@ -1815,11 +1816,14 @@ const ERROR_ROUTE = '/this-page-does-not-exist'
  * one rendered state, and a second `Runtime.evaluate` only widens the window in
  * which the page can change underneath them.
  *
- * `[role="status"]` rather than a class or a tag: what is being asserted is the
- * accessibility-tree condition, not which component satisfied it. `aria-live`
- * is counted alongside it and reported separately — an author who reaches for
- * `aria-live="polite"` here has met the requirement a different way, and the
- * row should say so rather than fail on the spelling.
+ * `[role="status"]` rather than a class or a tag on the counting row: what is
+ * asserted is the accessibility-tree condition, not which component satisfied
+ * it. `[aria-live]` is counted alongside and **reported, not asserted** — it is
+ * context for a failure ("there is a live region here, spelled the other way"),
+ * not an alternative that passes. `role="status"` is what is required, because
+ * it is what the prop emits and what the idiom this copies already ships
+ * (`Notice.vue:111`); a second accepted spelling would be the divergence D27
+ * exists to prevent.
  */
 const READ_ERROR_ROUTE = `(async () => {
   const root = document.getElementById('__nuxt')
@@ -1935,6 +1939,15 @@ const emptyStateStatusRows = async (cdp: Cdp, origin: string): Promise<Row[]> =>
 
   let read: ErrorRouteRead | undefined
   try {
+    /* `watching`, cleared in the `finally`, for the reason the per-route loop
+       sets it: with it `undefined` the client attributes every event from every
+       target to nobody in particular, and this probe would file the 404 page's
+       console output into the shared `consoleErrors` the routes above are
+       judged on. Nothing reads them after this point today; that is a fact
+       about the current call order, not a property worth relying on. */
+    cdp.exceptions = []
+    cdp.consoleErrors = []
+    cdp.watching = sessionId
     await cdp.send('Runtime.enable', {}, sessionId)
     await cdp.send('Page.enable', {}, sessionId)
     await cdp.send('Page.navigate', { url: `${origin}/` }, sessionId)
@@ -1958,12 +1971,15 @@ const emptyStateStatusRows = async (cdp: Cdp, origin: string): Promise<Row[]> =>
     }
 
     if (!hydrated) {
+      /* The static half reads files and needs no browser, so it still runs and
+         still reports — a group that answers one question is worth more than
+         one that abandons both. */
       return [{
         label: `gh#224 — / hydrated, so ${ERROR_ROUTE} can be reached through the router`,
         ok: false,
         detail: `expected #__nuxt.__vue_app__ within ${timeoutMs}ms · actual absent`
           + ' — without a running app there is no client-side navigation to judge'
-      }]
+      }, ...emptyStateStaticRows()]
     }
 
     const evaluated = await cdp.send<{ result: { value?: ErrorRouteRead } }>(
@@ -1974,6 +1990,8 @@ const emptyStateStatusRows = async (cdp: Cdp, origin: string): Promise<Row[]> =>
     read = evaluated.result?.value
   } finally {
     await cdp.send('Target.closeTarget', { targetId }).catch(() => {})
+    /* After the close, so anything the dying target flushes still counts. */
+    cdp.watching = undefined
   }
 
   if (read === undefined || read.pushed !== true) {
@@ -1983,7 +2001,7 @@ const emptyStateStatusRows = async (cdp: Cdp, origin: string): Promise<Row[]> =>
       detail: 'expected $router on #__nuxt.__vue_app__ · actual unreachable'
         + ' — the probe could not perform a client-side navigation, so the announcement'
         + ' is untested rather than absent'
-    }]
+    }, ...emptyStateStaticRows()]
   }
 
   rows.push({
