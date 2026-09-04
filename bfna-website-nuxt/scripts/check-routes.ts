@@ -2503,8 +2503,17 @@ const RESULT_COUNT_QUERY = 'democracy'
 const RESULT_COUNT_ROUTE = `/search?q=${RESULT_COUNT_QUERY}`
 const RESULT_COUNT_IDLE_ROUTE = '/search'
 
-/** The sentence `bfSearchShell` composed before gh#226, and must still. */
-const COUNT_SENTENCE = new RegExp(`^(\\d+) (results?) for “${RESULT_COUNT_QUERY}”, ranked by relevance$`)
+/**
+ * The sentence `bfSearchShell` composed before gh#226, and must still.
+ *
+ * The query is escaped into the pattern rather than interpolated raw: it is a
+ * constant today and a word, but a later probe query containing `.`, `?` or `+`
+ * would otherwise widen this assertion silently instead of failing loudly,
+ * which is the one failure mode a gate must not have.
+ */
+const COUNT_SENTENCE = new RegExp(
+  `^(\\d+) (results?) for “${RESULT_COUNT_QUERY.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}”, ranked by relevance$`
+)
 
 /**
  * The count region as the browser sees it.
