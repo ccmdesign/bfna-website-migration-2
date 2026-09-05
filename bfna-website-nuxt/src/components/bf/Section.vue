@@ -243,8 +243,12 @@ const root = ref<HTMLElement | null>(null)
  * an attribute nothing displays would be a name no sighted user can see. That
  * behaviour **stands** (a11y BRIEF D26): this component is not changed to name
  * itself from `label`, and a `label`-only band is still deliberately unnamed.
- * What is added is a way for the five call sites that got it wrong to find out,
- * which is gh#230's list to work from.
+ * What is added is a way for the call sites that got it wrong to say so out
+ * loud, which is gh#230's list to work from. Measured on a clean dev load:
+ * `/about` warns twice (`data-label="Bertelsmann Stiftung"` and `"Contact"`),
+ * `/projects` warns not at all — its three bands slot their own `<h2>` and
+ * name themselves at the call site, which is the correct pattern — and the
+ * article-body band warns on the 76 insight pages whose bodies author `##`.
  *
  * ## Why this is a warning and not a type
  *

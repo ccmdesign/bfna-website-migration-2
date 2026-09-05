@@ -83,7 +83,7 @@ const props = defineProps<ProseProps>()
 /**
  * One parsed block. A discriminated union rather than a `tag` plus optional
  * fields, so the template's branches are exhaustive by construction and a `ul`
- * can carry `items` while the other three carry `text`.
+ * can carry `items` while every other member carries `text`.
  *
  * The rank set is closed on purpose and is now `h2`–`h6` (gh#223). It was
  * `h2 | h3`, the wf source's own, and that was a silent lossy cap: a body
