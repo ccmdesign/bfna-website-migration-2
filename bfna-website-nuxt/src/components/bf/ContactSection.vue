@@ -70,15 +70,39 @@
  * discarding whatever the visitor had typed. Probe 44 clicks the button and
  * asserts the page did not navigate.
  *
+ * ## The accessible error plumbing is wired, the behaviour still is not (gh#229)
+ *
+ * The audit measured this band's three controls as `required: false`,
+ * `aria-required: null`, `aria-describedby: null`, `aria-invalid: null`, the
+ * `<form>` with no `novalidate` and the band with no status region — while
+ * `bfFormField` implemented every one of those correctly and this call site
+ * used none of it (a11y BRIEF §0, "Contact form").
+ *
+ * gh#229 wires the call site. It does **not** add behaviour: there is still no
+ * submit handler, no `fetch` and no validation, because the endpoint is
+ * site-epic #72's. What changes is that the *semantics* are now complete and a
+ * handler, when it lands, has somewhere to put its output — `errors` and
+ * `status` below — rather than needing this template edited again.
+ *
+ * `novalidate` on the `<form>` is the one piece that is not merely plumbing.
+ * The email field is `type="email"`, so without it the user agent's own
+ * constraint bubble fires *before* the `submit` event: a message that is not
+ * the `aria-describedby` target, is not a live region, is announced
+ * inconsistently across UA/AT pairs and disappears on the next keystroke. With
+ * it, the only error surface is `bfFormField`'s — one `<p>`, referenced by
+ * `aria-describedby`, carrying `role="alert"`.
+ *
  * The controls carry `name` attributes (`name`, `email`, `message`) through
  * `$attrs`. Nothing reads them today; they are what a form's controls are
  * called, and the day an endpoint lands the band already speaks `FormData`.
  *
- * ## Styling: one rule, and it is a subtraction
+ * ## Styling: two rules, and both are subtractions
  *
- * No new CSS variable and no colour of any kind. The single rule neutralises
+ * No new CSS variable and no colour of any kind. The first rule neutralises
  * `base/forms.css`'s `fieldset { margin-bottom: var(--space-m) }` — see the
- * `<style>` block for why it is neutralised here rather than fixed there.
+ * `<style>` block for why it is neutralised here rather than fixed there. The
+ * second (gh#229) takes the user agent's 1em start margin off the status
+ * region, which renders empty in every state this component currently has.
  */
 defineOptions({ name: 'BfContactSection' })
 
@@ -123,13 +147,64 @@ interface Props {
    * take a gap in the stack.
    */
   address?: string
+  /**
+   * Per-field error messages, keyed by the control's `name` (gh#229).
+   *
+   * Caller-supplied, exactly as `bfFormField.error` is: this band runs no
+   * validation and never writes into this object. Passing one turns that field
+   * into `aria-invalid="true"` with an `aria-describedby` pointing at a
+   * `role="alert"` `<p>` carrying the string — the plumbing `bfFormField`
+   * already had and this call site did not use.
+   *
+   * Three named optional properties rather than a `Record<string, string>`.
+   * The fields are fixed and known at compile time, so an index signature buys
+   * nothing and costs the `noUncheckedIndexedAccess` widening the three refs
+   * below already document — and named keys mean a typo in a caller's object
+   * is a typecheck error rather than an error message that silently never
+   * renders.
+   */
+  errors?: ContactErrors
+  /**
+   * The outcome of a submission, announced by the band's `role="status"`
+   * region (gh#229).
+   *
+   * Empty is the idle state, and the region is mounted anyway — D29: a live
+   * region that is `display: none` (or absent) while idle is not in the
+   * accessibility tree when the text arrives, so the announcement is lost.
+   * Nothing here sets it; the handler site-epic #72 adds will.
+   */
+  status?: string
+}
+
+/**
+ * The shape of `Props.errors`.
+ *
+ * Declared locally, not in `src/types/bf-contracts.ts`, for the reason the
+ * `Props` docblock above already gives: BRIEF §5 rule 11 governs **shared**
+ * types, and nothing outside this file names this shape.
+ */
+interface ContactErrors {
+  /** The Name field's error, or absent for "no error". */
+  name?: string
+  /** The Email field's error. */
+  email?: string
+  /** The Message field's error. */
+  message?: string
 }
 
 withDefaults(defineProps<Props>(), {
   email: 'info@bfna.org',
   heading: 'Contact',
   visitHeading: 'Visit us',
-  address: '[street address — Directus contact singleton]'
+  address: '[street address — Directus contact singleton]',
+  /*
+    A factory, because an object default shared across every instance of a
+    component is the classic mutable-default bug — and `''` for the status, not
+    `undefined`, so the region renders an empty text node rather than nothing
+    at all.
+  */
+  errors: () => ({}),
+  status: ''
 })
 
 /**
@@ -180,10 +255,18 @@ const messageValue = ref('')
       with a function nobody calls; writing `@submit="onSubmit"` and calling
       `preventDefault()` inside would move a one-word guarantee into a body
       someone can later add a `fetch` to without changing the template.
+
+      `novalidate` (gh#229) — see the § in the header block. It suppresses the
+      user agent's own constraint bubble so that the only error surface is the
+      one that is properly associated and properly announced. It does NOT
+      remove the constraints: `required` still reaches the accessibility tree
+      on every control, and `type="email"` still reports its validity through
+      the constraint-validation API for the handler site-epic #72 adds.
     -->
     <form
       class="bf-contact-section__form | stack"
       data-gap="s"
+      novalidate
       @submit.prevent
     >
       <h2 class="bf-contact-section__heading">{{ heading }}</h2>
@@ -213,10 +296,24 @@ const messageValue = ref('')
         made implicitly and would have lost the moment anything came between the
         two.
 
-        `v-model` on each, over the three refs above. No `required`, no `hint`
-        and no `error` on any of them: the wf source marks nothing required, and
-        this band runs no validation, so supplying an error string here would
-        paint a field red on a judgement nobody made.
+        `v-model` on each, over the three refs above.
+
+        `required` on all three (gh#229). A contact form with an optional
+        message is not a contact form, and the accessibility half is the point:
+        `bfFormField` binds it as the **native** attribute on the control,
+        which is what maps to the required state in the accessibility tree. No
+        `aria-required` is written beside it — the native attribute IS the
+        mapping, and a redundant `aria-required="true"` is a second copy of one
+        fact that can later disagree with the first. The visible `*` marker
+        `bfFormField` draws is already `aria-hidden` (`FormField.vue:236-243`),
+        so nothing hears "star" on top of "required".
+
+        `:error` on all three, bound to the caller's `errors` object. Still no
+        `hint`. Nothing here supplies an error — the default is `{}` — so no
+        field turns red on a judgement nobody made; what changed is that a
+        caller with a judgement to report now has somewhere to report it, and
+        `aria-invalid` / `aria-describedby` / `role="alert"` follow from
+        `bfFormField` without another edit here.
       -->
       <bfFormGroup :legend="heading" class="bf-contact-section__fields">
         <bfFormField
@@ -225,6 +322,8 @@ const messageValue = ref('')
           type="text"
           name="name"
           autocomplete="name"
+          required
+          :error="errors.name"
         />
         <bfFormField
           v-model="emailValue"
@@ -232,6 +331,8 @@ const messageValue = ref('')
           type="email"
           name="email"
           autocomplete="email"
+          required
+          :error="errors.email"
         />
         <!--
           `rows="4"` is the wf source's value, and it needs no prop of its own:
@@ -244,6 +345,8 @@ const messageValue = ref('')
           type="textarea"
           name="message"
           :rows="4"
+          required
+          :error="errors.message"
         />
       </bfFormGroup>
 
@@ -258,9 +361,34 @@ const messageValue = ref('')
         that needs a submit control gets one (its own source comment names this
         component). Probe 44 asserts the rendered `type`, rather than trusting
         that comment.
+
+        The status region lives in this `<div>`, next to the control whose
+        outcome it reports, and that placement is load-bearing twice over
+        (gh#229):
+
+        1. **D29 — always mounted, never `display: none`.** The `<p>` is
+           rendered unconditionally with `status` empty by default, so the live
+           region is in the accessibility tree *before* there is anything to
+           announce. A `v-if` here would defeat the whole point: an element
+           inserted at the same moment its text arrives is announced by fewer
+           AT/UA pairs than one that was already there and changed.
+        2. **It must not be a `.stack` child.** `.bf-contact-section__form` is
+           a flex column with `gap: var(--space-s)`, and flex gap is applied
+           between items whatever their size — so an empty `<p>` placed
+           directly in the form would add one `--space-s` of vertical space to
+           the column while rendering nothing. Inside this `<div>`, an empty
+           `<p>` is a zero-height block in normal flow and the layout is
+           byte-identical to before (D23 / DoD-A10: this row changes nothing a
+           sighted user can see).
+
+        `role="status"` alone — no `aria-live`, no `aria-atomic`. The role
+        already implies `aria-live="polite"` and `aria-atomic="true"`, and this
+        is the idiom `bfResultCount` uses and `check-routes.ts` already asserts
+        for it (gh#226).
       -->
       <div>
         <bfButton type="submit" variant="primary">Send message</bfButton>
+        <p class="bf-contact-section__status" role="status">{{ status }}</p>
       </div>
     </form>
 
@@ -332,6 +460,34 @@ const messageValue = ref('')
   */
   .bf-contact-section fieldset {
     margin-block-end: 0;
+  }
+
+  /*
+    The status region's start margin, zeroed (gh#229).
+
+    `base/reset.css:81-92` zeroes `margin-block-end` on `p` and deliberately
+    leaves the user agent's `margin-block-start: 1em` alone — that inherited
+    1em is the site's paragraph rhythm and this row does not touch it. But the
+    status region renders an EMPTY string in the idle state, which is every
+    state until site-epic #72 ships a submit handler, and an empty `<p>` with a
+    1em start margin is 1em of vertical space added to the submit row for a box
+    that draws nothing. DoD-A10 / D23: this row changes nothing a sighted user
+    can see, so the margin comes off.
+
+    `margin-block-start`, not `margin-top`, and no colour, size, weight or
+    radius anywhere in this rule — the declaration is a zero, like the fieldset
+    rule above it. What the spacing should be *when a message is present* is a
+    design decision belonging to whoever ships the behaviour; leaving it at 0
+    declines to make it here.
+
+    `:empty` is deliberately NOT used to scope this to the idle state. Vue
+    renders `{{ status }}` as a text node whose data is the empty string, and
+    whether an element containing one matches `:empty` is a Selectors-4
+    behaviour that differs across engines — exactly the kind of thing the
+    WebKit list-role note in `Breadcrumb.vue:238-240` warns about.
+  */
+  .bf-contact-section__status {
+    margin-block-start: 0;
   }
 }
 </style>
