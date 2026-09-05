@@ -125,19 +125,32 @@ first (an inlined Nuxt payload carries content strings, and two insight bodies a
 HTML that would otherwise be matched inside a JSON string). A skip is any step from rank
 *n* to rank > *n*+1, plus a first heading that is not rank 1.
 
-Excluded, printed in the row label so the exclusion cannot quietly widen:
+Excluded by tree: `wireframes/` and `docs/` — the two exclusions `LIST_ROLE_SKIP` already
+states, for its reasons.
 
-- `wireframes/`, `docs/` — the exclusions `LIST_ROLE_SKIP` already states, same reasons.
-- The routes **#230** owns. BRIEF §0 records two live skips — `/insights` `1 → 3` and
-  `/search` `1 → 3` — that come from call sites (`insights/index.vue:347` and
-  `search.vue:411` render a `bfSection` with no heading around cards whose titles are
-  `h3`). Fixing a call site is #230's row, not this one, and this row must not ship a
-  gate that cannot pass. The excluded pages get their **own informational row** that
-  prints the skips it found with `ok: true` — so the debt is visible on a green run, and
-  the row stays green when #230 clears it rather than flipping red.
+**Amended after the first run.** The plan assumed the two skips BRIEF §0 measured. The
+gate found **23**, and one of the two was not among them:
 
-Negative-tested by injecting a skip into a page the gate does judge and confirming the row
-goes red, then reverting.
+- `/insights` — the call-site skip the audit recorded. #230's.
+- **22 `/insights/<slug>` detail pages** — a new finding. Their bodies author `### ` as the
+  first heading with no `## ` above it, and the article-body band
+  (`insights/[slug].vue:280`) passes `label="Body"` and no `heading`, so `bfProse` emits an
+  `h3` directly under the page's `h1`. Fixed either editorially (normalise the authored
+  depth) or by naming the band — neither is a component change and neither is this row's.
+  Filed as a residual.
+- `/search` is **not** among them: its measured `1 → 3` exists only after hydration renders
+  result cards, and the prerendered idle page has no skip.
+
+So the exclusion became a **debt ledger**, `HEADING_SKIP_KNOWN` — the shape
+`.github/typecheck-baseline.txt` and `check-contrast.ts`'s `KNOWN_FAILURES` already use.
+It stores each page's *exact* skip, so the debt can be paid but not deepened: a listed page
+that starts skipping differently fails like any other. A listed page that stops skipping is
+printed by its own row rather than failing — deliberately unlike the contrast gate, because
+most of these clear through editorial changes to `content/bf/**` that land outside any
+issue, and a gate that reddens because somebody improved a body is a gate people delete.
+
+Negative-tested by running the gate before the ledger existed: it went red on exactly those
+23 pages while all 25 other check groups stayed green, then green once they were recorded.
 
 ## 4. Verification
 

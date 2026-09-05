@@ -95,6 +95,27 @@
  * that happened to set it. It now lives in `nuxt.config.ts` `app.head`, and this
  * gate is what stops it drifting back out.
  *
+ * **DoD-A1 — no heading-level skip** (a11y epic, gh#223). Every prerendered
+ * page must open at `h1` and step its heading ranks down by at most one.
+ * Whole-build and static, like the DoD-A9 gate below it and for the same
+ * reason: an outline is a property of the markup the server wrote, source order
+ * *is* document order in a prerendered file, and reading all ~430 pages costs
+ * one file walk where the browser loop would re-assert one template nine times.
+ * `<script>`, `<style>` and `<noscript>` bodies are masked before anything is
+ * counted — every page inlines its Nuxt payload, and two insight bodies are
+ * legacy HTML, so an unmasked read would find `<h3>` inside a JSON string and
+ * report a skip on a page that has none.
+ *
+ * 23 pages are **recorded, not excused**, in `HEADING_SKIP_KNOWN` — a debt
+ * ledger in the shape of `.github/typecheck-baseline.txt` and
+ * `check-contrast.ts`'s `KNOWN_FAILURES`. One is `/insights`, the call site
+ * a11y BRIEF §0 measured; 22 are insight detail pages this gate found, whose
+ * bodies author `###` with no `##` above it. Every one is fixed in a page
+ * template or a content document, neither of which gh#223 may edit. The ledger
+ * stores the *exact* skip each page produces, so the debt can be paid but not
+ * deepened, and a stale entry is printed rather than failed — see the comment
+ * on the map.
+ *
  * **DoD-A4 — lists are lists** (a11y epic, gh#220). Two halves, because the
  * acceptance sentence has two. The **per-route** half runs in the browser and
  * is the accurate one: every `ul`/`ol` in the hydrated DOM whose *computed*
@@ -1388,6 +1409,265 @@ const listRoleRows = (): Row[] => {
           + ' — base/reset.css strips list-style from every ul[class]/ol[class] and WebKit'
           + ' drops the implicit list role when it does; restate role="list" on the element'
           + ' (gh#220, the idiom at nav/Dropdown.vue:109)'
+    }
+  ]
+}
+
+/* ------------------------------------------------------------------ *
+ * DoD-A1 — no heading-level skip (gh#223)
+ * ------------------------------------------------------------------ */
+/**
+ * Elements whose *text content is not document content*, removed before any
+ * heading is counted.
+ *
+ * `<script>` is the one that matters and the reason this masking exists at all:
+ * every prerendered page inlines its Nuxt payload as a JSON string literal, and
+ * two of the 371 insight bodies are legacy HTML — so `<h3>` occurs inside a
+ * payload string on those pages, in an order that has nothing to do with the
+ * document outline. Counting it would report a skip on a page that has none, on
+ * a page nobody could then fix. `<style>` and `<noscript>` are masked for the
+ * same reason at lower odds.
+ *
+ * The back-reference makes the closer match the opener, so a `<style>` block
+ * cannot be closed by a `</script>`.
+ */
+const NON_CONTENT_ELEMENTS = /<(script|style|noscript)\b[^>]*>[\s\S]*?<\/\1\s*>/gi
+
+/** An opening `<h1>`–`<h6>` tag. Closers carry no rank information. */
+const HEADING_OPEN_TAG = /<h([1-6])\b[^>]*>/gi
+
+/**
+ * The heading ranks of one prerendered page, in document order.
+ *
+ * Source order **is** document order in a prerendered file: this is the markup
+ * the server wrote, before any client-side reordering, and no bf template moves
+ * a heading with CSS. That is what makes a static read of this legitimate where
+ * a static read of, say, a computed `list-style-type` would not be.
+ */
+const headingRanks = (html: string): number[] => {
+  const content = html.replace(NON_CONTENT_ELEMENTS, '')
+  const ranks: number[] = []
+
+  HEADING_OPEN_TAG.lastIndex = 0
+  let match: RegExpExecArray | null
+  while ((match = HEADING_OPEN_TAG.exec(content)) !== null) ranks.push(Number(match[1]))
+
+  return ranks
+}
+
+/**
+ * The heading-level skips in one rank sequence, as readable strings.
+ *
+ * Two conditions, which are the two halves of WCAG 1.3.1's heading outline:
+ *
+ * - the first heading on a page is rank 1 — a page that opens at `h2` has no
+ *   top level, and every rank below it is describing a parent that is not
+ *   there;
+ * - no step goes down by more than one — `h1 → h3` tells a screen-reader user
+ *   navigating by heading that a level was skipped, and they cannot tell
+ *   whether they missed something or nothing exists.
+ *
+ * Going *up* by any amount is not a skip. `h4 → h2` is a new second-level
+ * section, which is ordinary and correct.
+ */
+const headingSkips = (ranks: number[]): string[] => {
+  const skips: string[] = []
+  let previous = 0
+
+  for (const rank of ranks) {
+    if (previous === 0) {
+      if (rank !== 1) skips.push(`opens at h${rank}`)
+    }
+    else if (rank > previous + 1) {
+      skips.push(`h${previous} → h${rank}`)
+    }
+    previous = rank
+  }
+
+  return skips
+}
+
+/**
+ * Prerendered trees this gate does not judge. `LIST_ROLE_SKIP`'s two, for
+ * `LIST_ROLE_SKIP`'s two reasons: `wireframes/` is frozen by BF-217 D2 and
+ * byte-guarded by site-epic DoD-4, and `docs/` renders `components/ds/**`,
+ * which a11y BRIEF §7 puts outside this epic.
+ */
+const HEADING_SKIP_TREES = ['wireframes/', 'docs/']
+
+/**
+ * The heading skips that exist on `dev` today, page by page, with the exact
+ * skip each page produces. A debt ledger, not an exclusion list.
+ *
+ * ## Why there is a ledger at all
+ *
+ * gh#223, which wrote this gate, owns two components — `bfSection` and
+ * `bfProse` — and is not permitted to edit a page template or a content
+ * document. Every entry below is fixed somewhere it may not reach, so the
+ * choice was a gate that cannot pass or a gate that records what it cannot yet
+ * demand. This is the second, and it is the shape the repo already uses twice:
+ * `.github/typecheck-baseline.txt` and `check-contrast.ts`'s `KNOWN_FAILURES`.
+ *
+ * ## What is in it
+ *
+ * `insights/index.html` — the one a11y BRIEF §0 measured. `insights/index.vue`
+ * wraps `h3`-titled cards in a `bfSection` that passes `label` and no
+ * `heading`, so nothing sits between the page's `h1` and the card titles.
+ * **gh#230**'s call site.
+ *
+ * The 22 `insights/<slug>` pages — a finding this gate made, not one the audit
+ * carried in. Their bodies author `### ` as the first heading with no `## `
+ * above it, and the article-body band (`insights/[slug].vue:280`) passes
+ * `label="Body"` and no `heading`, so `bfProse` emits an `h3` straight under
+ * the page's `h1`. Two possible fixes and neither is this row's: normalise the
+ * authored depth in `content/bf/insights/**` (editorial, Irene), or give the
+ * body band a heading (a visible design change). Filed as a residual off
+ * gh#223.
+ *
+ * `/search` is **not** here. Its measured `1 → 3` (BRIEF §0) exists only after
+ * hydration, once a query renders result cards; the prerendered idle page has
+ * no skip and this static gate correctly reports none.
+ *
+ * ## The value is the skip, not just the key
+ *
+ * A page in this map is compared against its recorded signature, so the debt
+ * can be paid but not deepened: an `h1 → h3` that becomes `h1 → h4`, or a
+ * second skip appearing on a listed page, fails like any other. Only the exact
+ * recorded string is tolerated.
+ *
+ * ## Stale entries are reported, not failed
+ *
+ * `check-contrast.ts` makes an allowlisted pair that starts passing an error,
+ * so its list can only shrink. That is right for two shipped colour values
+ * owned by one named PR. It is the wrong trade here: most of these entries are
+ * cleared by *editorial* changes to `content/bf/**`, which land outside any
+ * issue, and a gate that turns red because somebody improved a body is a gate
+ * people learn to delete. So a listed page that no longer skips is printed by
+ * its own row, naming the entries to remove — visible on every green run, and
+ * never a reason to revert an improvement.
+ */
+const HEADING_SKIP_KNOWN: ReadonlyMap<string, string> = new Map([
+  /* gh#230 — the call site a11y BRIEF §0 measured. */
+  ['insights/index.html', 'h1 → h3'],
+  /* Bodies whose first authored heading is `###`. Residual off gh#223. */
+  ['insights/a-new-constellation/index.html', 'h1 → h3'],
+  ['insights/a-new-role-for-france/index.html', 'h1 → h3'],
+  ['insights/autocratization-and-the-decline-of-international-cooperation/index.html', 'h1 → h3'],
+  ['insights/dialogue-with-professor-carol-anderson/index.html', 'h1 → h3'],
+  ['insights/from-idea-to-impact/index.html', 'h1 → h3'],
+  ['insights/germanys-coalition-agreement/index.html', 'h1 → h3'],
+  ['insights/in-search-of-the-center/index.html', 'h1 → h3'],
+  ['insights/infographic-ai-research-and-development-in-the-u-s-eu-and-china/index.html', 'h1 → h3'],
+  ['insights/inside-turkeys-economy/index.html', 'h1 → h3'],
+  ['insights/interview-with-john-blackburn/index.html', 'h1 → h3'],
+  ['insights/meddle-meets-mettle/index.html', 'h1 → h3'],
+  ['insights/nafta-renegotiation-recalibrating-north-american-economic-relations/index.html', 'h1 → h3'],
+  ['insights/open-debate-and-unlikely-bedfellows/index.html', 'h1 → h3'],
+  ['insights/protecting-europes-family-ties-in-trying-times/index.html', 'h1 → h3'],
+  ['insights/shifting-identities-from-victims-to-changemakers/index.html', 'h1 → h3'],
+  ['insights/the-end-of-panda-politics/index.html', 'h1 → h3'],
+  ['insights/the-far-right-foundation/index.html', 'h1 → h3'],
+  ['insights/the-gambler/index.html', 'h1 → h3'],
+  ['insights/the-international-response-to-crisis-in-the-middle-east/index.html', 'h1 → h3'],
+  ['insights/the-turkish-german-tug-of-war/index.html', 'h1 → h3'],
+  ['insights/trans-atlantic-trade-at-the-crossroads/index.html', 'h1 → h3'],
+  ['insights/transatlantic-digital-trade/index.html', 'h1 → h3']
+])
+
+/**
+ * DoD-A1: no prerendered page steps its heading levels down by more than one,
+ * and every page opens at `h1`.
+ *
+ * The wide, static half — `listRoleRows`'s shape and for its reason: it reads
+ * all ~430 prerendered pages rather than the nine the browser loop visits, and
+ * a heading outline is a property of the markup, so a file read answers it
+ * exactly. There is no browser half; the per-route loop already counts `h1`s,
+ * and a second engine would not make source order any more true.
+ *
+ * The count of pages inspected is in the label, and a zero denominator is its
+ * own failure row — the rule `listRoleRows` states: a gate that passes by
+ * finding nothing is not a gate.
+ */
+const headingOutlineRows = (): Row[] => {
+  if (!existsSync(publicDir)) {
+    return [{
+      label: 'DoD-A1 — prerendered output present',
+      ok: false,
+      detail: `expected ${publicDir} · actual missing — run \`npx nuxt generate\` first`
+    }]
+  }
+
+  const files = prerenderedHtmlFiles(publicDir)
+    .map(file => file.slice(publicDir.length + 1))
+    .filter(rel => !HEADING_SKIP_TREES.some(prefix => rel.startsWith(prefix)))
+
+  const offenders: string[] = []
+  /* Listed pages whose skip is exactly what was recorded — tolerated. */
+  const paid: string[] = []
+  /* Listed pages that no longer skip at all — the ledger entry is stale. */
+  const stale: string[] = []
+  let inspected = 0
+
+  for (const rel of files) {
+    const ranks = headingRanks(readFileSync(join(publicDir, rel), 'utf8'))
+    if (ranks.length === 0) continue
+    inspected++
+
+    const found = headingSkips(ranks).join(', ')
+    const known = HEADING_SKIP_KNOWN.get(rel)
+
+    if (known === undefined) {
+      if (found !== '') offenders.push(`${rel} — ${found}`)
+      continue
+    }
+    if (found === '') stale.push(rel)
+    else if (found === known) paid.push(rel)
+    /* Listed, but skipping differently than recorded: the debt deepened. */
+    else offenders.push(`${rel} — ${found} (ledger records "${known}")`)
+  }
+
+  const scope = `${inspected} pages, excluding ${HEADING_SKIP_TREES.join(' and ')}`
+
+  return [
+    {
+      label: `DoD-A1 — the build emitted pages with headings to inspect (${scope})`,
+      ok: inspected > 0,
+      detail: inspected > 0
+        ? `expected >= 1 page carrying a heading · actual ${inspected}`
+        : 'expected >= 1 · actual 0 — either the build is empty or this walk no longer'
+          + ' reaches the bf pages, and in both cases the row below would pass by'
+          + ' finding nothing'
+    },
+    {
+      label: `DoD-A1 — no heading-level skip (${scope}, ${paid.length} known)`,
+      ok: offenders.length === 0,
+      detail: offenders.length === 0
+        ? `expected 0 unrecorded skips · actual 0 of ${inspected} (${paid.length} recorded in HEADING_SKIP_KNOWN)`
+        : `expected 0 unrecorded skips · actual ${offenders.length} of ${inspected}: `
+          + `${offenders.slice(0, 5).join(' , ')}${offenders.length > 5 ? ' , …' : ''}`
+          + ' — a rank that jumps tells a screen-reader user a level was skipped and'
+          + ' gives them no way to know whether they missed something (WCAG 1.3.1).'
+          + ' Give the band a heading (`bfSection`\'s `heading` prop, at the'
+          + ' `headingLevel` the outline needs — gh#223) rather than lowering the'
+          + ' rank of what is under it. Do NOT add a row to HEADING_SKIP_KNOWN to'
+          + ' silence this: that map is the debt that existed when the gate landed'
+          + ' and it only shrinks'
+    },
+    {
+      /*
+       * Stale ledger entries. Reported, never failed — see the comment on
+       * `HEADING_SKIP_KNOWN` for why this one row does not follow
+       * `check-contrast.ts`'s "an allowlisted pair that starts passing is an
+       * error" rule.
+       */
+      label: `DoD-A1 — HEADING_SKIP_KNOWN is current (${HEADING_SKIP_KNOWN.size} entries, ${stale.length} stale)`,
+      ok: true,
+      detail: stale.length === 0
+        ? `expected 0 stale · actual 0 — all ${paid.length} present entries still skip as recorded`
+        : `${stale.length} entr${stale.length === 1 ? 'y' : 'ies'} no longer skip and should be deleted `
+          + `from HEADING_SKIP_KNOWN: ${stale.slice(0, 8).join(' , ')}`
+          + `${stale.length > 8 ? ' , …' : ''} — not a failure, so an editorial fix to a body`
+          + ' is never a reason to revert'
     }
   ]
 }
@@ -4530,6 +4810,16 @@ const run = async (): Promise<void> => {
       )
       for (const row of listFailing) console.log(`      ✗ ${row.label} — ${row.detail}`)
       if (verbose) for (const row of listGate.filter(r => r.ok)) console.log(`      · ${row.label}`)
+
+      const headingGate = headingOutlineRows()
+      const headingFailing = headingGate.filter(r => !r.ok)
+      results.push({ slug: 'heading outline (DoD-A1)', rows: headingGate, failing: headingFailing })
+      console.log(
+        `${headingFailing.length === 0 ? '  ✓ PASS' : '  ✗ FAIL'}  `
+        + `${'heading outline (DoD-A1)'.padEnd(44)} ${headingGate.length - headingFailing.length}/${headingGate.length} rows`
+      )
+      for (const row of headingFailing) console.log(`      ✗ ${row.label} — ${row.detail}`)
+      if (verbose) for (const row of headingGate.filter(r => r.ok)) console.log(`      · ${row.label}`)
 
       const altGate = imageAltRows()
       const altFailing = altGate.filter(r => !r.ok)
