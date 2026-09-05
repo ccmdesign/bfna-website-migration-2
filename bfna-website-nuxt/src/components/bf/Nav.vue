@@ -251,12 +251,21 @@ defineProps<{
 
     /*
       Was `1.25rem` — the wireframe's own logo slot, which `bfLogo` also
-      defaults to. Raised 40% by design review: at 1.25rem the wordmark's
-      lower band (an inverted shape with the letterforms knocked out) closed
-      up at nav scale and read as a solid bar. The nav row is taller than the
-      mark either way, so nothing else in the bar reflows.
+      defaults to.
+
+      Raised by design review, in two passes. The first tried +40% (1.75rem,
+      28px) and was rejected on sight: the mark's lower band is an inverted
+      shape with the letterforms knocked out, so below roughly 40px it fills
+      in and reads as a solid bar rather than as the word FOUNDATION. +40% of
+      a 20px mark is +8px inside a 76px-tall row — a real change that looks
+      like none.
+
+      `3.25rem` (52px) is where the two lines of the wordmark become legible
+      at 1x. It leaves ~12px of breathing room above and below inside the
+      76px row, so the bar does not grow and nothing else in it reflows.
+      Roughly 56px is the ceiling before the row itself has to give.
     */
-    --_bf-logo-size: 1.75rem;
+    --_bf-logo-size: 3.25rem;
   }
 
   /*
