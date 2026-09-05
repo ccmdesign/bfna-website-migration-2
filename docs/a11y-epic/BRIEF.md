@@ -30,7 +30,7 @@ places and not others.
 | Focus indicator | **Correct.** `public/css/base/focus.css:76-81` is a `@layer defaults` floor; six bf atoms restate it in `@layer components`. Measured on a keyboard-focused `input[name=email]` and on `a.bf-skip-link`: `outline: 2px solid rgb(8,8,8)`, offset `2px` — **20.03:1** against the white ground. The production bfna.org pattern (outlines removed, no replacement) is **not** inherited |
 | Landmarks | `header` / `nav "Main"` / `main#main` / `footer` + six labelled `nav "Footer — …"` on all ten routes. One `<main>` per route. No `role="search"` anywhere |
 | `lang` | `en` on all ten routes — but set per-layout (`bf-default.vue:218`, `wireframe.vue:43`), not in `nuxt.config.ts` `app.head` (lines 147-157 carry no `htmlAttrs`) |
-| Headings | One `<h1>` on all ten routes. **Two live skips:** `/insights` `1 → 3 ("The Nuclear Option")`, `/search?q=democracy` `1 → 3 ("Alexa, Is Democracy Dead?")` |
+| Headings | One `<h1>` on all ten routes. The audit found **two** live skips — `/insights` and `/search?q=democracy`, both `1 → 3`. gh#223's whole-build gate later found **23**: the other 21 are insight bodies authoring `###` with no `##` above them (a content defect, gh#293), and `/search`'s skip turned out to be hydration-only and invisible to a static gate. The ten-route sample could not have seen them |
 | Section naming | 12 unnamed `<section>` elements across the ten routes (`/insights` 3, `/insights/:slug` 3, `/search` 2, one each on `/`, `/projects`, `/projects/:slug`, `/democracy`, `/archive`) |
 | Image alt | **No content image on the site carries alternative text.** `grep -rl '"alt"' content/bf` → **0 of 433 documents**; `image` is a bare URL string. `Media.vue:184,193` coerces `:alt="alt ?? ''"`. Measured: `/` 9/9 `alt=""`, `/about` 14/15 `alt=""` |
 | Lead images | `insights/[slug].vue:248` and `projects/[slug].vue:288` pass `:alt="heading"`. Measured on `/insights/12-days-of-christmas-in-europe` (a `format: infographic` row): `alt` is character-identical to the `<h1>` |
@@ -86,7 +86,7 @@ split.
 
 | # | Gate | Check |
 |---|---|---|
-| DoD-A1 | No heading skips | Every public route's heading levels increase by at most one; asserted by `scripts/check-routes.ts` (#110) |
+| DoD-A1 | No heading skips | Every public route's heading levels increase by at most one; asserted by `scripts/check-routes.ts`. gh#223 ships this as a `HEADING_SKIP_KNOWN` debt ledger recording each of the 23 pages' exact skip, so existing debt cannot deepen and each entry is paid off individually rather than hidden behind an exclusion list. DoD-A1 is met when the ledger is empty |
 | DoD-A2 | Every band is named | Zero `<section>` inside `<main>` without `aria-label` or `aria-labelledby`; asserted by `check-routes.ts` |
 | DoD-A3 | Every image states a decision | Zero `<img>` without an `alt` attribute; zero `alt` string character-identical to the route's `<h1>`; `MediaProps.alt` is required (not optional) so a missing one is a typecheck error, not a silent `""` |
 | DoD-A4 | Lists are lists | Every `ul`/`ol` whose computed `list-style-type` is `none` carries `role="list"`; asserted by `check-routes.ts` |
