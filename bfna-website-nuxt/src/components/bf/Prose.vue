@@ -33,8 +33,11 @@
  *
  * ## Heading ranks start at 2, and cannot start lower
  *
- * `##` and `#` alike map to rank 2; `###` maps to rank 3. Nothing in this file
- * emits a rank-1 heading, and nothing can: a legacy body's rank-1 heading is
+ * `##` and `#` alike map to rank 2; `###`–`######` map to ranks 3–6, each to
+ * itself (gh#223 — before it, `####` and deeper fell through to the paragraph
+ * branch and an authored subsection lost its element and its place in the
+ * outline while still looking like a heading on the page). Nothing in this
+ * file emits a rank-1 heading, and nothing can: a legacy body's rank-1 heading is
  * flattened to a paragraph line by the tag-strip pass *before* the line loop
  * ever sees it, so the element is gone and only its text survives. That keeps
  * the page's single rank-1 heading — `bfPageHeader`'s or `bfHero`'s — unique
@@ -80,12 +83,18 @@ const props = defineProps<ProseProps>()
 /**
  * One parsed block. A discriminated union rather than a `tag` plus optional
  * fields, so the template's branches are exhaustive by construction and a `ul`
- * can carry `items` while the other three carry `text`.
+ * can carry `items` while every other member carries `text`.
  *
- * Ported from the wf source unchanged, including the closed rank set: adding
- * `'h4'` here would silently widen what the parser may emit.
+ * The rank set is closed on purpose and is now `h2`–`h6` (gh#223). It was
+ * `h2 | h3`, the wf source's own, and that was a silent lossy cap: a body
+ * authoring `#### ` was flattened to a paragraph, so a fourth-level subsection
+ * lost both its element and its place in the outline while looking fine on the
+ * page. `h1` stays out of the set — see the file header; that exclusion is the
+ * one thing keeping the page's single rank-1 heading unique.
  */
-type Block = { tag: 'h2' | 'h3' | 'p', text: string } | { tag: 'ul', items: string[] }
+type Block =
+  | { tag: 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p', text: string }
+  | { tag: 'ul', items: string[] }
 
 /**
  * Strip inline markdown marks, leaving the text.
@@ -102,13 +111,22 @@ const inline = (s: string) => s
   .trim()
 
 /**
- * The body, parsed. Ported verbatim from the wf source.
+ * The body, parsed. The wf source's, with the heading branch widened (gh#223).
  *
  * The legacy pre-pass runs first and only when the content actually looks like
  * markup, so a markdown body containing a stray `<` is not mangled by it. After
- * it, both paths are the same line loop: rank-3 heading, rank-2 heading (`#` or
- * `##`), list item — appended to the open list if the previous block is one —
- * else paragraph.
+ * it, both paths are the same line loop: heading (`#`–`######`, floored at rank
+ * 2), list item — appended to the open list if the previous block is one — else
+ * paragraph.
+ *
+ * The legacy path is deliberately not widened with it. A legacy `<h4>` is
+ * flattened to a paragraph line by the tag-strip pass above, before the loop
+ * ever sees it — the same mechanism, and the same line of code, that flattens a
+ * legacy `<h1>` and is what makes the "cannot emit rank 1" guarantee true.
+ * Recovering rank from stripped legacy markup is a different change with a
+ * different risk, and it is not this one. Measured: of the 433 documents in
+ * `content/bf/**`, two carry legacy HTML bodies and neither contains an
+ * `<h4>`–`<h6>` tag.
  */
 const blocks = computed<Block[]>(() => {
   let src = props.content ?? ''
@@ -119,8 +137,23 @@ const blocks = computed<Block[]>(() => {
   }
   const out: Block[] = []
   for (const line of src.split(/\n+/).map(l => l.trim()).filter(Boolean)) {
-    if (/^###\s/.test(line)) out.push({ tag: 'h3', text: inline(line.slice(4)) })
-    else if (/^##?\s/.test(line)) out.push({ tag: 'h2', text: inline(line.replace(/^#+\s/, '')) })
+    /*
+      One branch for every authored depth (gh#223). The wf source had two —
+      `###` and `##?` — and everything deeper fell through to the paragraph
+      branch, so a `####` subsection was silently demoted to body text.
+
+      `Math.max(2, …)` is the floor, and it is the *only* clamp: `#` still maps
+      to rank 2, exactly as before, because nothing in this component may emit
+      an `h1` (file header, BRIEF §5 rule 9). The upper end needs no clamp —
+      the pattern matches at most six hashes.
+    */
+    const marker = /^#{1,6}\s/.exec(line)?.[0]
+    if (marker !== undefined) {
+      /* The marker is the hashes plus the one whitespace character the pattern
+         matched, so the rank is its length less that character. */
+      const level = Math.max(2, marker.length - 1) as 2 | 3 | 4 | 5 | 6
+      out.push({ tag: `h${level}`, text: inline(line.slice(marker.length)) })
+    }
     else if (/^[-*]\s/.test(line)) {
       const last = out[out.length - 1]
       if (last?.tag === 'ul') last.items.push(inline(line.slice(2)))
@@ -145,12 +178,24 @@ const blocks = computed<Block[]>(() => {
       blocks and the placeholder that is now gone.
     -->
     <template v-for="(b, i) in blocks" :key="i">
-      <h2 v-if="b.tag === 'h2'">{{ b.text }}</h2>
-      <h3 v-else-if="b.tag === 'h3'">{{ b.text }}</h3>
-      <ul v-else-if="b.tag === 'ul'">
+      <ul v-if="b.tag === 'ul'">
         <li v-for="li in b.items" :key="li">{{ li }}</li>
       </ul>
-      <p v-else>{{ b.text }}</p>
+      <p v-else-if="b.tag === 'p'">{{ b.text }}</p>
+      <!--
+        Every heading rank through one `<component :is>` (gh#223), rather than
+        the `h2`/`h3` pair the wf source hard-coded and the `h4`/`h5`/`h6` that
+        pair would now need beside it. `b.tag` is a closed union of tag-name
+        strings, so this can only ever resolve to a real heading element — the
+        same idiom, and the same guarantee, as `bfSection` and the card
+        wrappers (D27).
+
+        The `ul` and `p` branches come first so this one is the `v-else`: the
+        union's other two members are named, and what is left is a heading by
+        construction rather than by a list of ranks somebody has to keep in
+        step with `Block`.
+      -->
+      <component :is="b.tag" v-else>{{ b.text }}</component>
     </template>
     <!--
       Empty content renders **nothing** — residual #186, decided here for every

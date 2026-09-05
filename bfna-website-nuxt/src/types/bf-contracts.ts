@@ -1003,6 +1003,28 @@ export interface FormGroupProps {
 export type SectionLayout = 'stack' | 'switcher' | 'cluster' | 'plain'
 
 /**
+ * The rank `bfSection` renders its own `heading` at (gh#223).
+ *
+ * Its own type rather than a reuse of {@link CardHeadingLevel}, which happens
+ * to hold the same three values: that union's doc ties its members to
+ * `bfCard`'s stylesheet — `:is(h2, h3, h4)` after D-20.4 — which is a fact
+ * about cards and would be the wrong reason for a band to stop at 4. Same
+ * shape as {@link EmptyStateHeadingLevel}, a separate type for a separate
+ * reason.
+ *
+ * The range stops at `4` because that is where the nesting stops being real.
+ * A band's heading is a division of the page, whose `<h1>` belongs to
+ * `bfPageHeader` or `bfHero`; rank 3 is a band inside a band, rank 4 a band
+ * inside that. A page that needs a rank-5 band heading has an outline problem
+ * this prop would only help it hide.
+ *
+ * Not a `number`, for `CardHeadingLevel`'s reason: `headingLevel="7"` would
+ * typecheck, render an `<h7>` — which is not an element at all — and ship a
+ * band whose heading is an unstyled inline unknown.
+ */
+export type SectionHeadingLevel = 2 | 3 | 4
+
+/**
  * Props of `bfSection` — the base band every template composes.
  *
  * Evolves `components/wireframe/wfSection.vue` (frozen, D2 — read, never
@@ -1026,17 +1048,48 @@ export interface SectionProps {
    */
   label?: string
   /**
-   * The band's heading, rendered as an `<h2>` when given and as no element at
-   * all when not — `wfSection`'s own `v-if`, kept.
+   * The band's heading, rendered as a heading element when given and as no
+   * element at all when not — `wfSection`'s own `v-if`, kept.
    *
-   * The rank is fixed at 2 and there is no `headingLevel` prop, unlike the
-   * card wrappers (#128). A section is a top-level division of a page whose
-   * `<h1>` belongs to `bfHero` or `bfPageHeader`; a caller that wants a
-   * deeper rank wants a heading inside the slot, not a differently-ranked
-   * band. Fixing it here is what keeps BRIEF §5 rule 9's "sequential heading
-   * levels" true by construction for every template that composes this.
+   * Its rank is {@link SectionProps.headingLevel}, which defaults to the `2`
+   * this was hard-coded at.
    */
   heading?: string
+  /**
+   * The rank {@link SectionProps.heading} renders at — `2`, `3` or `4`, as
+   * `<component :is="`h${headingLevel}`">`. Defaults to **`2`**.
+   *
+   * ## Why this exists, when the rank used to be fixed
+   *
+   * It was fixed at 2, and this interface argued for that: *"a section is a
+   * top-level division of a page whose `<h1>` belongs to `bfHero` or
+   * `bfPageHeader`; a caller that wants a deeper rank wants a heading inside
+   * the slot"*. That argument holds for a top-level band and stops holding the
+   * moment a `bfSection` composes **inside another band's content**, which is
+   * a shape the templates now need (gh#230, gh#232). A nested band with a
+   * fixed rank-2 heading does not keep BRIEF §5 rule 9 true by construction —
+   * it breaks it by construction, emitting a second rank-2 sibling under the
+   * first one's own rank-2 heading.
+   *
+   * "Put the heading in the slot instead" is not an answer either: a slotted
+   * heading is not the element the root's `aria-labelledby` points at unless
+   * the call site wires its own (`projects/index.vue:169-183` does, and has to
+   * explain why), so the escape hatch costs the band its landmark name — the
+   * exact defect gh#55 fixed.
+   *
+   * ## The default is the no-change value
+   *
+   * `2` is what this component hard-coded and what all 25 call sites render;
+   * adopting the prop moves no pixel and changes no markup until a caller asks
+   * it to. Same construction and same reasoning as
+   * {@link CardWrapperProps.headingLevel} (gh#128), which is the repo's own
+   * idiom for this (D27).
+   *
+   * Lowering the rank changes the element and nothing else. There is no size
+   * change with it: the type scale is `@layer defaults`' business, and this
+   * component states no type of any kind.
+   */
+  headingLevel?: SectionHeadingLevel
   /**
    * Rhythm inside the band, as a step on the space scale (`3xs`…`3xl`).
    * Rendered as `data-gap` on the inner box and resolved entirely by

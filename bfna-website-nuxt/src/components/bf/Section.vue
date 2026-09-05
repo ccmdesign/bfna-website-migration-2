@@ -104,7 +104,13 @@ defineSlots<{
 
 const props = withDefaults(defineProps<SectionProps>(), {
   gap: 'm',
-  layout: 'stack'
+  layout: 'stack',
+  /*
+   * The rank this component hard-coded before gh#223, so adopting the prop
+   * changes no markup at any of the 25 existing call sites. See
+   * `SectionProps.headingLevel` for why the rank stopped being fixed.
+   */
+  headingLevel: 2
 })
 
 /**
@@ -207,6 +213,118 @@ const headingId = useId()
  * displays would give the band an accessible name no sighted user can see.
  */
 const headingLabelledBy = computed(() => (props.heading ? headingId : undefined))
+
+/**
+ * The heading element, as a tag name — `h2` by default, the rank this
+ * component hard-coded before gh#223.
+ *
+ * `<component :is>` with a string resolves to that HTML element, which is the
+ * repo's own idiom for a variable heading rank: every typed card wrapper
+ * renders `` `h${headingLevel}` `` this way (gh#128, D27). The union in
+ * `SectionHeadingLevel` is what stops the template interpolating a rank that
+ * is not an element.
+ */
+const headingTag = computed(() => `h${props.headingLevel}`)
+
+/**
+ * The band's root, so the dev-time assertion below can read what this
+ * component actually rendered. Never bound as an attribute; `$attrs` and
+ * `rootAttrs` are untouched by it.
+ */
+const root = ref<HTMLElement | null>(null)
+
+/**
+ * Dev-time assertion: a band that renders an `<h2>` and has **no accessible
+ * name** is almost certainly a call site that read `label` as naming the
+ * landmark.
+ *
+ * It does not. `label` renders as `data-label` — invisible to the
+ * accessibility tree by design (`SectionProps.label`), and a name taken from
+ * an attribute nothing displays would be a name no sighted user can see. That
+ * behaviour **stands** (a11y BRIEF D26): this component is not changed to name
+ * itself from `label`, and a `label`-only band is still deliberately unnamed.
+ * What is added is a way for the call sites that got it wrong to say so out
+ * loud, which is gh#230's list to work from. Measured on a clean dev load:
+ * `/about` warns twice (`data-label="Bertelsmann Stiftung"` and `"Contact"`),
+ * `/projects` warns not at all — its three bands slot their own `<h2>` and
+ * name themselves at the call site, which is the correct pattern — and the
+ * article-body band warns on the 76 insight pages whose bodies author `##`.
+ *
+ * ## Why this is a warning and not a type
+ *
+ * gh#222 deleted a dev-only `console.warn` from `bfMedia` (D25) and was right
+ * to: it was compensating for a missing type guarantee, and once `MediaProps.alt`
+ * became required the warning was dead weight — "a warning that does not run in
+ * production is not a gate" applies exactly when a type could have been the
+ * gate instead.
+ *
+ * There is no type here to promote it to. The proposition is a relationship
+ * between *the content a slot rendered* and *an ARIA attribute on a different
+ * element* — `<h2>` appeared in my subtree, and nothing named me. A slot's
+ * rendered content has no type surface (`v-slot` is untyped structure, not a
+ * shape), and `aria-labelledby` arrives through `$attrs`, which is
+ * `Record<string, unknown>` by construction. TypeScript cannot state this, so
+ * a runtime assertion is the only place it can be stated at all. That is the
+ * difference from the warning gh#222 removed, and it is why this one is worth
+ * its bytes.
+ *
+ * ## Why the DOM, and why `onMounted`
+ *
+ * `Card.vue:129-144` is the precedent and this is its shape: a `ref` on the
+ * root, `onMounted`, `console.warn`, never a silent fallback and never a throw,
+ * with `import.meta.dev` keeping the whole block out of the production bundle.
+ *
+ * Not vnode inspection, which is `PageHeader.vue`'s `hasRenderedContent`
+ * shape: that one is called *from the template*, inside a render. Calling
+ * `slots.default()` from `onMounted` is outside one, and Vue's own dev build
+ * logs *"Slot … invoked outside of the render function"* when it happens —
+ * trading one warning for two. Reading the DOM also answers the question more
+ * honestly: it sees the `<h2>` a child component emitted, not only the one the
+ * call site typed.
+ *
+ * ## The three conditions
+ *
+ * 1. **No accessible name on the root.** The rendered attribute, not
+ *    `props.heading` — that is one test covering both ways a band gets named:
+ *    this component's own `aria-labelledby` (`headingLabelledBy`, above) *and*
+ *    a call site that wires its own. The second is not hypothetical:
+ *    `projects/index.vue:169-183` slots an `<h2>` because the heading has to be
+ *    a link, and passes `:aria-labelledby` at the call site. It is **correct**,
+ *    and it stays silent here. `aria-label` counts too — a band named by a
+ *    string rather than by an element is still a named band.
+ * 2. **An `<h2>` in the subtree.** Rank 2 specifically, because rank 2 is what
+ *    a band's own heading is by default, so an `<h2>` inside an unnamed band is
+ *    the call site saying "this band has a heading" in the one way this
+ *    component cannot see.
+ * 3. **Whose nearest `<section>` ancestor is this root.** A nested `bfSection`
+ *    renders its own `<h2>` inside its own `<section>`; attributing it to the
+ *    outer band would fire on markup that is already correct.
+ */
+if (import.meta.dev) {
+  onMounted(() => {
+    const el = root.value
+    if (!el) return
+
+    const named
+      = el.getAttribute('aria-labelledby') !== null
+        || el.getAttribute('aria-label') !== null
+
+    if (named) return
+
+    const ownH2 = Array.from(el.querySelectorAll('h2'))
+      .some(h2 => h2.closest('section') === el)
+
+    if (!ownH2) return
+
+    console.warn(
+      '[bfSection] renders an <h2> but has no accessible name, so it is a generic '
+      + 'container rather than a region landmark. `label` renders as data-label and '
+      + 'does not name it. Pass the `heading` prop, or keep the slotted heading and '
+      + 'point `aria-labelledby` at its id (the idiom at projects/index.vue:169-183).'
+      + (props.label === undefined ? '' : ` Band: data-label="${props.label}".`)
+    )
+  })
+}
 </script>
 
 <template>
@@ -220,6 +338,7 @@ const headingLabelledBy = computed(() => (props.heading ? headingId : undefined)
     `bf-section` rather than replacing it.
   -->
   <section
+    ref="root"
     class="bf-section"
     :class="{
       'bf-section--padded': padded,
@@ -277,15 +396,26 @@ const headingLabelledBy = computed(() => (props.heading ? headingId : undefined)
     >
       <!--
         `v-if`, so an absent heading renders no element rather than an empty
-        `<h2>` that would still take a gap in the stack. Rank fixed at 2 — see
-        `SectionProps.heading`.
+        heading that would still take a gap in the stack.
+
+        The rank is `headingLevel`, defaulting to the `2` this was hard-coded
+        at before gh#223 — see `SectionProps.headingLevel` for why a band's
+        rank stopped being fixed and why the default is the no-change value.
+        `<component :is>` on a tag-name string is the card wrappers' own idiom
+        (gh#128, D27); `SectionHeadingLevel` is what stops it interpolating a
+        rank that is not an element.
 
         The `id` is the target of the root's `aria-labelledby` (#164): together
         they are what makes a band with a heading a named `region` landmark
         rather than a generic container. Both appear and disappear on the same
         `heading` condition, so there is never an idref without an element.
       -->
-      <h2 v-if="heading" :id="headingId" class="bf-section__heading">{{ heading }}</h2>
+      <component
+        :is="headingTag"
+        v-if="heading"
+        :id="headingId"
+        class="bf-section__heading"
+      >{{ heading }}</component>
       <slot />
     </div>
   </section>
