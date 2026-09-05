@@ -248,6 +248,23 @@
  * second band open. That is the row that would catch an accordion fighting the
  * native toggle, or a two-way binding that loops or inverts.
  *
+ * **Contact-form error semantics** (a11y epic, gh#229). `/about`'s contact band
+ * had a real `<form>`, `<fieldset>/<legend>` and three real `<label for>`s and
+ * used none of the error plumbing `bfFormField` already implemented — measured
+ * `required: false`, `aria-required: null`, `aria-describedby: null`,
+ * `aria-invalid: null`, no `novalidate` and no status region. The runtime half
+ * asserts the form carries `novalidate` (the IDL reflection, since the
+ * attribute's presence is its whole value), that all three controls expose the
+ * required state and keep a visible `<label for>` and their `autocomplete`,
+ * that no error-free control carries `aria-invalid`, that every
+ * `aria-describedby` id resolves, and that exactly one `role="status"` region is
+ * mounted, exposed, free of a redundant `aria-live`/`aria-atomic` and **empty**
+ * on load (D29). The error path is asserted from source — a `:error` binding on
+ * each field, `aria-describedby`/`aria-invalid` on both of `bfFormField`'s
+ * control branches, and `role="alert"` on the `v-if`'d error `<p>` and nowhere
+ * else — because nothing on the route produces an error and the form is
+ * knowingly unwired until site-epic #72.
+ *
  * **DoD-A8 — the reduced-motion floor** (a11y epic, gh#218). The served
  * `.output/public/css/base/reset.css` must carry a `prefers-reduced-motion:
  * reduce` block that sets `@view-transition { navigation: none }` and caps
@@ -3819,6 +3836,403 @@ const compositeWidgetRows = async (cdp: Cdp, origin: string): Promise<Row[]> => 
 }
 
 /* ------------------------------------------------------------------ *
+ * Contact-form error semantics (a11y epic, gh#229)
+ * ------------------------------------------------------------------ */
+/**
+ * `/about`'s contact band had a real `<form>`, a real `<fieldset>/<legend>` and
+ * three real `<label for>`s — and used none of the error plumbing
+ * `bfFormField` already implemented. Measured before the fix (a11y BRIEF §0,
+ * "Contact form"): `required: false` and `aria-required: null` on all three
+ * controls, `aria-describedby: null`, `aria-invalid: null`, no `novalidate` on
+ * the form, and no status region anywhere in the component.
+ *
+ * ## What this group asserts, and how
+ *
+ * **Runtime, read from the hydrated page.** Structure only — the form is
+ * knowingly unwired (`@submit.prevent` with no handler; the endpoint is
+ * site-epic #72's), so there is no submission to drive and this gate does not
+ * pretend there is:
+ *
+ * 1. Exactly one `<form>` inside `.bf-contact-section`, and it reports
+ *    `noValidate === true`. The IDL reflection rather than the attribute
+ *    string, because `novalidate` is a boolean attribute whose presence is the
+ *    whole value and `getAttribute` returns `''` for it. It matters here
+ *    specifically: the email field is `type="email"`, so without `novalidate`
+ *    the user agent's own constraint bubble fires before the `submit` event —
+ *    a message that is not the `aria-describedby` target, is not a live region
+ *    and is announced inconsistently across UA/AT pairs.
+ * 2. Exactly three controls in that form, in DOM order `name`, `email`,
+ *    `message`.
+ * 3. Each control exposes the required state: native `required === true`, or
+ *    `aria-required="true"`. Either mapping satisfies the row — the component
+ *    writes the native attribute, which is what actually reaches the
+ *    accessibility tree, and a future that swapped in the ARIA one would still
+ *    be correct.
+ * 4. Each control still has its **visible** `<label for>`: the label resolves
+ *    to the control, carries non-empty text, and its computed `display` is not
+ *    `none`. The audit measured these as already correct, so this is a
+ *    regression guard on the half most easily lost to a placeholder-instead-of
+ *    -label "tidy-up".
+ * 5. `autocomplete` survives on the first two (`name`, `email`) — also
+ *    measured correct, also a regression guard (WCAG 1.3.5).
+ * 6. Error-free, every control's `aria-invalid` is `null`. `bfFormField`'s
+ *    contract is `'true'` or nothing, never `'false'`
+ *    (`FormField.vue:149-153`), and an `aria-invalid="false"` on every valid
+ *    field is noise that makes the attribute's absence stop meaning anything.
+ * 7. Every id in any `aria-describedby` present on a control resolves to an
+ *    element in the document. Vacuously true while no hint and no error is
+ *    supplied — and the row that catches a dangling reference the day one is.
+ * 8. Exactly one `[role="status"]` in the band; it is in the accessibility
+ *    tree (computed `display` not `none`, `visibility` not `hidden`); it
+ *    carries no `aria-live` and no `aria-atomic` beside the role (the
+ *    `bfResultCount` idiom, gh#226); and its text is **empty** on load. All
+ *    four together are D29: a region that is mounted and exposed before there
+ *    is anything to say, and that therefore says nothing at page load.
+ *
+ * **Source, for the error path.** It cannot be exercised at runtime without
+ * behaviour this row may not add — nothing on `/about` produces an error, and
+ * `__vueParentComponent` is dev-only, so a production build offers no way to
+ * plant one from outside (the same limit `accordionWiringRows` records). These
+ * two rows are therefore **source reads, not measured runtime facts**, and are
+ * labelled as such (a11y BRIEF §5):
+ *
+ * 9. `ContactSection.vue` binds `:error` on all three `bfFormField`s.
+ * 10. `FormField.vue` binds `:aria-describedby="describedBy"` and
+ *    `:aria-invalid="invalid"` on both control branches, and its error `<p>`
+ *    carries both `:id="errorId"` and `role="alert"`.
+ *
+ * The association itself — a planted `error` producing `aria-invalid="true"`
+ * and an `aria-describedby` that resolves to the visible message — was
+ * measured by hand against `nuxt dev` on the PR, which is what the issue's
+ * acceptance asks for. It is not asserted here, because asserting it would
+ * mean shipping a page that plants an error.
+ *
+ * It asserts nothing about what a screen reader announces. There is no
+ * assistive technology on this runner (a11y BRIEF §0.2); that is the manual
+ * pass in §8.
+ */
+const CONTACT_ROUTE = '/about'
+/** The three controls, in the order `ContactSection.vue` renders them. */
+const CONTACT_FIELDS = ['name', 'email', 'message'] as const
+/** The two that carry an `autocomplete` token, and the token each carries. */
+const CONTACT_AUTOCOMPLETE: Readonly<Record<string, string>> = { name: 'name', email: 'email' }
+
+const READ_CONTACT_FORM = `(() => {
+  const band = document.querySelector('.bf-contact-section')
+  if (!band) return { band: false }
+  const forms = Array.from(band.querySelectorAll('form'))
+  const form = forms[0] || null
+  const controls = form
+    ? Array.from(form.querySelectorAll('input, textarea, select'))
+    : []
+  const statuses = Array.from(band.querySelectorAll('[role="status"]'))
+  const status = statuses[0] || null
+  const statusStyle = status ? getComputedStyle(status) : null
+  return {
+    band: true,
+    forms: forms.length,
+    noValidate: form ? form.noValidate === true : null,
+    controls: controls.map(el => {
+      const label = el.id
+        ? document.querySelector('label[for="' + CSS.escape(el.id) + '"]')
+        : null
+      const labelStyle = label ? getComputedStyle(label) : null
+      const describedBy = el.getAttribute('aria-describedby')
+      const ids = describedBy === null ? [] : describedBy.split(/\\s+/).filter(Boolean)
+      return {
+        name: el.getAttribute('name'),
+        tag: el.tagName.toLowerCase(),
+        type: el.getAttribute('type'),
+        required: el.required === true,
+        ariaRequired: el.getAttribute('aria-required'),
+        autocomplete: el.getAttribute('autocomplete'),
+        ariaInvalid: el.getAttribute('aria-invalid'),
+        describedBy,
+        danglingIds: ids.filter(id => document.getElementById(id) === null),
+        labelText: label ? (label.textContent || '').replace(/\\s+/g, ' ').trim() : null,
+        labelDisplay: labelStyle ? labelStyle.display : null
+      }
+    }),
+    statuses: statuses.length,
+    statusTag: status ? status.tagName.toLowerCase() : null,
+    statusInForm: !!(status && form && form.contains(status)),
+    statusDisplay: statusStyle ? statusStyle.display : null,
+    statusVisibility: statusStyle ? statusStyle.visibility : null,
+    statusText: status ? (status.textContent || '').replace(/\\s+/g, ' ').trim() : null,
+    statusAriaLive: status ? status.getAttribute('aria-live') : null,
+    statusAriaAtomic: status ? status.getAttribute('aria-atomic') : null
+  }
+})()`
+
+type ContactControlRead = {
+  name: string | null
+  tag: string
+  type: string | null
+  required: boolean
+  ariaRequired: string | null
+  autocomplete: string | null
+  ariaInvalid: string | null
+  describedBy: string | null
+  danglingIds: string[]
+  labelText: string | null
+  labelDisplay: string | null
+}
+
+type ContactFormRead = {
+  band: boolean
+  forms?: number
+  noValidate?: boolean | null
+  controls?: ContactControlRead[]
+  statuses?: number
+  statusTag?: string | null
+  statusInForm?: boolean
+  statusDisplay?: string | null
+  statusVisibility?: string | null
+  statusText?: string | null
+  statusAriaLive?: string | null
+  statusAriaAtomic?: string | null
+}
+
+/** The error path, read from source — see rows 9-10 in the group's docblock. */
+const contactErrorWiringRows = (): Row[] => {
+  const rows: Row[] = []
+  const section = join(appRoot, 'src/components/bf/ContactSection.vue')
+  const field = join(appRoot, 'src/components/bf/FormField.vue')
+
+  for (const file of [section, field]) {
+    if (existsSync(file)) continue
+    return [{
+      label: 'gh#229 — the contact-form source files are where this gate expects them',
+      ok: false,
+      detail: `expected ${file.slice(appRoot.length + 1)} · actual missing`
+    }]
+  }
+
+  /* Comments stripped first, `accordionWiringRows`' reason: both files argue
+     about this wiring in prose and quote the bindings verbatim, so a raw scan
+     would read the explanation as the implementation. */
+  const strip = (raw: string): string =>
+    raw.replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/<!--[\s\S]*?-->/g, ' ')
+
+  const contact = strip(readFileSync(section, 'utf8'))
+  const formField = strip(readFileSync(field, 'utf8'))
+
+  const boundErrors = (contact.match(/:error=/g) ?? []).length
+  rows.push({
+    label: `gh#229 — ContactSection binds :error on all ${CONTACT_FIELDS.length} fields (source read)`,
+    ok: boundErrors === CONTACT_FIELDS.length,
+    detail: `expected ${CONTACT_FIELDS.length} :error bindings · actual ${boundErrors}`
+      + (boundErrors === CONTACT_FIELDS.length
+        ? ''
+        : ' — bfFormField turns `error` into aria-invalid + aria-describedby + a role="alert"'
+          + ' message; a field with no binding cannot report one however the caller validates')
+  })
+
+  const bindsDescribedBy = (formField.match(/:aria-describedby="describedBy"/g) ?? []).length
+  const bindsInvalid = (formField.match(/:aria-invalid="invalid"/g) ?? []).length
+  rows.push({
+    label: 'gh#229 — bfFormField binds aria-describedby + aria-invalid on BOTH control branches (source read)',
+    ok: bindsDescribedBy === 2 && bindsInvalid === 2,
+    detail: `expected 2 and 2 · actual ${bindsDescribedBy} and ${bindsInvalid}`
+      + (bindsDescribedBy === 2 && bindsInvalid === 2
+        ? ''
+        : ' — the <input> and <textarea> branches are written out twice precisely so the ARIA'
+          + ' wiring cannot diverge (FormField.vue:236-243); one branch drifting is the defect')
+  })
+
+  const errorParagraph = /<p\s+v-if="error"[^>]*>/.exec(formField)?.[0] ?? ''
+  const hasErrorId = /:id="errorId"/.test(errorParagraph)
+  const hasAlert = /role="alert"/.test(errorParagraph)
+  rows.push({
+    label: 'gh#229 — the error <p> carries :id="errorId" AND role="alert" (source read)',
+    ok: errorParagraph !== '' && hasErrorId && hasAlert,
+    detail: errorParagraph === ''
+      ? 'expected a <p v-if="error"> in FormField.vue · actual none found'
+      : `expected both · actual id=${hasErrorId} alert=${hasAlert}`
+        + (hasErrorId && hasAlert
+          ? ''
+          : ' — aria-describedby is announced when the control is REACHED, so an error that'
+            + ' appears while focus is elsewhere (which is what submit does) reaches nobody'
+            + ' without the live region')
+  })
+
+  const alerts = (formField.match(/role="alert"/g) ?? []).length
+  rows.push({
+    label: 'gh#229 — role="alert" appears once, on the v-if\'d error only (source read)',
+    ok: alerts === 1,
+    detail: `expected 1 · actual ${alerts}`
+      + (alerts === 1
+        ? ''
+        : ' — an always-mounted alert region announces at page load, which is worse for an'
+          + ' assertive region than the display:none problem D29 describes for status regions')
+  })
+
+  return rows
+}
+
+const contactFormRows = async (cdp: Cdp, origin: string): Promise<Row[]> => {
+  const rows: Row[] = contactErrorWiringRows()
+
+  const { targetId } = await cdp.send<{ targetId: string }>('Target.createTarget', { url: 'about:blank' })
+  const { sessionId } = await cdp.send<{ sessionId: string }>('Target.attachToTarget', { targetId, flatten: true })
+
+  let read: ContactFormRead | undefined
+  let hydrated = false
+
+  try {
+    /* Cleared and restored for gh#224's reason: with `watching` unset the
+       client files every target's console output into the shared arrays the
+       per-route rows are judged on. */
+    cdp.exceptions = []
+    cdp.consoleErrors = []
+    cdp.watching = sessionId
+
+    hydrated = await openHydrated(cdp, sessionId, `${origin}${CONTACT_ROUTE}`)
+    if (hydrated) {
+      await sleep(250)
+      read = await evaluate<ContactFormRead>(cdp, sessionId, READ_CONTACT_FORM)
+    }
+  } finally {
+    await cdp.send('Target.closeTarget', { targetId }).catch(() => {})
+    /* After the close, so anything the dying target flushes still counts. */
+    cdp.watching = undefined
+  }
+
+  if (read === undefined || read.band !== true) {
+    rows.push({
+      label: `gh#229 — ${CONTACT_ROUTE} hydrated and rendered the contact band`,
+      ok: false,
+      detail: hydrated
+        ? `expected .bf-contact-section on ${CONTACT_ROUTE} · actual ${read === undefined ? 'the page did not answer' : 'absent'}`
+        : `expected #__nuxt.__vue_app__ within ${timeoutMs}ms · actual absent`
+    })
+    return rows
+  }
+
+  rows.push({
+    label: `gh#229 — ${CONTACT_ROUTE} exposes exactly one <form> in the contact band`,
+    ok: read.forms === 1,
+    detail: `expected 1 · actual ${read.forms}`
+  })
+
+  rows.push({
+    label: 'gh#229 — the contact <form> carries novalidate',
+    ok: read.noValidate === true,
+    detail: `expected form.noValidate true · actual ${JSON.stringify(read.noValidate)}`
+      + (read.noValidate === true
+        ? ''
+        : ' — the email field is type="email", so without it the UA constraint bubble fires'
+          + ' before the submit event: a message that is not the aria-describedby target, is'
+          + ' not a live region, and is announced inconsistently')
+  })
+
+  const controls = read.controls ?? []
+  const names = controls.map(c => c.name)
+  rows.push({
+    label: `gh#229 — the form holds exactly the ${CONTACT_FIELDS.length} named controls, in order`,
+    ok: names.length === CONTACT_FIELDS.length && CONTACT_FIELDS.every((n, i) => names[i] === n),
+    detail: `expected ${JSON.stringify(CONTACT_FIELDS)} · actual ${JSON.stringify(names)}`
+  })
+
+  for (const control of controls) {
+    const who = `${control.name ?? '(unnamed)'} <${control.tag}${control.type === null ? '' : ` type=${control.type}`}>`
+
+    const required = control.required || control.ariaRequired === 'true'
+    rows.push({
+      label: `gh#229 — ${who} exposes the required state`,
+      ok: required,
+      detail: `expected required true or aria-required="true" · actual required=${control.required}`
+        + ` aria-required=${JSON.stringify(control.ariaRequired)}`
+        + (required
+          ? ''
+          : ' — measured false/null on all three before this row (a11y BRIEF §0)')
+    })
+
+    const labelled = control.labelText !== null
+      && control.labelText.length > 0
+      && control.labelDisplay !== 'none'
+    rows.push({
+      label: `gh#229 — ${who} keeps a visible <label for> (${JSON.stringify(control.labelText)})`,
+      ok: labelled,
+      detail: `expected non-empty label text with display not none · actual`
+        + ` text=${JSON.stringify(control.labelText)} display=${JSON.stringify(control.labelDisplay)}`
+    })
+
+    const expected = CONTACT_AUTOCOMPLETE[control.name ?? '']
+    if (expected !== undefined) {
+      rows.push({
+        label: `gh#229 — ${who} keeps autocomplete="${expected}" (WCAG 1.3.5)`,
+        ok: control.autocomplete === expected,
+        detail: `expected ${JSON.stringify(expected)} · actual ${JSON.stringify(control.autocomplete)}`
+      })
+    }
+
+    rows.push({
+      label: `gh#229 — ${who} carries no aria-invalid while it has no error`,
+      ok: control.ariaInvalid === null,
+      detail: `expected null · actual ${JSON.stringify(control.ariaInvalid)}`
+        + (control.ariaInvalid === null
+          ? ''
+          : ' — bfFormField writes "true" or nothing, never "false" (FormField.vue:149-153):'
+            + ' aria-invalid="false" on every valid field makes the attribute\'s absence'
+            + ' stop meaning anything')
+    })
+
+    rows.push({
+      label: `gh#229 — every aria-describedby id on ${who} resolves`,
+      ok: control.danglingIds.length === 0,
+      detail: control.danglingIds.length === 0
+        ? `expected 0 dangling · actual 0 (aria-describedby=${JSON.stringify(control.describedBy)})`
+        : `expected 0 dangling · actual ${JSON.stringify(control.danglingIds)}`
+          + ' — a reference to an id that is not in the document is a broken relationship,'
+          + ' which some assistive technology reports rather than ignores'
+    })
+  }
+
+  rows.push({
+    label: 'gh#229 — the band mounts exactly one role="status" region, inside the form',
+    ok: read.statuses === 1 && read.statusInForm === true,
+    detail: `expected 1 in the form · actual ${read.statuses} (inForm=${JSON.stringify(read.statusInForm)})`
+      + (read.statuses === 1 && read.statusInForm === true
+        ? ''
+        : ' — the submit outcome has to be announced somewhere, and nowhere in this band'
+          + ' announced anything before this row (a11y BRIEF §0)')
+  })
+
+  rows.push({
+    label: 'gh#229 — D29: the status region is in the accessibility tree, not display:none',
+    ok: read.statusDisplay !== null
+      && read.statusDisplay !== 'none'
+      && read.statusVisibility !== 'hidden',
+    detail: `expected a rendered element · actual display=${JSON.stringify(read.statusDisplay)}`
+      + ` visibility=${JSON.stringify(read.statusVisibility)}`
+      + ' — display:none removes a live region from the accessibility tree, so the text that'
+      + ' arrives with it is never announced (D29, and search.vue\'s own note)'
+  })
+
+  rows.push({
+    label: 'gh#229 — role="status" alone, with no aria-live and no aria-atomic beside it',
+    ok: read.statusAriaLive === null && read.statusAriaAtomic === null,
+    detail: `expected both null · actual aria-live=${JSON.stringify(read.statusAriaLive)}`
+      + ` aria-atomic=${JSON.stringify(read.statusAriaAtomic)}`
+      + ' — the role already implies polite/atomic; restating them is a second copy of one'
+      + ' fact that can later disagree with the first (the bfResultCount idiom, gh#226)'
+  })
+
+  rows.push({
+    label: 'gh#229 — the status region is EMPTY on load, so nothing is announced at page load',
+    ok: read.statusText === '',
+    detail: `expected "" · actual ${JSON.stringify(read.statusText)}`
+      + (read.statusText === ''
+        ? ''
+        : ' — a live region that arrives with text already in it announces it on arrival;'
+          + ' the region exists to be filled later, not to speak now')
+  })
+
+  return rows
+}
+
+/* ------------------------------------------------------------------ *
  * DoD-3 — every §7 route reachable from the menus
  * ------------------------------------------------------------------ */
 /**
@@ -4196,6 +4610,16 @@ const run = async (): Promise<void> => {
       )
       for (const row of compositeFailing) console.log(`      ✗ ${row.label} — ${row.detail}`)
       if (verbose) for (const row of compositeGate.filter(r => r.ok)) console.log(`      · ${row.label}`)
+
+      const contactGate = await contactFormRows(cdp, origin)
+      const contactFailing = contactGate.filter(r => !r.ok)
+      results.push({ slug: 'contact form semantics (gh#229)', rows: contactGate, failing: contactFailing })
+      console.log(
+        `${contactFailing.length === 0 ? '  ✓ PASS' : '  ✗ FAIL'}  `
+        + `${'contact form semantics (gh#229)'.padEnd(44)} ${contactGate.length - contactFailing.length}/${contactGate.length} rows`
+      )
+      for (const row of contactFailing) console.log(`      ✗ ${row.label} — ${row.detail}`)
+      if (verbose) for (const row of contactGate.filter(r => r.ok)) console.log(`      · ${row.label}`)
 
       const navRows = homeLinks === undefined
         ? [{ label: 'DoD-3 — the home page rendered', ok: false, detail: 'expected / to hydrate · actual it did not, so reachability cannot be judged' }]

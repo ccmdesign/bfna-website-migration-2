@@ -265,9 +265,24 @@ const readValue = (event: Event): string =>
       writes them in, so what a screen reader hears matches what a sighted
       reader sees. Neither renders when its string is absent: no empty `<p>`,
       and therefore no id pointing at an empty box.
+
+      `role="alert"` on the error, and only on the error (gh#229).
+      `aria-describedby` makes the message part of the control's accessible
+      description, which is announced when the control is *reached* — so an
+      error that appears while focus is somewhere else, which is exactly what
+      happens on submit, reaches nobody until the user navigates back to the
+      field. `role="alert"` is the live region that closes that gap.
+
+      It is safe to put it on this element *because* of the `v-if`. An
+      always-mounted alert region announces its contents at page load, which is
+      the failure mode D29 describes for status regions and which is worse for
+      an assertive one; this `<p>` enters the DOM only when there is a message,
+      so its insertion is the announcement. No `aria-live` and no `aria-atomic`
+      beside it: `role="alert"` already implies `aria-live="assertive"` and
+      `aria-atomic="true"`, and restating them is a second copy of one fact.
     -->
     <p v-if="hint" :id="hintId" class="bf-form-field__hint">{{ hint }}</p>
-    <p v-if="error" :id="errorId" class="bf-form-field__error">{{ error }}</p>
+    <p v-if="error" :id="errorId" class="bf-form-field__error" role="alert">{{ error }}</p>
   </div>
 </template>
 
