@@ -80,6 +80,7 @@
 import type { Menu } from '~/types/bf-contracts'
 import MenuLink from './nav/MenuLink.vue'
 import Dropdown from './nav/Dropdown.vue'
+import { newTabAttrs } from '~/utils/link'
 
 defineOptions({ name: 'BfNav' })
 
@@ -130,6 +131,7 @@ defineProps<{
           :href="m.href"
           class="bf-nav__link"
           :data-external="m.external || undefined"
+          v-bind="newTabAttrs(m.href)"
         >{{ m.label }}</a>
         <MenuLink
           v-else-if="m.to"
@@ -247,8 +249,14 @@ defineProps<{
     display: flex;
     margin-inline-end: auto;
 
-    /** Matches the wireframe's logo slot; `bfLogo`'s own default is the same value. */
-    --_bf-logo-size: 1.25rem;
+    /*
+      Was `1.25rem` — the wireframe's own logo slot, which `bfLogo` also
+      defaults to. Raised 40% by design review: at 1.25rem the wordmark's
+      lower band (an inverted shape with the letterforms knocked out) closed
+      up at nav scale and read as a solid bar. The nav row is taller than the
+      mark either way, so nothing else in the bar reflows.
+    */
+    --_bf-logo-size: 1.75rem;
   }
 
   /*

@@ -155,11 +155,20 @@ const titleId = useId()
 @layer components {
   .bf-logo {
     /* Default CSS variable values — override from the consumer, not here. */
-    --_bf-logo-size: 1.25rem;
     --_bf-logo-color: var(--color-text);
 
     display: inline-block;
-    block-size: var(--_bf-logo-size);
+    /*
+      The size default lives in the `var()` fallback, NOT in a declaration on
+      this element. A custom property declared here would shadow the same
+      property set by an ancestor, so `.bf-nav__logo { --_bf-logo-size: … }`
+      — the documented consumer override, two lines up in this file's own
+      docblock — silently did nothing. It went unnoticed while both values
+      were `1.25rem`; raising the nav's to `1.75rem` is what exposed it.
+      Inline `style` on this element still wins, as `$attrs` fallthrough
+      promises; an ancestor now works too.
+    */
+    block-size: var(--_bf-logo-size, 1.25rem);
     inline-size: auto;
     aspect-ratio: 695.1 / 266.6;
 

@@ -116,3 +116,35 @@ export function isExternal(
 
   return !siteHosts.some(own => own.toLowerCase().replace(/\.$/, '') === host)
 }
+
+/**
+ * The attributes that send an off-site link to a new tab.
+ *
+ * Same question as `isExternal`, same answer — this only names what the DOM
+ * needs once, so five call sites (`bfNav`'s top-level links, `nav/MenuLink`,
+ * `bfFooter`'s column heads and socials, `bfButton`'s anchor branch) do not
+ * each re-decide the `rel` string. Spread it: `v-bind="newTabAttrs(href)"`.
+ *
+ * Gated on `isExternal`, deliberately, rather than on the data's own
+ * `external: true` flag. Four menu entries in `src/assets/bf-data/menus.json`
+ * carry that flag over a **placeholder** href (`#podcast-platform-url`,
+ * `#transponder-magazine-url`, `#`) because the real destination is not known
+ * yet. Opening `#` in a new tab yields a blank duplicate of the current page,
+ * which is worse than doing nothing; `isExternal` returns `false` for those and
+ * they stay in-tab until a real URL lands, at which point this starts applying
+ * with no further edit.
+ *
+ * `rel="noopener noreferrer"`: `noopener` severs `window.opener` so the opened
+ * page cannot reach back into this one (a `target="_blank"` without it is the
+ * reverse-tabnabbing hole), and `noreferrer` withholds the referrer. Modern
+ * engines imply `noopener`, but it is written out because the guarantee should
+ * not depend on the reader knowing that.
+ */
+export function newTabAttrs(
+  href: string | null | undefined,
+  siteHosts: readonly string[] = SITE_HOSTS
+): { target: '_blank'; rel: string } | Record<string, never> {
+  return isExternal(href, siteHosts)
+    ? { target: '_blank', rel: 'noopener noreferrer' }
+    : {}
+}

@@ -66,6 +66,7 @@
  */
 import { computed } from 'vue'
 import type { MenuItem } from '~/types/bf-contracts'
+import { newTabAttrs } from '~/utils/link'
 
 defineOptions({ name: 'BfNavMenuLink' })
 
@@ -110,6 +111,7 @@ const label = computed(() => {
     class="bf-nav__item"
     :href="item.href ?? '#'"
     data-external
+    v-bind="newTabAttrs(item.href)"
   >{{ label.text }}<span v-if="label.marker" aria-hidden="true">{{ label.marker }}</span></a>
 </template>
 

@@ -69,7 +69,7 @@
  * asserts both branches, and that no rendered `href` contains `/wireframes/`.
  */
 import type { CardWrapperProps, Insight } from '~/types/bf-contracts'
-import { isExternal } from '~/utils/link'
+import { isExternal, newTabAttrs } from '~/utils/link'
 
 defineOptions({
   name: 'BfCardFeatured',
@@ -235,7 +235,7 @@ if (import.meta.dev) {
         v-if="hasExternalLink"
         :href="externalHref"
         :data-external="externalMarker"
-        rel="noopener"
+        v-bind="newTabAttrs(externalHref)"
       >{{ headingText }}</a>
       <NuxtLink v-else :to="`/insights/${item.slug}`">{{ headingText }}</NuxtLink>
     </component>

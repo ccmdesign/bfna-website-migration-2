@@ -94,6 +94,7 @@
  */
 import type { Menu } from '~/types/bf-contracts'
 import MenuLink from './nav/MenuLink.vue'
+import { newTabAttrs } from '~/utils/link'
 
 defineOptions({ name: 'BfFooter' })
 
@@ -180,6 +181,7 @@ const year = new Date().getFullYear()
                 :href="m.href"
                 class="bf-footer__link"
                 :data-external="m.external || undefined"
+                v-bind="newTabAttrs(m.href)"
               ><strong>{{ m.label }}</strong></a>
               <NuxtLink
                 v-else-if="m.to"
@@ -230,6 +232,7 @@ const year = new Date().getFullYear()
             :href="s.url"
             class="bf-footer__link"
             data-external
+            v-bind="newTabAttrs(s.url)"
           >{{ s.name }}</a>
         </li>
       </ul>
@@ -239,7 +242,7 @@ const year = new Date().getFullYear()
           <p>© {{ year }} Copyright Bertelsmann Foundation.</p>
           <p><a href="#" class="bf-footer__link">Privacy Policy</a></p>
         </div>
-        <p>Site by <a href="https://ccm.design" class="bf-footer__link" data-external>ccm.design</a></p>
+        <p>Site by <a href="https://ccm.design" class="bf-footer__link" data-external v-bind="newTabAttrs('https://ccm.design')">ccm.design</a></p>
       </div>
     </div>
   </footer>

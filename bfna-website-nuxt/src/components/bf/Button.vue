@@ -82,6 +82,7 @@
  * rule and are not to be re-derived.
  */
 import type { ButtonProps } from '~/types/bf-contracts'
+import { newTabAttrs } from '~/utils/link'
 
 defineOptions({
   name: 'BfButton',
@@ -191,7 +192,7 @@ const cssVars = computed<Record<string, string>>(() => {
     :data-size="size || undefined"
     :data-external="external || undefined"
     :style="cssVars"
-    v-bind="$attrs"
+    v-bind="{ ...newTabAttrs(href), ...$attrs }"
   >
     <slot />
   </a>
