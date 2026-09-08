@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bertelsmann Foundation North America — Grid &amp; Grotesk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ------------------------------------------------------------------
+   01 · GRID & GROTESK — Swiss / International Typographic Style
+   Throwaway art-direction prototype. Not production code.
+   ------------------------------------------------------------------ */
+
+:root{
+  --paper:#FFFFFF;
+  --ink:#0A0A0A;
+  --muted:#4A4A4A;
+  --rule:#0A0A0A;
+  --rule-soft:#C9C9C9;
+  --teal:#116F7E;      /* Democracy */
+  --ochre:#A3680F;     /* Transatlantic Relations & Global Challenges */
+  --red:#CF4457;       /* Future Leadership + interaction accent */
+  --neutral:#ECECEC;   /* spec strip only */
+
+  --sans:"Helvetica Neue","Instrument Sans",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;
+
+  --margin:48px;
+  --gutter:24px;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+
+html{-webkit-text-size-adjust:100%}
+
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--sans);
+  font-size:18px;
+  line-height:1.5;
+  font-weight:400;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+
+img{display:block;max-width:100%;height:auto}
+
+a{color:inherit;text-decoration:none}
+
+:focus-visible{outline:2px solid var(--red);outline-offset:3px}
+
+h1,h2,h3,p,ul,ol,figure{margin:0}
+ul{list-style:none;padding:0}
+
+/* ---------- grid ------------------------------------------------- */
+
+.wrap{
+  max-width:1440px;
+  margin:0 auto;
+  padding-inline:var(--margin);
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(12,1fr);
+  column-gap:var(--gutter);
+}
+
+.c1-4{grid-column:1 / span 4}
+.c1-6{grid-column:1 / span 6}
+.c1-9{grid-column:1 / span 9}
+.c1-10{grid-column:1 / span 10}
+.c5-8{grid-column:5 / span 8}
+.c8-5{grid-column:8 / span 5}
+.span3{grid-column:span 3}
+.span4{grid-column:span 4}
+.span6{grid-column:span 6}
+
+/* ---------- type primitives -------------------------------------- */
+
+.meta{
+  font-size:13px;
+  line-height:1.3;
+  font-weight:500;
+  text-transform:uppercase;
+  letter-spacing:.06em;
+  font-variant-numeric:tabular-nums;
+}
+
+.lede{
+  font-size:clamp(19px,1.7vw,24px);
+  line-height:1.35;
+  letter-spacing:-.01em;
+  max-width:62ch;
+}
+
+.body{font-size:18px;line-height:1.5;max-width:62ch}
+.body--sm{font-size:16px;line-height:1.5;color:var(--muted);max-width:62ch}
+
+.arrow-link{
+  display:inline-block;
+  font-size:18px;
+  font-weight:500;
+  line-height:1.2;
+  text-decoration:underline;
+  text-underline-offset:5px;
+  text-decoration-thickness:1px;
+  color:var(--red);
+}
+.arrow-link:hover{text-decoration-thickness:2px}
+
+.hue-teal{color:var(--teal)}
+.hue-ochre{color:var(--ochre)}
+.hue-red{color:var(--red)}
+
+/* ---------- announcement ----------------------------------------- */
+
+.announce{
+  display:block;
+  border-bottom:1px solid var(--rule);
+}
+.announce .wrap{
+  display:flex;
+  gap:16px;
+  align-items:baseline;
+  padding-block:12px;
+}
+.announce-flag{color:var(--red);white-space:nowrap}
+.announce-text{
+  font-size:13px;
+  line-height:1.3;
+  letter-spacing:.01em;
+  font-weight:400;
+  text-transform:none;
+}
+.announce-arrow{margin-left:auto;color:var(--red)}
+.announce:hover .announce-text{text-decoration:underline;text-underline-offset:3px}
+
+/* ---------- masthead --------------------------------------------- */
+
+.masthead{border-bottom:1px solid var(--rule)}
+.masthead .wrap{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:48px;
+  padding-block:24px;
+}
+.wordmark{width:176px;height:auto;color:var(--ink);display:block}
+.nav ul{display:flex;flex-wrap:wrap;gap:28px;align-items:baseline}
+.nav a{
+  font-size:16px;
+  font-weight:500;
+  text-transform:uppercase;
+  letter-spacing:.06em;
+  padding-bottom:2px;
+  border-bottom:1px solid transparent;
+}
+.nav a:hover{border-bottom-color:var(--ink)}
+.nav .ext{font-size:13px;vertical-align:.15em}
+
+/* ---------- bands ------------------------------------------------ */
+
+.band{padding-block:96px}
+.band--tight{padding-block:80px}
+
+.band-head{
+  border-top:1px solid var(--rule);
+  padding-top:16px;
+  margin-bottom:56px;
+}
+.index{
+  font-size:13px;
+  line-height:1.3;
+  font-weight:500;
+  text-transform:uppercase;
+  letter-spacing:.06em;
+  font-variant-numeric:tabular-nums;
+}
+.band-foot{margin-top:64px}
+
+/* ---------- hero -------------------------------------------------- */
+
+.hero{padding-top:56px;padding-bottom:112px}
+.hero .index{margin-bottom:40px}
+
+.hero h1{
+  font-size:clamp(44px,8.89vw,128px);
+  font-weight:500;
+  line-height:.95;
+  letter-spacing:-.03em;
+  margin-bottom:64px;
+}
+
+.hero-row{row-gap:48px;align-items:end}
+.hero-text .lede{margin-bottom:32px}
+
+.hero-figure img{
+  width:100%;
+  aspect-ratio:4/3;
+  object-fit:cover;
+  filter:grayscale(1) contrast(1.05);
+}
+.hero-figure figcaption{
+  margin-top:12px;
+  color:var(--muted);
+}
+
+/* ---------- programs ---------------------------------------------- */
+
+.programs-row{row-gap:64px}
+
+.program{border-top:6px solid var(--hue);display:flex;flex-direction:column;align-items:flex-start}
+.program--democracy{--hue:var(--teal)}
+.program--trgc{--hue:var(--ochre)}
+.program--fl{--hue:var(--red)}
+
+.program-num{
+  display:block;
+  font-size:clamp(48px,5vw,72px);
+  font-weight:300;
+  line-height:1;
+  letter-spacing:-.03em;
+  font-variant-numeric:tabular-nums;
+  margin-top:20px;
+  color:var(--hue);
+}
+.program h3{
+  font-size:clamp(28px,2.8vw,40px);
+  font-weight:500;
+  line-height:1.02;
+  letter-spacing:-.03em;
+  margin-top:24px;
+}
+.program p{margin-top:20px;font-size:18px;line-height:1.5}
+.program .arrow-link{margin-top:auto;padding-top:32px}
+
+/* ---------- projects ---------------------------------------------- */
+
+.projects-row{row-gap:72px}
+
+.project img{
+  width:100%;
+  aspect-ratio:4/3;
+  object-fit:cover;
+  filter:grayscale(1) contrast(1.03);
+  transition:filter .18s linear;
+}
+.project:hover img{filter:none}
+.project .kicker{margin-top:16px;padding-top:12px;border-top:1px solid var(--rule)}
+.project h3{
+  font-size:24px;
+  font-weight:500;
+  line-height:1.1;
+  letter-spacing:-.02em;
+  margin-top:12px;
+}
+.project p{margin-top:12px}
+.project .ext{color:var(--red)}
+
+/* ---------- insights ---------------------------------------------- */
+
+.product{row-gap:40px;margin-bottom:96px;align-items:start}
+.product img{width:100%;height:auto}
+.product h3{
+  font-size:clamp(32px,5vw,72px);
+  font-weight:500;
+  line-height:.95;
+  letter-spacing:-.03em;
+}
+.product .meta{margin-bottom:24px}
+.product .body{margin-top:32px}
+.product .arrow-link{margin-top:32px}
+
+.sub-rule{
+  border-top:1px solid var(--rule);
+  padding-top:16px;
+  margin-bottom:40px;
+}
+
+.highlights{row-gap:48px;margin-bottom:96px}
+.highlight img{
+  width:100%;
+  aspect-ratio:3/2;
+  object-fit:cover;
+  filter:grayscale(1) contrast(1.03);
+  transition:filter .18s linear;
+}
+.highlight:hover img{filter:none}
+.highlight .meta{margin-top:14px;color:var(--muted)}
+.highlight h3{
+  font-size:18px;
+  font-weight:500;
+  line-height:1.2;
+  letter-spacing:-.01em;
+  margin-top:8px;
+}
+
+/* latest — a table, not cards */
+.latest{border-top:1px solid var(--rule)}
+.latest li{border-bottom:1px solid var(--rule-soft)}
+.latest a{
+  display:grid;
+  grid-template-columns:repeat(12,1fr);
+  column-gap:var(--gutter);
+  padding-block:24px;
+  align-items:baseline;
+}
+.latest a:hover .l-title{text-decoration:underline;text-underline-offset:5px}
+.l-date{grid-column:1 / span 2;color:var(--muted)}
+.l-main{grid-column:3 / span 6;display:block}
+.l-title{
+  display:block;
+  font-size:clamp(20px,1.7vw,24px);
+  font-weight:500;
+  line-height:1.15;
+  letter-spacing:-.02em;
+}
+.l-excerpt{display:block;margin-top:8px}
+.l-prog,.l-date{display:block}
+.l-prog{grid-column:9 / span 3}
+.l-arrow{grid-column:12 / span 1;text-align:right;font-size:18px;color:var(--red)}
+
+/* ---------- footer ------------------------------------------------ */
+
+.site-footer{padding-top:96px;padding-bottom:56px}
+.foot-cols{row-gap:48px;margin-bottom:80px}
+.foot-cols h3{
+  font-size:13px;
+  font-weight:500;
+  text-transform:uppercase;
+  letter-spacing:.06em;
+  padding-bottom:12px;
+  border-bottom:1px solid var(--rule);
+  margin-bottom:16px;
+}
+.foot-cols li{margin-bottom:8px}
+.foot-cols a{font-size:16px;line-height:1.4}
+.foot-cols a:hover{text-decoration:underline;text-underline-offset:4px}
+.foot-cols .ext{font-size:13px;vertical-align:.15em;color:var(--muted)}
+
+.foot-meta{
+  border-top:1px solid var(--rule);
+  padding-top:16px;
+  row-gap:16px;
+  margin-bottom:72px;
+  color:var(--muted);
+}
+.foot-meta a{color:var(--ink)}
+.foot-meta a:hover{text-decoration:underline;text-underline-offset:4px}
+.foot-meta .fm-2{grid-column:5 / span 4}
+.foot-meta .fm-3{grid-column:9 / span 4}
+
+.wordmark-full{width:100%;height:auto;color:var(--ink);display:block}
+
+/* ---------- direction spec strip (proof sheet, not the site) ------ */
+
+.spec{
+  background:var(--neutral);
+  color:#111;
+  font-family:var(--mono);
+  font-size:12px;
+  line-height:1.6;
+  padding-block:40px;
+  border-top:1px solid var(--rule);
+}
+.spec .grid{row-gap:32px}
+.spec h2{
+  font-family:var(--mono);
+  font-size:12px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  margin-bottom:16px;
+}
+.spec h3{
+  font-family:var(--mono);
+  font-size:12px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  margin-bottom:10px;
+}
+.spec p,.spec li{font-size:12px}
+.spec li{margin-bottom:6px}
+.spec .sw{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.spec .chip{width:22px;height:22px;flex:0 0 22px;border:1px solid #111}
+
+/* ---------- responsive -------------------------------------------- */
+
+@media (max-width:1120px){
+  :root{--margin:32px;--gutter:20px}
+  .band{padding-block:80px}
+  .nav ul{gap:20px}
+  .nav a{font-size:14px}
+  .wordmark{width:150px}
+}
+
+@media (max-width:860px){
+  :root{--margin:24px}
+  body{font-size:17px}
+  .grid{grid-template-columns:1fr;row-gap:40px}
+  .grid > *{grid-column:1 / -1 !important}
+  .masthead .wrap{flex-direction:column;align-items:flex-start;gap:20px}
+  .nav ul{gap:16px 20px}
+  .band{padding-block:56px}
+  .hero{padding-top:40px;padding-bottom:64px}
+  .hero h1{margin-bottom:40px}
+  .product,.highlights{margin-bottom:64px}
+  .latest a{grid-template-columns:1fr;row-gap:6px;padding-block:20px}
+  .latest a > *{grid-column:1 / -1 !important}
+  .l-arrow{text-align:left}
+  .announce .wrap{flex-wrap:wrap;gap:8px}
+  .announce-arrow{margin-left:0}
+  .foot-cols{row-gap:32px}
+  .site-footer{padding-top:56px}
+}
+</style>
+</head>
+<body>
+
+<!-- wordmark sprite ------------------------------------------------ -->
+<svg aria-hidden="true" focusable="false" style="position:absolute;width:0;height:0;overflow:hidden">
+  <symbol id="bfna-wordmark" viewBox="0 0 695.1 266.6">
+    <g fill="currentColor">
+      <path d="M62.2,76.5c0-13.7-8.1-24.4-22-26.6c7-4.3,12.4-11.8,12.4-23.3C52.6,10.7,41.8,0,23.3,0H0v106.3h29.2 C48.4,106.3,62.2,95.1,62.2,76.5z M7,6.4h13.5c5.6,0,12.5,0.3,17.7,4.5c3.5,2.9,7.2,8.1,7.2,16.6c0,7.3-2.7,12.7-7,16.2 c-4.6,3.8-9.1,4.5-14.5,4.5H7V6.4z M7,99.9V54.5h16.6c11.8,0,17.1,1.7,19.9,3c8,3.7,11.3,10.2,11.3,19.8c0,4.9-1.1,11.2-6.9,16.3 c-7.2,6.4-15.9,6.4-23.1,6.4H7z"/>
+      <path d="M110.1,108c16.1,0,24.7-10.3,28.5-17.6l-5.4-3.2c-4.1,8.6-12.1,14.8-22.6,14.8c-13.7,0-25.8-10.8-25.8-27.4 l55.6-0.1c0-20.7-13.2-34.7-30.8-34.7c-15.9,0-31.5,11.6-31.5,34.2C78.1,93,89.9,108,110.1,108z M109.6,46 c12.9,0,22.5,9.7,24.1,22.6l-48.4-0.1C87,55.9,96.4,45.9,109.6,46z"/>
+      <path d="M165.6,106.3V71.4c0-8.1,0.2-25.5,13.2-25.5c2.9,0,4.1,0.8,4.8,1.3l3.1-5.8c-2.1-1.1-4.5-1.6-6.8-1.6 c-7,0-12,4.3-14.3,9.9v-8.4h-6.4l0,65H165.6z"/>
+      <polygon points="201.1,106.3 207.5,106.3 207.5,47.3 218.8,47.3 218.8,41.3 207.5,41.3 207.5,18 201.1,18 201.1,41.3 193.9,41.3 193.9,47.3 201.1,47.3"/>
+      <path d="M259.4,108c16.1,0,24.7-10.3,28.5-17.6l-5.4-3.2c-4.1,8.6-12.1,14.8-22.6,14.8c-13.7,0-25.8-10.8-25.8-27.4 l55.6-0.1c0-20.7-13.2-34.7-30.7-34.7c-15.9,0-31.5,11.6-31.5,34.2C227.4,93,239.2,108,259.4,108z M258.9,45.9 c12.9,0,22.5,9.7,24.1,22.7l-48.4-0.1C236.3,55.9,245.7,45.9,258.9,45.9z"/>
+      <rect x="308.5" width="6.4" height="106.3"/>
+      <path d="M353.6,102c-7.2,0-14-4.5-16.2-13.1l-6.2,1.9c2.7,10.8,11.6,17.2,22.5,17.2c10,0,21.2-5.9,21.2-20.7 c0-3.7-0.6-7.2-3.3-10.5c-4.1-5.3-10.2-7-16.7-9.6c-6.4-2.5-11.5-4.6-11.5-11c0-4.8,3.7-10.4,11-10.4c4.9-0.1,9.4,2.8,11.3,7.3 l5.4-2.8c-3-7-9.4-10.5-17-10.5c-9.9,0-17.4,6.9-17.4,16.7c0,3.1,1,6,2.9,8.5c2.9,3.8,7.6,5.9,14.2,8.6c9.9,4,14.5,6.7,14.5,14 C368.1,96.1,361.9,102,353.6,102z"/>
+      <path d="M397.3,68.7c0-12.9,5.3-22.8,16.6-22.8c14,0,14.3,14.5,14.3,18.6v41.8h6.4V67.1c0-4,0.2-21.2,17.4-21.2 c3.6-0.2,7.1,1.2,9.7,3.7c3.5,3.7,3.8,9.1,3.8,13.4v43.3h6.4V63c0-5.3-0.3-12.4-5.6-17.7c-2.9-2.9-7.5-5.4-14.7-5.4 c-8.6,0-15.6,4-19.3,11.8c-1.3-3.3-5.4-11.8-18.2-11.8c-7-0.3-13.5,3.4-16.9,9.6v-8.1H391v65h6.3V68.7z"/>
+      <path d="M522.5,108.1c10.2,0.2,19.7-4.9,25.3-13.4v11.6h6.4v-65h-6.4v11.4c-6.2-8.8-15.1-12.8-25.3-12.8 c-19,0-31.7,13.9-31.7,33.9C490.8,95.2,505.4,108.1,522.5,108.1z M522.8,45.9c11.2,0,25.3,8.1,25.3,27.4c0,15-8.9,28.7-25.2,28.7 c-16.4,0-25.5-14-25.5-28.7C497.5,55.6,509.9,45.9,522.8,45.9z"/>
+      <path d="M583.5,72.5c0-6.4,0.6-12.4,3.5-17.5c2.4-4.3,7-9.1,15.9-9.1c7.8,0,11.3,4,12.8,6.4c2.4,3.7,2.5,8.6,2.5,13.1 v41h6.4v-41c0-5.7-0.3-11.8-3.2-16.4c-1.4-2.2-6.4-9.1-18-9.1c-11,0-16.9,6.2-19.9,11.6V41.3h-6.4v65h6.4V72.5z"/>
+      <path d="M653.9,72.5c0-6.4,0.6-12.4,3.5-17.5c2.4-4.3,7-9.1,15.9-9.1c7.8,0,11.3,4,12.8,6.4c2.4,3.7,2.5,8.6,2.5,13.1 v41h6.4v-41c0-5.7-0.3-11.8-3.2-16.4c-1.4-2.2-6.4-9.1-18-9.1c-11,0-16.9,6.2-19.9,11.6V41.3h-6.4l0,65h6.4V72.5z"/>
+      <path d="M329.9,162.6h-9.5v64.2h9.5c19.3,0,32.5-13.1,32.5-32.1C362.5,176.1,349.1,162.6,329.9,162.6z"/>
+      <polygon points="389.3,202.9 416.9,202.9 403.2,168.3"/>
+      <path d="M543.6,161.6c-18.8,0-32.8,14.6-32.8,33.3c0,18.7,14,33.2,32.8,33.2s32.8-14.6,32.8-33.2h0 C576.5,176.2,562.5,161.6,543.6,161.6z"/>
+      <path d="M106.8,161.6C88,161.6,74,176.2,74,194.9c0,18.7,14,33.2,32.8,33.2c18.8,0,32.8-14.6,32.8-33.2h0.1 C139.6,176.2,125.6,161.6,106.8,161.6z"/>
+      <path d="M0,122.5v144.1h695.1V122.5H0z M61.3,162.6H36.5v26.5h24.1v4.4H36.5v37.8h-4.8v-73h29.6V162.6z M144.6,194.9 c0,21-16.5,37.5-37.9,37.5c-21.3,0-37.9-16.5-37.9-37.5c0-20.9,17-37.9,37.9-37.9S144.6,174,144.6,194.9L144.6,194.9z M210.1,203.9 c0,8-0.4,13.2-4.2,18.7c-5.5,8-14.1,9.8-20.7,9.8s-15.2-1.9-20.7-9.8c-3.7-5.5-4.2-10.7-4.2-18.7v-45.6h4.7v45.6 c0,6.9,0.3,11.4,3.1,15.8c4.3,6.9,12.3,8.4,17,8.4c4.7,0,12.7-1.5,17-8.4c2.7-4.4,3.1-8.9,3.1-15.8v-45.7h4.8V203.9z M295.8,233.1 L234.6,169v62.3l-4.9,0v-73.8l61.3,64.2v-63.4h4.8V233.1z M357,221.1c-9.2,9.2-20.5,10.2-26.9,10.2l-14.5,0v-73H330 c6.5,0,17.7,1,26.9,10.2c7.8,7.8,10.5,18.4,10.5,26.4S364.8,213.3,357,221.1z M428.4,231.3l-9.7-24h-31.1l-9.7,24h-5.3l30.8-75.2 l30.3,75.2H428.4z M473.8,162.6h-18.9v68.6H450v-68.6h-18.9v-4.4h42.7V162.6z M490,231.2h-4.8v-73h4.8V231.2z M581.5,194.9 c0,21-16.5,37.5-37.9,37.5s-37.9-16.5-37.9-37.5c0-20.9,17-37.9,37.9-37.9S581.5,174,581.5,194.9L581.5,194.9z M663.3,233.1 L602,169v62.3l-4.8,0v-73.8l61.3,64.2v-63.4h4.8V233.1z"/>
+    </g>
+  </symbol>
+</svg>
+
+<!-- announcement --------------------------------------------------- -->
+<a class="announce meta" href="#fellowship-2026">
+  <span class="wrap">
+    <span class="announce-flag">Apply now</span>
+    <span class="announce-text">Bertelsmann Foundation Fellowship 2026 – Strategic Triangle: Exploring the Future of U.S.-EU-Asia Dynamics</span>
+    <span class="announce-arrow" aria-hidden="true">→</span>
+  </span>
+</a>
+
+<!-- masthead ------------------------------------------------------- -->
+<header class="masthead">
+  <div class="wrap">
+    <a href="#" aria-label="Bertelsmann Foundation North America — home">
+      <svg class="wordmark" viewBox="0 0 695.1 266.6" role="img" aria-hidden="true" focusable="false"><use href="#bfna-wordmark"></use></svg>
+    </a>
+    <nav class="nav" aria-label="Primary">
+      <ul>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Programs</a></li>
+        <li><a href="#">Projects</a></li>
+        <li><a href="#">Insights</a></li>
+        <li><a href="#">Podcasts <span class="ext" aria-hidden="true">↗</span></a></li>
+        <li><a href="#">Documentaries <span class="ext" aria-hidden="true">↗</span></a></li>
+        <li><a href="#">Search</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <!-- BAND 1 — HERO ---------------------------------------------- -->
+  <section class="hero" aria-labelledby="hero-h">
+    <div class="wrap">
+      <p class="index">Independent · Nonpartisan · Washington, D.C.</p>
+      <div class="grid">
+        <h1 id="hero-h" class="c1-9">Strengthening the Transatlantic Relationship</h1>
+      </div>
+      <div class="grid hero-row">
+        <div class="hero-text c1-6">
+          <p class="lede">The Bertelsmann Foundation North America is an independent, nonpartisan think tank dedicated to strengthening the transatlantic partnership and advancing dialogue on the global challenges shaping our future.</p>
+          <a class="arrow-link" href="#programs">Explore our work <span aria-hidden="true">→</span></a>
+        </div>
+        <figure class="hero-figure c8-5">
+          <img src="./assets/hero-democracy.jpg" alt="The curved dark edge of a modern building against a white sky." width="1600" height="1600">
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- BAND 2 — PROGRAMS ------------------------------------------ -->
+  <section class="band" id="programs" aria-labelledby="programs-h">
+    <div class="wrap">
+      <div class="band-head">
+        <h2 class="index" id="programs-h">01 — Programs</h2>
+      </div>
+      <div class="grid programs-row">
+
+        <article class="program program--democracy span4">
+          <span class="program-num" aria-hidden="true">01</span>
+          <h3>Democracy</h3>
+          <p>Democracies around the world are facing profound challenges, from declining trust in institutions and political polarization to technological disruption and changing social and economic conditions.</p>
+          <a class="arrow-link" href="#">Explore <span aria-hidden="true">→</span></a>
+        </article>
+
+        <article class="program program--trgc span4">
+          <span class="program-num" aria-hidden="true">02</span>
+          <h3>Transatlantic Relations &amp; Global Challenges</h3>
+          <p>The transatlantic community is undergoing profound change. Geopolitical competition, economic shifts, technological disruption, and evolving political landscapes are reshaping the global environment and redefining cooperation.</p>
+          <a class="arrow-link" href="#">Explore <span aria-hidden="true">→</span></a>
+        </article>
+
+        <article class="program program--fl span4">
+          <span class="program-num" aria-hidden="true">03</span>
+          <h3>Future Leadership</h3>
+          <p>Strong transatlantic leadership has never been more important. As the United States and Europe confront growing geopolitical uncertainty, effective leadership depends on trust, collaboration, and a shared understanding of the challenges ahead.</p>
+          <a class="arrow-link" href="#">Explore <span aria-hidden="true">→</span></a>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- BAND 3 — FEATURED PROJECTS --------------------------------- -->
+  <section class="band" aria-labelledby="projects-h">
+    <div class="wrap">
+      <div class="band-head">
+        <h2 class="index" id="projects-h">02 — Featured projects</h2>
+      </div>
+      <div class="grid projects-row">
+
+        <article class="project span6">
+          <a href="#">
+            <img src="./assets/proj-barometer.jpg" alt="Screenshot of the Transatlantic Barometer platform: a world map marked with national flags." width="1400" height="897">
+            <p class="meta kicker">Data analysis platform · <span class="hue-ochre">Transatlantic Relations</span></p>
+            <h3>Transatlantic Barometer <span class="ext" aria-hidden="true">↗</span></h3>
+            <p class="body--sm">A synopsis of the policy positions and engagement of 31 key transatlantic actors: the United States, Canada, the United Kingdom and the EU-27.</p>
+          </a>
+        </article>
+
+        <article class="project span6">
+          <a href="#">
+            <img src="./assets/proj-periscope.jpg" alt="Screenshot of the Transatlantic Periscope platform interface." width="1400" height="897">
+            <p class="meta kicker">Interactive multimedia platform · <span class="hue-ochre">Transatlantic Relations</span></p>
+            <h3>Transatlantic Periscope <span class="ext" aria-hidden="true">↗</span></h3>
+            <p class="body--sm">An interactive tool bringing together expert commentary, media coverage, official policy documents, quantitative data and gray literature on the transatlantic relationship.</p>
+          </a>
+        </article>
+
+        <article class="project span6">
+          <a href="#">
+            <img src="./assets/proj-htfd.jpg" alt="Video still from How to Fix Democracy: an interviewee against a teal background." width="1000" height="641">
+            <p class="meta kicker">Podcast &amp; video series · <span class="hue-teal">Democracy</span></p>
+            <h3>How to Fix Democracy <span class="ext" aria-hidden="true">↗</span></h3>
+            <p class="body--sm">Since its origins, democracy has been a work in progress; today, many question its resilience. Interviews on democracy’s past, present and future, with Humanity in Action and host Andrew Keen.</p>
+          </a>
+        </article>
+
+        <article class="project span6">
+          <a href="#" id="fellowship-2026">
+            <img src="./assets/proj-fellowship.jpg" alt="A group of Bertelsmann Foundation fellows photographed outdoors." width="1400" height="897">
+            <p class="meta kicker">Fellowship · <span class="hue-red">Future Leadership</span></p>
+            <h3>The Bertelsmann Foundation Fellowship</h3>
+            <p class="body--sm">A five-month transatlantic hybrid experience designed to foster connection and shared understanding among emerging leaders from the United States and Europe.</p>
+          </a>
+        </article>
+
+      </div>
+      <div class="band-foot">
+        <a class="arrow-link" href="#">All projects <span aria-hidden="true">→</span></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- BAND 4 — INSIGHTS ------------------------------------------ -->
+  <section class="band" aria-labelledby="insights-h">
+    <div class="wrap">
+      <div class="band-head">
+        <h2 class="index" id="insights-h">03 — Insights</h2>
+      </div>
+
+      <!-- product -->
+      <div class="grid product">
+        <figure class="c1-4">
+          <img src="./assets/proj-transponder.jpg" alt="Cover of Transponder Magazine Issue 7: a magenta cover showing a globe and a control panel." width="1236" height="1600">
+        </figure>
+        <div class="c5-8">
+          <p class="meta">Transponder Magazine · Issue 07 · Biannual</p>
+          <h3>Transponder · Issue 7 · The Future</h3>
+          <p class="body">The Bertelsmann Foundation’s biannual magazine on the issues shaping the transatlantic relationship: short- and long-form articles, interviews and infographics.</p>
+          <a class="arrow-link" href="#">Read the issue <span aria-hidden="true">↗</span></a>
+        </div>
+      </div>
+
+      <!-- highlights -->
+      <h3 class="index sub-rule">03.1 — Highlights</h3>
+      <div class="grid highlights">
+
+        <article class="highlight span3">
+          <a href="#">
+            <img src="./assets/ins-lithium.jpg" alt="Report cover for Lithium Rising: blue sky over a desert landscape." width="1280" height="1280">
+            <p class="meta">1 Aug 2025 · <span class="hue-ochre">Transatlantic Relations</span></p>
+            <h3>Lithium Rising: The Race for Critical Minerals</h3>
+          </a>
+        </article>
+
+        <article class="highlight span3">
+          <a href="#">
+            <img src="./assets/ins-strength.jpg" alt="Dark navy infographic mapping multilateral institutions in the Indo-Pacific." width="1600" height="1600">
+            <p class="meta">1 Oct 2025 · <span class="hue-ochre">Transatlantic Relations</span></p>
+            <h3>Strength in Numbers</h3>
+          </a>
+        </article>
+
+        <article class="highlight span3">
+          <a href="#">
+            <img src="./assets/ins-livni.jpg" alt="Video still of Tzipi Livni speaking." width="1280" height="720">
+            <p class="meta">14 Nov 2024 · <span class="hue-red">Future Leadership</span></p>
+            <h3>Leadership in Action: Tzipi Livni on negotiating peace</h3>
+          </a>
+        </article>
+
+        <article class="highlight span3">
+          <a href="#">
+            <img src="./assets/ins-class2025.jpg" alt="Dark poster for Class of 2025: The Geopolitics of Space." width="1600" height="989">
+            <p class="meta">10 Dec 2024 · <span class="hue-red">Future Leadership</span></p>
+            <h3>Class of 2025: The Geopolitics of Space</h3>
+          </a>
+        </article>
+
+      </div>
+
+      <!-- latest -->
+      <h3 class="index sub-rule">03.2 — Latest</h3>
+      <ul class="latest">
+        <li><a href="#">
+          <span class="meta l-date">21 Jul 2026</span>
+          <span class="l-main">
+            <span class="l-title">The Nuclear Option</span>
+            <span class="body--sm l-excerpt">Within Europe, Germany has remained an outlier in its staunch stance against nuclear energy, a position which has become a core pillar of its national identity.</span>
+          </span>
+          <span class="meta l-prog hue-ochre">Transatlantic Relations</span>
+          <span class="l-arrow" aria-hidden="true">→</span>
+        </a></li>
+        <li><a href="#">
+          <span class="meta l-date">7 Jul 2026</span>
+          <span class="l-main">
+            <span class="l-title">Meddle Meets Mettle</span>
+            <span class="body--sm l-excerpt">At first glance, the recent elections in Hungary and Slovenia had little in common.</span>
+          </span>
+          <span class="meta l-prog hue-ochre">Transatlantic Relations</span>
+          <span class="l-arrow" aria-hidden="true">→</span>
+        </a></li>
+        <li><a href="#">
+          <span class="meta l-date">12 Jun 2026</span>
+          <span class="l-main">
+            <span class="l-title">Open Debate and Unlikely Bedfellows</span>
+            <span class="body--sm l-excerpt">In his first campaign to become chairman of the CDU in 2018, Friedrich Merz, now Chancellor of Germany, made a promise.</span>
+          </span>
+          <span class="meta l-prog hue-ochre">Transatlantic Relations</span>
+          <span class="l-arrow" aria-hidden="true">→</span>
+        </a></li>
+        <li><a href="#">
+          <span class="meta l-date">27 May 2026</span>
+          <span class="l-main">
+            <span class="l-title">What Comes After Z?</span>
+            <span class="body--sm l-excerpt">Throughout 2024 and 2025, Generation Z flooded streets around the world to protest government corruption.</span>
+          </span>
+          <span class="meta l-prog hue-teal">Democracy</span>
+          <span class="l-arrow" aria-hidden="true">→</span>
+        </a></li>
+        <li><a href="#">
+          <span class="meta l-date">26 May 2026</span>
+          <span class="l-main">
+            <span class="l-title">A Kettle Full of Steam</span>
+            <span class="body--sm l-excerpt">In a high-school auditorium, German Chancellor Friedrich Merz undid a year’s worth of goodwill.</span>
+          </span>
+          <span class="meta l-prog hue-ochre">Transatlantic Relations</span>
+          <span class="l-arrow" aria-hidden="true">→</span>
+        </a></li>
+        <li><a href="#">
+          <span class="meta l-date">17 Mar 2026</span>
+          <span class="l-main">
+            <span class="l-title">Misplaced Passion, Myopic Policy</span>
+            <span class="body--sm l-excerpt">The Free Democratic Party (FDP) has earned the moniker of “kingmaker” in German politics.</span>
+          </span>
+          <span class="meta l-prog hue-teal">Democracy</span>
+          <span class="l-arrow" aria-hidden="true">→</span>
+        </a></li>
+      </ul>
+
+      <div class="band-foot">
+        <a class="arrow-link" href="#">All insights <span aria-hidden="true">→</span></a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- BAND 5 — FOOTER ---------------------------------------------- -->
+<footer class="site-footer" aria-labelledby="footer-h">
+  <div class="wrap">
+    <div class="band-head">
+      <h2 class="index" id="footer-h">04 — Index</h2>
+    </div>
+
+    <div class="grid foot-cols">
+      <nav class="span3" aria-label="About">
+        <h3>About</h3>
+        <ul>
+          <li><a href="#">Mission</a></li>
+          <li><a href="#">Board of Directors</a></li>
+          <li><a href="#">Team</a></li>
+          <li><a href="#">Bertelsmann Stiftung <span class="ext" aria-hidden="true">↗</span></a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </nav>
+      <nav class="span3" aria-label="Programs">
+        <h3>Programs</h3>
+        <ul>
+          <li><a href="#">Democracy</a></li>
+          <li><a href="#">Transatlantic Relations &amp; Global Challenges</a></li>
+          <li><a href="#">Future Leadership</a></li>
+        </ul>
+      </nav>
+      <nav class="span3" aria-label="Projects">
+        <h3>Projects</h3>
+        <ul>
+          <li><a href="#">Transatlantic Barometer</a></li>
+          <li><a href="#">Transatlantic Periscope</a></li>
+          <li><a href="#">RANGE</a></li>
+          <li><a href="#">How to Fix Democracy</a></li>
+          <li><a href="#">Fellowship</a></li>
+          <li><a href="#">All projects</a></li>
+        </ul>
+      </nav>
+      <nav class="span3" aria-label="Insights">
+        <h3>Insights</h3>
+        <ul>
+          <li><a href="#">All insights</a></li>
+          <li><a href="#">Articles</a></li>
+          <li><a href="#">Reports</a></li>
+          <li><a href="#">Videos</a></li>
+          <li><a href="#">Infographics</a></li>
+          <li><a href="#">Transponder Magazine <span class="ext" aria-hidden="true">↗</span></a></li>
+          <li><a href="#">Archive</a></li>
+        </ul>
+      </nav>
+    </div>
+
+    <div class="grid foot-meta meta">
+      <p class="span4">Washington, D.C.</p>
+      <p class="fm-2"><a href="#">LinkedIn</a> · <a href="#">X</a> · <a href="#">YouTube</a> · <a href="#">Email</a></p>
+      <p class="fm-3">© 2026 Bertelsmann Foundation North America · <a href="#">Privacy Policy</a> · Site by ccm.design</p>
+    </div>
+
+    <svg class="wordmark-full" viewBox="0 0 695.1 266.6" role="img" aria-label="Bertelsmann Foundation North America" focusable="false"><use href="#bfna-wordmark"></use></svg>
+  </div>
+</footer>
+
+<!-- DIRECTION SPEC STRIP — proof sheet, not part of the site ------ -->
+<aside class="spec" aria-label="Art direction specification">
+  <div class="wrap">
+    <h2>Direction 01 · Grid &amp; Grotesk (Swiss)</h2>
+    <div class="grid">
+      <div class="span3">
+        <h3>Typefaces</h3>
+        <p>Display / text: Helvetica Neue<br>Fallback: Instrument Sans 400 / 500 / 600 / 700<br>Scale: 13 · 16 · 18 · 24 · 40 · 72 · 128<br>H1 500, -0.03em, lh 0.95<br>Body 18 / 1.5, measure &lt;= 62ch<br>Meta 13 uppercase, 0.06em, tabular</p>
+      </div>
+      <div class="span3">
+        <h3>Palette</h3>
+        <div class="sw"><span class="chip" style="background:#FFFFFF"></span>#FFFFFF paper</div>
+        <div class="sw"><span class="chip" style="background:#0A0A0A"></span>#0A0A0A ink / hairline</div>
+        <div class="sw"><span class="chip" style="background:#116F7E"></span>#116F7E democracy</div>
+        <div class="sw"><span class="chip" style="background:#A3680F"></span>#A3680F transatlantic</div>
+        <div class="sw"><span class="chip" style="background:#CF4457"></span>#CF4457 future leadership / link</div>
+      </div>
+      <div class="span3">
+        <h3>Grid</h3>
+        <p>12 columns · 24px gutters<br>48px outer margins · max 1440<br>8px vertical baseline<br>Every band opens on a 1px rule<br>with a numbered left-column label</p>
+      </div>
+      <div class="span3">
+        <h3>Three principles</h3>
+        <ul>
+          <li>1. The grid is the brand — it is meant to be seen.</li>
+          <li>2. Scale carries the argument; decoration carries none.</li>
+          <li>3. Colour is a label, never a surface.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</aside>
+
+</body>
+</html>

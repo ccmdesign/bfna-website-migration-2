@@ -1,0 +1,782 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bertelsmann Foundation North America — 04 Great Circle</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#00243A;
+  --navy-deep:#001B2C;
+  --ivory:#F2EEE6;
+  --ink:#0B1F2E;
+  --teal-d:#2AA5B3;  --amber-d:#EEAC49;  --red-d:#E5566A;
+  --teal-l:#116F7E;  --ochre-l:#A3680F;  --red-l:#CF4457;
+  --rule-d:rgba(242,238,230,.18);
+  --rule-d-strong:rgba(242,238,230,.34);
+  --rule-l:rgba(11,31,46,.22);
+  --meridian:rgba(242,238,230,.075);
+  --dim-d:rgba(242,238,230,.74);
+  --dim-l:rgba(11,31,46,.70);
+  --max:1400px; --pad:40px; --gut:24px;
+  --sans:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --focus:var(--amber-d);
+}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--navy);color:var(--ivory);
+  font-family:var(--sans);font-size:17px;line-height:1.6;font-weight:400;
+  -webkit-font-smoothing:antialiased;
+}
+img{display:block;max-width:100%}
+a{color:inherit}
+h1,h2,h3,p,ul,ol,dl,dd,figure,table{margin:0}
+ul{list-style:none;padding:0}
+:focus-visible{outline:2px solid var(--focus);outline-offset:3px}
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
+.skip{position:absolute;left:-9999px;top:0;background:var(--ivory);color:var(--navy);
+  padding:12px 20px;font-family:var(--mono);font-size:13px;z-index:9}
+.skip:focus{left:0}
+
+/* ---------- structure ---------- */
+.wrap{max-width:var(--max);margin-inline:auto;padding-inline:var(--pad);position:relative}
+.wrap--meridian{
+  background-image:repeating-linear-gradient(to right,var(--meridian) 0 1px,transparent 1px calc(100%/12));
+  background-origin:content-box;background-clip:content-box;
+}
+.band--light{background:var(--ivory);color:var(--ink);--focus:#0B1F2E;--dim:var(--dim-l);--rule:var(--rule-l)}
+.band--dark{background:var(--navy);color:var(--ivory);--dim:var(--dim-d);--rule:var(--rule-d)}
+.cols2{display:grid;grid-template-columns:repeat(2,1fr);gap:64px var(--gut)}
+.cols3{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--gut)}
+.cols4{display:grid;grid-template-columns:repeat(4,1fr);gap:40px var(--gut)}
+
+/* ---------- type atoms ---------- */
+.idx,.kick,.btn,.arrow,.nav a,.legal,.plate__cap,.pt,.t-date,.spec{
+  font-family:var(--mono);text-transform:uppercase;letter-spacing:.085em;
+}
+.idx,.kick{font-size:13px;line-height:1.5;color:var(--dim,var(--dim-d));font-weight:400}
+.arrow{font-size:13px;font-weight:500;text-decoration:none;display:inline-flex;gap:.65em;
+  align-items:center;border-bottom:1px solid currentColor;padding-bottom:3px;transition:opacity .15s}
+.arrow:hover{opacity:.62}
+.btn{font-size:13px;font-weight:500;text-decoration:none;display:inline-flex;align-items:center;
+  gap:.8em;border:1px solid currentColor;padding:16px 26px;transition:background .15s,color .15s}
+.band--dark .btn:hover{background:var(--ivory);color:var(--navy)}
+.band--light .btn:hover{background:var(--ink);color:var(--ivory)}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--c);
+  margin-right:.7em;flex:none;position:relative;top:0}
+.tick-arc{width:26px;height:13px;flex:none;overflow:visible}
+
+/* ---------- announcement ---------- */
+.ann{background:var(--navy-deep);border-bottom:1px solid var(--rule-d)}
+.ann a{display:flex;gap:18px;align-items:baseline;padding:14px 0;text-decoration:none;font-size:16px;line-height:1.4}
+.ann a:hover .ann__txt{text-decoration:underline;text-underline-offset:3px}
+.ann__tag{font-family:var(--mono);font-size:13px;font-weight:500;text-transform:uppercase;
+  letter-spacing:.12em;color:var(--amber-d);flex:none}
+.ann__txt{color:var(--ivory)}
+.ann__arw{margin-left:auto;color:var(--dim-d)}
+
+/* ---------- masthead ---------- */
+.mast{border-bottom:1px solid var(--rule-d)}
+.mast .wrap{display:flex;align-items:center;justify-content:space-between;gap:32px;padding-block:22px}
+.wordmark{width:154px;height:auto;color:var(--ivory);display:block}
+.nav ul{display:flex;flex-wrap:wrap;gap:26px;align-items:center}
+.nav a{font-size:13px;font-weight:400;text-decoration:none;color:rgba(242,238,230,.86);
+  padding-bottom:4px;border-bottom:1px solid transparent}
+.nav a:hover{color:var(--ivory);border-bottom-color:var(--ivory)}
+
+/* ---------- hero ---------- */
+.hero{border-bottom:1px solid var(--rule-d)}
+.hero .wrap{padding-block:80px 96px}
+.hero__text{max-width:56ch}
+.hero h1{
+  font-size:clamp(40px,5.85vw,84px);font-weight:600;line-height:1.02;letter-spacing:-.028em;
+  margin:26px 0 30px;
+}
+.lede{font-size:20px;line-height:1.55;color:rgba(242,238,230,.9);max-width:46ch;margin-bottom:38px}
+.plate{margin:0}
+.plate__cap{font-size:13px;color:var(--dim-d);padding-bottom:12px;border-bottom:1px solid var(--rule-d);
+  margin-bottom:26px;letter-spacing:.12em}
+.plate__box{position:relative;width:100%;aspect-ratio:720/460}
+.arc{width:100%;height:100%;display:block;overflow:visible}
+.pt{position:absolute;font-size:13px;line-height:1.5;color:rgba(242,238,230,.92);white-space:nowrap;
+  font-weight:400}
+.pt--w{left:10%;top:85.22%;transform:translate(16px,8px)}
+.pt--b{left:65.28%;top:30%;transform:translate(14px,8px)}
+.pt--g{left:77.22%;top:23.91%;transform:translate(14px,-50%)}
+@media(min-width:1180px){
+  .hero__in{display:grid;grid-template-columns:repeat(12,1fr);gap:var(--gut);align-items:center}
+  .hero__text{grid-column:1/span 6;max-width:none}
+  .plate{grid-column:7/span 6}
+}
+@media(max-width:1179px){
+  .plate{max-width:720px;margin-top:72px}
+}
+
+/* ---------- band heads ---------- */
+.bandhead{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;
+  padding-bottom:20px;border-bottom:1px solid var(--rule);margin-bottom:44px}
+.bandhead .idx{display:flex;align-items:center;gap:12px}
+.bandhead h2{font-size:clamp(24px,2.3vw,30px);font-weight:600;letter-spacing:-.015em;margin-top:14px}
+
+/* ---------- programs ---------- */
+.programs .wrap{padding-block:88px 104px}
+.panel{border:1px solid var(--rule-d);display:flex;flex-direction:column;background:transparent}
+.panel__img{border-bottom:1px solid var(--rule-d);aspect-ratio:3/2;overflow:hidden;background:var(--navy-deep)}
+.panel__img img{width:100%;height:100%;object-fit:cover;opacity:.5}
+.panel__body{padding:26px 26px 30px;display:flex;flex-direction:column;flex:1}
+.tick2{display:block;width:48px;height:2px;background:var(--c);margin-bottom:18px}
+.panel h3{font-size:clamp(26px,2.6vw,36px);font-weight:600;line-height:1.1;letter-spacing:-.02em;
+  margin:12px 0 16px}
+.panel p{color:rgba(242,238,230,.86);margin-bottom:26px}
+.panel .arrow{margin-top:auto;align-self:flex-start}
+
+/* ---------- projects ---------- */
+.projects .wrap{padding-block:88px 104px}
+.frame{border:1px solid var(--rule-l);overflow:hidden;background:#E6E1D6}
+.frame img{width:100%;height:100%;object-fit:cover}
+.proj .kick{display:flex;align-items:center;margin-bottom:14px}
+.proj .frame{aspect-ratio:3/2;margin-bottom:22px}
+.proj h3{font-size:clamp(23px,2vw,28px);font-weight:600;line-height:1.18;letter-spacing:-.015em;margin-bottom:12px}
+.proj h3 a{text-decoration:none}
+.proj h3 a:hover{text-decoration:underline;text-underline-offset:4px}
+.ext{font-size:.72em;vertical-align:.28em;color:var(--dim-l)}
+.proj p{color:var(--dim-l);max-width:52ch}
+.bandfoot{margin-top:56px;padding-top:22px;border-top:1px solid var(--rule)}
+
+/* ---------- insights ---------- */
+.insights{border-top:1px solid var(--rule-l)}
+.insights .wrap{padding-block:88px 104px}
+.tp{display:grid;grid-template-columns:repeat(12,1fr);gap:var(--gut);align-items:center;
+  padding-bottom:64px;border-bottom:1px solid var(--rule-l)}
+.tp__cover{grid-column:1/span 4;aspect-ratio:1236/1600}
+.tp__body{grid-column:6/span 7}
+.tp__body h3{font-size:clamp(40px,5vw,72px);font-weight:600;line-height:1;letter-spacing:-.03em;
+  margin:16px 0 22px}
+.tp__body p{color:var(--dim-l);max-width:54ch;margin-bottom:32px}
+.sub{margin-top:64px}
+.sub__label{display:flex;align-items:center;gap:12px;padding-bottom:16px;
+  border-bottom:1px solid var(--rule-l);margin-bottom:36px}
+.hl .frame{aspect-ratio:16/10;margin-bottom:18px}
+.hl .kick{display:flex;align-items:center;margin-bottom:10px}
+.hl h3{font-size:20px;font-weight:600;line-height:1.28;letter-spacing:-.01em}
+.hl h3 a{text-decoration:none}
+.hl h3 a:hover{text-decoration:underline;text-underline-offset:3px}
+.ticker{width:100%;border-collapse:collapse}
+.ticker td{border-bottom:1px solid var(--rule-l);padding:22px 16px 22px 0;vertical-align:baseline}
+.ticker tr:first-child td{border-top:1px solid var(--rule-l)}
+.t-date{font-size:13px;color:var(--dim-l);white-space:nowrap;width:1%;padding-right:40px;font-weight:400}
+.t-title{font-size:clamp(19px,1.6vw,22px);font-weight:500;line-height:1.3;letter-spacing:-.012em}
+.t-title a{text-decoration:none}
+.t-title a:hover{text-decoration:underline;text-underline-offset:4px}
+.t-prog{font-family:var(--mono);font-size:13px;text-transform:uppercase;letter-spacing:.085em;
+  color:var(--dim-l);white-space:nowrap;width:1%;padding-right:32px}
+.t-prog span.lbl{display:inline-flex;align-items:center}
+.t-go{width:1%;text-align:right;color:var(--dim-l);padding-right:0}
+
+/* ---------- footer ---------- */
+.site-footer .wrap{padding-block:80px 44px}
+.f-top{display:flex;align-items:flex-end;justify-content:space-between;gap:40px;flex-wrap:wrap;
+  padding-bottom:44px;border-bottom:1px solid var(--rule-d)}
+.f-top .wordmark{width:264px}
+.f-meta{text-align:right}
+.f-soc{display:flex;gap:22px;justify-content:flex-end;margin-top:14px;font-size:16px}
+.f-soc a{text-decoration:none;border-bottom:1px solid var(--rule-d-strong);padding-bottom:2px}
+.f-soc a:hover{border-bottom-color:var(--ivory)}
+.f-cols{padding-block:48px}
+.f-cols h3{display:flex;align-items:center;gap:11px;font-family:var(--mono);font-size:13px;
+  font-weight:500;text-transform:uppercase;letter-spacing:.1em;color:var(--ivory);margin-bottom:20px}
+.f-cols li{margin-bottom:11px}
+.f-cols a{font-size:16px;text-decoration:none;color:rgba(242,238,230,.82)}
+.f-cols a:hover{color:var(--ivory);text-decoration:underline;text-underline-offset:3px}
+.legal{font-size:12px;color:var(--dim-d);padding-top:26px;border-top:1px solid var(--rule-d);
+  letter-spacing:.08em;line-height:1.7}
+
+/* ---------- proof sheet ---------- */
+.spec{background:#D8D4CA;color:#14181B;border-top:6px solid var(--navy)}
+.spec .wrap{padding-block:40px 48px}
+.spec,.spec *{font-family:var(--mono)}
+.spec__tag{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#5A5A52;margin-bottom:20px}
+.spec h2{font-size:22px;font-weight:500;letter-spacing:.02em;margin-bottom:26px}
+.spec dl{display:grid;grid-template-columns:150px 1fr;gap:10px 24px;font-size:13px;line-height:1.7;
+  max-width:900px;margin-bottom:30px}
+.spec dt{text-transform:uppercase;letter-spacing:.1em;color:#5A5A52}
+.sw{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:30px}
+.sw li{font-size:12px;letter-spacing:.06em;color:#3A3A34}
+.sw i{display:block;width:78px;height:44px;margin-bottom:7px;border:1px solid rgba(20,24,27,.3)}
+.prin{counter-reset:p;list-style:none;padding:0;font-size:13px;line-height:1.7;max-width:96ch;
+  display:grid;gap:8px}
+.prin li{padding-left:34px;position:relative}
+.prin li::before{counter-increment:p;content:"0" counter(p);position:absolute;left:0;color:#5A5A52}
+
+/* ---------- responsive ---------- */
+@media(max-width:1080px){
+  .tp__cover{grid-column:1/span 5}
+  .tp__body{grid-column:7/span 6}
+}
+@media(max-width:1000px){
+  .cols4{grid-template-columns:repeat(2,1fr)}
+  .f-cols{grid-template-columns:repeat(2,1fr);gap:44px var(--gut)}
+}
+@media(max-width:860px){
+  :root{--pad:28px}
+  .cols3,.cols2{grid-template-columns:1fr}
+  .cols2{gap:56px}
+  .tp{grid-template-columns:1fr;gap:36px}
+  .tp__cover{grid-column:1;max-width:340px}
+  .tp__body{grid-column:1}
+  .f-meta{text-align:left}
+  .f-soc{justify-content:flex-start}
+  .f-top .wordmark{width:212px}
+}
+@media(max-width:780px){
+  .ticker,.ticker tbody,.ticker tr,.ticker td{display:block;width:auto}
+  .ticker td{border:0;padding:0}
+  .ticker tr{border-top:1px solid var(--rule-l);padding:22px 0}
+  .ticker tr:last-child{border-bottom:1px solid var(--rule-l)}
+  .t-date{padding-right:0;margin-bottom:8px}
+  .t-prog{padding-right:0;margin-top:10px}
+  .t-go{display:none !important}
+  .nav ul{gap:18px}
+  .ann a{flex-wrap:wrap;gap:6px 16px}
+  .ann__arw{margin-left:0}
+}
+@media(max-width:720px){
+  :root{--pad:20px}
+  .arc circle{r:11}
+  .arc circle.sm{r:6.5}
+  .plate__box{aspect-ratio:720/640}
+  .pt--w{left:10%;top:89.4%;transform:translate(16px,8px)}
+  .pt--b{left:65.28%;top:49.6%;transform:translate(-100%,-100%);margin:-16px 0 0 -12px}
+  .pt--g{left:auto;right:0;top:29%;transform:none}
+  .hero .wrap{padding-block:56px 72px}
+  .programs .wrap,.projects .wrap,.insights .wrap{padding-block:64px 76px}
+  .mast .wrap{flex-direction:column;align-items:flex-start;gap:20px}
+  .bandhead{flex-direction:column;align-items:flex-start;gap:16px}
+}
+@media(max-width:560px){
+  .spec dl{grid-template-columns:1fr;gap:2px 0}
+  .spec dt{margin-top:14px}
+  .cols4{grid-template-columns:1fr;gap:44px}
+  .f-cols{grid-template-columns:1fr;gap:36px}
+  .wordmark{width:180px}
+}
+</style>
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="ann">
+  <div class="wrap">
+    <a href="#">
+      <span class="ann__tag">Apply now</span>
+      <span class="ann__txt">Bertelsmann Foundation Fellowship 2026 – Strategic Triangle: Exploring the Future of U.S.-EU-Asia Dynamics</span>
+      <span class="ann__arw" aria-hidden="true">→</span>
+    </a>
+  </div>
+</div>
+
+<header class="mast band--dark">
+  <div class="wrap">
+    <a href="#" aria-label="Bertelsmann Foundation North America — home">
+      <svg class="wordmark" viewBox="0 0 695.1 266.6" role="img" aria-label="Bertelsmann Foundation North America" focusable="false">    <g fill="currentColor">
+    <path
+      d="M62.2,76.5c0-13.7-8.1-24.4-22-26.6c7-4.3,12.4-11.8,12.4-23.3C52.6,10.7,41.8,0,23.3,0H0v106.3h29.2
+    C48.4,106.3,62.2,95.1,62.2,76.5z M7,6.4h13.5c5.6,0,12.5,0.3,17.7,4.5c3.5,2.9,7.2,8.1,7.2,16.6c0,7.3-2.7,12.7-7,16.2
+    c-4.6,3.8-9.1,4.5-14.5,4.5H7V6.4z M7,99.9V54.5h16.6c11.8,0,17.1,1.7,19.9,3c8,3.7,11.3,10.2,11.3,19.8c0,4.9-1.1,11.2-6.9,16.3
+    c-7.2,6.4-15.9,6.4-23.1,6.4H7z"
+    />
+    <path
+      d="M110.1,108c16.1,0,24.7-10.3,28.5-17.6l-5.4-3.2c-4.1,8.6-12.1,14.8-22.6,14.8c-13.7,0-25.8-10.8-25.8-27.4
+    l55.6-0.1c0-20.7-13.2-34.7-30.8-34.7c-15.9,0-31.5,11.6-31.5,34.2C78.1,93,89.9,108,110.1,108z M109.6,46
+    c12.9,0,22.5,9.7,24.1,22.6l-48.4-0.1C87,55.9,96.4,45.9,109.6,46z"
+    />
+    <path
+      d="M165.6,106.3V71.4c0-8.1,0.2-25.5,13.2-25.5c2.9,0,4.1,0.8,4.8,1.3l3.1-5.8c-2.1-1.1-4.5-1.6-6.8-1.6
+    c-7,0-12,4.3-14.3,9.9v-8.4h-6.4l0,65H165.6z"
+    />
+    <polygon
+      points="201.1,106.3 207.5,106.3 207.5,47.3 218.8,47.3 218.8,41.3 207.5,41.3 207.5,18 201.1,18 201.1,41.3 
+    193.9,41.3 193.9,47.3 201.1,47.3  "
+    />
+    <path
+      d="M259.4,108c16.1,0,24.7-10.3,28.5-17.6l-5.4-3.2c-4.1,8.6-12.1,14.8-22.6,14.8c-13.7,0-25.8-10.8-25.8-27.4
+    l55.6-0.1c0-20.7-13.2-34.7-30.7-34.7c-15.9,0-31.5,11.6-31.5,34.2C227.4,93,239.2,108,259.4,108z M258.9,45.9
+    c12.9,0,22.5,9.7,24.1,22.7l-48.4-0.1C236.3,55.9,245.7,45.9,258.9,45.9z"
+    />
+    <rect x="308.5" width="6.4" height="106.3" />
+    <path
+      d="M353.6,102c-7.2,0-14-4.5-16.2-13.1l-6.2,1.9c2.7,10.8,11.6,17.2,22.5,17.2c10,0,21.2-5.9,21.2-20.7
+    c0-3.7-0.6-7.2-3.3-10.5c-4.1-5.3-10.2-7-16.7-9.6c-6.4-2.5-11.5-4.6-11.5-11c0-4.8,3.7-10.4,11-10.4c4.9-0.1,9.4,2.8,11.3,7.3
+    l5.4-2.8c-3-7-9.4-10.5-17-10.5c-9.9,0-17.4,6.9-17.4,16.7c0,3.1,1,6,2.9,8.5c2.9,3.8,7.6,5.9,14.2,8.6c9.9,4,14.5,6.7,14.5,14
+    C368.1,96.1,361.9,102,353.6,102z"
+    />
+    <path
+      d="M397.3,68.7c0-12.9,5.3-22.8,16.6-22.8c14,0,14.3,14.5,14.3,18.6v41.8h6.4V67.1c0-4,0.2-21.2,17.4-21.2
+    c3.6-0.2,7.1,1.2,9.7,3.7c3.5,3.7,3.8,9.1,3.8,13.4v43.3h6.4V63c0-5.3-0.3-12.4-5.6-17.7c-2.9-2.9-7.5-5.4-14.7-5.4
+    c-8.6,0-15.6,4-19.3,11.8c-1.3-3.3-5.4-11.8-18.2-11.8c-7-0.3-13.5,3.4-16.9,9.6v-8.1H391v65h6.3V68.7z"
+    />
+    <path
+      d="M522.5,108.1c10.2,0.2,19.7-4.9,25.3-13.4v11.6h6.4v-65h-6.4v11.4c-6.2-8.8-15.1-12.8-25.3-12.8
+    c-19,0-31.7,13.9-31.7,33.9C490.8,95.2,505.4,108.1,522.5,108.1z M522.8,45.9c11.2,0,25.3,8.1,25.3,27.4c0,15-8.9,28.7-25.2,28.7
+    c-16.4,0-25.5-14-25.5-28.7C497.5,55.6,509.9,45.9,522.8,45.9z"
+    />
+    <path
+      d="M583.5,72.5c0-6.4,0.6-12.4,3.5-17.5c2.4-4.3,7-9.1,15.9-9.1c7.8,0,11.3,4,12.8,6.4c2.4,3.7,2.5,8.6,2.5,13.1
+    v41h6.4v-41c0-5.7-0.3-11.8-3.2-16.4c-1.4-2.2-6.4-9.1-18-9.1c-11,0-16.9,6.2-19.9,11.6V41.3h-6.4v65h6.4V72.5z"
+    />
+    <path
+      d="M653.9,72.5c0-6.4,0.6-12.4,3.5-17.5c2.4-4.3,7-9.1,15.9-9.1c7.8,0,11.3,4,12.8,6.4c2.4,3.7,2.5,8.6,2.5,13.1
+    v41h6.4v-41c0-5.7-0.3-11.8-3.2-16.4c-1.4-2.2-6.4-9.1-18-9.1c-11,0-16.9,6.2-19.9,11.6V41.3h-6.4l0,65h6.4V72.5z"
+    />
+    <path
+      d="M329.9,162.6h-9.5v64.2h9.5c19.3,0,32.5-13.1,32.5-32.1C362.5,176.1,349.1,162.6,329.9,162.6z"
+    />
+    <polygon points="389.3,202.9 416.9,202.9 403.2,168.3  " />
+    <path
+      d="M543.6,161.6c-18.8,0-32.8,14.6-32.8,33.3c0,18.7,14,33.2,32.8,33.2s32.8-14.6,32.8-33.2h0
+    C576.5,176.2,562.5,161.6,543.6,161.6z"
+    />
+    <path
+      d="M106.8,161.6C88,161.6,74,176.2,74,194.9c0,18.7,14,33.2,32.8,33.2c18.8,0,32.8-14.6,32.8-33.2h0.1
+    C139.6,176.2,125.6,161.6,106.8,161.6z"
+    />
+    <path
+      d="M0,122.5v144.1h695.1V122.5H0z M61.3,162.6H36.5v26.5h24.1v4.4H36.5v37.8h-4.8v-73h29.6V162.6z M144.6,194.9
+    c0,21-16.5,37.5-37.9,37.5c-21.3,0-37.9-16.5-37.9-37.5c0-20.9,17-37.9,37.9-37.9S144.6,174,144.6,194.9L144.6,194.9z M210.1,203.9
+    c0,8-0.4,13.2-4.2,18.7c-5.5,8-14.1,9.8-20.7,9.8s-15.2-1.9-20.7-9.8c-3.7-5.5-4.2-10.7-4.2-18.7v-45.6h4.7v45.6
+    c0,6.9,0.3,11.4,3.1,15.8c4.3,6.9,12.3,8.4,17,8.4c4.7,0,12.7-1.5,17-8.4c2.7-4.4,3.1-8.9,3.1-15.8v-45.7h4.8V203.9z M295.8,233.1
+    L234.6,169v62.3l-4.9,0v-73.8l61.3,64.2v-63.4h4.8V233.1z M357,221.1c-9.2,9.2-20.5,10.2-26.9,10.2l-14.5,0v-73H330
+    c6.5,0,17.7,1,26.9,10.2c7.8,7.8,10.5,18.4,10.5,26.4S364.8,213.3,357,221.1z M428.4,231.3l-9.7-24h-31.1l-9.7,24h-5.3l30.8-75.2
+    l30.3,75.2H428.4z M473.8,162.6h-18.9v68.6H450v-68.6h-18.9v-4.4h42.7V162.6z M490,231.2h-4.8v-73h4.8V231.2z M581.5,194.9
+    c0,21-16.5,37.5-37.9,37.5s-37.9-16.5-37.9-37.5c0-20.9,17-37.9,37.9-37.9S581.5,174,581.5,194.9L581.5,194.9z M663.3,233.1
+    L602,169v62.3l-4.8,0v-73.8l61.3,64.2v-63.4h4.8V233.1z"
+    />
+    </g>
+</svg>
+    </a>
+    <nav class="nav" aria-label="Primary">
+      <ul>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Programs</a></li>
+        <li><a href="#">Projects</a></li>
+        <li><a href="#">Insights</a></li>
+        <li><a href="#">Podcasts <span aria-hidden="true">↗</span></a></li>
+        <li><a href="#">Documentaries <span aria-hidden="true">↗</span></a></li>
+        <li><a href="#">Search</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+  <!-- 01 · HERO -->
+  <section class="hero band--dark" aria-labelledby="pagetitle">
+    <div class="wrap wrap--meridian">
+      <div class="hero__in">
+        <div class="hero__text">
+          <p class="idx">BFNA · Washington, D.C. · 38.90°N 77.04°W</p>
+          <h1 id="pagetitle">Strengthening the Transatlantic Relationship</h1>
+          <p class="lede">The Bertelsmann Foundation North America is an independent, nonpartisan think tank dedicated to strengthening the transatlantic partnership and advancing dialogue on the global challenges shaping our future.</p>
+          <a class="btn" href="#">Explore our work <span aria-hidden="true">→</span></a>
+        </div>
+
+        <figure class="plate">
+          <figcaption class="plate__cap">Fig. 01 · Great-circle route</figcaption>
+          <div class="plate__box">
+            <svg class="arc" viewBox="0 0 720 460" preserveAspectRatio="xMidYMax meet" aria-hidden="true" focusable="false">
+              <path d="M72 392 Q272 60 470 138" fill="none" stroke="#F2EEE6" stroke-width="1.5" stroke-linecap="round" vector-effect="non-scaling-stroke"/>
+              <path d="M470 138 L556 110" fill="none" stroke="#F2EEE6" stroke-width="1.5" stroke-linecap="round" vector-effect="non-scaling-stroke"/>
+              <circle cx="72" cy="392" r="6.5" fill="none" stroke="#F2EEE6" stroke-width="1.5" vector-effect="non-scaling-stroke"/>
+              <circle cx="470" cy="138" r="6.5" fill="none" stroke="#F2EEE6" stroke-width="1.5" vector-effect="non-scaling-stroke"/>
+              <circle class="sm" cx="556" cy="110" r="3.5" fill="none" stroke="#F2EEE6" stroke-width="1.5" vector-effect="non-scaling-stroke"/>
+            </svg>
+            <span class="pt pt--w">Washington, D.C.</span>
+            <span class="pt pt--b">Brussels<br>50.85°N 4.35°E</span>
+            <span class="pt pt--g">Gütersloh</span>
+          </div>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 · PROGRAMS -->
+  <section class="programs band--dark" aria-labelledby="h-programs">
+    <div class="wrap wrap--meridian">
+      <div class="bandhead">
+        <div>
+          <p class="idx">
+            <svg class="tick-arc" viewBox="0 0 28 14" aria-hidden="true" focusable="false"><path d="M2 12 Q14 -1 26 6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="2" cy="12" r="2" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="26" cy="6" r="2" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+            Section 02
+          </p>
+          <h2 id="h-programs">Programs</h2>
+        </div>
+      </div>
+
+      <div class="cols3">
+        <article class="panel">
+          <div class="panel__img"><img src="assets/prog-democracy.jpg" alt="Curved dark modern building edge against a white sky." width="1600" height="1600"></div>
+          <div class="panel__body">
+            <span class="tick2" style="--c:var(--teal-d)"></span>
+            <p class="idx">01 / Democracy</p>
+            <h3>Democracy</h3>
+            <p>Democracies around the world are facing profound challenges, from declining trust in institutions and political polarization to technological disruption and changing social and economic conditions.</p>
+            <a class="arrow" href="#">Open <span aria-hidden="true">→</span></a>
+          </div>
+        </article>
+
+        <article class="panel">
+          <div class="panel__img"><img src="assets/prog-trgc.jpg" alt="Curved stone amphitheatre steps." width="1600" height="1600"></div>
+          <div class="panel__body">
+            <span class="tick2" style="--c:var(--amber-d)"></span>
+            <p class="idx">02 / Transatlantic Relations</p>
+            <h3>Transatlantic Relations &amp; Global Challenges</h3>
+            <p>The transatlantic community is undergoing profound change. Geopolitical competition, economic shifts, technological disruption, and evolving political landscapes are reshaping the global environment and redefining cooperation.</p>
+            <a class="arrow" href="#">Open <span aria-hidden="true">→</span></a>
+          </div>
+        </article>
+
+        <article class="panel">
+          <div class="panel__img"><img src="assets/prog-fl.jpg" alt="Close-up of a camera lens." width="1600" height="1600"></div>
+          <div class="panel__body">
+            <span class="tick2" style="--c:var(--red-d)"></span>
+            <p class="idx">03 / Future Leadership</p>
+            <h3>Future Leadership</h3>
+            <p>Strong transatlantic leadership has never been more important. As the United States and Europe confront growing geopolitical uncertainty, effective leadership depends on trust, collaboration, and a shared understanding of the challenges ahead.</p>
+            <a class="arrow" href="#">Open <span aria-hidden="true">→</span></a>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 · FEATURED PROJECTS -->
+  <section class="projects band--light" aria-labelledby="h-projects">
+    <div class="wrap">
+      <div class="bandhead">
+        <div>
+          <p class="idx">
+            <svg class="tick-arc" viewBox="0 0 28 14" aria-hidden="true" focusable="false"><path d="M2 12 Q14 -1 26 6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="2" cy="12" r="2" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="26" cy="6" r="2" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+            Section 03
+          </p>
+          <h2 id="h-projects">Featured projects</h2>
+        </div>
+        <a class="arrow" href="#">All projects <span aria-hidden="true">→</span></a>
+      </div>
+
+      <div class="cols2">
+        <article class="proj">
+          <p class="kick"><span class="dot" style="--c:var(--ochre-l)"></span>Platform · 31 actors</p>
+          <div class="frame"><img src="assets/proj-barometer.jpg" alt="Transatlantic Barometer platform: a world map marked with country flags." width="1400" height="897"></div>
+          <h3><a href="#">Transatlantic Barometer <span class="ext" aria-hidden="true">↗</span></a></h3>
+          <p>A synopsis of the policy positions and engagement of 31 key transatlantic actors: the United States, Canada, the United Kingdom and the EU-27.</p>
+        </article>
+
+        <article class="proj">
+          <p class="kick"><span class="dot" style="--c:var(--ochre-l)"></span>Platform · Multimedia</p>
+          <div class="frame"><img src="assets/proj-periscope.jpg" alt="Transatlantic Periscope platform interface." width="1400" height="897"></div>
+          <h3><a href="#">Transatlantic Periscope <span class="ext" aria-hidden="true">↗</span></a></h3>
+          <p>An interactive tool bringing together expert commentary, media coverage, official policy documents, quantitative data and gray literature on the transatlantic relationship.</p>
+        </article>
+
+        <article class="proj">
+          <p class="kick"><span class="dot" style="--c:var(--teal-l)"></span>Podcast · Video</p>
+          <div class="frame"><img src="assets/proj-htfd.jpg" alt="Video still from How to Fix Democracy: an interviewee against a teal backdrop." width="1000" height="641"></div>
+          <h3><a href="#">How to Fix Democracy <span class="ext" aria-hidden="true">↗</span></a></h3>
+          <p>Since its origins, democracy has been a work in progress; today, many question its resilience. Interviews on democracy's past, present and future, with Humanity in Action and host Andrew Keen.</p>
+        </article>
+
+        <article class="proj">
+          <p class="kick"><span class="dot" style="--c:var(--red-l)"></span>Fellowship · 5 months</p>
+          <div class="frame"><img src="assets/proj-fellowship.jpg" alt="A group of Bertelsmann Foundation fellows outdoors." width="1400" height="897"></div>
+          <h3><a href="#">The Bertelsmann Foundation Fellowship</a></h3>
+          <p>A five-month transatlantic hybrid experience designed to foster connection and shared understanding among emerging leaders from the United States and Europe.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 · INSIGHTS -->
+  <section class="insights band--light" aria-labelledby="h-insights">
+    <div class="wrap">
+      <div class="bandhead">
+        <div>
+          <p class="idx">
+            <svg class="tick-arc" viewBox="0 0 28 14" aria-hidden="true" focusable="false"><path d="M2 12 Q14 -1 26 6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="2" cy="12" r="2" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="26" cy="6" r="2" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+            Section 04
+          </p>
+          <h2 id="h-insights">Insights</h2>
+        </div>
+        <a class="arrow" href="#">All insights <span aria-hidden="true">→</span></a>
+      </div>
+
+      <div class="tp">
+        <div class="tp__cover frame">
+          <img src="assets/proj-transponder.jpg" alt="Transponder Issue 7 cover: a globe and a control panel on a magenta ground." width="1236" height="1600">
+        </div>
+        <div class="tp__body">
+          <p class="kick">Transponder · Issue 07</p>
+          <h3>The Future</h3>
+          <p>The Bertelsmann Foundation's biannual magazine on the issues shaping the transatlantic relationship: short- and long-form articles, interviews and infographics.</p>
+          <a class="btn" href="#">Read the issue <span aria-hidden="true">↗</span></a>
+        </div>
+      </div>
+
+      <section class="sub" aria-label="Highlights">
+        <p class="idx sub__label">
+          <svg class="tick-arc" viewBox="0 0 28 14" aria-hidden="true" focusable="false"><path d="M2 12 Q14 -1 26 6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="2" cy="12" r="2" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="26" cy="6" r="2" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+          04.1 / Highlights
+        </p>
+        <div class="cols4">
+          <article class="hl">
+            <div class="frame"><img src="assets/ins-lithium.jpg" alt="Report cover: a desert plain under a blue sky." width="1280" height="1280"></div>
+            <p class="kick"><span class="dot" style="--c:var(--ochre-l)"></span>1 Aug 2025 · Report</p>
+            <h3><a href="#">Lithium Rising: The Race for Critical Minerals</a></h3>
+          </article>
+          <article class="hl">
+            <div class="frame"><img src="assets/ins-strength.jpg" alt="Dark navy map infographic of the Indo-Pacific." width="1600" height="1600"></div>
+            <p class="kick"><span class="dot" style="--c:var(--ochre-l)"></span>1 Oct 2025 · Infographic</p>
+            <h3><a href="#">Strength in Numbers</a></h3>
+          </article>
+          <article class="hl">
+            <div class="frame"><img src="assets/ins-livni.jpg" alt="Video still of Tzipi Livni in conversation." width="1280" height="720"></div>
+            <p class="kick"><span class="dot" style="--c:var(--red-l)"></span>14 Nov 2024 · Video</p>
+            <h3><a href="#">Leadership in Action: Tzipi Livni on negotiating peace</a></h3>
+          </article>
+          <article class="hl">
+            <div class="frame"><img src="assets/ins-class2025.jpg" alt="Dark space poster for the Class of 2025 fellowship call." width="1600" height="989"></div>
+            <p class="kick"><span class="dot" style="--c:var(--red-l)"></span>10 Dec 2024 · Fellowship call</p>
+            <h3><a href="#">Class of 2025: The Geopolitics of Space</a></h3>
+          </article>
+        </div>
+      </section>
+
+      <section class="sub" aria-label="Latest">
+        <p class="idx sub__label">
+          <svg class="tick-arc" viewBox="0 0 28 14" aria-hidden="true" focusable="false"><path d="M2 12 Q14 -1 26 6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="2" cy="12" r="2" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="26" cy="6" r="2" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+          04.2 / Latest
+        </p>
+        <table class="ticker">
+          <caption class="vh">Latest insights, newest first</caption>
+          <tbody>
+            <tr>
+              <td class="t-date">21 Jul 2026 · Article</td>
+              <td class="t-title"><a href="#">The Nuclear Option</a></td>
+              <td class="t-prog"><span class="lbl"><span class="dot" style="--c:var(--ochre-l)"></span>Transatlantic Relations</span></td>
+              <td class="t-go" aria-hidden="true">→</td>
+            </tr>
+            <tr>
+              <td class="t-date">7 Jul 2026 · Article</td>
+              <td class="t-title"><a href="#">Meddle Meets Mettle</a></td>
+              <td class="t-prog"><span class="lbl"><span class="dot" style="--c:var(--ochre-l)"></span>Transatlantic Relations</span></td>
+              <td class="t-go" aria-hidden="true">→</td>
+            </tr>
+            <tr>
+              <td class="t-date">12 Jun 2026 · Article</td>
+              <td class="t-title"><a href="#">Open Debate and Unlikely Bedfellows</a></td>
+              <td class="t-prog"><span class="lbl"><span class="dot" style="--c:var(--ochre-l)"></span>Transatlantic Relations</span></td>
+              <td class="t-go" aria-hidden="true">→</td>
+            </tr>
+            <tr>
+              <td class="t-date">27 May 2026 · Article</td>
+              <td class="t-title"><a href="#">What Comes After Z?</a></td>
+              <td class="t-prog"><span class="lbl"><span class="dot" style="--c:var(--teal-l)"></span>Democracy</span></td>
+              <td class="t-go" aria-hidden="true">→</td>
+            </tr>
+            <tr>
+              <td class="t-date">26 May 2026 · Article</td>
+              <td class="t-title"><a href="#">A Kettle Full of Steam</a></td>
+              <td class="t-prog"><span class="lbl"><span class="dot" style="--c:var(--ochre-l)"></span>Transatlantic Relations</span></td>
+              <td class="t-go" aria-hidden="true">→</td>
+            </tr>
+            <tr>
+              <td class="t-date">17 Mar 2026 · Article</td>
+              <td class="t-title"><a href="#">Misplaced Passion, Myopic Policy</a></td>
+              <td class="t-prog"><span class="lbl"><span class="dot" style="--c:var(--teal-l)"></span>Democracy</span></td>
+              <td class="t-go" aria-hidden="true">→</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer band--dark">
+  <div class="wrap wrap--meridian">
+    <h2 class="vh">Site index</h2>
+    <div class="f-top">
+      <svg class="wordmark" viewBox="0 0 695.1 266.6" role="img" aria-label="Bertelsmann Foundation North America" focusable="false">    <g fill="currentColor">
+    <path
+      d="M62.2,76.5c0-13.7-8.1-24.4-22-26.6c7-4.3,12.4-11.8,12.4-23.3C52.6,10.7,41.8,0,23.3,0H0v106.3h29.2
+    C48.4,106.3,62.2,95.1,62.2,76.5z M7,6.4h13.5c5.6,0,12.5,0.3,17.7,4.5c3.5,2.9,7.2,8.1,7.2,16.6c0,7.3-2.7,12.7-7,16.2
+    c-4.6,3.8-9.1,4.5-14.5,4.5H7V6.4z M7,99.9V54.5h16.6c11.8,0,17.1,1.7,19.9,3c8,3.7,11.3,10.2,11.3,19.8c0,4.9-1.1,11.2-6.9,16.3
+    c-7.2,6.4-15.9,6.4-23.1,6.4H7z"
+    />
+    <path
+      d="M110.1,108c16.1,0,24.7-10.3,28.5-17.6l-5.4-3.2c-4.1,8.6-12.1,14.8-22.6,14.8c-13.7,0-25.8-10.8-25.8-27.4
+    l55.6-0.1c0-20.7-13.2-34.7-30.8-34.7c-15.9,0-31.5,11.6-31.5,34.2C78.1,93,89.9,108,110.1,108z M109.6,46
+    c12.9,0,22.5,9.7,24.1,22.6l-48.4-0.1C87,55.9,96.4,45.9,109.6,46z"
+    />
+    <path
+      d="M165.6,106.3V71.4c0-8.1,0.2-25.5,13.2-25.5c2.9,0,4.1,0.8,4.8,1.3l3.1-5.8c-2.1-1.1-4.5-1.6-6.8-1.6
+    c-7,0-12,4.3-14.3,9.9v-8.4h-6.4l0,65H165.6z"
+    />
+    <polygon
+      points="201.1,106.3 207.5,106.3 207.5,47.3 218.8,47.3 218.8,41.3 207.5,41.3 207.5,18 201.1,18 201.1,41.3 
+    193.9,41.3 193.9,47.3 201.1,47.3  "
+    />
+    <path
+      d="M259.4,108c16.1,0,24.7-10.3,28.5-17.6l-5.4-3.2c-4.1,8.6-12.1,14.8-22.6,14.8c-13.7,0-25.8-10.8-25.8-27.4
+    l55.6-0.1c0-20.7-13.2-34.7-30.7-34.7c-15.9,0-31.5,11.6-31.5,34.2C227.4,93,239.2,108,259.4,108z M258.9,45.9
+    c12.9,0,22.5,9.7,24.1,22.7l-48.4-0.1C236.3,55.9,245.7,45.9,258.9,45.9z"
+    />
+    <rect x="308.5" width="6.4" height="106.3" />
+    <path
+      d="M353.6,102c-7.2,0-14-4.5-16.2-13.1l-6.2,1.9c2.7,10.8,11.6,17.2,22.5,17.2c10,0,21.2-5.9,21.2-20.7
+    c0-3.7-0.6-7.2-3.3-10.5c-4.1-5.3-10.2-7-16.7-9.6c-6.4-2.5-11.5-4.6-11.5-11c0-4.8,3.7-10.4,11-10.4c4.9-0.1,9.4,2.8,11.3,7.3
+    l5.4-2.8c-3-7-9.4-10.5-17-10.5c-9.9,0-17.4,6.9-17.4,16.7c0,3.1,1,6,2.9,8.5c2.9,3.8,7.6,5.9,14.2,8.6c9.9,4,14.5,6.7,14.5,14
+    C368.1,96.1,361.9,102,353.6,102z"
+    />
+    <path
+      d="M397.3,68.7c0-12.9,5.3-22.8,16.6-22.8c14,0,14.3,14.5,14.3,18.6v41.8h6.4V67.1c0-4,0.2-21.2,17.4-21.2
+    c3.6-0.2,7.1,1.2,9.7,3.7c3.5,3.7,3.8,9.1,3.8,13.4v43.3h6.4V63c0-5.3-0.3-12.4-5.6-17.7c-2.9-2.9-7.5-5.4-14.7-5.4
+    c-8.6,0-15.6,4-19.3,11.8c-1.3-3.3-5.4-11.8-18.2-11.8c-7-0.3-13.5,3.4-16.9,9.6v-8.1H391v65h6.3V68.7z"
+    />
+    <path
+      d="M522.5,108.1c10.2,0.2,19.7-4.9,25.3-13.4v11.6h6.4v-65h-6.4v11.4c-6.2-8.8-15.1-12.8-25.3-12.8
+    c-19,0-31.7,13.9-31.7,33.9C490.8,95.2,505.4,108.1,522.5,108.1z M522.8,45.9c11.2,0,25.3,8.1,25.3,27.4c0,15-8.9,28.7-25.2,28.7
+    c-16.4,0-25.5-14-25.5-28.7C497.5,55.6,509.9,45.9,522.8,45.9z"
+    />
+    <path
+      d="M583.5,72.5c0-6.4,0.6-12.4,3.5-17.5c2.4-4.3,7-9.1,15.9-9.1c7.8,0,11.3,4,12.8,6.4c2.4,3.7,2.5,8.6,2.5,13.1
+    v41h6.4v-41c0-5.7-0.3-11.8-3.2-16.4c-1.4-2.2-6.4-9.1-18-9.1c-11,0-16.9,6.2-19.9,11.6V41.3h-6.4v65h6.4V72.5z"
+    />
+    <path
+      d="M653.9,72.5c0-6.4,0.6-12.4,3.5-17.5c2.4-4.3,7-9.1,15.9-9.1c7.8,0,11.3,4,12.8,6.4c2.4,3.7,2.5,8.6,2.5,13.1
+    v41h6.4v-41c0-5.7-0.3-11.8-3.2-16.4c-1.4-2.2-6.4-9.1-18-9.1c-11,0-16.9,6.2-19.9,11.6V41.3h-6.4l0,65h6.4V72.5z"
+    />
+    <path
+      d="M329.9,162.6h-9.5v64.2h9.5c19.3,0,32.5-13.1,32.5-32.1C362.5,176.1,349.1,162.6,329.9,162.6z"
+    />
+    <polygon points="389.3,202.9 416.9,202.9 403.2,168.3  " />
+    <path
+      d="M543.6,161.6c-18.8,0-32.8,14.6-32.8,33.3c0,18.7,14,33.2,32.8,33.2s32.8-14.6,32.8-33.2h0
+    C576.5,176.2,562.5,161.6,543.6,161.6z"
+    />
+    <path
+      d="M106.8,161.6C88,161.6,74,176.2,74,194.9c0,18.7,14,33.2,32.8,33.2c18.8,0,32.8-14.6,32.8-33.2h0.1
+    C139.6,176.2,125.6,161.6,106.8,161.6z"
+    />
+    <path
+      d="M0,122.5v144.1h695.1V122.5H0z M61.3,162.6H36.5v26.5h24.1v4.4H36.5v37.8h-4.8v-73h29.6V162.6z M144.6,194.9
+    c0,21-16.5,37.5-37.9,37.5c-21.3,0-37.9-16.5-37.9-37.5c0-20.9,17-37.9,37.9-37.9S144.6,174,144.6,194.9L144.6,194.9z M210.1,203.9
+    c0,8-0.4,13.2-4.2,18.7c-5.5,8-14.1,9.8-20.7,9.8s-15.2-1.9-20.7-9.8c-3.7-5.5-4.2-10.7-4.2-18.7v-45.6h4.7v45.6
+    c0,6.9,0.3,11.4,3.1,15.8c4.3,6.9,12.3,8.4,17,8.4c4.7,0,12.7-1.5,17-8.4c2.7-4.4,3.1-8.9,3.1-15.8v-45.7h4.8V203.9z M295.8,233.1
+    L234.6,169v62.3l-4.9,0v-73.8l61.3,64.2v-63.4h4.8V233.1z M357,221.1c-9.2,9.2-20.5,10.2-26.9,10.2l-14.5,0v-73H330
+    c6.5,0,17.7,1,26.9,10.2c7.8,7.8,10.5,18.4,10.5,26.4S364.8,213.3,357,221.1z M428.4,231.3l-9.7-24h-31.1l-9.7,24h-5.3l30.8-75.2
+    l30.3,75.2H428.4z M473.8,162.6h-18.9v68.6H450v-68.6h-18.9v-4.4h42.7V162.6z M490,231.2h-4.8v-73h4.8V231.2z M581.5,194.9
+    c0,21-16.5,37.5-37.9,37.5s-37.9-16.5-37.9-37.5c0-20.9,17-37.9,37.9-37.9S581.5,174,581.5,194.9L581.5,194.9z M663.3,233.1
+    L602,169v62.3l-4.8,0v-73.8l61.3,64.2v-63.4h4.8V233.1z"
+    />
+    </g>
+</svg>
+      <div class="f-meta">
+        <p class="idx">Washington, D.C. · 38.90°N 77.04°W</p>
+        <p class="f-soc">
+          <a href="#">LinkedIn</a><a href="#">X</a><a href="#">YouTube</a><a href="#">Email</a>
+        </p>
+      </div>
+    </div>
+
+    <div class="f-cols cols4">
+      <nav aria-label="About">
+        <h3><svg class="tick-arc" viewBox="0 0 28 14" aria-hidden="true" focusable="false"><path d="M2 12 Q14 -1 26 6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="2" cy="12" r="2" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="26" cy="6" r="2" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>About</h3>
+        <ul>
+          <li><a href="#">Mission</a></li>
+          <li><a href="#">Board of Directors</a></li>
+          <li><a href="#">Team</a></li>
+          <li><a href="#">Bertelsmann Stiftung <span aria-hidden="true">↗</span></a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </nav>
+      <nav aria-label="Programs">
+        <h3><svg class="tick-arc" viewBox="0 0 28 14" aria-hidden="true" focusable="false"><path d="M2 12 Q14 -1 26 6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="2" cy="12" r="2" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="26" cy="6" r="2" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>Programs</h3>
+        <ul>
+          <li><a href="#">Democracy</a></li>
+          <li><a href="#">Transatlantic Relations &amp; Global Challenges</a></li>
+          <li><a href="#">Future Leadership</a></li>
+        </ul>
+      </nav>
+      <nav aria-label="Projects">
+        <h3><svg class="tick-arc" viewBox="0 0 28 14" aria-hidden="true" focusable="false"><path d="M2 12 Q14 -1 26 6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="2" cy="12" r="2" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="26" cy="6" r="2" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>Projects</h3>
+        <ul>
+          <li><a href="#">Transatlantic Barometer</a></li>
+          <li><a href="#">Transatlantic Periscope</a></li>
+          <li><a href="#">RANGE</a></li>
+          <li><a href="#">How to Fix Democracy</a></li>
+          <li><a href="#">Fellowship</a></li>
+          <li><a href="#">All projects</a></li>
+        </ul>
+      </nav>
+      <nav aria-label="Insights">
+        <h3><svg class="tick-arc" viewBox="0 0 28 14" aria-hidden="true" focusable="false"><path d="M2 12 Q14 -1 26 6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="2" cy="12" r="2" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="26" cy="6" r="2" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>Insights</h3>
+        <ul>
+          <li><a href="#">All insights</a></li>
+          <li><a href="#">Articles</a></li>
+          <li><a href="#">Reports</a></li>
+          <li><a href="#">Videos</a></li>
+          <li><a href="#">Infographics</a></li>
+          <li><a href="#">Transponder Magazine <span aria-hidden="true">↗</span></a></li>
+          <li><a href="#">Archive</a></li>
+        </ul>
+      </nav>
+    </div>
+
+    <p class="legal">© 2026 Bertelsmann Foundation North America · Privacy Policy · Site by ccm.design</p>
+  </div>
+</footer>
+
+<aside class="spec" aria-label="Direction specification">
+  <div class="wrap">
+    <p class="spec__tag">Proof sheet · not part of the site</p>
+    <h2>04 · Great Circle (Cartographic)</h2>
+    <dl>
+      <dt>Typefaces</dt>
+      <dd>IBM Plex Sans 400/500/600 — display and body. IBM Plex Mono 400/500 — coordinates, indices, metadata.</dd>
+      <dt>Scale</dt>
+      <dd>H1 84 · Product 72 · Programme 36 · Project 28 · Ticker 22 · Highlight 20 · Body 17 · Mono 13.</dd>
+      <dt>Grid</dt>
+      <dd>Max 1400 · 12 columns · 24px gutters · meridian rule every column on navy bands.</dd>
+      <dt>Rhythm</dt>
+      <dd>Navy (hero, programs) → ivory (projects, insights) → navy (footer).</dd>
+    </dl>
+    <ul class="sw">
+      <li><i style="background:#00243A"></i>#00243A navy</li>
+      <li><i style="background:#001B2C"></i>#001B2C deep</li>
+      <li><i style="background:#F2EEE6"></i>#F2EEE6 ivory</li>
+      <li><i style="background:#0B1F2E"></i>#0B1F2E ink</li>
+      <li><i style="background:#2AA5B3"></i>#2AA5B3 teal/d</li>
+      <li><i style="background:#EEAC49"></i>#EEAC49 amber/d</li>
+      <li><i style="background:#E5566A"></i>#E5566A red/d</li>
+      <li><i style="background:#116F7E"></i>#116F7E teal/l</li>
+      <li><i style="background:#A3680F"></i>#A3680F ochre/l</li>
+      <li><i style="background:#CF4457"></i>#CF4457 red/l</li>
+    </ul>
+    <ol class="prin">
+      <li>Lines, not fills. The arc, the meridians and the hairline frames carry the identity; nothing is shaded, glowed or rounded.</li>
+      <li>Colour is data. The three programme hues appear only as a 2px tick or a 9px dot — never as a field, never as body text.</li>
+      <li>Dark states the argument, light presents the evidence. The great circle is drawn once, at plate scale; everywhere else it is a 26px marker.</li>
+    </ol>
+  </div>
+</aside>
+
+</body>
+</html>

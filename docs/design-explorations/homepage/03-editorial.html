@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bertelsmann Foundation North America — Journal of Record (Editorial)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,100..900,0..100,0..1;1,9..144,100..900,0..100,0..1&family=Inter:wght@400;500;600;700&display=swap">
+<style>
+/* ============================================================
+   03 · JOURNAL OF RECORD — editorial art direction
+   Paper, ink, rules. Colour never carries structure.
+   ============================================================ */
+
+:root{
+  --paper:      #F6F2EA;
+  --paper-2:    #EFEAE0;   /* very slight tone for the magazine promo well */
+  --ink:        #141210;
+  --ink-2:      #554C42;   /* secondary text, 6.5:1 on paper */
+  --rule:       #141210;
+  --hairline:   rgba(20,18,16,.26);
+  --hairline-2: rgba(20,18,16,.14);
+  --accent:     #B5333F;   /* the single accent: links, kickers, folios */
+  --navy:       #003C5C;   /* footer only */
+  --prog-dem:   #116F7E;   /* Democracy */
+  --prog-tr:    #8A5709;   /* Transatlantic Relations & Global Challenges */
+  --prog-fl:    #C23C4A;   /* Future Leadership */
+  --gutter:     32px;
+}
+
+*,*::before,*::after{ box-sizing:border-box; }
+
+html{ -webkit-text-size-adjust:100%; }
+
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:"Inter",-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;
+  font-size:17px;
+  line-height:1.62;
+  font-feature-settings:"kern" 1,"liga" 1;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+
+img{ display:block; max-width:100%; height:auto; }
+
+a{ color:inherit; }
+
+a:focus-visible,
+:focus-visible{
+  outline:2px solid var(--accent);
+  outline-offset:3px;
+}
+
+/* ---------- typographic primitives ---------- */
+
+.fr{
+  font-family:"Fraunces",Georgia,"Times New Roman",serif;
+  font-variation-settings:"opsz" 144,"wght" 700,"SOFT" 0,"WONK" 0;
+  letter-spacing:-.02em;
+  line-height:.95;
+  font-weight:700;
+}
+
+.kicker{
+  font-size:13px;
+  line-height:1.3;
+  font-weight:600;
+  letter-spacing:.09em;
+  text-transform:uppercase;
+  font-feature-settings:"tnum" 1;
+}
+
+.meta{
+  font-size:13px;
+  line-height:1.4;
+  letter-spacing:.07em;
+  text-transform:uppercase;
+  color:var(--ink-2);
+  font-feature-settings:"tnum" 1;
+}
+
+.textlink{
+  color:var(--accent);
+  font-weight:600;
+  text-decoration:underline;
+  text-decoration-thickness:1px;
+  text-underline-offset:4px;
+}
+.textlink:hover{ text-decoration-thickness:2px; }
+
+/* the two structural devices: the hairline and the double rule */
+.rule{ border:0; border-top:1px solid var(--rule); margin:0; }
+.rule-double{
+  height:5px;
+  border-top:3px solid var(--rule);
+  border-bottom:1px solid var(--rule);
+  margin:0;
+}
+
+/* ---------- shell ---------- */
+
+.wrap{
+  max-width:1448px;      /* 1320 of content + 2 × 64 margin */
+  margin:0 auto;
+  padding:0 64px;
+  position:relative;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(12,minmax(0,1fr));
+  column-gap:var(--gutter);
+}
+
+/* ---------- announcement strip ---------- */
+
+.notice{
+  border-bottom:1px solid var(--hairline);
+  background:var(--paper);
+}
+.notice a{
+  display:flex;
+  align-items:baseline;
+  gap:16px;
+  padding:11px 0;
+  text-decoration:none;
+}
+.notice .flag{
+  color:var(--accent);
+  white-space:nowrap;
+  border-bottom:2px solid var(--accent);
+  padding-bottom:1px;
+}
+.notice .body{
+  font-size:15px;
+  line-height:1.4;
+  color:var(--ink);
+}
+.notice a:hover .body{ text-decoration:underline; text-underline-offset:3px; }
+.notice .arrow{ margin-left:auto; color:var(--accent); font-size:15px; }
+
+/* ---------- masthead ---------- */
+
+.masthead{ padding-top:26px; }
+
+.masthead__row{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);
+  align-items:center;
+  gap:24px;
+  padding-bottom:22px;
+}
+
+.wordmark{ width:214px; height:auto; color:var(--ink); }
+.masthead__home{ display:inline-block; text-decoration:none; }
+
+.dateline{
+  text-align:center;
+  font-size:13px;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:var(--ink-2);
+  white-space:nowrap;
+}
+
+.masthead__search{ justify-self:end; }
+.search{
+  display:inline-flex;
+  align-items:baseline;
+  gap:10px;
+  text-decoration:none;
+  border-bottom:1px solid var(--rule);
+  padding-bottom:4px;
+  font-size:13px;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  font-weight:600;
+}
+.search:hover{ color:var(--accent); border-color:var(--accent); }
+
+.nav{ padding:12px 0 13px; }
+.nav ul{
+  list-style:none;
+  margin:0; padding:0;
+  display:flex;
+  flex-wrap:wrap;
+  gap:0 40px;
+}
+.nav a{
+  text-decoration:none;
+  font-size:14px;
+  font-weight:600;
+  letter-spacing:.11em;
+  text-transform:uppercase;
+}
+.nav a:hover{ color:var(--accent); }
+.nav .ext{ font-size:12px; vertical-align:2px; }
+
+/* ---------- bands ---------- */
+
+.band{ padding:0 0 88px; position:relative; }
+.band__head{
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  gap:32px;
+  padding:18px 0 34px;
+}
+.band__title{
+  margin:0;
+  font-family:"Fraunces",Georgia,"Times New Roman",serif;
+  font-size:clamp(30px,3.1vw,44px);
+  font-variation-settings:"opsz" 96,"wght" 700,"SOFT" 0,"WONK" 0;
+}
+.band__link{ white-space:nowrap; font-size:15px; }
+
+/* folio-style band number, set out in the margin */
+.folio{
+  position:absolute;
+  left:10px;
+  top:24px;
+  width:38px;
+  margin:0;
+  text-align:right;
+  font-family:"Fraunces",Georgia,serif;
+  font-variation-settings:"opsz" 24,"wght" 600,"SOFT" 0,"WONK" 0;
+  font-size:16px;
+  line-height:1;
+  letter-spacing:.08em;
+  color:var(--accent);
+}
+
+/* ---------- band I — front page ---------- */
+
+.hero{ padding-top:0; }
+.hero__inner{ padding-top:40px; }
+
+.hero__lead{ grid-column:1 / span 8; min-width:0; }
+.hero__rail{
+  grid-column:9 / span 4;
+  min-width:0;
+  border-left:1px solid var(--hairline);
+  padding-left:var(--gutter);
+}
+
+h1{
+  margin:0 0 30px;
+  font-family:"Fraunces",Georgia,"Times New Roman",serif;
+  font-size:clamp(40px,7.2vw,104px);
+  font-variation-settings:"opsz" 144,"wght" 700,"SOFT" 0,"WONK" 0;
+  letter-spacing:-.022em;
+  line-height:.94;
+  text-wrap:balance;
+}
+
+.lede{
+  max-width:62ch;
+  width:66%;
+  margin:0 0 26px;
+  font-family:"Fraunces",Georgia,serif;
+  font-style:italic;
+  font-variation-settings:"opsz" 72,"wght" 400,"SOFT" 0,"WONK" 1;
+  font-size:24px;
+  line-height:1.45;
+  letter-spacing:-.005em;
+}
+/* the page's one drop cap */
+.lede::first-letter{
+  float:left;
+  font-family:"Fraunces",Georgia,serif;
+  font-style:normal;
+  font-variation-settings:"opsz" 144,"wght" 700,"SOFT" 0,"WONK" 0;
+  font-size:119px;
+  line-height:.62;
+  padding:16px 13px 0 0;
+  color:var(--ink);
+}
+
+.hero__cta{ font-size:18px; }
+
+.hero__art{ margin:52px 0 0; }
+.hero__art img{
+  width:100%;
+  height:auto;
+  aspect-ratio:21 / 9;
+  object-fit:cover;
+  object-position:50% 44%;
+}
+.caption{
+  margin:10px 0 0;
+  font-family:"Fraunces",Georgia,serif;
+  font-style:italic;
+  font-variation-settings:"opsz" 14,"wght" 400,"SOFT" 0,"WONK" 0;
+  font-size:13px;
+  line-height:1.45;
+  color:var(--ink-2);
+  max-width:56ch;
+}
+
+/* right rail */
+.rail__label{
+  margin:0 0 16px;
+  padding-bottom:10px;
+  border-bottom:1px solid var(--rule);
+  color:var(--accent);
+}
+.rail__item{ padding:20px 0; border-bottom:1px solid var(--hairline); }
+.rail__item:first-of-type{ padding-top:0; }
+.rail__item:last-of-type{ border-bottom:0; }
+.rail__dateline{ margin:0 0 7px; font-size:12px; }
+.rail__title{
+  margin:0 0 6px;
+  font-family:"Fraunces",Georgia,serif;
+  font-variation-settings:"opsz" 30,"wght" 600,"SOFT" 0,"WONK" 0;
+  font-size:21px;
+  line-height:1.16;
+  letter-spacing:-.012em;
+}
+.rail__title a{ text-decoration:none; }
+.rail__title a:hover{ color:var(--accent); }
+.rail__excerpt{ margin:0; font-size:15px; line-height:1.5; color:var(--ink-2); }
+
+/* ---------- band II — programs ---------- */
+
+.programs{ grid-template-columns:repeat(3,minmax(0,1fr)); column-gap:0; }
+.program{ padding:0 40px; min-width:0; }
+.program:first-child{ padding-left:0; }
+.program:last-child{ padding-right:0; }
+.program + .program{ border-left:1px solid var(--hairline); }
+
+.program__kicker{ margin:0 0 14px; }
+.program__name{
+  margin:0 0 16px;
+  font-family:"Fraunces",Georgia,serif;
+  font-variation-settings:"opsz" 72,"wght" 700,"SOFT" 0,"WONK" 0;
+  font-size:clamp(28px,2.9vw,44px);
+  line-height:1;
+  letter-spacing:-.02em;
+}
+.program__name a{ text-decoration:none; }
+.program__name a:hover{ color:var(--accent); }
+.program__intro{ margin:0 0 20px; font-size:17px; }
+.program__more{ font-size:15px; }
+
+.p-dem{ color:var(--prog-dem); }
+.p-tr { color:var(--prog-tr);  }
+.p-fl { color:var(--prog-fl);  }
+
+/* ---------- band III — featured projects ---------- */
+
+.projects{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  column-gap:var(--gutter);
+  row-gap:52px;
+}
+.project{ border-top:1px solid var(--rule); padding-top:20px; min-width:0; }
+.project__kicker{ margin:0 0 16px; }
+.project__fig{ margin:0; }
+.project__fig img{ width:100%; height:auto; aspect-ratio:3 / 2; object-fit:cover; }
+.project__title{
+  margin:14px 0 8px;
+  font-family:"Fraunces",Georgia,serif;
+  font-variation-settings:"opsz" 60,"wght" 600,"SOFT" 0,"WONK" 0;
+  font-size:clamp(24px,2vw,28px);
+  line-height:1.1;
+  letter-spacing:-.017em;
+}
+.project__title a{ text-decoration:none; }
+.project__title a:hover{ color:var(--accent); }
+.project__excerpt{ margin:0; font-size:17px; max-width:56ch; color:var(--ink-2); }
+.ext{ font-size:.72em; vertical-align:.28em; color:var(--accent); }
+
+/* ---------- band IV — insights ---------- */
+
+.promo{
+  border-top:1px solid var(--rule);
+  border-bottom:1px solid var(--rule);
+  padding:40px 0 44px;
+  margin-bottom:60px;
+  background:var(--paper-2);
+}
+.promo__inner{ align-items:center; }
+.promo__cover{ grid-column:1 / span 4; min-width:0; }
+.promo__cover .frame{ border:1px solid var(--rule); padding:9px; background:var(--paper); }
+.promo__cover img{ width:100%; height:auto; }
+.promo__body{ grid-column:6 / span 7; min-width:0; }
+.promo__kicker{ margin:0 0 18px; color:var(--accent); }
+.promo__title{
+  margin:0 0 20px;
+  font-family:"Fraunces",Georgia,serif;
+  font-variation-settings:"opsz" 144,"wght" 700,"SOFT" 0,"WONK" 0;
+  font-size:clamp(34px,4.5vw,64px);
+  line-height:.98;
+  letter-spacing:-.024em;
+}
+.promo__title em{
+  font-style:italic;
+  font-variation-settings:"opsz" 144,"wght" 700,"SOFT" 0,"WONK" 1;
+}
+.promo__text{ margin:0 0 24px; font-size:18px; max-width:52ch; }
+
+.subhead{
+  display:flex;
+  align-items:baseline;
+  gap:20px;
+  margin:0 0 24px;
+  padding-bottom:9px;
+  border-bottom:1px solid var(--rule);
+}
+.subhead span:first-child{ white-space:nowrap; }
+.subhead .fill{ flex:1 1 auto; }
+.subhead a{ font-size:14px; }
+
+.highlights{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  column-gap:var(--gutter);
+  margin-bottom:64px;
+}
+.highlight{ min-width:0; }
+.highlight img{ width:100%; height:auto; aspect-ratio:4 / 3; object-fit:cover; margin-bottom:14px; }
+.highlight__kicker{ margin:0 0 8px; font-size:12px; letter-spacing:.08em; }
+.highlight__title{
+  margin:0;
+  font-family:"Fraunces",Georgia,serif;
+  font-variation-settings:"opsz" 36,"wght" 600,"SOFT" 0,"WONK" 0;
+  font-size:22px;
+  line-height:1.15;
+  letter-spacing:-.015em;
+}
+.highlight__title a{ text-decoration:none; }
+.highlight__title a:hover{ color:var(--accent); }
+
+.latest{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); column-gap:0; }
+.latest__col{ min-width:0; }
+.latest__col:first-child{ padding-right:48px; }
+.latest__col:last-child{ padding-left:48px; border-left:1px solid var(--hairline); }
+.entry{ padding:22px 0; border-top:1px solid var(--hairline); }
+.latest__col > .entry:first-child{ border-top:0; padding-top:0; }
+.entry__meta{ margin:0 0 8px; font-size:12px; }
+.entry__meta .sep{ color:var(--hairline); padding:0 6px; }
+.entry__title{
+  margin:0 0 7px;
+  font-family:"Fraunces",Georgia,serif;
+  font-variation-settings:"opsz" 48,"wght" 600,"SOFT" 0,"WONK" 0;
+  font-size:26px;
+  line-height:1.12;
+  letter-spacing:-.018em;
+}
+.entry__title a{ text-decoration:none; }
+.entry__title a:hover{ color:var(--accent); }
+.entry__excerpt{ margin:0; font-size:16px; line-height:1.55; color:var(--ink-2); max-width:54ch; }
+
+/* ---------- footer ---------- */
+
+.site-footer{
+  background:var(--navy);
+  color:var(--paper);
+  padding:0 0 52px;
+  margin-top:24px;
+}
+.site-footer .rule-double{ border-color:rgba(246,242,234,.85); }
+.site-footer a{ color:var(--paper); text-decoration:none; }
+.site-footer a:hover{ text-decoration:underline; text-underline-offset:3px; }
+.site-footer a:focus-visible{ outline-color:var(--paper); }
+.site-footer .ext{ color:inherit; }
+
+.footer__top{ padding-top:44px; }
+.footer__wordmark{
+  width:min(560px,100%);
+  height:auto;
+  color:var(--paper);
+}
+.footer__place{
+  margin:22px 0 0;
+  font-size:13px;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:rgba(246,242,234,.78);
+}
+
+.footer__cols{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  column-gap:var(--gutter);
+  row-gap:36px;
+  padding:46px 0 40px;
+  margin-top:40px;
+  border-top:1px solid rgba(246,242,234,.3);
+}
+.footer__col h2{
+  margin:0 0 16px;
+  font-size:13px;
+  font-weight:600;
+  letter-spacing:.11em;
+  text-transform:uppercase;
+  color:rgba(246,242,234,.72);
+}
+.footer__col ul{ list-style:none; margin:0; padding:0; }
+.footer__col li{ margin-bottom:9px; }
+.footer__col a{ font-size:16px; }
+
+.colophon{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px 26px;
+  padding-top:26px;
+  border-top:1px solid rgba(246,242,234,.3);
+  font-size:13px;
+  color:rgba(246,242,234,.8);
+}
+.colophon .social{ margin-left:auto; display:flex; gap:22px; }
+
+/* ---------- direction spec strip (proof sheet — not part of the site) ---------- */
+
+.spec{
+  background:#DCD8D0;
+  color:#1B1815;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  font-size:12px;
+  line-height:1.6;
+  padding:28px 0 34px;
+  border-top:1px solid rgba(20,18,16,.35);
+}
+.spec__grid{
+  display:grid;
+  grid-template-columns:1.05fr 1fr 1.5fr;
+  gap:32px;
+}
+.spec h2{
+  margin:0 0 12px;
+  font-family:inherit;
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+}
+.spec p, .spec ol{ margin:0 0 6px; }
+.spec ol{ padding-left:16px; }
+.spec li{ margin-bottom:4px; }
+.spec__swatches{ display:flex; flex-wrap:wrap; gap:10px; margin-top:4px; }
+.spec__sw{ width:104px; }
+.spec__chip{ height:34px; border:1px solid rgba(20,18,16,.45); }
+.spec__hex{ display:block; margin-top:5px; font-size:12px; letter-spacing:.02em; }
+.spec__note{ margin-top:16px; font-size:12px; color:#4A443D; }
+
+/* ---------- responsive ---------- */
+
+@media (max-width:1200px){
+  .wrap{ padding:0 40px; }
+  .folio{ position:static; width:auto; text-align:left; display:block; padding-top:16px; }
+  .lede{ width:80%; }
+  .promo__body{ grid-column:6 / span 7; }
+}
+
+@media (max-width:1024px){
+  :root{ --gutter:24px; }
+  .hero__lead{ grid-column:1 / span 12; }
+  .hero__rail{
+    grid-column:1 / span 12;
+    border-left:0;
+    border-top:1px solid var(--rule);
+    padding-left:0;
+    padding-top:26px;
+    margin-top:52px;
+  }
+  .hero__rail .rail__items{
+    display:grid;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    column-gap:24px;
+  }
+  .rail__item{ padding-top:0; border-bottom:0; }
+  .lede{ width:100%; }
+  .highlights{ grid-template-columns:repeat(2,minmax(0,1fr)); row-gap:36px; }
+  .promo__cover{ grid-column:1 / span 5; }
+  .promo__body{ grid-column:7 / span 6; }
+  .footer__cols{ grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .footer__wordmark{ width:min(440px,100%); }
+}
+
+@media (max-width:760px){
+  body{ font-size:17px; }
+  .wrap{ padding:0 20px; }
+  .masthead__row{
+    grid-template-columns:1fr;
+    gap:16px;
+    padding-bottom:18px;
+  }
+  .dateline{ text-align:left; white-space:normal; }
+  .masthead__search{ justify-self:start; }
+  .wordmark{ width:186px; }
+  .nav ul{ gap:0 22px; }
+  .nav a{ font-size:13px; }
+  .notice a{ flex-wrap:wrap; gap:6px 14px; }
+  .notice .arrow{ margin-left:0; }
+
+  h1{ letter-spacing:-.015em; }
+  .lede{ font-size:21px; }
+  .lede::first-letter{ font-size:92px; padding:6px 9px 0 0; }
+  .hero__art img{ aspect-ratio:4 / 3; }
+  .hero__rail .rail__items{ grid-template-columns:1fr; }
+  .rail__item{ padding:18px 0; border-bottom:1px solid var(--hairline); }
+  .rail__item:first-of-type{ padding-top:0; }
+  .rail__item:last-of-type{ border-bottom:0; }
+
+  .band{ padding-bottom:60px; }
+  .band__head{ flex-direction:column; align-items:flex-start; gap:10px; padding-bottom:24px; }
+
+  .programs{ grid-template-columns:1fr; }
+  .program{ padding:26px 0; border-left:0 !important; }
+  .program:first-child{ padding-top:0; }
+  .program + .program{ border-top:1px solid var(--hairline); }
+
+  .projects{ grid-template-columns:1fr; row-gap:40px; }
+
+  .promo{ padding:28px 0 32px; margin-bottom:44px; }
+  .promo__cover{ grid-column:1 / span 12; margin-bottom:26px; }
+  .promo__cover .frame{ max-width:280px; }
+  .promo__body{ grid-column:1 / span 12; }
+
+  .highlights{ grid-template-columns:1fr; row-gap:30px; margin-bottom:44px; }
+  .highlight img{ aspect-ratio:16 / 9; }
+
+  .latest{ grid-template-columns:1fr; }
+  .latest__col:first-child{ padding-right:0; }
+  .latest__col:last-child{ padding-left:0; border-left:0; }
+  .latest__col:last-child > .entry:first-child{ border-top:1px solid var(--hairline); padding-top:22px; }
+
+  .footer__cols{ grid-template-columns:1fr; row-gap:28px; padding:34px 0 30px; margin-top:30px; }
+  .footer__wordmark{ width:100%; }
+  .colophon{ flex-direction:column; }
+  .colophon .social{ margin-left:0; }
+
+  .spec__grid{ grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- wordmark, inlined once and referenced twice so it takes currentColor -->
+<svg width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute">
+  <symbol id="bfna-wordmark" viewBox="0 0 695.1 266.6">
+    <g fill="currentColor">
+      <path d="M62.2,76.5c0-13.7-8.1-24.4-22-26.6c7-4.3,12.4-11.8,12.4-23.3C52.6,10.7,41.8,0,23.3,0H0v106.3h29.2 C48.4,106.3,62.2,95.1,62.2,76.5z M7,6.4h13.5c5.6,0,12.5,0.3,17.7,4.5c3.5,2.9,7.2,8.1,7.2,16.6c0,7.3-2.7,12.7-7,16.2 c-4.6,3.8-9.1,4.5-14.5,4.5H7V6.4z M7,99.9V54.5h16.6c11.8,0,17.1,1.7,19.9,3c8,3.7,11.3,10.2,11.3,19.8c0,4.9-1.1,11.2-6.9,16.3 c-7.2,6.4-15.9,6.4-23.1,6.4H7z"/>
+      <path d="M110.1,108c16.1,0,24.7-10.3,28.5-17.6l-5.4-3.2c-4.1,8.6-12.1,14.8-22.6,14.8c-13.7,0-25.8-10.8-25.8-27.4 l55.6-0.1c0-20.7-13.2-34.7-30.8-34.7c-15.9,0-31.5,11.6-31.5,34.2C78.1,93,89.9,108,110.1,108z M109.6,46 c12.9,0,22.5,9.7,24.1,22.6l-48.4-0.1C87,55.9,96.4,45.9,109.6,46z"/>
+      <path d="M165.6,106.3V71.4c0-8.1,0.2-25.5,13.2-25.5c2.9,0,4.1,0.8,4.8,1.3l3.1-5.8c-2.1-1.1-4.5-1.6-6.8-1.6 c-7,0-12,4.3-14.3,9.9v-8.4h-6.4l0,65H165.6z"/>
+      <polygon points="201.1,106.3 207.5,106.3 207.5,47.3 218.8,47.3 218.8,41.3 207.5,41.3 207.5,18 201.1,18 201.1,41.3 193.9,41.3 193.9,47.3 201.1,47.3"/>
+      <path d="M259.4,108c16.1,0,24.7-10.3,28.5-17.6l-5.4-3.2c-4.1,8.6-12.1,14.8-22.6,14.8c-13.7,0-25.8-10.8-25.8-27.4 l55.6-0.1c0-20.7-13.2-34.7-30.7-34.7c-15.9,0-31.5,11.6-31.5,34.2C227.4,93,239.2,108,259.4,108z M258.9,45.9 c12.9,0,22.5,9.7,24.1,22.7l-48.4-0.1C236.3,55.9,245.7,45.9,258.9,45.9z"/>
+      <rect x="308.5" width="6.4" height="106.3"/>
+      <path d="M353.6,102c-7.2,0-14-4.5-16.2-13.1l-6.2,1.9c2.7,10.8,11.6,17.2,22.5,17.2c10,0,21.2-5.9,21.2-20.7 c0-3.7-0.6-7.2-3.3-10.5c-4.1-5.3-10.2-7-16.7-9.6c-6.4-2.5-11.5-4.6-11.5-11c0-4.8,3.7-10.4,11-10.4c4.9-0.1,9.4,2.8,11.3,7.3 l5.4-2.8c-3-7-9.4-10.5-17-10.5c-9.9,0-17.4,6.9-17.4,16.7c0,3.1,1,6,2.9,8.5c2.9,3.8,7.6,5.9,14.2,8.6c9.9,4,14.5,6.7,14.5,14 C368.1,96.1,361.9,102,353.6,102z"/>
+      <path d="M397.3,68.7c0-12.9,5.3-22.8,16.6-22.8c14,0,14.3,14.5,14.3,18.6v41.8h6.4V67.1c0-4,0.2-21.2,17.4-21.2 c3.6-0.2,7.1,1.2,9.7,3.7c3.5,3.7,3.8,9.1,3.8,13.4v43.3h6.4V63c0-5.3-0.3-12.4-5.6-17.7c-2.9-2.9-7.5-5.4-14.7-5.4 c-8.6,0-15.6,4-19.3,11.8c-1.3-3.3-5.4-11.8-18.2-11.8c-7-0.3-13.5,3.4-16.9,9.6v-8.1H391v65h6.3V68.7z"/>
+      <path d="M522.5,108.1c10.2,0.2,19.7-4.9,25.3-13.4v11.6h6.4v-65h-6.4v11.4c-6.2-8.8-15.1-12.8-25.3-12.8 c-19,0-31.7,13.9-31.7,33.9C490.8,95.2,505.4,108.1,522.5,108.1z M522.8,45.9c11.2,0,25.3,8.1,25.3,27.4c0,15-8.9,28.7-25.2,28.7 c-16.4,0-25.5-14-25.5-28.7C497.5,55.6,509.9,45.9,522.8,45.9z"/>
+      <path d="M583.5,72.5c0-6.4,0.6-12.4,3.5-17.5c2.4-4.3,7-9.1,15.9-9.1c7.8,0,11.3,4,12.8,6.4c2.4,3.7,2.5,8.6,2.5,13.1 v41h6.4v-41c0-5.7-0.3-11.8-3.2-16.4c-1.4-2.2-6.4-9.1-18-9.1c-11,0-16.9,6.2-19.9,11.6V41.3h-6.4v65h6.4V72.5z"/>
+      <path d="M653.9,72.5c0-6.4,0.6-12.4,3.5-17.5c2.4-4.3,7-9.1,15.9-9.1c7.8,0,11.3,4,12.8,6.4c2.4,3.7,2.5,8.6,2.5,13.1 v41h6.4v-41c0-5.7-0.3-11.8-3.2-16.4c-1.4-2.2-6.4-9.1-18-9.1c-11,0-16.9,6.2-19.9,11.6V41.3h-6.4l0,65h6.4V72.5z"/>
+      <path d="M329.9,162.6h-9.5v64.2h9.5c19.3,0,32.5-13.1,32.5-32.1C362.5,176.1,349.1,162.6,329.9,162.6z"/>
+      <polygon points="389.3,202.9 416.9,202.9 403.2,168.3"/>
+      <path d="M543.6,161.6c-18.8,0-32.8,14.6-32.8,33.3c0,18.7,14,33.2,32.8,33.2s32.8-14.6,32.8-33.2h0 C576.5,176.2,562.5,161.6,543.6,161.6z"/>
+      <path d="M106.8,161.6C88,161.6,74,176.2,74,194.9c0,18.7,14,33.2,32.8,33.2c18.8,0,32.8-14.6,32.8-33.2h0.1 C139.6,176.2,125.6,161.6,106.8,161.6z"/>
+      <path d="M0,122.5v144.1h695.1V122.5H0z M61.3,162.6H36.5v26.5h24.1v4.4H36.5v37.8h-4.8v-73h29.6V162.6z M144.6,194.9 c0,21-16.5,37.5-37.9,37.5c-21.3,0-37.9-16.5-37.9-37.5c0-20.9,17-37.9,37.9-37.9S144.6,174,144.6,194.9L144.6,194.9z M210.1,203.9 c0,8-0.4,13.2-4.2,18.7c-5.5,8-14.1,9.8-20.7,9.8s-15.2-1.9-20.7-9.8c-3.7-5.5-4.2-10.7-4.2-18.7v-45.6h4.7v45.6 c0,6.9,0.3,11.4,3.1,15.8c4.3,6.9,12.3,8.4,17,8.4c4.7,0,12.7-1.5,17-8.4c2.7-4.4,3.1-8.9,3.1-15.8v-45.7h4.8V203.9z M295.8,233.1 L234.6,169v62.3l-4.9,0v-73.8l61.3,64.2v-63.4h4.8V233.1z M357,221.1c-9.2,9.2-20.5,10.2-26.9,10.2l-14.5,0v-73H330 c6.5,0,17.7,1,26.9,10.2c7.8,7.8,10.5,18.4,10.5,26.4S364.8,213.3,357,221.1z M428.4,231.3l-9.7-24h-31.1l-9.7,24h-5.3l30.8-75.2 l30.3,75.2H428.4z M473.8,162.6h-18.9v68.6H450v-68.6h-18.9v-4.4h42.7V162.6z M490,231.2h-4.8v-73h4.8V231.2z M581.5,194.9 c0,21-16.5,37.5-37.9,37.5s-37.9-16.5-37.9-37.5c0-20.9,17-37.9,37.9-37.9S581.5,174,581.5,194.9L581.5,194.9z M663.3,233.1 L602,169v62.3l-4.8,0v-73.8l61.3,64.2v-63.4h4.8V233.1z"/>
+    </g>
+  </symbol>
+</svg>
+
+<!-- ============ ANNOUNCEMENT ============ -->
+<aside class="notice">
+  <div class="wrap">
+    <a href="#fellowship">
+      <span class="kicker flag">Apply now</span>
+      <span class="body">Bertelsmann Foundation Fellowship 2026 – Strategic Triangle: Exploring the Future of U.S.-EU-Asia Dynamics</span>
+      <span class="arrow" aria-hidden="true">&rarr;</span>
+    </a>
+  </div>
+</aside>
+
+<!-- ============ MASTHEAD ============ -->
+<header class="masthead">
+  <div class="wrap">
+    <div class="masthead__row">
+      <a class="masthead__home" href="#top" aria-label="Bertelsmann Foundation North America — home">
+        <svg class="wordmark" viewBox="0 0 695.1 266.6" role="img" aria-label="Bertelsmann Foundation North America"><use href="#bfna-wordmark"></use></svg>
+      </a>
+      <p class="dateline">Washington, D.C. &middot; Friday, 4 September 2026</p>
+      <div class="masthead__search">
+        <a class="search" href="#search">Search</a>
+      </div>
+    </div>
+
+    <hr class="rule-double">
+
+    <nav class="nav" aria-label="Primary">
+      <ul>
+        <li><a href="#about">About</a></li>
+        <li><a href="#programs">Programs</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#insights">Insights</a></li>
+        <li><a href="#podcasts">Podcasts <span class="ext" aria-hidden="true">&#8599;</span></a></li>
+        <li><a href="#documentaries">Documentaries <span class="ext" aria-hidden="true">&#8599;</span></a></li>
+      </ul>
+    </nav>
+
+    <hr class="rule">
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- ============ I · FRONT PAGE ============ -->
+  <section class="band hero" aria-labelledby="page-title">
+    <div class="wrap">
+      <p class="folio" aria-hidden="true">I</p>
+      <div class="grid hero__inner">
+        <div class="hero__lead">
+          <h1 id="page-title">Strengthening the Transatlantic Relationship</h1>
+          <p class="lede">The Bertelsmann Foundation North America is an independent, nonpartisan think tank dedicated to strengthening the transatlantic partnership and advancing dialogue on the global challenges shaping our future.</p>
+          <p class="hero__cta"><a class="textlink" href="#projects">Explore our work <span aria-hidden="true">&rarr;</span></a></p>
+
+        </div>
+
+        <aside class="hero__rail" aria-labelledby="rail-label">
+          <p class="kicker rail__label" id="rail-label">From the Foundation</p>
+          <div class="rail__items">
+            <article class="rail__item" id="fellowship">
+              <p class="meta rail__dateline">Washington, D.C. &middot; Open call</p>
+              <h3 class="rail__title"><a href="#fellowship">Bertelsmann Foundation Fellowship 2026 – Strategic Triangle: Exploring the Future of U.S.-EU-Asia Dynamics</a></h3>
+            </article>
+            <article class="rail__item">
+              <p class="meta rail__dateline">1 Aug 2025 &middot; Report &amp; documentary</p>
+              <h3 class="rail__title"><a href="#insights">Lithium Rising: The Race for Critical Minerals</a></h3>
+            </article>
+            <article class="rail__item">
+              <p class="meta rail__dateline">1 Oct 2025 &middot; Infographic</p>
+              <h3 class="rail__title"><a href="#insights">Strength in Numbers</a></h3>
+              <p class="rail__excerpt">Multilateral institutions in the Indo-Pacific.</p>
+            </article>
+          </div>
+        </aside>
+      </div>
+
+      <figure class="hero__art">
+        <img src="./assets/hero-homepage.jpg" alt="The coffered interior of a domed rotunda, seen from below, lit through a central oculus." width="1600" height="1067">
+        <figcaption class="caption">Washington, D.C. &middot; Bertelsmann Foundation North America.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ============ II · PROGRAMS ============ -->
+  <section class="band" id="programs" aria-labelledby="programs-title">
+    <div class="wrap">
+      <p class="folio" aria-hidden="true">II</p>
+      <hr class="rule-double">
+      <div class="band__head">
+        <h2 class="band__title" id="programs-title">Programs</h2>
+      </div>
+
+      <div class="grid programs">
+        <article class="program">
+          <p class="kicker program__kicker p-dem">Program 01</p>
+          <h3 class="program__name"><a href="#programs">Democracy</a></h3>
+          <p class="program__intro">Democracies around the world are facing profound challenges, from declining trust in institutions and political polarization to technological disruption and changing social and economic conditions.</p>
+          <p class="program__more"><a class="textlink" href="#programs">Read more <span aria-hidden="true">&rarr;</span></a></p>
+        </article>
+
+        <article class="program">
+          <p class="kicker program__kicker p-tr">Program 02</p>
+          <h3 class="program__name"><a href="#programs">Transatlantic Relations &amp; Global Challenges</a></h3>
+          <p class="program__intro">The transatlantic community is undergoing profound change. Geopolitical competition, economic shifts, technological disruption, and evolving political landscapes are reshaping the global environment and redefining cooperation.</p>
+          <p class="program__more"><a class="textlink" href="#programs">Read more <span aria-hidden="true">&rarr;</span></a></p>
+        </article>
+
+        <article class="program">
+          <p class="kicker program__kicker p-fl">Program 03</p>
+          <h3 class="program__name"><a href="#programs">Future Leadership</a></h3>
+          <p class="program__intro">Strong transatlantic leadership has never been more important. As the United States and Europe confront growing geopolitical uncertainty, effective leadership depends on trust, collaboration, and a shared understanding of the challenges ahead.</p>
+          <p class="program__more"><a class="textlink" href="#programs">Read more <span aria-hidden="true">&rarr;</span></a></p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ III · FEATURED PROJECTS ============ -->
+  <section class="band" id="projects" aria-labelledby="projects-title">
+    <div class="wrap">
+      <p class="folio" aria-hidden="true">III</p>
+      <hr class="rule-double">
+      <div class="band__head">
+        <h2 class="band__title" id="projects-title">Featured Projects</h2>
+        <p class="band__link"><a class="textlink" href="#projects">All projects <span aria-hidden="true">&rarr;</span></a></p>
+      </div>
+
+      <div class="projects">
+        <article class="project">
+          <p class="kicker project__kicker p-tr">Data analysis platform &middot; Transatlantic Relations</p>
+          <figure class="project__fig">
+            <img src="./assets/proj-barometer.jpg" alt="Screenshot of the Transatlantic Barometer platform: a world map annotated with national flags." width="1400" height="897">
+            <figcaption class="caption">31 key transatlantic actors: the United States, Canada, the United Kingdom and the EU-27.</figcaption>
+          </figure>
+          <h3 class="project__title"><a href="#projects">Transatlantic Barometer <span class="ext" aria-hidden="true">&#8599;</span></a></h3>
+          <p class="project__excerpt">A synopsis of the policy positions and engagement of 31 key transatlantic actors.</p>
+        </article>
+
+        <article class="project">
+          <p class="kicker project__kicker p-tr">Interactive multimedia platform &middot; Transatlantic Relations</p>
+          <figure class="project__fig">
+            <img src="./assets/proj-periscope.jpg" alt="Screenshot of the Transatlantic Periscope platform interface." width="1400" height="897">
+            <figcaption class="caption">Expert commentary, media coverage and official policy documents in one place.</figcaption>
+          </figure>
+          <h3 class="project__title"><a href="#projects">Transatlantic Periscope <span class="ext" aria-hidden="true">&#8599;</span></a></h3>
+          <p class="project__excerpt">An interactive tool bringing together expert commentary, media coverage, official policy documents, quantitative data and gray literature on the transatlantic relationship.</p>
+        </article>
+
+        <article class="project">
+          <p class="kicker project__kicker p-dem">Podcast &amp; video series &middot; Democracy</p>
+          <figure class="project__fig">
+            <img src="./assets/proj-htfd.jpg" alt="Video still from How to Fix Democracy: an interviewee against a teal backdrop." width="1000" height="641">
+            <figcaption class="caption">Interviews on democracy&rsquo;s past, present and future.</figcaption>
+          </figure>
+          <h3 class="project__title"><a href="#projects">How to Fix Democracy <span class="ext" aria-hidden="true">&#8599;</span></a></h3>
+          <p class="project__excerpt">Since its origins, democracy has been a work in progress; today, many question its resilience. With Humanity in Action and host Andrew Keen.</p>
+        </article>
+
+        <article class="project">
+          <p class="kicker project__kicker p-fl">Fellowship &middot; Future Leadership</p>
+          <figure class="project__fig">
+            <img src="./assets/proj-fellowship.jpg" alt="A group of Bertelsmann Foundation fellows standing together outdoors." width="1400" height="897">
+            <figcaption class="caption">Emerging leaders from the United States and Europe.</figcaption>
+          </figure>
+          <h3 class="project__title"><a href="#projects">The Bertelsmann Foundation Fellowship</a></h3>
+          <p class="project__excerpt">A five-month transatlantic hybrid experience designed to foster connection and shared understanding among emerging leaders.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ IV · INSIGHTS ============ -->
+  <section class="band" id="insights" aria-labelledby="insights-title">
+    <div class="wrap">
+      <p class="folio" aria-hidden="true">IV</p>
+      <hr class="rule-double">
+      <div class="band__head">
+        <h2 class="band__title" id="insights-title">Insights</h2>
+        <p class="band__link"><a class="textlink" href="#insights">All insights <span aria-hidden="true">&rarr;</span></a></p>
+      </div>
+    </div>
+
+    <!-- product: the magazine promo -->
+    <div class="promo">
+      <div class="wrap">
+        <div class="grid promo__inner">
+          <div class="promo__cover">
+            <div class="frame">
+              <img src="./assets/proj-transponder.jpg" alt="Cover of Transponder magazine, Issue 7: a magenta field with a globe and a control panel." width="1236" height="1600">
+            </div>
+          </div>
+          <div class="promo__body">
+            <p class="kicker promo__kicker">Transponder Magazine &middot; Issue 7</p>
+            <h3 class="promo__title">Transponder, Issue 7 &mdash; <em>The Future</em></h3>
+            <p class="promo__text">The Bertelsmann Foundation&rsquo;s biannual magazine on the issues shaping the transatlantic relationship: short- and long-form articles, interviews and infographics.</p>
+            <p><a class="textlink" href="#insights">Read the issue <span aria-hidden="true">&#8599;</span></a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="wrap">
+      <!-- highlights -->
+      <div class="subhead">
+        <span class="kicker">Highlights</span>
+      </div>
+      <div class="highlights">
+        <article class="highlight">
+          <img src="./assets/ins-lithium.jpg" alt="Report cover for Lithium Rising: a desert landscape under a blue sky." width="1280" height="1280">
+          <p class="kicker highlight__kicker p-tr">Report &amp; documentary &middot; 1 Aug 2025</p>
+          <h3 class="highlight__title"><a href="#insights">Lithium Rising: The Race for Critical Minerals</a></h3>
+        </article>
+        <article class="highlight">
+          <img src="./assets/ins-strength.jpg" alt="Dark navy infographic map of multilateral institutions in the Indo-Pacific." width="1600" height="1600">
+          <p class="kicker highlight__kicker p-tr">Infographic &middot; 1 Oct 2025</p>
+          <h3 class="highlight__title"><a href="#insights">Strength in Numbers</a></h3>
+        </article>
+        <article class="highlight">
+          <img src="./assets/ins-livni.jpg" alt="Video still of Tzipi Livni speaking during an interview." width="1280" height="720">
+          <p class="kicker highlight__kicker p-fl">Video &middot; 14 Nov 2024</p>
+          <h3 class="highlight__title"><a href="#insights">Leadership in Action: Tzipi Livni on negotiating peace</a></h3>
+        </article>
+        <article class="highlight">
+          <img src="./assets/ins-class2025.jpg" alt="Dark poster for Class of 2025: The Geopolitics of Space." width="1600" height="989">
+          <p class="kicker highlight__kicker p-fl">Fellowship call &middot; 10 Dec 2024</p>
+          <h3 class="highlight__title"><a href="#insights">Class of 2025: The Geopolitics of Space</a></h3>
+        </article>
+      </div>
+
+      <!-- latest -->
+      <div class="subhead">
+        <span class="kicker">Latest</span>
+      </div>
+      <div class="latest">
+        <div class="latest__col">
+          <article class="entry">
+            <p class="meta entry__meta">21 Jul 2026 <span class="sep" aria-hidden="true">|</span> <span class="p-tr">Transatlantic Relations</span></p>
+            <h3 class="entry__title"><a href="#insights">The Nuclear Option</a></h3>
+            <p class="entry__excerpt">Within Europe, Germany has remained an outlier in its staunch stance against nuclear energy, a position which has become a core pillar of its national identity.</p>
+          </article>
+          <article class="entry">
+            <p class="meta entry__meta">7 Jul 2026 <span class="sep" aria-hidden="true">|</span> <span class="p-tr">Transatlantic Relations</span></p>
+            <h3 class="entry__title"><a href="#insights">Meddle Meets Mettle</a></h3>
+            <p class="entry__excerpt">At first glance, the recent elections in Hungary and Slovenia had little in common.</p>
+          </article>
+          <article class="entry">
+            <p class="meta entry__meta">12 Jun 2026 <span class="sep" aria-hidden="true">|</span> <span class="p-tr">Transatlantic Relations</span></p>
+            <h3 class="entry__title"><a href="#insights">Open Debate and Unlikely Bedfellows</a></h3>
+            <p class="entry__excerpt">In his first campaign to become chairman of the CDU in 2018, Friedrich Merz, now Chancellor of Germany, made a promise.</p>
+          </article>
+        </div>
+        <div class="latest__col">
+          <article class="entry">
+            <p class="meta entry__meta">27 May 2026 <span class="sep" aria-hidden="true">|</span> <span class="p-dem">Democracy</span></p>
+            <h3 class="entry__title"><a href="#insights">What Comes After Z?</a></h3>
+            <p class="entry__excerpt">Throughout 2024 and 2025, Generation Z flooded streets around the world to protest government corruption.</p>
+          </article>
+          <article class="entry">
+            <p class="meta entry__meta">26 May 2026 <span class="sep" aria-hidden="true">|</span> <span class="p-tr">Transatlantic Relations</span></p>
+            <h3 class="entry__title"><a href="#insights">A Kettle Full of Steam</a></h3>
+            <p class="entry__excerpt">In a high-school auditorium, German Chancellor Friedrich Merz undid a year&rsquo;s worth of goodwill.</p>
+          </article>
+          <article class="entry">
+            <p class="meta entry__meta">17 Mar 2026 <span class="sep" aria-hidden="true">|</span> <span class="p-dem">Democracy</span></p>
+            <h3 class="entry__title"><a href="#insights">Misplaced Passion, Myopic Policy</a></h3>
+            <p class="entry__excerpt">The Free Democratic Party (FDP) has earned the moniker of &ldquo;kingmaker&rdquo; in German politics.</p>
+          </article>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ============ V · FOOTER ============ -->
+<footer class="site-footer" id="about">
+  <div class="wrap">
+    <div class="footer__top">
+      <hr class="rule-double">
+      <div style="padding-top:36px">
+        <svg class="footer__wordmark" viewBox="0 0 695.1 266.6" role="img" aria-label="Bertelsmann Foundation North America"><use href="#bfna-wordmark"></use></svg>
+        <p class="footer__place">Washington, D.C.</p>
+      </div>
+    </div>
+
+    <div class="footer__cols">
+      <div class="footer__col">
+        <h2>About</h2>
+        <ul>
+          <li><a href="#about">Mission</a></li>
+          <li><a href="#about">Board of Directors</a></li>
+          <li><a href="#about">Team</a></li>
+          <li><a href="#about">Bertelsmann Stiftung <span class="ext" aria-hidden="true">&#8599;</span></a></li>
+          <li><a href="#about">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer__col">
+        <h2>Programs</h2>
+        <ul>
+          <li><a href="#programs">Democracy</a></li>
+          <li><a href="#programs">Transatlantic Relations &amp; Global Challenges</a></li>
+          <li><a href="#programs">Future Leadership</a></li>
+        </ul>
+      </div>
+      <div class="footer__col">
+        <h2>Projects</h2>
+        <ul>
+          <li><a href="#projects">Transatlantic Barometer</a></li>
+          <li><a href="#projects">Transatlantic Periscope</a></li>
+          <li><a href="#projects">RANGE</a></li>
+          <li><a href="#projects">How to Fix Democracy</a></li>
+          <li><a href="#projects">Fellowship</a></li>
+          <li><a href="#projects">All projects</a></li>
+        </ul>
+      </div>
+      <div class="footer__col">
+        <h2>Insights</h2>
+        <ul>
+          <li><a href="#insights">All insights</a></li>
+          <li><a href="#insights">Articles</a></li>
+          <li><a href="#insights">Reports</a></li>
+          <li><a href="#insights">Videos</a></li>
+          <li><a href="#insights">Infographics</a></li>
+          <li><a href="#insights">Transponder Magazine <span class="ext" aria-hidden="true">&#8599;</span></a></li>
+          <li><a href="#insights">Archive</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="colophon">
+      <span>&copy; 2026 Bertelsmann Foundation North America</span>
+      <span><a href="#privacy">Privacy Policy</a></span>
+      <span>Site by ccm.design</span>
+      <span class="social">
+        <a href="#linkedin">LinkedIn</a>
+        <a href="#x">X</a>
+        <a href="#youtube">YouTube</a>
+        <a href="#email">Email</a>
+      </span>
+    </div>
+  </div>
+</footer>
+
+<!-- ============ DIRECTION SPEC STRIP (proof sheet — not part of the site) ============ -->
+<aside class="spec" aria-label="Direction spec sheet">
+  <div class="wrap">
+    <div class="spec__grid">
+      <div>
+        <h2>Direction 03</h2>
+        <p>JOURNAL OF RECORD (EDITORIAL)</p>
+        <p>A think tank is a publisher. The homepage is a front page: masthead, dateline, lead story, columns, kickers, captions.</p>
+        <h2 style="margin-top:18px">Typefaces</h2>
+        <p>Fraunces variable — opsz 14/144, wght 400/700, SOFT 0, WONK 0/1, roman + italic</p>
+        <p>Inter — 400/500/600/700, 17px body</p>
+        <p>Scale: 104 / 64 / 44 / 28 / 26 / 24 / 22 / 17 / 13</p>
+      </div>
+      <div>
+        <h2>Palette</h2>
+        <div class="spec__swatches">
+          <div class="spec__sw"><div class="spec__chip" style="background:#F6F2EA"></div><span class="spec__hex">PAPER #F6F2EA</span></div>
+          <div class="spec__sw"><div class="spec__chip" style="background:#141210"></div><span class="spec__hex">INK #141210</span></div>
+          <div class="spec__sw"><div class="spec__chip" style="background:#B5333F"></div><span class="spec__hex">ACCENT #B5333F</span></div>
+          <div class="spec__sw"><div class="spec__chip" style="background:#003C5C"></div><span class="spec__hex">NAVY #003C5C</span></div>
+          <div class="spec__sw"><div class="spec__chip" style="background:#116F7E"></div><span class="spec__hex">DEMOCRACY #116F7E</span></div>
+          <div class="spec__sw"><div class="spec__chip" style="background:#8A5709"></div><span class="spec__hex">TRANSATL. #8A5709</span></div>
+          <div class="spec__sw"><div class="spec__chip" style="background:#C23C4A"></div><span class="spec__hex">FUT. LEAD. #C23C4A</span></div>
+        </div>
+      </div>
+      <div>
+        <h2>Three principles</h2>
+        <ol>
+          <li>A front page, not a landing page. Bands are sections of a paper; every one opens on a double rule and a folio.</li>
+          <li>Structure is carried by rules, kickers, datelines and captions — never by colour. One accent (#B5333F); programme hues only as kicker text; navy only in the footer.</li>
+          <li>Scale is the only loud thing: 104px Fraunces on paper, one drop cap, and everything else set quietly at 17px.</li>
+        </ol>
+        <p class="spec__note">Programme hues darkened from the token values (#A3680F &rarr; #8A5709, #CF4457 &rarr; #C23C4A) to clear 4.5:1 on paper. Same hue family.</p>
+      </div>
+    </div>
+  </div>
+</aside>
+
+</body>
+</html>
