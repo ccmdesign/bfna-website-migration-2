@@ -300,19 +300,6 @@ export default defineNuxtConfig({
       path: resolve(currentDir, 'components/bf'),
       pathPrefix: false,
       prefix: 'bf'
-    },
-    {
-      // Dev-only floating tools (e.g. FooterGapDial). Nuxt's directory-based
-      // `pathPrefix` only derives a name segment from subdirectories BELOW
-      // the registered `path` (`scanComponents` in `nuxt/dist/index.mjs`) —
-      // a file sitting directly in `components/dev` gets no prefix from
-      // `dev` itself, so an explicit `prefix` is required, the same way `bf`
-      // and `ccm` above get theirs. `components/dev/FooterGapDial.vue` then
-      // auto-imports as <DevFooterGapDial>, deliberately distinct from the
-      // `bf-*`/`wf-*` naming any production or wireframe component uses.
-      path: resolve(currentDir, 'components/dev'),
-      pathPrefix: false,
-      prefix: 'Dev'
     }
   ],
 })
