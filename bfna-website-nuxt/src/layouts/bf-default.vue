@@ -241,6 +241,14 @@ useHead({
   ],
   link: [{ rel: 'stylesheet', href: '/css/styles.css' }]
 })
+
+/**
+ * Gates `DevFooterGapDial` below. `import.meta.dev` is a Vite-time constant —
+ * `false` in a production build, which lets the bundler dead-code-eliminate
+ * the branch (the same pattern every `bf-*` component's own dev-only
+ * `console.warn` block uses) — so the panel never ships.
+ */
+const isDev = import.meta.dev
 </script>
 
 <template>
@@ -343,6 +351,14 @@ useHead({
     </main>
 
     <bfFooter :menus="siteMenus" />
+
+    <!-- Footer social-row spacing explorer (bottom-left pill), dev-only —
+         see `components/dev/FooterGapDial.vue`. Client-only: it reads
+         localStorage and writes `--bf-footer-social-*` straight onto
+         `.bf-footer`. `isDev` keeps it out of every production build. -->
+    <ClientOnly>
+      <LazyDevFooterGapDial v-if="isDev" />
+    </ClientOnly>
   </div>
 </template>
 
