@@ -29,10 +29,87 @@
        in wireframes. */
     filter: grayscale(1);
 
-    /* Neutral type signals "structure, not design" */
-    font-family: system-ui, sans-serif;
+    /* ---- Type dial custom properties ------------------------------
+       The single source of truth for wireframe typography. Defaults now
+       consume the token system's chosen pairing (Newsreader / IBM Plex
+       Sans) so the wireframe reflects production type when the dial is
+       untouched; wfTypeDial.vue overwrites these same properties inline
+       on this element so other pairings can still be explored live.
+       Nothing outside `.wireframe` reads them. */
+
+    /* Families: display = headings, body = running text, ui = chrome.
+       --wf-tracking-ui is intentionally NOT pre-declared: its use sites
+       carry a per-site fallback (monospace/0.05em for chips) so an
+       untouched dial keeps that chip look, while one inline value from
+       the dial drives it. --wf-font-ui IS pre-declared (aliased to
+       --font-family-ui) so nav/buttons/chips read the token system too. */
+    --wf-font-display: var(--font-family-display);
+    --wf-font-body: var(--font-family-body);
+    --wf-font-ui: var(--font-family-ui);
+
+    /* Weights */
+    --wf-weight-display: 700;
+    --wf-weight-body: 300;
+
+    /* Modular scale: base size in px, ratio between steps */
+    --wf-size-base: 20px;
+    --wf-scale: 1.37;
+
+    /* Heading steps derived from base × ratio^n (nested calc: works
+       everywhere, no pow()/CSS-Values-4 dependency) */
+    --wf-h4: calc(var(--wf-size-base) * var(--wf-scale));
+    --wf-h3: calc(var(--wf-h4) * var(--wf-scale));
+    --wf-h2: calc(var(--wf-h3) * var(--wf-scale));
+    --wf-h1: calc(var(--wf-h2) * var(--wf-scale));
+
+    /* Leading + tracking */
+    --wf-leading-body: 1.5;
+    --wf-leading-display: 1.1;
+    --wf-tracking-display: 0.005em;
+    --wf-ui-transform: none;
+
+    /* Token-system type applies even when the dial is untouched */
+    font-family: var(--wf-font-body);
+    font-size: var(--wf-size-base);
+    font-weight: var(--wf-weight-body);
+    line-height: var(--wf-leading-body);
     background-color: white;
     color: #222;
+  }
+
+  /* ---- Type wiring ------------------------------------------------
+     Only font-family / size / weight / leading / tracking are touched
+     here — no layout, color or spacing changes. */
+
+  /* Running text (prose, card copy, taglines, list items) */
+  .wireframe :is(p, li, dd, dt, blockquote, figcaption) {
+    font-family: var(--wf-font-body);
+    font-size: var(--wf-size-base);
+    font-weight: var(--wf-weight-body);
+    line-height: var(--wf-leading-body);
+  }
+
+  /* Headings — hero title, page-header title and card titles are h1/h2/h3 */
+  .wireframe :is(h1, h2, h3, h4, .h1, .h2, .h3, .h4) {
+    font-family: var(--wf-font-display);
+    font-weight: var(--wf-weight-display);
+    line-height: var(--wf-leading-display);
+    letter-spacing: var(--wf-tracking-display);
+  }
+
+  .wireframe :is(h1, .h1) { font-size: var(--wf-h1); }
+  .wireframe :is(h2, .h2) { font-size: var(--wf-h2); }
+  .wireframe :is(h3, .h3) { font-size: var(--wf-h3); }
+  .wireframe :is(h4, .h4) { font-size: var(--wf-h4); }
+
+  /* UI chrome: nav, breadcrumbs, chips, buttons, card dates */
+  .wireframe :is(.wf-nav, .wf-header, .wf-footer a, .wf-button, .wf-card > time, nav[aria-label="Breadcrumb"]) {
+    font-family: var(--wf-font-ui, system-ui, sans-serif);
+    letter-spacing: var(--wf-tracking-ui, 0);
+  }
+
+  .wireframe :is(.wf-nav a, .wf-nav summary, .wf-button, .wf-card > time, nav[aria-label="Breadcrumb"]) {
+    text-transform: var(--wf-ui-transform);
   }
 
   /* ---- Region / slot marking ------------------------------------- */
@@ -352,9 +429,12 @@
     border: 1px solid #666;
     border-radius: 999px;
     font-size: 0.7rem;
-    font-family: monospace;
+    /* Type dial owns the family once a pairing is picked; until then the
+       chip keeps today's monospace dev-annotation look (--wf-font-ui is
+       deliberately left undeclared on `.wireframe` for exactly this). */
+    font-family: var(--wf-font-ui, monospace);
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: var(--wf-tracking-ui, 0.05em);
   }
 
   .wireframe input[type="email"],

@@ -14,6 +14,12 @@
            button went with it — it anchored to this section. -->
     </main>
     <wf-footer />
+    <!-- Front 2 typography explorer (bottom-left pill; bottom-right belongs to
+         the feedback widget). Client-only: it reads localStorage and writes
+         the --wf-* properties straight onto this element. -->
+    <ClientOnly>
+      <wf-type-dial />
+    </ClientOnly>
   </div>
 </template>
 
