@@ -1,22 +1,28 @@
+/*
+ * Font Loading & Utilities
+ *
+ * This file handles:
+ * - External font imports (@import statements)
+ * - @font-face declarations for fallback fonts
+ *
+ * Note: Typography tokens are defined in semantic-misc.css
+ * See: src/public/css/tokens/semantic-misc.css for:
+ *   - --font-family-display, --font-family-body, --font-family-ui, --font-family-icon
+ *   - --font-weight-light, --font-weight-normal, --font-weight-medium, --font-weight-semibold, --font-weight-bold
+ *
+ * gh#(type-tokens). @import must sit OUTSIDE any @layer block — an @import
+ * nested inside `@layer { }` is invalid CSS and every browser drops it
+ * silently, which is why the former Cloud.typography (Sentinel, kit
+ * deactivated) and Typekit (trade-gothic-next) imports never actually
+ * loaded despite living in this file. See
+ * _process/open-design/homepage-NOTES.md item 3. Both are removed and
+ * replaced with a single Google Fonts import: display = Newsreader,
+ * body/ui = IBM Plex Sans — the pairing chosen via the wireframe type dial.
+ */
+@import "https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..800;1,6..72,400..800&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&display=swap";
+@import 'https://fonts.googleapis.com/css2?family=Material+Icons+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap';
+
 @layer tokens {
-  @import 'https://fonts.googleapis.com/css2?family=Material+Icons+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap';
-  @import "https://cloud.typography.com/7264818/6341032/css/fonts.css";
-  @import "https://use.typekit.net/tsd2tcy.css";
-  
-  
-  /*
-   * Font Loading & Utilities
-   *
-   * This file handles:
-   * - External font imports (@import statements)
-   * - @font-face declarations for fallback fonts
-   *
-   * Note: Typography tokens are defined in semantic-misc.css
-   * See: src/public/css/tokens/semantic-misc.css for:
-   *   - --font-family-display, --font-family-body, --font-family-icon
-   *   - --font-weight-normal, --font-weight-medium, --font-weight-semibold, --font-weight-bold
-   */
-  
     /* Material Icons Fallback */
     @font-face {
       font-family: 'Material Icons';

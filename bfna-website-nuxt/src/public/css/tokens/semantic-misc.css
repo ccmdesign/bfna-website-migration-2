@@ -37,14 +37,24 @@
     /* Typography semantic tokens */
     :root {
       /* Font families */
-      --font-family-display: "Sentinel SSm A", "Sentinel SSm B", sans-serif;
-      --font-family-body: "trade-gothic-next", sans-serif;
+      --font-family-display: "Newsreader", georgia, "Times New Roman", serif;
+      --font-family-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+      --font-family-ui: var(--font-family-body);
       --font-family-icon: "Material Icons";
-  
+
       /* Font weights */
+      --font-weight-light: 300;
       --font-weight-normal: 400;
       --font-weight-medium: 500;
       --font-weight-semibold: 600;
       --font-weight-bold: 700;
+
+      /* Leading (line-height) */
+      --leading-body: 1.5;
+      --leading-display: 1.1;
+
+      /* Tracking (letter-spacing) */
+      --tracking-display: 0.005em;
+      --tracking-ui: 0;
     }
 }

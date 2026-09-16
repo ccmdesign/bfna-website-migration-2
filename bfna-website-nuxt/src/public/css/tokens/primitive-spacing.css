@@ -13,33 +13,43 @@
    * This applies to both human developers and AI assistants.
    */
   
-  /* @link https://utopia.fyi/type/calculator?c=320,12,1.125,1248,18,1.2,7,2,&s=0.75|0.5|3,1.5|2|3|4|6,s-l&g=s,l,xl,12 */
-  
-  :root {
-    --size--2: clamp(0.5926rem, 0.5275rem + 0.3253vw, 0.7813rem);
-    --size--1: clamp(0.6667rem, 0.5733rem + 0.467vw, 0.9375rem);
-    --size-0: clamp(0.75rem, 0.6207rem + 0.6466vw, 1.125rem);
-    --size-1: clamp(0.8438rem, 0.6692rem + 0.8728vw, 1.35rem);
-    --size-2: clamp(0.9492rem, 0.7179rem + 1.1565vw, 1.62rem);
-    --size-3: clamp(1.0679rem, 0.7658rem + 1.5106vw, 1.944rem);
-    --size-4: clamp(1.2014rem, 0.8112rem + 1.9508vw, 2.3328rem);
-    --size-5: clamp(1.3515rem, 0.8523rem + 2.4963vw, 2.7994rem);
+  /* @link https://utopia.fyi/type/calculator?c=320,16,1.2,1248,20,1.37,7,2 */
 
-    /*
-     * gh#254. Two steps added to the same ramp, not a second scale: the URL
-     * above changed only in its positive-step count (`5,2` -> `7,2`), and
-     * replaying that generator's own arithmetic regenerates `--size--2`
-     * through `--size-5` byte for byte against the values already here.
-     * That equality is the proof these two were derived rather than
-     * invented; re-derive them the same way before editing either.
-     *
-     * `--size-7` is the article `<h1>` (`components/article.css`), the first
-     * thing on the site to reach the top of the ramp. `--size-6` is the step
-     * between it and `--size-5`; the ramp is a ramp, so it is written even
-     * though nothing takes it yet.
-     */
-    --size-6: clamp(1.5205rem, 0.8864rem + 3.1703vw, 3.3592rem);
-    --size-7: clamp(1.7105rem, 0.9103rem + 4.001vw, 4.0311rem);
+  /*
+   * gh#(type-tokens). Regenerated for the Newsreader / IBM Plex Sans pairing
+   * chosen via the wireframe type dial: base 20px @ desktop, ratio 1.37;
+   * min 16px @ 320px viewport, ratio 1.20; max 1248px viewport, root 16px.
+   * Per step n: minPx = 16 * 1.20^n, maxPx = 20 * 1.37^n; slope =
+   * (maxPx - minPx) / (1248 - 320); intercept = minPx - slope * 320;
+   * clamp(minRem, interceptRem + (slope * 100)vw, maxRem), 4 decimals.
+   * Replaying that formula with these parameters regenerates every line
+   * below byte for byte — re-derive the same way before editing any of
+   * them, rather than hand-editing a single step.
+   *
+   * `--size--2` is a known artifact of the two ratios diverging at negative
+   * steps: at n=-2, 20*1.37^-2 (~10.66px) falls below 16*1.20^-2 (~11.11px),
+   * so its `max` argument is smaller than its `min` argument. Per the CSS
+   * clamp() spec (`max(MIN, min(VAL, MAX))`) that resolves to a constant
+   * 0.6944rem across all viewports rather than a fluid value — computed
+   * faithfully from the stated formula, not a hand override.
+   *
+   * `--size-7` is the article `<h1>` (`components/article.css`), the first
+   * thing on the site to reach the top of the ramp. `--size-6` is the step
+   * between it and `--size-5`; the ramp is a ramp, so it is written even
+   * though nothing takes it yet.
+   */
+
+  :root {
+    --size--2: clamp(0.6944rem, 0.7043rem + -0.0491vw, 0.6660rem);
+    --size--1: clamp(0.8333rem, 0.8061rem + 0.1363vw, 0.9124rem);
+    --size-0: clamp(1.0000rem, 0.9138rem + 0.4310vw, 1.2500rem);
+    --size-1: clamp(1.2000rem, 1.0233rem + 0.8836vw, 1.7125rem);
+    --size-2: clamp(1.4400rem, 1.1275rem + 1.5623vw, 2.3461rem);
+    --size-3: clamp(1.7280rem, 1.2155rem + 2.5624vw, 3.2142rem);
+    --size-4: clamp(2.0736rem, 1.2702rem + 4.0170vw, 4.4034rem);
+    --size-5: clamp(2.4883rem, 1.2661rem + 6.1110vw, 6.0327rem);
+    --size-6: clamp(2.9860rem, 1.1657rem + 9.1014vw, 8.2648rem);
+    --size-7: clamp(3.5832rem, 0.9143rem + 13.3442vw, 11.3228rem);
   }
   
   

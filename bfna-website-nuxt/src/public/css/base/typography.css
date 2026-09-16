@@ -2,10 +2,10 @@
   :root {
     font-family: var(--font-family-body);
     font-optical-sizing: auto;
-    font-weight: var(--font-weight-normal);
+    font-weight: var(--font-weight-light);
     font-style: normal;
     font-size: 16px;
-    line-height: 1.5;
+    line-height: var(--leading-body);
   }
 
   body {
@@ -63,24 +63,32 @@
   .h1 {
     font-size: var(--size-4);
     font-weight: var(--font-weight-bold);
+    line-height: var(--leading-display);
+    letter-spacing: var(--tracking-display);
   }
 
   h2,
   .h2 {
     font-size: var(--size-2);
     font-weight: var(--font-weight-bold);
+    line-height: var(--leading-display);
+    letter-spacing: var(--tracking-display);
   }
 
   h3,
   .h3 {
     font-size: var(--size-1);
     font-weight: var(--font-weight-bold);
+    line-height: var(--leading-display);
+    letter-spacing: var(--tracking-display);
   }
 
   h4,
   .h4 {
     font-size: var(--size-0);
     font-weight: var(--font-weight-bold);
+    line-height: var(--leading-display);
+    letter-spacing: var(--tracking-display);
   }
 
   /*
@@ -192,7 +200,10 @@
   input,
   button,
   a {
-    font-weight: var(--font-weight-normal);
+    /* Type pairing (Sep 2026): body copy is IBM Plex Sans at the light face,
+       chosen on the wireframe type dial. `strong` keeps 700 so the emphasis
+       gap (300 vs 700) stays wide. */
+    font-weight: var(--font-weight-light);
   }
 
   strong {
