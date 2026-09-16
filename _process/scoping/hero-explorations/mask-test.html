@@ -1,0 +1,231 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Capitol ↔ Reichstag — living mask test (throwaway)</title>
+<style>
+  :root { color-scheme: light; }
+  body { margin: 0; background: #d9d7d3; font: 13px/1.4 system-ui, sans-serif; color: #222; }
+  .stage { position: relative; width: 100vw; height: 100vh; overflow: hidden; background: #cfcdc8; cursor: crosshair; }
+  .stage svg, .stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .stage canvas { object-fit: cover; }
+  .panel { position: fixed; right: 12px; top: 12px; background: rgba(255,255,255,.9); padding: 10px 12px; border-radius: 6px;
+           display: grid; grid-template-columns: auto 1fr auto; gap: 4px 8px; align-items: center; min-width: 300px; }
+  .panel label { white-space: nowrap; }
+  .panel input[type=range] { width: 140px; }
+  .panel select, .panel button { grid-column: 1 / -1; }
+  .panel output { font-variant-numeric: tabular-nums; min-width: 4ch; text-align: right; }
+  .copy { position: absolute; left: 6vw; bottom: 10vh; max-width: 40ch; pointer-events: none; }
+  .copy h1 { font: 700 clamp(28px, 4.5vw, 56px)/1.05 Georgia, serif; margin: 0 0 .4em; color: #1b2a4a; }
+  .copy p { margin: 0; color: #333; }
+</style>
+
+<div class="stage" id="stage">
+  <svg id="svg" viewBox="0 0 1024 756" preserveAspectRatio="xMidYMid slice">
+    <defs>
+      <filter id="noise" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+        <feTurbulence id="turb" type="fractalNoise" baseFrequency="0.0035" numOctaves="3" seed="7" result="n"/>
+        <!-- push the noise into a soft-edged blob field: contrast around mid grey -->
+        <feColorMatrix id="cm" type="matrix" result="blobs"
+          values="0 0 0 0 0
+                  0 0 0 0 0
+                  0 0 0 0 0
+                  6 0 0 0 -2.6"/>
+        <!-- pointer spotlight, added on top -->
+        <feImage id="spot" href="" result="spotimg" x="0" y="0" width="1024" height="756" preserveAspectRatio="none"/>
+        <feComposite in="blobs" in2="spotimg" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" result="sum"/>
+        <feGaussianBlur in="sum" stdDeviation="6"/>
+      </filter>
+      <mask id="m" maskUnits="userSpaceOnUse" maskContentUnits="userSpaceOnUse" x="0" y="0" width="1024" height="756">
+        <rect x="0" y="0" width="1024" height="756" fill="black" filter="url(#noise)"/>
+      </mask>
+      <radialGradient id="rg" gradientUnits="userSpaceOnUse" id2="x">
+        <stop offset="0" stop-color="white" stop-opacity=".9"/>
+        <stop offset="1" stop-color="white" stop-opacity="0"/>
+      </radialGradient>
+    </defs>
+    <!-- base: Capitol -->
+    <image id="imgA" width="1024" height="756" preserveAspectRatio="xMidYMid slice"/>
+    <!-- overlay: Reichstag, revealed through the living mask; transform = manual registration -->
+    <g id="regB" mask="url(#m)">
+      <image id="imgB" width="1024" height="756" preserveAspectRatio="xMidYMid slice"/>
+    </g>
+  </svg>
+  <canvas id="cv2" width="1024" height="756" hidden></canvas>
+  <div class="copy">
+    <h1>Strengthening the transatlantic relationship.</h1>
+    <p>Placeholder h1 to judge legibility over the blend.</p>
+  </div>
+</div>
+
+<div class="panel">
+  <select id="pair">
+    <option value="front-clay">front · clay</option>
+    <option value="front-photo">front · photo</option>
+    <option value="portico-clay">portico · clay</option>
+    <option value="portico-photo">portico · photo</option>
+    <option value="dome-clay">dome · clay</option>
+    <option value="dome-photo">dome · photo</option>
+    <option value="perspective-clay">perspective · clay</option>
+    <option value="perspective-photo">perspective · photo</option>
+  </select>
+  <select id="mode">
+    <option value="turb">mask: turbulence</option>
+    <option value="squares">mask: squares</option>
+  </select>
+  <label>cell size</label><input id="cell" type="range" min="16" max="128" step="8" value="64"><output id="cellO"></output>
+  <label>cell gap</label><input id="gap" type="range" min="0" max="6" step="1" value="2"><output id="gapO"></output>
+  <label>levels (0=smooth)</label><input id="levels" type="range" min="0" max="8" step="1" value="3"><output id="levelsO"></output>
+  <label>cell noise scale</label><input id="cfreq" type="range" min="0.05" max="0.6" step="0.01" value="0.22"><output id="cfreqO"></output>
+  <label>cell ease</label><input id="ease" type="range" min="0.02" max="0.5" step="0.01" value="0.08"><output id="easeO"></output>
+  <label>noise scale</label><input id="freq" type="range" min="0.001" max="0.012" step="0.0005" value="0.0035"><output id="freqO"></output>
+  <label>mix (drift centre)</label><input id="bias" type="range" min="-3.6" max="-1.6" step="0.05" value="-2.6"><output id="biasO"></output>
+  <label>blob contrast</label><input id="gain" type="range" min="2" max="12" step="0.5" value="6"><output id="gainO"></output>
+  <label>spot radius</label><input id="rad" type="range" min="60" max="600" step="10" value="260"><output id="radO"></output>
+  <label>spot strength</label><input id="spotk" type="range" min="0" max="1" step="0.05" value="0.9"><output id="spotkO"></output>
+  <label>drift speed</label><input id="speed" type="range" min="0" max="2" step="0.1" value="0.6"><output id="speedO"></output>
+  <label>B scale</label><input id="bs" type="range" min="0.6" max="1.6" step="0.01" value="1"><output id="bsO"></output>
+  <label>B offset x</label><input id="bx" type="range" min="-300" max="300" step="1" value="0"><output id="bxO"></output>
+  <label>B offset y</label><input id="by" type="range" min="-300" max="300" step="1" value="0"><output id="byO"></output>
+  <button id="swap">swap A/B</button>
+</div>
+
+<script>
+  const $ = id => document.getElementById(id);
+  const W = 1024, H = 756;
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // --- per-pair registration presets (B = Reichstag over A = Capitol), found by eye in the sliders
+  const PRESET = { 'portico-photo': { bs: 1, bx: 0, by: 220 } };
+  // --- pair loading
+  let swapped = false;
+  function loadPair() {
+    const n = $('pair').value;
+    const pr = PRESET[n] || { bs: 1, bx: 0, by: 0 };
+    for (const k in pr) { $(k).value = pr[k]; $(k + 'O').value = pr[k]; }
+    if (window.ctlReady) applyStatic();
+    const a = `out/${n}-capitol.webp`, b = `out/${n}-reichstag.webp`;
+    $('imgA').setAttribute('href', swapped ? b : a);
+    $('imgB').setAttribute('href', swapped ? a : b);
+    location.hash = n;
+  }
+  if (location.hash) $('pair').value = location.hash.slice(1);
+  addEventListener('hashchange', () => { $('pair').value = location.hash.slice(1); loadPair(); });
+  $('pair').addEventListener('change', loadPair);
+  $('swap').addEventListener('click', () => { swapped = !swapped; loadPair(); });
+  loadPair();
+
+  // --- pointer spotlight rendered to a tiny canvas, fed into feImage
+  const cv = document.createElement('canvas'); cv.width = 256; cv.height = 189;
+  const cx = cv.getContext('2d');
+  let px = W * .5, py = H * .5, tx = px, ty = py, hasPointer = false;
+  $('stage').addEventListener('pointermove', e => {
+    const r = $('svg').getBoundingClientRect();
+    // map viewport → viewBox under xMidYMid slice
+    const s = Math.max(r.width / W, r.height / H);
+    tx = (e.clientX - r.left - (r.width - W * s) / 2) / s;
+    ty = (e.clientY - r.top - (r.height - H * s) / 2) / s;
+    hasPointer = true;
+  });
+  $('stage').addEventListener('pointerleave', () => { hasPointer = false; });
+
+  function drawSpot(k, rad) {
+    cx.clearRect(0, 0, cv.width, cv.height);
+    const sx = px / W * cv.width, sy = py / H * cv.height, sr = rad / W * cv.width;
+    const g = cx.createRadialGradient(sx, sy, 0, sx, sy, sr);
+    g.addColorStop(0, `rgba(255,255,255,${k})`);
+    g.addColorStop(1, 'rgba(255,255,255,0)');
+    cx.fillStyle = g; cx.fillRect(0, 0, cv.width, cv.height);
+    $('spot').setAttribute('href', cv.toDataURL());
+  }
+
+  // --- controls
+  const ctl = {};
+  for (const id of ['freq','bias','gain','rad','spotk','speed','bs','bx','by','cell','gap','levels','cfreq','ease']) {
+    const el = $(id); ctl[id] = () => parseFloat(el.value);
+    const show = () => $(id + 'O').value = el.value;
+    el.addEventListener('input', () => { show(); applyStatic(); }); show();
+  }
+  function applyStatic() {
+    $('turb').setAttribute('baseFrequency', ctl.freq());
+    $('regB').setAttribute('transform', `translate(${W/2 + ctl.bx()} ${H/2 + ctl.by()}) scale(${ctl.bs()}) translate(${-W/2} ${-H/2})`);
+  }
+  window.ctlReady = true; applyStatic();
+
+  // --- squares mode: one canvas, A underneath, B drawn per cell with its own alpha
+  const c2 = $('cv2'), g2 = c2.getContext('2d');
+  const imA = new Image(), imB = new Image();
+  const offB = document.createElement('canvas'); offB.width = W; offB.height = H; const gB = offB.getContext('2d');
+  function syncImages() { imA.src = $('imgA').getAttribute('href'); imB.src = $('imgB').getAttribute('href'); }
+  imB.onload = drawOffB;
+  function coverRect(im) { // xMidYMid slice of an image into W×H
+    const s = Math.max(W / im.naturalWidth, H / im.naturalHeight);
+    const w = im.naturalWidth * s, h = im.naturalHeight * s;
+    return [(W - w) / 2, (H - h) / 2, w, h];
+  }
+  function drawOffB() { // B with registration baked in
+    if (!imB.naturalWidth) return;
+    gB.setTransform(1, 0, 0, 1, 0, 0); gB.clearRect(0, 0, W, H);
+    gB.translate(W / 2 + ctl.bx(), H / 2 + ctl.by()); gB.scale(ctl.bs(), ctl.bs()); gB.translate(-W / 2, -H / 2);
+    gB.drawImage(imB, ...coverRect(imB));
+  }
+  const _apply = applyStatic; applyStatic = function () { _apply(); drawOffB(); };
+  const _load = loadPair; loadPair = function () { _load(); syncImages(); };
+  syncImages();
+
+  // 3-D value noise, smooth, cheap
+  function hash(x, y, z) { let h = x * 374761393 + y * 668265263 + z * 2147483647; h = (h ^ (h >>> 13)) * 1274126177; return ((h ^ (h >>> 16)) >>> 0) / 4294967295; }
+  const sm = t => t * t * (3 - 2 * t);
+  function vnoise(x, y, z) {
+    const xi = Math.floor(x), yi = Math.floor(y), zi = Math.floor(z), xf = sm(x - xi), yf = sm(y - yi), zf = sm(z - zi);
+    const l = (a, b, t) => a + (b - a) * t;
+    const n = (dx, dy, dz) => hash(xi + dx, yi + dy, zi + dz);
+    return l(l(l(n(0,0,0), n(1,0,0), xf), l(n(0,1,0), n(1,1,0), xf), yf),
+             l(l(n(0,0,1), n(1,0,1), xf), l(n(0,1,1), n(1,1,1), xf), yf), zf);
+  }
+  let cellState = [];
+  function drawSquares(t, bias) {
+    if (!imA.naturalWidth || !imB.naturalWidth) return;
+    const cs = ctl.cell(), gap = ctl.gap(), lv = ctl.levels(), cf = ctl.cfreq(), ease = ctl.ease();
+    const cols = Math.ceil(W / cs), rows = Math.ceil(H / cs);
+    if (cellState.length !== cols * rows) cellState = new Array(cols * rows).fill(0);
+    g2.clearRect(0, 0, W, H); g2.globalAlpha = 1; g2.drawImage(imA, ...coverRect(imA));
+    const rad = ctl.rad(), sk = ctl.spotk();
+    for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
+      const x = c * cs, y = r * cs, mx = x + cs / 2, my = y + cs / 2;
+      const n = vnoise(c * cf, r * cf, t * 0.25);                                   // 0..1
+      const d = Math.hypot(mx - px, my - py), spot = sk * Math.max(0, 1 - d / rad) ** 2;
+      // same shape as the turbulence path: gain*(n) + bias, bias runs about -3.6…-1.6 → map to 0..1 range
+      let target = Math.min(1, Math.max(0, ctl.gain() / 3 * (n - 0.5) + (bias + 2.6) * 0.5 + 0.5 + spot));
+      if (lv > 0) target = Math.round(target * lv) / lv;
+      const i = r * cols + c; cellState[i] += (target - cellState[i]) * ease;
+      const a = cellState[i]; if (a < 0.01) continue;
+      g2.globalAlpha = a;
+      g2.drawImage(offB, x, y, cs, cs, x + gap / 2, y + gap / 2, cs - gap, cs - gap);
+    }
+    g2.globalAlpha = 1;
+  }
+  function setMode() {
+    const sq = $('mode').value === 'squares';
+    c2.hidden = !sq; $('svg').style.visibility = sq ? 'hidden' : 'visible';
+  }
+  $('mode').addEventListener('change', setMode);
+  if (new URLSearchParams(location.search).get('mode') === 'squares') $('mode').value = 'squares';
+  setMode();
+
+  // --- animation: drift the noise and breathe the mix
+  let t0 = performance.now();
+  function frame(now) {
+    const t = (now - t0) / 1000 * ctl.speed();
+    // idle: seed drifts slowly (feTurbulence seed is integer → step it), mix breathes near each full state
+    const breathe = Math.sin(t * 0.35) * 0.9;           // -0.9 … +0.9 around the bias
+    const bias = ctl.bias() + (reduced ? 0 : breathe);
+    const g = ctl.gain();
+    $('cm').setAttribute('values', `0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  ${g} 0 0 0 ${bias}`);
+    if (!reduced) $('turb').setAttribute('seed', Math.floor(t * 0.8) % 100);
+    // pointer: ease toward target; when idle, wander on a lissajous
+    if (!hasPointer && !reduced) { tx = W * (.5 + .35 * Math.sin(t * .27)); ty = H * (.5 + .25 * Math.cos(t * .19)); }
+    px += (tx - px) * .06; py += (ty - py) * .06;
+    if ($('mode').value === 'squares') drawSquares(t, bias); else drawSpot(ctl.spotk(), ctl.rad());
+    if (!reduced) requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+</script>
