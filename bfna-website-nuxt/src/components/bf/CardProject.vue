@@ -197,7 +197,7 @@ if (import.meta.dev) {
     <p v-if="excerptText">{{ excerptText }}</p>
 
     <template v-if="hasChips" #chips>
-      <bfChip v-if="kind">{{ kind }}</bfChip>
+      <bfChip v-if="kind" data-tone="format">{{ kind }}</bfChip>
       <bfChip v-if="project.external_url">External platform</bfChip>
       <bfChip v-if="project.pending">Copy pending {{ project.pending }}</bfChip>
     </template>

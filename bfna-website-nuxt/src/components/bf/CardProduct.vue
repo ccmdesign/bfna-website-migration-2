@@ -264,7 +264,7 @@ if (import.meta.dev) {
         `kind` reads `podcast` on the Transponder document, which is the legacy
         CMS's noise rather than a description of a magazine.
       -->
-      <bfChip>Magazine</bfChip>
+      <bfChip data-tone="format">Magazine</bfChip>
 
       <!--
         Only on the unlinked branch. This chip is the whole reason a heading may

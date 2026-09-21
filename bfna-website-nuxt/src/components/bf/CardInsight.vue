@@ -181,6 +181,25 @@ const excerptText = computed(() => {
     ? text.slice(0, props.excerptLength).trimEnd() + '…'
     : text
 })
+
+const PROGRAM_SLUGS: Record<string, string> = {
+  'Democracy': 'democracy',
+  'Transatlantic Relations & Global Challenges': 'transatlantic-relations-global-challenges',
+  'Future Leadership': 'future-leadership'
+}
+
+const programLabel = computed(() => {
+  const name = props.insight.program
+  if (!name) return ''
+  if (name === 'Transatlantic Relations & Global Challenges') return 'Transatlantic Rel.'
+  if (name.startsWith('RE-TAG') || name.startsWith('PENDING')) return 'Re-tag'
+  return name
+})
+
+const programSlug = computed(() => {
+  const name = props.insight.program
+  return name ? PROGRAM_SLUGS[name] : undefined
+})
 </script>
 
 <template>
@@ -201,21 +220,16 @@ const excerptText = computed(() => {
       <NuxtLink :to="`/insights/${insight.slug}`">{{ headingText }}</NuxtLink>
     </component>
 
-    <p v-if="excerpt && excerptText">{{ excerptText }}</p>
-
-    <!--
-      `bfTime` in place of the wireframe's bare `<time>{{ monthYear(…) }}</time>`,
-      which carries no `datetime` attribute and is therefore, to every machine
-      that reads the page, a `<span>` spelled differently. It renders **no
-      element** for a null or unparseable date (20 real rows), so a card
-      without one grows no phantom flex child — and it stays a *direct* child
-      of the `<li>`, which is what `.bf-card > time { margin-block-start: auto }`
-      needs to float the date to the card's bottom edge.
-    -->
     <bfTime :date="insight.publish_date" />
 
+    <p v-if="excerpt && excerptText">{{ excerptText }}</p>
+
     <template #chips>
-      <bfChip>{{ formatLabel(insight.format) }}</bfChip>
+      <bfChip data-tone="format">{{ formatLabel(insight.format) }}</bfChip>
+      <bfChip
+        v-if="programLabel"
+        :data-program="programSlug"
+      >{{ programLabel }}</bfChip>
       <bfChip v-for="chip in extraChips" :key="chip">{{ chip }}</bfChip>
       <!--
         `archived` is a non-nullable `boolean` since gh#140 (it was

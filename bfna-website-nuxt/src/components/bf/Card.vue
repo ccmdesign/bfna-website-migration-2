@@ -170,6 +170,13 @@ if (import.meta.dev) {
     <slot />
 
     <!--
+      After the heading in the DOM, pulled above it with `order`. A label, not a heading.
+    -->
+    <p v-if="$slots.kicker" class="bf-card__kicker">
+      <slot name="kicker" />
+    </p>
+
+    <!--
       Rendered only when filled, so an empty card carries no empty flex child
       contributing a `gap` to the stack. `.cluster` with `data-gap="xs"` is
       `wfCard.vue`'s own choice, kept: chips wrap as a row and the gap comes
@@ -272,7 +279,6 @@ if (import.meta.dev) {
   */
   .bf-card[data-span="full"] {
     grid-column: 1 / -1;
-    --_bf-card-border-width: var(--border-width-medium);
   }
 
   /*
@@ -285,7 +291,29 @@ if (import.meta.dev) {
     overflow: hidden;
     background-color: var(--color-base-tint-10);
   }
-  .bf-card__chips { order: -1; }
+
+  /*
+    Kicker sits under the media and above the title. Chips close the card.
+    The row modifier puts its chips back in front — that line is chip, title, date.
+  */
+  .bf-card p.bf-card__kicker {
+    order: -1;
+    /*
+      Paper groups kicker, title and date at 4px. The card gap is `--space-s`
+      (~16px); this pulls the title back up to `--space-3xs`.
+    */
+    margin-block: 0 calc(var(--space-3xs) - var(--_bf-card-gap));
+    color: var(--color-primary);
+    font-family: var(--font-family-ui);
+    font-size: var(--size--1);
+    font-weight: var(--font-weight-bold);
+    letter-spacing: var(--tracking-ui);
+    line-height: var(--leading-display);
+    text-transform: uppercase;
+  }
+
+  .bf-card__chips { order: 1; }
+  .bf-card.bf-card-row .bf-card__chips { order: -1; }
 
   /*
     ## The row modifier — `.bf-card-row` (`bfCardRow`, gh#36 / issue 27)
@@ -357,25 +385,26 @@ if (import.meta.dev) {
   }
 
   /*
-    Dates sit at the card's bottom edge so a row of cards of unequal text
-    length still aligns its dates. `> time`, so a `<time>` inside an excerpt
-    is not yanked to the floor.
+    Date follows the title. `> time`, so a `<time>` inside an excerpt is not restyled.
   */
   .bf-card > time {
-    margin-block-start: auto;
-    color: var(--color-primary-light);
+    margin-block-start: calc(var(--space-3xs) - var(--_bf-card-gap));
+    color: var(--color-primary-tint-70);
+    font-family: var(--font-family-ui);
     font-size: var(--size--2);
     font-weight: var(--font-weight-semibold);
-    letter-spacing: 0.08em;
+    letter-spacing: var(--tracking-ui);
+    line-height: var(--leading-display);
     text-transform: uppercase;
   }
 
   .bf-card :is(h2, h3, h4) {
     color: var(--color-accent);
+    font-family: var(--font-family-ui);
     font-size: var(--size-1);
     font-weight: var(--font-weight-normal);
-    letter-spacing: -0.01em;
-    line-height: 1.1;
+    letter-spacing: var(--tracking-ui);
+    line-height: var(--leading-display);
   }
 
   .bf-card :is(h2, h3, h4) a {
@@ -385,7 +414,10 @@ if (import.meta.dev) {
   }
 
   .bf-card p {
+    color: var(--color-text);
+    font-size: var(--size-0);
     font-weight: var(--font-weight-light);
+    line-height: var(--leading-body);
   }
 
   /*
@@ -503,11 +535,28 @@ if (import.meta.dev) {
     so this has to live in a later layer to win.
   */
   .bf-card .bf-chip {
-    --_bf-chip-bg: color-mix(in srgb, var(--color-program) 11%, var(--color-surface-page));
-    --_bf-chip-color: var(--color-program-on-light);
+    --_bf-chip-bg: var(--color-accent-tint-11);
+    --_bf-chip-color: var(--color-accent);
+    --_bf-chip-padding: 0 var(--space-xs);
+    --_bf-chip-font-size: var(--size--2);
     --_bf-chip-border: 0;
+    font-family: var(--font-family-ui);
     font-weight: var(--font-weight-semibold);
-    letter-spacing: 0.02em;
+    letter-spacing: var(--tracking-ui);
+    line-height: var(--leading-display);
+    text-transform: uppercase;
+  }
+
+  /* Paper format pill: #FAEAED / #CF4457 → red tint 11 / error. */
+  .bf-card .bf-chip[data-tone="format"] {
+    --_bf-chip-bg: var(--color-red-tint-11);
+    --_bf-chip-color: var(--color-error);
+  }
+
+  /* Paper topic pill: #E3F0F2 / #027A8D → green tint 11 / green. */
+  .bf-card .bf-chip[data-program] {
+    --_bf-chip-bg: var(--color-green-tint-11);
+    --_bf-chip-color: var(--color-green);
   }
 }
 </style>

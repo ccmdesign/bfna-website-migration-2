@@ -122,7 +122,23 @@ const props = withDefaults(defineProps<Props>(), {
  */
 const headingText = computed(() => (props.item.heading ?? '').trim())
 
-const hasHeading = computed(() => headingText.value !== '')
+/**
+ * Paper splits "Latest Issue | Transponder: The Future" into a kicker and a title.
+ * A heading with no pipe stays a title.
+ */
+const kicker = computed(() => {
+  const pipe = headingText.value.indexOf('|')
+  if (pipe === -1) return ''
+  return headingText.value.slice(0, pipe).trim()
+})
+
+const titleText = computed(() => {
+  const pipe = headingText.value.indexOf('|')
+  if (pipe === -1) return headingText.value
+  return headingText.value.slice(pipe + 1).trim()
+})
+
+const hasHeading = computed(() => titleText.value !== '')
 
 /**
  * The row's off-site destination, trimmed — residual
@@ -236,11 +252,15 @@ if (import.meta.dev) {
         :href="externalHref"
         :data-external="externalMarker"
         v-bind="newTabAttrs(externalHref)"
-      >{{ headingText }}</a>
-      <NuxtLink v-else :to="`/insights/${item.slug}`">{{ headingText }}</NuxtLink>
+      >{{ titleText }}</a>
+      <NuxtLink v-else :to="`/insights/${item.slug}`">{{ titleText }}</NuxtLink>
     </component>
 
+    <bfTime :date="item.publish_date" />
+
     <p v-if="excerptText">{{ excerptText }}</p>
+
+    <template v-if="kicker" #kicker>{{ kicker }}</template>
 
     <template #chips>
       <!--
@@ -248,7 +268,7 @@ if (import.meta.dev) {
         `format: null`, and the word this card exists to say is the *curation*
         ("we picked this"), which is not a field on the row.
       -->
-      <bfChip>Featured</bfChip>
+      <bfChip data-tone="format">Featured</bfChip>
     </template>
 
     <template #media>

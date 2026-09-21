@@ -47,7 +47,6 @@
  * page: a route that sets no title renders `Bertelsmann Foundation North
  * America` alone, rather than the site name twice.
  */
-import type { Insight } from '~/types/bf-contracts'
 import { useBfInsights } from '~/composables/data/useBfInsights'
 import { useBfPages } from '~/composables/data/useBfPages'
 import { useBfPrograms } from '~/composables/data/useBfPrograms'
@@ -88,36 +87,6 @@ const featured = highlights().slice(0, 4)
  * private array (gh#91), so this slice cannot reach the payload.
  */
 const latest = active.slice(0, 6)
-
-/**
- * The programme chip shown on each insight row, ported verbatim from
- * `pages/wireframes/index.vue`.
- *
- * It stays a page-level function rather than moving to the entity, because
- * there is no field to move it to: `bfProgramSchema` (issue 09) declares
- * `slug`, `name`, `tagline`, `intro` and `image` — no short name — and
- * `Insight.program` is the display **name**, not a relation. Recorded as a
- * gap in the spec's Decisions (D-47.2); deriving one here would be exactly the
- * page-side synthesis BRIEF §5 rule 10 forbids, so the mapping is kept as the
- * literal relabelling it is.
- *
- * `RE-TAG` / `PENDING` are the normaliser's placeholders for a row whose
- * programme the client has not re-assigned (issue 07); the wireframe collapses
- * both to one honest chip rather than printing the placeholder at a reader.
- */
-const shortProgram = (program: string): string => {
-  if (program === 'Transatlantic Relations & Global Challenges') return 'Transatlantic Rel.'
-  if (program.startsWith('RE-TAG') || program.startsWith('PENDING')) return 'Re-tag'
-  return program
-}
-
-/**
- * `bfGridInsights.extraChips` — per row, and `undefined` for a row with no
- * programme, which the grid reads as "no extra chips" rather than as an empty
- * cluster.
- */
-const insightChips = (i: Insight): string[] | undefined =>
-  i.program ? [shortProgram(i.program)] : undefined
 </script>
 
 <template>
@@ -281,7 +250,6 @@ const insightChips = (i: Insight): string[] | undefined =>
     <bfGridInsights
       :insights="latest"
       :excerpt-length="160"
-      :extra-chips="insightChips"
       :heading-level="3"
     />
 
