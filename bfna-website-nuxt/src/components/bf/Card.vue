@@ -250,6 +250,12 @@ if (import.meta.dev) {
     border: var(--_bf-card-border);
     border-radius: var(--radius-s);
     background-color: var(--color-surface-page);
+    --_bf-card-shadow: var(--shadow-elevation-low);
+    --_bf-card-shadow-hover: var(--shadow-elevation-medium);
+    box-shadow: var(--_bf-card-shadow);
+    transition:
+      transform 200ms ease,
+      box-shadow 200ms ease;
 
     /*
       `base/typography.css` sets `li { margin-bottom: 0.5em }` in
@@ -458,14 +464,23 @@ if (import.meta.dev) {
   }
 
   /*
-    Hover feedback for a card that actually goes somewhere — `:has()` is what
-    distinguishes it from a card that is only a container. Same construction as
-    the frozen skin (border colour plus a one-pixel shadow ring that thickens
-    the edge without moving the box), painted from tokens.
+    Hover on a card that actually goes somewhere. 5% scale, and one step up
+    the elevation scale. `z-index` lifts it over the neighbours it now overlaps.
   */
   .bf-card:has(:is(h2, h3, h4) a):hover {
-    --_bf-card-border-color: var(--_bf-card-hover-color);
-    box-shadow: 0 0 0 var(--border-width-thin) var(--_bf-card-hover-color);
+    z-index: 1;
+    transform: scale(1.05);
+    box-shadow: var(--_bf-card-shadow-hover);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bf-card {
+      transition: none;
+    }
+
+    .bf-card:has(:is(h2, h3, h4) a):hover {
+      transform: none;
+    }
   }
 
   /*
