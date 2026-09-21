@@ -224,9 +224,9 @@ if (import.meta.dev) {
       spec names) exists in `tokens/semantic-colors.css`, and adding one is
       forbidden.
     */
-    --_bf-card-padding: var(--space-s);
-    --_bf-card-gap: var(--space-2xs);
-    --_bf-card-border-width: var(--border-width-thin);
+    --_bf-card-padding: var(--space-m);
+    --_bf-card-gap: var(--space-s);
+    --_bf-card-border-width: 0;
     --_bf-card-border-color: var(--color-base-light);
     --_bf-card-border: var(--_bf-card-border-width) solid var(--_bf-card-border-color);
     --_bf-card-focus-color: var(--color-text);
@@ -241,6 +241,8 @@ if (import.meta.dev) {
     gap: var(--_bf-card-gap);
     padding: var(--_bf-card-padding);
     border: var(--_bf-card-border);
+    border-radius: var(--radius-s);
+    background-color: var(--color-surface-page);
 
     /*
       `base/typography.css` sets `li { margin-bottom: 0.5em }` in
@@ -277,7 +279,12 @@ if (import.meta.dev) {
     Visual order, the CSS half of "heading first in the DOM". Never markup
     order — see the component comment.
   */
-  .bf-card__media { order: -2; }
+  .bf-card__media {
+    order: -2;
+    border-radius: var(--radius-s);
+    overflow: hidden;
+    background-color: var(--color-base-tint-10);
+  }
   .bf-card__chips { order: -1; }
 
   /*
@@ -356,6 +363,29 @@ if (import.meta.dev) {
   */
   .bf-card > time {
     margin-block-start: auto;
+    color: var(--color-primary-light);
+    font-size: var(--size--2);
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .bf-card :is(h2, h3, h4) {
+    color: var(--color-accent);
+    font-size: var(--size-1);
+    font-weight: var(--font-weight-normal);
+    letter-spacing: -0.01em;
+    line-height: 1.1;
+  }
+
+  .bf-card :is(h2, h3, h4) a {
+    color: inherit;
+    font-weight: inherit;
+    text-decoration: none;
+  }
+
+  .bf-card p {
+    font-weight: var(--font-weight-light);
   }
 
   /*
@@ -403,7 +433,7 @@ if (import.meta.dev) {
   */
   .bf-card:has(:is(h2, h3, h4) a):hover {
     --_bf-card-border-color: var(--_bf-card-hover-color);
-    box-shadow: 0 0 0 var(--_bf-card-border-width) var(--_bf-card-hover-color);
+    box-shadow: 0 0 0 var(--border-width-thin) var(--_bf-card-hover-color);
   }
 
   /*
@@ -461,6 +491,23 @@ if (import.meta.dev) {
   .bf-card :is(h2, h3, h4) a {
     position: static;
     z-index: auto;
+  }
+}
+</style>
+
+<style>
+@layer overrides {
+  /*
+    Filled programme pills, only inside a card. Filter-bar chips stay outlined.
+    The chip's own rule sets `--_bf-chip-*` on itself in `@layer components`,
+    so this has to live in a later layer to win.
+  */
+  .bf-card .bf-chip {
+    --_bf-chip-bg: color-mix(in srgb, var(--color-program) 11%, var(--color-surface-page));
+    --_bf-chip-color: var(--color-program-on-light);
+    --_bf-chip-border: 0;
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: 0.02em;
   }
 }
 </style>
