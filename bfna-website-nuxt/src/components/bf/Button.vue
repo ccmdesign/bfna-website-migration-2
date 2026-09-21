@@ -49,37 +49,35 @@
  *
  * ## Colour
  *
- * No new colour (BRIEF §5 rule 2) and no primitive — every value is an
- * existing semantic token. The wireframe's literals map like this:
+ * Paper, 21 Sep 2026. Both treatments are navy. `--color-primary` is blue
+ * and is not used here; navy's semantic name is `--color-accent`.
  *
- * | | wireframe | here |
- * |---|---|---|
- * | default fill | white | *none* — the button paints no ground |
- * | default text + border | near-black | `--color-text` |
- * | primary fill | near-black | `--color-primary` |
- * | primary label | white | `--color-text-inverse` |
+ * | | fill | label | border |
+ * |---|---|---|---|
+ * | default | *none* | `--color-accent` | `--color-primary-tint-30` |
+ * | primary | `--color-accent` | `--color-text-inverse` | `--color-accent` |
  *
- * The default variant paints **no** ground rather than a white one: the
- * semantic layer has no `--color-surface`, the one white-ish semantic name is
- * `--color-text-inverse` (whose meaning is text, not ground), and the
- * `--color-white` primitive is exactly what BRIEF §5 rule 2 forbids and what
- * gh#101 removed from `bfLogo`. On the white page ground the render is
- * identical to the wireframe's, and the button stays usable on a dark panel.
- *
- * `--color-text-inverse` on `--color-primary` is ≈6.2:1 — WCAG 2.1 AA at any
- * size.
+ * The comp paints the default ground white because the artboard is white.
+ * The button paints no ground: on the page that reads the same, and on the
+ * hero scrim a white fill plus the scrim's inverse label is white on white.
+ * Border is `--border-width-medium` (2px) on both.
  *
  * ## Box metrics
  *
- * Matched to the wireframe's button class rather than reinvented:
- * `0.4em 1.2em` padding and a 2px border, the latter through the existing
- * `--border-width-medium` token. Because the padding is in `em`, a size change
- * is a font-size change and the whole box scales with it — there is no
- * per-size padding table. `scripts/verify-bf-button.ts` parsed those two
- * values back out of `wireframe.css`, and probe 15 measured a real hidden
- * wireframe button against a rendered `bf-button`. Both retired with the probe
- * pages in gh#68 (BRIEF §5); the two values below still come from the frozen
- * rule and are not to be re-derived.
+ * Three sizes from the same comp. `m` is the base — omitting `size` and
+ * `size="m"` are the same box. Padding is optical: block-end is 2px more
+ * than block-start. Radius is the primitive `--border-radius-*` scale
+ * (4 / 8 / 12); the semantic `--radius-*` scale is 6 / 12 / 20 and does not
+ * match this comp.
+ *
+ * | size | font | padding (block-start / inline / block-end) | radius |
+ * |---|---|---|---|
+ * | l | 22px | 12 / 24 / 14 | `--border-radius-l` |
+ * | m | 18px | 8 / 16 / 10 | `--border-radius-m` |
+ * | s | 12px | 4 / 10 / 6 | `--border-radius-s` |
+ *
+ * Type is `--font-family-ui` (IBM Plex Sans) at `--font-weight-semibold`.
+ * Line-height is 1: the comp sets line-height equal to the font-size.
  */
 import type { ButtonProps } from '~/types/bf-contracts'
 import { newTabAttrs } from '~/utils/link'
@@ -103,19 +101,6 @@ const props = withDefaults(defineProps<ButtonProps>(), {
   size: undefined,
   disabled: false
 })
-
-/**
- * The recognised `size` values, as existing Utopia type steps.
- *
- * Omitting `size` is not "medium" — it inherits, matching the wireframe
- * class's `font: inherit`, so an unsized `bfButton` is wireframe-exact
- * wherever it is dropped. `m` is the explicit request for the base step.
- */
-const SIZE_STEPS: Readonly<Record<string, string>> = {
-  s: 'var(--size--1)',
-  m: 'var(--size-0)',
-  l: 'var(--size-1)'
-}
 
 /**
  * Which element this render resolves to. Exposed as `data-element` so the
@@ -142,9 +127,9 @@ const cssVars = computed<Record<string, string>>(() => {
   const vars: Record<string, string> = {}
 
   if (props.variant === 'primary') {
-    vars['--_bf-button-bg'] = 'var(--color-primary)'
+    vars['--_bf-button-bg'] = 'var(--color-accent)'
     vars['--_bf-button-color'] = 'var(--color-text-inverse)'
-    vars['--_bf-button-border'] = 'var(--border-width-medium) solid var(--color-primary)'
+    vars['--_bf-button-border'] = 'var(--border-width-medium) solid var(--color-accent)'
     /*
      * Review finding gh#24-P2-1. The focus ring is drawn outside the button,
      * over the page ground, so it must contrast with the ground rather than
@@ -154,9 +139,6 @@ const cssVars = computed<Record<string, string>>(() => {
      */
     vars['--_bf-button-focus-color'] = 'var(--color-text)'
   }
-
-  const step = props.size ? SIZE_STEPS[props.size] : undefined
-  if (step) vars['--_bf-button-font-size'] = step
 
   return vars
 })
@@ -230,14 +212,17 @@ const cssVars = computed<Record<string, string>>(() => {
       a later layer, or a `style` on the element — never by editing here.
     */
     --_bf-button-bg: none;
-    --_bf-button-color: var(--color-text);
-    --_bf-button-border: var(--border-width-medium) solid var(--color-text);
-    --_bf-button-padding: 0.4em 1.2em;
+    --_bf-button-color: var(--color-accent);
+    --_bf-button-border: var(--border-width-medium) solid var(--color-primary-tint-30);
+    --_bf-button-radius: var(--border-radius-m);
+    --_bf-button-padding: 8px 16px 10px;
+    --_bf-button-font-size: 18px;
     --_bf-button-focus-color: currentcolor;
 
     display: inline-block;
     padding: var(--_bf-button-padding);
     border: var(--_bf-button-border);
+    border-radius: var(--_bf-button-radius);
 
     /*
       `background`, not `background-color`: the shorthand accepts `none` — the
@@ -246,12 +231,25 @@ const cssVars = computed<Record<string, string>>(() => {
     background: var(--_bf-button-bg);
     color: var(--_bf-button-color);
 
-    /* The wireframe class's `font: inherit`, with the size hook layered on. */
-    font: inherit;
-    font-size: var(--_bf-button-font-size, inherit);
+    font-family: var(--font-family-ui);
+    font-size: var(--_bf-button-font-size);
+    font-weight: var(--font-weight-semibold);
+    line-height: 1;
     text-align: center;
     text-decoration: none;
     cursor: pointer;
+  }
+
+  .bf-button[data-size='l'] {
+    --_bf-button-radius: var(--border-radius-l);
+    --_bf-button-padding: 12px 24px 14px;
+    --_bf-button-font-size: 22px;
+  }
+
+  .bf-button[data-size='s'] {
+    --_bf-button-radius: var(--border-radius-s);
+    --_bf-button-padding: 4px 10px 6px;
+    --_bf-button-font-size: 12px;
   }
 
   /*

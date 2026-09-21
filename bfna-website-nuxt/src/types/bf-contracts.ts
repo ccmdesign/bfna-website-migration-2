@@ -116,10 +116,8 @@ export interface LogoProps {
 /**
  * Visual variant of `bfButton`.
  *
- * `primary` is the filled treatment — the `bf-*` reading of
- * `.wf-button[data-variant="primary"]`. `default` is the base: bordered,
- * unfilled, and the value the component falls back to, so a caller that
- * passes no variant gets the wireframe's plain button.
+ * `primary` is the filled navy treatment. `default` is the base: navy
+ * label, `--color-primary-tint-30` border, no fill.
  */
 export type ButtonVariant = 'primary' | 'default'
 
@@ -133,10 +131,8 @@ export type ButtonVariant = 'primary' | 'default'
  * renders `NuxtLink`, `href` renders `<a>`, and neither renders `<button>`.
  *
  * `size` is deliberately an open `string`, as the spec types it. The component
- * recognises `'s' | 'm' | 'l'`, mapping them onto the existing Utopia type
- * steps; any other value — and no value at all — inherits the surrounding font
- * size, which is what `.wf-button`'s `font: inherit` does. Because the padding
- * is expressed in `em`, the whole box scales with that one declaration.
+ * recognises `'s' | 'm' | 'l'` as the three Paper sizes (12 / 18 / 22px).
+ * Omitting `size` is `m`. Any other value falls through to that same base.
  */
 export interface ButtonProps {
   /** Internal route. Renders `NuxtLink`. A string path or a route-location object. */
@@ -147,7 +143,7 @@ export interface ButtonProps {
   external?: boolean
   /** Filled (`primary`) or bordered (`default`, the base). */
   variant?: ButtonVariant
-  /** Type step. `'s' | 'm' | 'l'` are recognised; anything else inherits. */
+  /** `'s' | 'm' | 'l'`. Omitting it is `m`. */
   size?: string
   /** Renders a non-interactive, non-focusable `<button disabled>`, whatever `to`/`href` say. */
   disabled?: boolean
