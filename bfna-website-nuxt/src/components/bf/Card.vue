@@ -163,27 +163,33 @@ if (import.meta.dev) {
   -->
   <li ref="root" class="bf-card" :data-span="span">
     <!--
-      The card body: heading first, then whatever the caller stacks under it
-      (excerpt, `<time>`, a secondary link). Unnamed, because it is the card —
-      the other two slots are the exceptions to it.
-    -->
-    <slot />
+      Heading stays the first content in the DOM. The picture is a later
+      sibling pulled above this block with `order`.
 
-    <!--
-      After the heading in the DOM, pulled above it with `order`. A label, not a heading.
+      `__text` is the part that grows on a text card (the excerpt) and, together
+      with the picture, the part that grows on a media card. Chips stay a
+      fixed-height sibling so they sit on the bottom edge.
     -->
-    <p v-if="$slots.kicker" class="bf-card__kicker">
-      <slot name="kicker" />
-    </p>
+    <div class="bf-card__copy">
+      <div class="bf-card__text">
+        <slot />
 
-    <!--
-      Rendered only when filled, so an empty card carries no empty flex child
-      contributing a `gap` to the stack. `.cluster` with `data-gap="xs"` is
-      `wfCard.vue`'s own choice, kept: chips wrap as a row and the gap comes
-      from the composition layer rather than from this component.
-    -->
-    <div v-if="$slots.chips" class="bf-card__chips | cluster" data-gap="xs">
-      <slot name="chips" />
+        <p v-if="$slots.kicker" class="bf-card__kicker kicker">
+          <slot name="kicker" />
+        </p>
+      </div>
+
+      <!--
+        Chip gap is 8px on text cards (`gap-2`) and 15px on media cards
+        (`gap-3.75`). `--space-2xs` / `--space-xs`.
+      -->
+      <div
+        v-if="$slots.chips"
+        class="bf-card__chips | cluster"
+        :data-gap="$slots.media ? 'xs' : '2xs'"
+      >
+        <slot name="chips" />
+      </div>
     </div>
 
     <div v-if="$slots.media" class="bf-card__media">
@@ -232,7 +238,11 @@ if (import.meta.dev) {
       forbidden.
     */
     --_bf-card-padding: var(--space-m);
-    --_bf-card-gap: var(--space-s);
+    /*
+      Paper card gap is 16px. `--space-xs` lands on 15px at the top of the
+      scale; `--space-s` lands on 20.
+    */
+    --_bf-card-gap: var(--space-xs);
     --_bf-card-border-width: 0;
     --_bf-card-border-color: var(--color-base-light);
     --_bf-card-border: var(--_bf-card-border-width) solid var(--_bf-card-border-color);
@@ -246,17 +256,19 @@ if (import.meta.dev) {
     display: flex;
     flex-direction: column;
     gap: var(--_bf-card-gap);
+    block-size: 100%;
     padding: var(--_bf-card-padding);
     border: var(--_bf-card-border);
-    border-radius: var(--radius-s);
+    border-radius: var(--border-radius-l);
     background-color: var(--color-surface-page);
-    --_bf-card-shadow: var(--shadow-elevation-low);
-    --_bf-card-shadow-hover: var(--shadow-elevation-medium);
+    --_bf-card-shadow: var(--shadow-elevation-medium);
+    --_bf-card-shadow-hover: var(--shadow-elevation-high);
     box-shadow: var(--_bf-card-shadow);
-    transition:
-      transform 200ms ease,
-      box-shadow 200ms ease;
+    transition: all 200ms ease;
 
+    * {
+      transition: all 200ms ease;
+    }
     /*
       `base/typography.css` sets `li { margin-bottom: 0.5em }` in
       `@layer defaults`, which this beats from `components`. Zeroing it makes
@@ -275,6 +287,31 @@ if (import.meta.dev) {
     list-style: none;
   }
 
+  .bf-card * {
+    position: relative;
+    top: 0;
+    transition: all 200ms ease;
+  }
+
+  .bf-card[data-span="full"]:hover {
+    transform: scale(1.05) translateY(-30px);
+    box-shadow: var(--shadow-elevation-high);
+    transition: all 200ms ease;
+  }
+
+
+  .bf-card:not([data-span="full"]):hover {
+    /* gap: calc(var(--_bf-card-gap) * 2); */
+    
+    .bf-card__media { 
+      top: -80px; 
+      box-shadow: var(--shadow-elevation-medium);
+    }
+    .bf-card__copy { top: -40px; }
+    .bf-card__chips { top: 10px; }
+    
+  }
+
   /*
     The "special" card inside a card grid — the Transponder issue leading the
     homepage Insights grid. `1 / -1` is the whole row at every column count, so
@@ -284,7 +321,91 @@ if (import.meta.dev) {
     `border` declaration so a consumer can retune one without restating both.
   */
   .bf-card[data-span="full"] {
+    display: grid;
     grid-column: 1 / -1;
+    gap: 0;
+    padding: 0;
+    block-size: auto;
+  }
+
+  /*
+    Picture and the copy share whatever height the row gives the card.
+    `flex-basis: auto` keeps each at its content size; `flex-grow` splits
+    the extra, which is the mock's `flex-1` on the media and on the text block.
+  */
+  .bf-card__media,
+  .bf-card__copy {
+    flex: 1 1 auto;
+    min-block-size: 0;
+  }
+
+  .bf-card__copy {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+
+  /*
+    Title stack is 4px (`gap-1`). The excerpt opens that up: 16px on a text
+    card (`gap-4` around a `flex-1` body), 24px on a media card (`gap-6`
+    inside the text block).
+  */
+  .bf-card__text {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    gap: var(--space-3xs);
+    min-block-size: 0;
+    overflow: hidden;
+  }
+
+  .bf-card__chips {
+    flex-shrink: 0;
+  }
+
+  .bf-card[data-span="full"] .bf-card__copy {
+    grid-area: 1 / 1;
+    justify-self: end;
+    align-self: end;
+    z-index: 1;
+    flex: none;
+    inline-size: 50%;
+    padding: var(--space-m);
+    gap: var(--space-s);
+    color: var(--color-text-inverse);
+  }
+
+  .bf-card[data-span="full"] .bf-card__media {
+    position: relative;
+    grid-area: 1 / 1;
+    border-radius: inherit;
+  }
+
+  /*
+    Dark scrim from the corner the type sits in (bottom-end). Same token as
+    the hero media layer so white type clears 4.5:1 over the photograph.
+  */
+  .bf-card[data-span="full"] .bf-card__media::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to top left,
+      var(--color-scrim) 0%,
+      color-mix(in srgb, var(--color-scrim) 72%, transparent) 42%,
+      transparent 72%
+    );
+    pointer-events: none;
+  }
+
+  .bf-card[data-span="full"] :is(h2, h3, h4),
+  .bf-card[data-span="full"] .bf-card__text > p:not(.kicker) {
+    color: var(--color-text-inverse);
+  }
+
+  .bf-card[data-span="full"] .bf-media {
+    block-size: 100%;
+    object-fit: cover;
   }
 
   /*
@@ -292,10 +413,18 @@ if (import.meta.dev) {
     order — see the component comment.
   */
   .bf-card__media {
-    order: -2;
-    border-radius: var(--radius-s);
+    order: -1;
+    display: flex;
+    border-radius: var(--border-radius-m);
     overflow: hidden;
     background-color: var(--color-base-tint-10);
+  }
+
+  .bf-card__media .bf-media {
+    flex: 1 1 auto;
+    block-size: 100%;
+    min-block-size: 0;
+    object-fit: cover;
   }
 
   /*
@@ -304,18 +433,8 @@ if (import.meta.dev) {
   */
   .bf-card p.bf-card__kicker {
     order: -1;
-    /*
-      Paper groups kicker, title and date at 4px. The card gap is `--space-s`
-      (~16px); this pulls the title back up to `--space-3xs`.
-    */
-    margin-block: 0 calc(var(--space-3xs) - var(--_bf-card-gap));
-    color: var(--color-primary);
-    font-family: var(--font-family-ui);
-    font-size: var(--size--1);
-    font-weight: var(--font-weight-bold);
-    letter-spacing: var(--tracking-ui);
-    line-height: var(--leading-display);
-    text-transform: uppercase;
+    flex-shrink: 0;
+    margin: 0;
   }
 
   .bf-card__chips { order: 1; }
@@ -375,6 +494,7 @@ if (import.meta.dev) {
       centres would leave three visibly different text baselines on one line.
     */
     align-items: baseline;
+    block-size: auto;
 
     gap: var(--_bf-card-row-gap);
   }
@@ -386,31 +506,38 @@ if (import.meta.dev) {
     row's bottom edge, off the baseline everything else shares. Zeroed, the
     date sits on the line with the rest of the row.
   */
-  .bf-card.bf-card-row > time {
+  .bf-card.bf-card-row .bf-card__copy,
+  .bf-card.bf-card-row .bf-card__text {
+    display: contents;
+  }
+
+  .bf-card.bf-card-row .bf-card__text > time {
     margin-block-start: 0;
   }
 
   /*
     Date follows the title. `> time`, so a `<time>` inside an excerpt is not restyled.
   */
-  .bf-card > time {
-    margin-block-start: calc(var(--space-3xs) - var(--_bf-card-gap));
+  .bf-card__text > time {
+    flex-shrink: 0;
+    margin: 0;
     color: var(--color-primary-tint-70);
     font-family: var(--font-family-ui);
-    font-size: var(--size--2);
+    font-size: 0.75rem;
     font-weight: var(--font-weight-semibold);
     letter-spacing: var(--tracking-ui);
-    line-height: var(--leading-display);
+    line-height: 1;
     text-transform: uppercase;
   }
 
   .bf-card :is(h2, h3, h4) {
-    color: var(--color-accent);
-    font-family: var(--font-family-ui);
+    flex-shrink: 0;
+    color: var(--color-navy);
+    font-family: var(--font-family-condensed);
     font-size: var(--size-1);
     font-weight: var(--font-weight-normal);
-    letter-spacing: var(--tracking-ui);
-    line-height: var(--leading-display);
+    letter-spacing: -0.01em;
+    line-height: calc(var(--leading-display) * 1.25);
   }
 
   .bf-card :is(h2, h3, h4) a {
@@ -419,11 +546,37 @@ if (import.meta.dev) {
     text-decoration: none;
   }
 
-  .bf-card p {
+  .bf-card__text > p:not(.kicker) {
+    /*
+      Text cards: the body is the `flex-1 overflow-clip` region, so it takes
+      the space between the title stack and the chips and clips the rest.
+      18px / 26px. `--size-0` is 20px at desktop, which makes the body line
+      as tall as the title's 30px line.
+    */
+    flex: 1 1 auto;
+    min-block-size: 0;
+    overflow: hidden;
+    margin-block-start: calc(var(--space-xs) - var(--space-3xs));
     color: var(--color-text);
-    font-size: var(--size-0);
+    font-family: var(--font-family-ui);
+    font-size: 1.125rem;
     font-weight: var(--font-weight-light);
-    line-height: var(--leading-body);
+    line-height: calc(26 / 18);
+  }
+
+  /*
+    Media cards: the text *block* is what grows (`flex-1` beside the picture),
+    not the excerpt. The excerpt stays content-sized and the gap above it is
+    the block's 24px.
+  */
+  .bf-card:has(.bf-card__media):not([data-span="full"]) .bf-card__text > p:not(.kicker) {
+    flex: 0 1 auto;
+    margin-block-start: calc(var(--space-s) - var(--space-3xs));
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 4;
+    line-clamp: 4;
   }
 
   /*
@@ -555,22 +708,32 @@ if (import.meta.dev) {
     --_bf-chip-padding: 0 var(--space-xs);
     --_bf-chip-font-size: var(--size--2);
     --_bf-chip-border: 0;
+
+    /*
+      Paper pill is 21px tall: 11px type plus ~5px above and below.
+      `--size--2` is the 11px step; `--space-3xs` is the 4–5px step.
+    */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    block-size: calc(var(--size--2) + 2 * var(--space-3xs));
     font-family: var(--font-family-ui);
     font-weight: var(--font-weight-semibold);
-    letter-spacing: var(--tracking-ui);
-    line-height: var(--leading-display);
+    letter-spacing: 0.02em;
+    line-height: 1;
     text-transform: uppercase;
+    white-space: nowrap;
   }
 
-  /* Paper format pill: #FAEAED / #CF4457 → red tint 11 / error. */
+  /* Format / Featured / Magazine — `--color-fail-tint-11` on `--color-red`. */
   .bf-card .bf-chip[data-tone="format"] {
-    --_bf-chip-bg: var(--color-red-tint-11);
-    --_bf-chip-color: var(--color-error);
+    --_bf-chip-bg: var(--color-fail-tint-11);
+    --_bf-chip-color: var(--color-red);
   }
 
-  /* Paper topic pill: #E3F0F2 / #027A8D → green tint 11 / green. */
+  /* Topic — `--color-secondary-tint-11` on `--color-green`. */
   .bf-card .bf-chip[data-program] {
-    --_bf-chip-bg: var(--color-green-tint-11);
+    --_bf-chip-bg: var(--color-secondary-tint-11);
     --_bf-chip-color: var(--color-green);
   }
 }

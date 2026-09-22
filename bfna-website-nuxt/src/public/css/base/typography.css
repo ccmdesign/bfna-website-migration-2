@@ -120,6 +120,22 @@
     text-transform: uppercase;
   }
 
+  /*
+    Eyebrow above a title. Paper: 16px / 16px / 700 / uppercase / --color-blue,
+    IBM Plex Sans Condensed. 16px is 1rem; --size--1 tops out at 14.6px and
+    --size-0 at 20px, so neither step holds the 16:27 ratio against the title.
+  */
+  .kicker {
+    margin: 0;
+    color: var(--color-blue);
+    font-family: var(--font-family-condensed);
+    font-size: 1rem;
+    font-weight: var(--font-weight-bold);
+    letter-spacing: var(--tracking-ui);
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
   p,
   dl,
   li {
