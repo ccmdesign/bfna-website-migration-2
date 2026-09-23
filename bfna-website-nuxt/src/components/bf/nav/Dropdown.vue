@@ -49,6 +49,19 @@ defineOptions({ name: 'BfNavDropdown' })
 
 defineProps<{ label: string, items: MenuItem[] }>()
 
+const root = ref<HTMLDetailsElement | null>(null)
+const route = useRoute()
+
+/**
+ * A click inside the panel navigates and leaves `<details open>` sitting
+ * on the next page — the panel is leftover chrome from the previous
+ * location. `fullPath` (not `path`) so `/insights` → `/insights?format=`
+ * closes too: those are the Insights submenu's own targets.
+ */
+watch(() => route.fullPath, () => {
+  if (root.value?.open) root.value.open = false
+})
+
 /**
  * Close every other open `<details>` in the same group. Ported from
  * `wfNavDropdown.vue`'s handler of the same name.
@@ -100,6 +113,7 @@ function closeOnEsc(e: KeyboardEvent) {
 
 <template>
   <details
+    ref="root"
     class="bf-nav__group"
     @toggle="closeSiblings"
     @keydown.esc="closeOnEsc"

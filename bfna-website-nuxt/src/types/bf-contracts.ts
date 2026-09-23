@@ -235,6 +235,12 @@ export interface FilterBarProps {
    * a screen-reader user hears the same group twice.
    */
   label?: string
+  /**
+   * Card-chip skin, forwarded onto every chip as the same attributes
+   * `bfCardInsight` sets: `format` → `data-tone="format"`, `program` →
+   * `data-program` (the filter key). Omitted, the chips stay outlined.
+   */
+  tone?: 'format' | 'program'
 }
 
 /**
@@ -694,6 +700,17 @@ export interface HeroProps {
    * string for a photograph that genuinely carries information.
    */
   imageAlt?: string
+  /**
+   * A second photograph the band crossfades to and from, on a slow loop.
+   * Ignored without an `image`. Decorative by construction — it renders with
+   * `alt=""` — so `imageAlt` should describe the pair if it describes anything.
+   *
+   * The two files should share framing and sky (see
+   * `_process/scoping/hero-capitol-reichstag-notes.md`, round 3): the fade is a
+   * plain opacity ramp, so whatever differs between them ghosts mid-fade.
+   * Still under `prefers-reduced-motion`, where only `image` shows.
+   */
+  imageSecondary?: string | null
   /**
    * Which scrim treatment the band wears. Ignored without an `image`.
    */

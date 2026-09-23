@@ -275,6 +275,8 @@ const onKeydown = (event: KeyboardEvent, index: number): void => {
       toggle
       :model-value="isSelected(filter.key)"
       :data-filter-key="filter.key"
+      :data-tone="tone === 'format' ? 'format' : undefined"
+      :data-program="tone === 'program' ? filter.key : undefined"
       @update:model-value="(next: boolean) => onToggle(filter.key, next)"
       @keydown="(event: KeyboardEvent) => onKeydown(event, index)"
       @focus="focusedIndex = index"

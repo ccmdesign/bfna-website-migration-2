@@ -20,7 +20,22 @@
  */
 import type { Menu } from '~/types/bf-contracts'
 import menusJson from './menus.json'
+import footerMenusJson from './footer-menus.json'
 
 export const menus: Menu[] = menusJson
+
+/**
+ * The FOOTER's menu list — the same structure with "All Projects" and "Archive" lifted
+ * out of the Projects and Insights lists and appended as heading-only entries, so the
+ * footer's grid gives each of them a column of its own on the second row beside
+ * Podcasts and Documentaries.
+ *
+ * Also GENERATED, by the same normaliser pass and from the same source array; the
+ * hoisting is synthesis and so belongs there rather than in `bfFooter`, which renders
+ * whichever list it is handed and knows nothing about this. `bfNav` reads `menus`
+ * above, unchanged — the two lists exist precisely so the footer's arrangement is not
+ * the nav's.
+ */
+export const footerMenus: Menu[] = footerMenusJson
 
 export default menus

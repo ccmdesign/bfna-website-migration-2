@@ -202,7 +202,18 @@ const showActions = (): boolean => hasRenderedContent(slots.default?.())
       `v-if`, so a hero with no image renders exactly the markup it rendered
       before this prop existed — no wrapper, no scrim, no `data-scrim`.
     -->
-    <bfHeroMedia v-if="image" :src="image" :alt="imageAlt" />
+    <bfHeroMedia
+      v-if="image"
+      :src="image"
+      :src-secondary="imageSecondary"
+      :alt="imageAlt"
+    >
+      <!--
+        On the scrim, not in the content column: a child of `.bf-hero-media`
+        (`z-index: -1`) paints above the photograph and below the copy.
+      -->
+      <slot name="overlay" />
+    </bfHeroMedia>
 
     <!--
       The wireframe's inner box, unchanged. `.center` gives the column its
@@ -353,35 +364,14 @@ const showActions = (): boolean => hasRenderedContent(slots.default?.())
   }
 
   /*
-    The controls' visible boundary, gh#253 — WCAG 1.4.11, and a regression
-    this band would otherwise introduce rather than an adjacent issue.
-
-    `bfButton`'s `primary` variant fills and outlines itself with
-    `--color-primary`. Against a white page that reads at 6.3:1; against this
-    band's scrim over the real photograph it measured **1.22:1**, so the
-    control had no discernible edge at all. The `default` variant is worse
-    still on a dark ground: `--color-text` label on `--_bf-button-bg: none`.
-
-    `border-color` as a longhand rather than through `--_bf-button-border`,
-    because `primary` writes that hook **inline** (`Button.vue:135-139`) and
-    an inline declaration cannot be outranked by any rule. The longhand at
-    (0,3,0) beats the component's own `border:` shorthand at (0,1,0) in the
-    same layer, so it lands on both variants. White on this scrim is 4.84:1,
-    comfortably past the 3:1 floor.
-
-    `--_bf-button-color` *is* written through the hook, because it is only the
-    `default` variant that needs it — `primary` already writes
-    `--color-text-inverse` inline, and an inline value winning there is the
-    right outcome.
-
-    The focus ring stays distinguishable from this keyline: it is an `outline`
-    with `outline-offset`, so it draws a second ring outside the border with
-    the band's ground showing between them.
+    Label colour only. `primary` already writes `--color-text-inverse` inline;
+    this is for a `default` button, whose own label is navy and would vanish
+    on the scrim. The border is left alone: `primary` is an opaque navy fill,
+    and a white keyline here was the old blue-fill fix (`--color-primary` at
+    1.22:1 against this scrim). That stroke is not the Paper primary.
   */
   .bf-hero--media :deep(.bf-button) {
     --_bf-button-color: var(--color-text-inverse);
-
-    border-color: var(--color-text-inverse);
   }
 }
 </style>

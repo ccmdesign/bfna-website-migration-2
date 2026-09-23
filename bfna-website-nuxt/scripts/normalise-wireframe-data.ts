@@ -3,7 +3,8 @@
  *
  * Reads all six `src/assets/wireframe-data/*.json` snapshots READ-ONLY and writes one
  * JSON document per item under `content/bf/<collection>/<slug>.json`, plus the site
- * chrome (`MENUS`) as `src/assets/bf-data/menus.json`.
+ * chrome (`MENUS`) as `src/assets/bf-data/menus.json` and its footer variant as
+ * `src/assets/bf-data/footer-menus.json`.
  *
  * Every synthesis `src/composables/useWfContent.ts` performs for these collections is
  * materialised here as a plain stored field, so `bf-*` components stay presentational
@@ -22,7 +23,9 @@
  *     snapshot's curated array position → `order: number` (gh#180)
  *   - `insights.json.featured` / `.retired_news` → booleans on the insight document
  *   - board predicate             (l.264)     → `board: boolean` on the person document
- *   - `MENUS`                     (l.153-186) → `src/assets/bf-data/menus.json`
+ *   - `MENUS`                     (l.153-186) → `src/assets/bf-data/menus.json`, plus the
+ *                                                footer's own variant of that list as
+ *                                                `src/assets/bf-data/footer-menus.json`
  * New (issue 07 Decisions): `Program.tagline` = first sentence of `intro`.
  *
  * Emitted field lists mirror the zod schemas of issue 09 (`bfInsights`, `bfProjects`,
@@ -885,12 +888,105 @@ const buildMenus = (): Menu[] => {
   return source.map(menuGroup)
 }
 
-const normaliseMenus = (): number => {
-  const menus = buildMenus()
+/**
+ * The two destinations the FOOTER lifts out of their parent lists (BF footer round 3).
+ *
+ * In the footer's grid every top-level entry is a column, and an entry with no `items`
+ * is a heading that is itself a link — which is what `Podcasts` and `Documentaries`
+ * already are. "All Projects" and "Archive" are the two list items that behave like
+ * those two (a whole section, not a sibling of the rows above them), so in the footer
+ * they leave their lists and join that second row: at four columns it reads
+ * Podcasts · Documentaries · All Projects · Archive, which puts All Projects directly
+ * under Projects and Archive under Insights. The placement is grid auto-flow, not an
+ * authored column — nothing in `Footer.vue` changes for this.
+ *
+ * **The nav is not touched.** `bfNav` keeps reading `menus.json`, where both entries
+ * stay exactly where they are; this second list is the footer's alone, which is the
+ * whole reason it is a second list rather than a reshape of the first.
+ *
+ * Matched by DESTINATION, never by label text or array position: the labels are copy
+ * (one of them carries an arrow) and the positions move whenever the lists do, while
+ * `/projects` and `/archive` are the routes themselves.
+ *
+ * Order here is the order they are appended in, so the emitted list is deterministic
+ * regardless of where the two were found.
+ */
+const FOOTER_HOISTED: readonly string[] = ['/projects', '/archive']
+
+/**
+ * The trailing arrow on "All Projects →".
+ *
+ * It is part of the label string in `MENUS`, where it reads as "…and the rest of them"
+ * at the foot of a list. A row-2 heading is not the end of a list and the other three
+ * carry no arrow, so it comes off here — in the hoisted COPY only. The nav's label,
+ * still in `menus.json`, keeps it.
+ */
+const TRAILING_ARROW = /\s*→\s*$/
+
+/**
+ * The footer's menu list: `menus` with the `FOOTER_HOISTED` destinations pulled out of
+ * their parents and appended as heading-only entries (`label` + `to`, no `items`).
+ *
+ * Returns `[]` — the loud failure `main()` reports and exits non-zero on — when a
+ * destination is not found, because the interesting failure is silent: a renamed route
+ * would otherwise emit a footer that simply lacks a column, and nothing downstream
+ * knows the column was meant to be there.
+ *
+ * `strong` is dropped with the rest of the `MenuItem` extras: it styles an emphasised
+ * row inside a list, and these are headings now.
+ */
+const buildFooterMenus = (menus: Menu[]): Menu[] => {
+  const hoisted = new Map<string, Menu>()
+
+  const kept = menus.map((menu): Menu => {
+    if (!menu.items) return menu
+    const items = menu.items.filter((item) => {
+      if (item.to === undefined || !FOOTER_HOISTED.includes(item.to)) return true
+      hoisted.set(item.to, { label: item.label.replace(TRAILING_ARROW, ''), to: item.to })
+      return false
+    })
+    return { ...menu, items }
+  })
+
+  const missing = FOOTER_HOISTED.filter(to => !hoisted.has(to))
+  if (missing.length) {
+    console.error(
+      `normalise-wireframe-data: footer menus — no menu item points at ${missing.join(', ')};`
+      + ' the footer\'s second row is built from those destinations, not from labels'
+    )
+    return []
+  }
+
+  return [...kept, ...FOOTER_HOISTED.map(to => hoisted.get(to)!)]
+}
+
+const normaliseMenus = (menus: Menu[]): number => {
   mkdirSync(BF_DATA_DIR, { recursive: true })
   // A bare array, so `src/assets/bf-data/menus.ts` can type it as `Menu[]` directly.
   writeFileSync(join(BF_DATA_DIR, 'menus.json'), `${JSON.stringify(menus, null, 2)}\n`, 'utf8')
   return menus.length
+}
+
+/**
+ * The footer list, emitted as its own file beside `menus.json` and in the same shape —
+ * a bare `Menu[]`, so `src/assets/bf-data/menus.ts` types it with the same annotation.
+ *
+ * Two files rather than one object with `nav` / `footer` keys: `menus.json` is consumed
+ * as a bare array by the typed accessor, the composable and the layout, and turning it
+ * into a wrapper object would rewrite all three to express a difference that only the
+ * footer has. A sibling file leaves the nav's path through the codebase untouched, which
+ * is also what makes "the nav is unchanged" checkable by diffing one generated file.
+ */
+const normaliseFooterMenus = (menus: Menu[]): number => {
+  const footerMenus = buildFooterMenus(menus)
+  if (!footerMenus.length) return 0
+  mkdirSync(BF_DATA_DIR, { recursive: true })
+  writeFileSync(
+    join(BF_DATA_DIR, 'footer-menus.json'),
+    `${JSON.stringify(footerMenus, null, 2)}\n`,
+    'utf8'
+  )
+  return footerMenus.length
 }
 
 // ---- boolean-flag assertion (gh#140) ---------------------------------------
@@ -1007,15 +1103,21 @@ const main = (): void => {
     pages: normalisePages(),
     announcements: normaliseAnnouncements()
   }
-  const menus = normaliseMenus()
+  // Built once and emitted twice: the footer list is the nav list with two entries
+  // hoisted, so deriving it from the same array is what keeps the two in step.
+  const menuList = buildMenus()
+  const menus = normaliseMenus(menuList)
+  const footerMenus = normaliseFooterMenus(menuList)
 
   console.log('normalise-wireframe-data → content/bf/')
   for (const [name, n] of Object.entries(counts)) console.log(`  ${name.padEnd(13)} ${n}`)
   console.log(`→ src/assets/bf-data/menus.json  ${menus} top-level menus`)
+  console.log(`→ src/assets/bf-data/footer-menus.json  ${footerMenus} top-level menus`)
 
   const empty = Object.entries(counts).filter(([, n]) => !n).map(([name]) => name)
-  if (empty.length || !menus) {
-    console.error(`normalise-wireframe-data: produced zero documents for ${[...empty, ...(menus ? [] : ['menus'])].join(', ')}`)
+  const emptyChrome = [...(menus ? [] : ['menus']), ...(footerMenus ? [] : ['footer menus'])]
+  if (empty.length || emptyChrome.length) {
+    console.error(`normalise-wireframe-data: produced zero documents for ${[...empty, ...emptyChrome].join(', ')}`)
     process.exitCode = 1
   }
 

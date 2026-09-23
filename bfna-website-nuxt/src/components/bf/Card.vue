@@ -259,7 +259,7 @@ if (import.meta.dev) {
     block-size: 100%;
     padding: var(--_bf-card-padding);
     border: var(--_bf-card-border);
-    border-radius: var(--border-radius-l);
+    border-radius: var(--border-radius-xl);
     background-color: var(--color-surface-page);
     --_bf-card-shadow: var(--shadow-elevation-medium);
     --_bf-card-shadow-hover: var(--shadow-elevation-high);
@@ -293,23 +293,23 @@ if (import.meta.dev) {
     transition: all 200ms ease;
   }
 
-  .bf-card[data-span="full"]:hover {
+  /*
+    Translate only when the card has media. Text cards keep the scale
+    from `.bf-card:has(a):hover` below and nothing else.
+  */
+  .bf-card:has(.bf-card__media)[data-span="full"]:hover {
     transform: scale(1.05) translateY(-30px);
     box-shadow: var(--shadow-elevation-high);
     transition: all 200ms ease;
   }
 
-
-  .bf-card:not([data-span="full"]):hover {
-    /* gap: calc(var(--_bf-card-gap) * 2); */
-    
-    .bf-card__media { 
-      top: -80px; 
+  .bf-card:has(.bf-card__media):not([data-span="full"]):hover {
+    .bf-card__media {
+      top: -80px;
       box-shadow: var(--shadow-elevation-medium);
     }
     .bf-card__copy { top: -40px; }
     .bf-card__chips { top: 10px; }
-    
   }
 
   /*
@@ -627,12 +627,18 @@ if (import.meta.dev) {
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .bf-card {
+    .bf-card,
+    .bf-card * {
       transition: none;
     }
 
-    .bf-card:has(:is(h2, h3, h4) a):hover {
+    .bf-card:has(:is(h2, h3, h4) a):hover,
+    .bf-card:has(.bf-card__media)[data-span="full"]:hover {
       transform: none;
+    }
+
+    .bf-card:has(.bf-card__media):not([data-span="full"]):hover :is(.bf-card__media, .bf-card__copy, .bf-card__chips) {
+      top: 0;
     }
   }
 
@@ -698,11 +704,16 @@ if (import.meta.dev) {
 <style>
 @layer overrides {
   /*
-    Filled programme pills, only inside a card. Filter-bar chips stay outlined.
-    The chip's own rule sets `--_bf-chip-*` on itself in `@layer components`,
-    so this has to live in a later layer to win.
+    Filled pills. Keyed on the chip's own attributes so a card and a filter
+    bar that set `data-tone` / `data-program` get one skin. Untoned chips
+    inside a card (Archive, extras) still take the accent fill via `.bf-card`.
+
+    The chip's own rule sets `--_bf-chip-*` in `@layer components`, so this
+    has to live in a later layer to win.
   */
-  .bf-card .bf-chip {
+  .bf-card .bf-chip,
+  .bf-chip[data-tone="format"],
+  .bf-chip[data-program] {
     --_bf-chip-bg: var(--color-accent-tint-11);
     --_bf-chip-color: var(--color-accent);
     --_bf-chip-padding: 0 var(--space-xs);
@@ -726,15 +737,27 @@ if (import.meta.dev) {
   }
 
   /* Format / Featured / Magazine — `--color-fail-tint-11` on `--color-red`. */
-  .bf-card .bf-chip[data-tone="format"] {
+  .bf-chip[data-tone="format"] {
     --_bf-chip-bg: var(--color-fail-tint-11);
     --_bf-chip-color: var(--color-red);
   }
 
   /* Topic — `--color-secondary-tint-11` on `--color-green`. */
-  .bf-card .bf-chip[data-program] {
+  .bf-chip[data-program] {
     --_bf-chip-bg: var(--color-secondary-tint-11);
     --_bf-chip-color: var(--color-green);
+  }
+
+  /*
+    Toggle chips (the filter bar) still have to show selection. This layer
+    outranks `.bf-chip[data-active]` in `@layer components`, so the inverse
+    fill is restated here. Border stays 0 so the box does not grow.
+  */
+  .bf-chip[data-tone="format"][data-active],
+  .bf-chip[data-program][data-active] {
+    --_bf-chip-bg: var(--color-surface-inverse);
+    --_bf-chip-color: var(--color-text-inverse);
+    --_bf-chip-border: 0;
   }
 }
 </style>

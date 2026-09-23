@@ -84,7 +84,8 @@
  * `.frame`'s universal child rule forces `100%/100%` onto a text panel, and
  * `.imposter` supplies no containing block.
  *
- * Presentational-only (BRIEF D8): two props in, no slot, nothing out.
+ * Presentational-only (BRIEF D8): two props in, one slot (painted on the
+ * scrim, above it), nothing out.
  */
 defineOptions({ name: 'BfHeroMedia' })
 
@@ -102,6 +103,12 @@ interface Props {
    * asset and has no business behind a page's `<h1>`.
    */
   src?: string | null
+  /**
+   * A second photograph, stacked over `src` and faded in and out on a loop.
+   * Ignored without `src`. Always `alt=""`: it is the same scene's other half,
+   * and announcing an image that comes and goes would be noise.
+   */
+  srcSecondary?: string | null
   /**
    * The photograph's alternative text.
    *
@@ -188,13 +195,40 @@ withDefaults(defineProps<Props>(), { alt: '' })
     />
 
     <!--
+      The crossfade partner. Same box, same crop, same srcset ladder as the
+      first image, painted over it and faded by `bf-hero-media-crossfade`.
+
+      `loading="eager"` because it is above the fold and wanted within a few
+      seconds, but **no** `fetchpriority="high"`: it starts at opacity 0, so
+      it is never the largest contentful paint and must not compete with the
+      image that is.
+    -->
+    <bfMedia
+      v-if="src && srcSecondary"
+      class="bf-hero-media__image bf-hero-media__image--secondary"
+      :src="srcSecondary"
+      alt=""
+      ratio="auto"
+      sizes="xs:100vw sm:100vw md:100vw lg:100vw xl:100vw xxl:100vw"
+      densities="1x"
+      loading="eager"
+    />
+
+    <!--
       The scrim is its own element rather than a pseudo-element on the
       wrapper, because `panel` mode resizes it and a pseudo-element would make
       that a second, invisible box to reason about. It is painted whether or
       not there is an image: a band with `data-scrim` and no photograph is a
       flat navy header, which is a coherent thing to be.
     -->
-    <div class="bf-hero-media__scrim" />
+    <!--
+      Slot content is a child of the scrim, so it paints above the scrim
+      fill and the photograph. `z-index` on the child cannot escape this
+      layer's own `-1` — the host's in-flow copy stays above it.
+    -->
+    <div class="bf-hero-media__scrim">
+      <slot />
+    </div>
   </div>
 </template>
 
@@ -259,10 +293,65 @@ withDefaults(defineProps<Props>(), { alt: '' })
     object-position: var(--_bf-hero-media-image-position, center);
   }
 
+  /*
+    The crossfade. One image fades over the other; the first never moves, so
+    the band is never empty mid-fade and the LCP image is never transparent.
+
+    The cycle is a hook, `--_bf-hero-media-crossfade-duration`, and the
+    keyframes split it into four: hold the first, fade, hold the second, fade
+    back. 20s gives 7s holds and 3s fades — slow enough to read as weather
+    rather than as a slideshow. There is no motion token to reach for yet
+    (`tokens/` has no duration scale), so the default is a literal.
+
+    `prefers-reduced-motion` stops it outright and leaves the first image.
+    What it does **not** yet have is a pause control, which WCAG 2.2.2 asks of
+    anything that auto-updates for more than five seconds beside other
+    content; recorded in the scoping notes rather than solved here.
+  */
+  .bf-hero-media > .bf-hero-media__image--secondary {
+    opacity: 0;
+    animation: bf-hero-media-crossfade
+      var(--_bf-hero-media-crossfade-duration, 20s) ease-in-out infinite;
+  }
+
+  @keyframes bf-hero-media-crossfade {
+    0%,
+    35% {
+      opacity: 0;
+    }
+
+    50%,
+    85% {
+      opacity: 1;
+    }
+
+    100% {
+      opacity: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bf-hero-media > .bf-hero-media__image--secondary {
+      animation: none;
+    }
+  }
+
   .bf-hero-media__scrim {
     position: absolute;
     inset: 0;
     background-color: var(--color-scrim);
+  }
+
+  /*
+    Whatever a host drops on the scrim — the site announcement, today —
+    sits in the band, above the fill. `position` + `z-index` is what puts
+    it over the scrim's own background; it still cannot climb out of this
+    layer. The block-start margin is the inset under the nav.
+  */
+  .bf-hero-media__scrim > :slotted(*) {
+    position: relative;
+    z-index: 1;
+    margin-block-start: var(--space-m);
   }
 
   /*
@@ -325,6 +414,26 @@ withDefaults(defineProps<Props>(), { alt: '' })
   @media print {
     .bf-hero-media {
       display: none;
+    }
+
+    /*
+      A scrim child (the announcement) must still print. The photograph
+      stays hidden; the scrim fill is a background and drops anyway.
+    */
+    .bf-hero-media:has(> .bf-hero-media__scrim > *) {
+      display: block;
+      position: static;
+      z-index: auto;
+      overflow: visible;
+    }
+
+    .bf-hero-media:has(> .bf-hero-media__scrim > *) .bf-hero-media__image {
+      display: none;
+    }
+
+    .bf-hero-media:has(> .bf-hero-media__scrim > *) .bf-hero-media__scrim {
+      position: static;
+      background-color: transparent;
     }
   }
 }

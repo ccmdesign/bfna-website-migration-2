@@ -243,7 +243,7 @@ const statusId = useId()
       :aria-describedby="announcement ? statusId : undefined"
       @click="onActivate"
     >
-      {{ label }}
+      {{ label }}<span aria-hidden="true"> →</span>
     </bfButton>
 
     <!--
@@ -292,6 +292,27 @@ const statusId = useId()
   */
   .bf-load-more {
     display: block;
+  }
+
+  /*
+    Same treatment as `.bf-home-more` on `/` (Paper, Sep 21): 14/18 medium
+    blue, no box. The homepage control is a `NuxtLink`; this one stays a
+    `<button>` because it paginates, it does not navigate. Hooks reset the
+    `bfButton` chrome; the type metrics have to be restated because they
+    are not hooks.
+  */
+  .bf-load-more .bf-load-more__button {
+    --_bf-button-border: none;
+    --_bf-button-color: var(--color-blue);
+    --_bf-button-font-size: 0.875rem;
+    --_bf-button-padding: 0;
+    --_bf-button-radius: 0;
+
+    font-weight: var(--font-weight-medium);
+    line-height: 1.125rem;
+    text-align: start;
+    text-transform: capitalize;
+    width: fit-content;
   }
 
   /*

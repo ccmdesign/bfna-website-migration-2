@@ -55,13 +55,14 @@
  * Nuxt scans `composables/` one directory deep for `index` files only, and
  * these live at `composables/data/useBf*.ts`.
  */
-import type { Insight } from '~/types/bf-contracts'
+import type { Announcement, Insight } from '~/types/bf-contracts'
 import { useBfInsights } from '~/composables/data/useBfInsights'
 import { useBfPages } from '~/composables/data/useBfPages'
 import { useBfPrograms } from '~/composables/data/useBfPrograms'
 import { useBfProjects } from '~/composables/data/useBfProjects'
 import { useProgramTheme } from '~/composables/useProgramTheme'
 import { formatLabel, monthYear } from '~/utils/format'
+import { isExternal } from '~/utils/link'
 
 defineOptions({ name: 'InsightDetailPage' })
 
@@ -120,6 +121,15 @@ useHead({ title: () => insight?.heading ?? 'Insight' })
 useProgramTheme(program?.slug)
 
 /**
+ * Same composition as the homepage hero and the Insights masthead: the
+ * shell skips its band on `/insights/:slug` and this header paints it.
+ */
+const banner = inject<Announcement | undefined>('bf-banner')
+const bannerCut = banner?.message?.indexOf(' | ') ?? -1
+const bannerKicker = bannerCut > 0 ? banner!.message!.slice(0, bannerCut) : ''
+const bannerBody = bannerCut > 0 ? banner!.message!.slice(bannerCut + 3) : (banner?.message ?? '')
+
+/**
  * Up to three more in the same programme, self excluded — the frozen page's
  * arithmetic, unchanged. It runs on the raw `insight.program` string rather
  * than on `programName`, so the 52 mis-tagged rows still find their siblings;
@@ -129,26 +139,6 @@ const related: Insight[] = insight?.program
   ? activeByProgram(insight.program)
     .filter(i => i.slug !== insight.slug)
     .slice(0, 3)
-  : []
-
-/**
- * The header chips, in the frozen page's order: format, programme, related
- * projects, and `Archive` last.
- *
- * `Insight.projects` holds project **slugs** (the real M2M) and the chip shows
- * the project's `heading`, exactly as `pages/[program].vue` builds its extra
- * chips. The programme chip is present only when the value is a real
- * programme. `filter(Boolean)` with the type predicate drops the nulls the
- * conditionals leave behind — `bfPageHeader` filters non-strings out too, but
- * the type has to agree with `chips?: string[]` here.
- */
-const chips: string[] = insight
-  ? [
-      formatLabel(insight.format),
-      programName,
-      ...(insight.projects ?? []).map(slug => projectBySlug(slug)?.heading ?? slug),
-      insight.archived ? 'Archive' : undefined
-    ].filter((c): c is string => typeof c === 'string' && c !== '')
   : []
 
 /**
@@ -199,7 +189,7 @@ const crumbs = [
       Two additions, gh#254, and they are the only things distinguishing this
       band from the seven other `bfPageHeader` call sites.
 
-      `measure="narrow"` gives the header the **body's** 60ch column, so the
+      `measure="wide"` gives the header the **body's** 90ch column, so the
       `<h1>` ranges left on the same vertical as the copy beneath it instead of
       some 300px outside it. It is a prop rather than a rule in
       `public/css/components/article.css`, and review is why: the first draft
@@ -218,13 +208,26 @@ const crumbs = [
     -->
     <bfPageHeader
       class="bf-article-header"
-      measure="narrow"
+      measure="wide"
       label="Insight header"
+      :image="insight.image || '/images/hero/article-texture.png'"
+      :data-cover="insight.image ? 'photo' : 'texture'"
       :crumbs="crumbs"
-      :chips="chips"
       :heading="insight.heading"
       :tagline="insight.subheading"
     >
+      <template #chips>
+        <bfChip data-tone="format">{{ formatLabel(insight.format) }}</bfChip>
+        <bfChip
+          v-if="program"
+          :data-program="program.slug"
+        >{{ program.name }}</bfChip>
+        <bfChip
+          v-for="slug in insight.projects ?? []"
+          :key="slug"
+        >{{ projectBySlug(slug)?.heading ?? slug }}</bfChip>
+        <bfChip v-if="insight.archived">Archive</bfChip>
+      </template>
       <!--
         The meta row. `bfByline` owns the "By … · date" phrase when there is an
         author; when there is not, the date stands alone and is wrapped in a
@@ -238,6 +241,24 @@ const crumbs = [
       -->
       <bfByline v-if="authorText" :author="authorText" :date="insight.publish_date" />
       <p v-else><bfTime :date="insight.publish_date" /></p>
+      <bfNotice
+        v-if="banner?.message"
+        class="bf-article-header__announcement bf-shell__announcement | center"
+        variant="info"
+      >
+        <a
+          v-if="banner.url"
+          :href="banner.url"
+          :data-external="isExternal(banner.url) || undefined"
+        >
+          <span v-if="bannerKicker" class="bf-announcement__kicker">{{ bannerKicker }}</span>
+          <span>{{ bannerBody }}</span>
+        </a>
+        <template v-else>
+          <span v-if="bannerKicker" class="bf-announcement__kicker">{{ bannerKicker }}</span>
+          <span>{{ bannerBody }}</span>
+        </template>
+      </bfNotice>
     </bfPageHeader>
 
     <!--
@@ -265,9 +286,8 @@ const crumbs = [
       Zone 3 — the body: excerpt dek, media, the full stored content, and the
       download when there is one.
 
-      `measure="narrow"` is the frozen page's own — this is the one band on the
-      site that is a column of running prose and wants a reading measure rather
-      than the default. It stays 60ch; gh#254 changed nothing about it.
+      `measure="wide"` — 90ch, the reading measure for this column. It stays
+      on the same step as the header so the two columns share a left edge.
 
       `bf-article-body` carries the programme spine — an opaque `--color-program`
       rule down the column's left edge, tying the piece to its programme without
@@ -277,7 +297,7 @@ const crumbs = [
       navy. Same D-50.2 guard as the chip, the banner link and the related
       heading, arrived at without this file saying anything.
     -->
-    <bfSection class="bf-article-body" label="Body" measure="narrow">
+    <bfSection class="bf-article-body" label="Body" measure="wide">
       <!--
         The dek. A plain string: the HTML strip and entity decode the frozen
         page's render-time helper did now happen once, in the build-time

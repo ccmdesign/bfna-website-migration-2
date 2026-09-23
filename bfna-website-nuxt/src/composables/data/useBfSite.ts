@@ -32,7 +32,7 @@
  * — what makes a page port a one-liner (issue 11 precedent).
  */
 import type { Announcement, Menu } from '~/types/bf-contracts'
-import { menus as bfMenus } from '~/assets/bf-data/menus'
+import { menus as bfMenus, footerMenus as bfFooterMenus } from '~/assets/bf-data/menus'
 
 /**
  * The publish gate, as a pure function: the document back when it is
@@ -78,6 +78,20 @@ export const useBfSite = async () => {
      * the top level is copied — the entries themselves are the same frozen-in-
      * practice objects the module exports, which is all any consumer reads.
      */
-    menus: (): Menu[] => [...bfMenus]
+    menus: (): Menu[] => [...bfMenus],
+    /**
+     * The same structure as `menus()`, arranged for the footer: "All Projects"
+     * and "Archive" hoisted out of the Projects and Insights lists into
+     * heading-only entries of their own, which the footer's grid lays out as
+     * columns on its second row beside Podcasts and Documentaries.
+     *
+     * A second generated list rather than a transform here, for the reason
+     * `menus()` is not one either — the arrangement is synthesis, and synthesis
+     * lives in the normaliser (BRIEF §6). This member exists so the layout can
+     * hand `bfNav` and `bfFooter` different lists; the nav's is untouched.
+     *
+     * A fresh array per call, exactly as above and for the gh#91 reason.
+     */
+    footerMenus: (): Menu[] => [...bfFooterMenus]
   }
 }

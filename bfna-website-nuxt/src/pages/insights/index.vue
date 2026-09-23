@@ -51,10 +51,11 @@
  * Nuxt scans `composables/` one directory deep for `index` files only, and
  * these live at `composables/data/useBf*.ts`.
  */
-import type { Filter, Insight } from '~/types/bf-contracts'
+import type { Filter, Insight, Announcement } from '~/types/bf-contracts'
 import { useBfInsights } from '~/composables/data/useBfInsights'
 import { useBfPages } from '~/composables/data/useBfPages'
 import { useBfPrograms } from '~/composables/data/useBfPrograms'
+import { isExternal } from '~/utils/link'
 
 defineOptions({ name: 'InsightsIndexPage' })
 
@@ -69,8 +70,31 @@ const { pageBySlug } = await useBfPages()
 /** The feed's own document — its heading and standfirst are content, not copy. */
 const feedPage = pageBySlug('insights')
 
+const heading = computed(() => feedPage?.heading ?? 'Insights')
+
+/**
+ * Two-then-current trail — residual #188. `bfBreadcrumb` treats the last
+ * crumb as the current page and never links it, so a one-entry Home trail
+ * would announce this page as the homepage.
+ */
+const crumbs = computed(() => [
+  { label: 'Home', to: '/' },
+  { label: heading.value }
+])
+
 /** The band's own title, added once by `bf-default`'s `titleTemplate`. */
-useHead({ title: () => feedPage?.heading ?? 'Insights' })
+useHead({ title: () => heading.value })
+
+/**
+ * Same contract as the homepage hero: the shell provides `bf-banner` and
+ * skips its own band on this route. Painted on the photograph, not between
+ * the nav and the hero.
+ */
+const banner = inject<Announcement | undefined>('bf-banner')
+
+const bannerCut = banner?.message?.indexOf(' | ') ?? -1
+const bannerKicker = bannerCut > 0 ? banner!.message!.slice(0, bannerCut) : ''
+const bannerBody = bannerCut > 0 ? banner!.message!.slice(bannerCut + 3) : (banner?.message ?? '')
 
 /**
  * The format facet, ported verbatim from the frozen page (and identical to the
@@ -136,15 +160,14 @@ const selectedFormat = computed<string | undefined>(() => readQuery('format'))
 const selectedArea = computed<string | undefined>(() => readQuery('area'))
 
 /**
- * `?archive=1` — the frozen page's third facet, kept as **URL state without a
- * control**.
+ * `?archive=1` — include archived rows in this feed.
  *
- * No chip writes it any more: archived items have their own route (issue 55)
- * and the Filters band links there instead. It is still read, and still carried
- * across every facet toggle by `linkWith`, so a bookmarked or hand-written
- * wireframe-era URL keeps working and the spec's three query keys stay true.
+ * A toggle writes it. `linkWith` drops a key whose patched value equals the
+ * current one, so passing `'1'` checks it on and unchecks it off.
  */
 const includeArchived = computed<boolean>(() => readQuery('archive') !== undefined)
+
+const onArchive = () => navigateTo(linkWith({ archive: '1' }))
 
 /**
  * The next location for a facet change — the frozen page's `linkWith()`,
@@ -265,92 +288,136 @@ const remaining = computed<number>(() => Math.max(filtered.value.length - visibl
   -->
 
   <!--
-    Zone 1 — the feed header. `heading` and `tagline` come from `pages.json`'s
-    `insights` row; the fallback is the frozen page's own.
+    Zone 1 — the hero. The photograph is the band's ground (`#bleed`,
+    outside `.center`); the copy sits on it. Facets are the next band.
 
-    **The trail is two entries, not the frozen source's one** — residual
-    [#188](https://github.com/ccmdesign/bfna-website-migration-2/issues/188).
-    `bfBreadcrumb` (#20) treats the *last* crumb as the current page and never
-    links it, positionally, whether or not it carries a `to`. A one-entry
-    `[{ label: 'Home', to: '/' }]` trail is therefore all-last, and this page
-    was shipping `<span aria-current="page">Home</span>`: a breadcrumb telling
-    the reader they are on the homepage while they are on the feed, with the
-    `to: '/'` silently dropped and no link anywhere in it. Naming this page as
-    the final, unlinked crumb restores Home to a real `<a href="/">` and puts
-    `aria-current="page"` where it belongs — the same two-then-current shape
-    `/projects` (#51) and both detail routes already build.
+    `pages.json`'s `insights` row has no image yet. `bfHeroMedia` refuses
+    the crosshatch placeholder, so until a `src` exists the stand-in is
+    `bfMedia` stretched over the same box — the composition, not a navy
+    scrim with nothing under it.
   -->
-  <bfPageHeader
+  <bfSection
+    class="bf-insights-masthead"
+    :class="{ 'bf-insights-masthead--media': Boolean(feedPage?.image) }"
+    :data-scrim="feedPage?.image ? 'full' : undefined"
     label="Insights feed"
-    :crumbs="[{ label: 'Home', to: '/' }, { label: feedPage?.heading ?? 'Insights' }]"
-    :heading="feedPage?.heading ?? 'Insights'"
-    :tagline="feedPage?.description"
-  />
+    gap="m"
+    padded
+    aria-labelledby="insights-heading"
+  >
+    <template #bleed>
+      <bfHeroMedia
+        v-if="feedPage?.image"
+        :src="feedPage.image"
+        alt=""
+      />
+      <div v-else class="bf-insights-masthead__bg">
+        <bfMedia alt="" ratio="auto" />
+      </div>
+    </template>
+
+    <div class="stack" data-gap="s">
+      <bfNotice
+        v-if="banner?.message"
+        class="bf-insights-masthead__announcement bf-shell__announcement | center"
+        variant="info"
+      >
+        <a
+          v-if="banner.url"
+          :href="banner.url"
+          :data-external="isExternal(banner.url) || undefined"
+        >
+          <span v-if="bannerKicker" class="bf-announcement__kicker">{{ bannerKicker }}</span>
+          <span>{{ bannerBody }}</span>
+        </a>
+        <template v-else>
+          <span v-if="bannerKicker" class="bf-announcement__kicker">{{ bannerKicker }}</span>
+          <span>{{ bannerBody }}</span>
+        </template>
+      </bfNotice>
+      <bfBreadcrumb :items="crumbs" />
+      <h1 id="insights-heading">{{ heading }}</h1>
+      <p v-if="feedPage?.description" data-measure="normal">
+        {{ feedPage.description }}
+      </p>
+    </div>
+  </bfSection>
 
   <!--
-    Zone 2 — the facets.
-
-    Each bar gets a **visible** caption and points its accessible name at it
-    with `aria-labelledby`, which wins over `bfFilterBar`'s own `aria-label` by
-    the ARIA name-computation order (the component documents exactly this call
-    site). Two bars on one page must not both announce as "Filters".
-
-    `:model-value` + `@update:model-value` rather than `v-model`: the state is
-    the URL, so the write is a navigation, not an assignment.
+    Zone 2 — facets, under the hero. Each bar gets a visible caption and
+    points its accessible name at it with `aria-labelledby`, which wins
+    over `bfFilterBar`'s own `aria-label`. Two bars on one page must not
+    both announce as "Filters". `:model-value` + `@update:model-value`:
+    the state is the URL.
   -->
   <bfSection label="Filters" gap="s">
-    <div class="cluster" data-gap="xs">
-      <span id="insights-facet-format">Format:</span>
-      <bfFilterBar
-        aria-labelledby="insights-facet-format"
-        label="Format"
-        :filters="FORMATS"
-        :model-value="asSelection(selectedFormat)"
-        @update:model-value="selection => onFacet('format', selection)"
-      />
+    <div class="cluster" data-gap="l">
+      <div class="stack" data-gap="xs">
+        <span id="insights-facet-format">Format:</span>
+        <bfFilterBar
+          aria-labelledby="insights-facet-format"
+          label="Format"
+          tone="format"
+          :filters="FORMATS"
+          :model-value="asSelection(selectedFormat)"
+          @update:model-value="selection => onFacet('format', selection)"
+        />
+      </div>
+
+      <div class="stack" data-gap="xs">
+        <span id="insights-facet-program">Program:</span>
+        <bfFilterBar
+          aria-labelledby="insights-facet-program"
+          label="Program"
+          tone="program"
+          :filters="programFilters"
+          :model-value="asSelection(selectedArea)"
+          @update:model-value="selection => onFacet('area', selection)"
+        />
+      </div>
     </div>
 
-    <div class="cluster" data-gap="xs">
-      <span id="insights-facet-program">Program:</span>
-      <bfFilterBar
-        aria-labelledby="insights-facet-program"
-        label="Program"
-        :filters="programFilters"
-        :model-value="asSelection(selectedArea)"
-        @update:model-value="selection => onFacet('area', selection)"
-      />
-    </div>
-
-    <!--
-      The archive, and the way out of a filtered view. The archive link
-      replaces the wireframe's inline `?archive=1` toggle — same counter, same
-      wording as the one `pages/[program].vue` already ships.
-    -->
-    <div class="cluster" data-gap="xs">
-      <bfButton to="/archive">
-        Include archived ({{ archived.length }})<span aria-hidden="true"> →</span>
-      </bfButton>
-      <bfButton v-if="hasFilters" to="/insights">
-        Clear filters
-      </bfButton>
+    <div class="cluster bf-insights-meta" data-gap="s">
+      <p class="bf-insights-count">
+        {{ filtered.length }} items<span v-if="includeArchived"> (including archive)</span>
+      </p>
+      <button
+        type="button"
+        class="bf-insights-archive"
+        :aria-pressed="includeArchived"
+        @click="onArchive"
+      >
+        <svg
+          class="bf-insights-archive__icon"
+          viewBox="0 0 16 16"
+          aria-hidden="true"
+        >
+          <path
+            v-if="includeArchived"
+            d="M4 4 12 12 M12 4 4 12"
+          />
+          <path
+            v-else
+            d="M3 8.5 6.2 12 13 4"
+          />
+        </svg>
+        Include archived ({{ archived.length }})
+      </button>
     </div>
   </bfSection>
 
   <!--
     Zone 3 — the results.
 
-    `bfGridInsights` brings its own `.grid[data-min-width]` (D9); this page
-    names no column count. `headingLevel` 3 keeps the card headings under the
+    `bfGridInsights` brings its own `.grid[data-min-width]` (D9). `min-width="xl"`
+    is the 400px floor — two tracks at 1200px, same as `bfGridProjects` and the
+    home featured bands. `headingLevel` 3 keeps the card headings under the
     band's `<h2>` (BRIEF §5 rule 9) — the wrapper's default, stated so the next
     reader does not have to know that.
   -->
   <bfSection label="Results">
-    <p>
-      <strong>{{ filtered.length }}</strong> items<span v-if="includeArchived"> (including archive)</span>
-    </p>
-
     <template v-if="filtered.length">
-      <bfGridInsights :insights="shown" :heading-level="3" />
+      <bfGridInsights :insights="shown" min-width="xl" :heading-level="3" />
 
       <!--
         The label carries the remainder, as the frozen page's button does — the
@@ -368,7 +435,7 @@ const remaining = computed<number>(() => Math.max(filtered.value.length - visibl
     </template>
 
     <!--
-      Nothing matched. `heading-level="2"` because `bfPageHeader` above already
+      Nothing matched. `heading-level="2"` because the masthead above already
       owns this page's `<h1>` — residual #173, and the reason `bfEmptyState`
       grew the prop.
     -->
@@ -382,3 +449,96 @@ const remaining = computed<number>(() => Math.max(filtered.value.length - visibl
     />
   </bfSection>
 </template>
+
+<style>
+/*
+  Containing block for the bleed layer. `isolation` keeps a negative
+  z-index above this band's own background and below the copy — the same
+  pair `bfPageHeader` writes on `.bf-page-header--media`.
+*/
+.bf-insights-masthead {
+  position: relative;
+  isolation: isolate;
+  aspect-ratio: 16 / 9;
+}
+
+/*
+  Same place as `bfHero`'s `#overlay`: on the photograph, under the nav,
+  not a band between them. The shell's `margin-block-end` is for the
+  between-nav placement; here the hero's own padding is the gap.
+*/
+.bf-insights-masthead__announcement {
+  position: absolute;
+  inset-block-start: var(--space-m);
+  inset-inline: 0;
+  z-index: 1;
+  margin-block-end: 0;
+}
+
+/*
+  Stand-in until `feedPage.image` exists. `ratio="auto"` drops the 16/9
+  box; this rule is what makes the placeholder the band, not a card.
+  Unlayered on purpose: it has to beat `bfMedia`'s layered `.bf-media`.
+*/
+.bf-insights-masthead__bg {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+}
+
+.bf-insights-masthead__bg .bf-media {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  aspect-ratio: auto;
+}
+
+.bf-insights-masthead--media {
+  color: var(--color-text-inverse);
+}
+
+.bf-insights-masthead--media .bf-breadcrumb__link,
+.bf-insights-masthead--media .bf-breadcrumb__link:visited {
+  color: inherit;
+}
+
+.bf-insights-meta {
+  align-items: center;
+}
+
+.bf-insights-count,
+.bf-insights-archive {
+  font-family: var(--font-family-ui);
+  font-size: 0.875rem;
+  font-weight: var(--font-weight-medium);
+  line-height: 1.125rem;
+}
+
+.bf-insights-count {
+  margin: 0;
+}
+
+.bf-insights-archive {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-blue);
+  text-transform: capitalize;
+  cursor: pointer;
+}
+
+.bf-insights-archive__icon {
+  inline-size: 1em;
+  block-size: 1em;
+  fill: none;
+  stroke: currentcolor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+</style>

@@ -36,69 +36,95 @@
 
 @layer components {
   /*
-   * The spine's width, declared once on the two bands that share it.
-   * `--border-width-thick` is 4px (`tokens/semantic-misc.css`).
-   */
-  .bf-article-header,
-  .bf-article-body {
-    --_bf-article-spine: var(--border-width-thick);
-  }
-
-  /*
-   * The programme spine — an opaque rule down the article's left edge.
-   *
-   * `--color-program`, not `--color-program-on-light`: this is a fill and never
-   * text, which is the only tier distinction that matters
-   * (`tokens/semantic-colors.css:255-258`). It needs no guard and no fallback
-   * declaration: `data-program` lands on `<html>` only for the three real
-   * programmes (gh#252), and `semantic-colors.css` declares the neutral `:root`
-   * default first and deliberately, so an article carrying one of the 52
-   * migration-signal values — or none at all — paints navy. That is the
-   * degradation, and it is the token's, not this file's.
-   *
-   * On `.center` rather than on the band, because `.center` is the column: the
-   * rule then sits one `--space-s` to the left of the copy instead of at the
-   * viewport edge.
-   */
-  .bf-article-body > .center {
-    border-inline-start: var(--_bf-article-spine) solid var(--color-program);
-  }
-
-  /*
-   * The same border on the header, in `transparent`, and it is load-bearing.
-   *
-   * `.center` is `box-sizing: content-box` with `margin-inline: auto`
-   * (`composition/center.css:50-58`), so a 4px border makes the body column 4px
-   * wider overall and auto-centring then moves its content 2px right. The
-   * header's column would no longer start on the same vertical — which is the
-   * one thing the `measure="narrow"` on the band exists to achieve. Giving both
-   * columns the same box model costs one declaration and keeps the edge exact at
-   * every width.
-   *
-   * `border-inline-start` is safe to declare from here where the measure was
-   * not: `composition/center.css` declares no border at all, so there is
-   * nothing to tie with — this adds a property rather than overwriting one.
-   */
+    `wide` is 90ch of this box's own font (the root 16px), which is only
+    ~72 characters of the body (`--size-0`). Scale the cap so a line of
+    prose is 90 characters of the type that is actually set. Header and
+    body share it so the columns start on the same vertical.
+  */
+  .bf-article-body > .center,
   .bf-article-header > .center {
-    border-inline-start: var(--_bf-article-spine) solid transparent;
+    max-inline-size: calc(90ch * var(--size-0) / 1em);
+  }
+
+  .bf-article-header {
+    position: relative;
+  }
+
+  .bf-article-header__announcement {
+    position: absolute;
+    inset-block-start: var(--space-m);
+    inset-inline: 0;
+    z-index: 1;
+    margin-block-end: 0;
   }
 
   /*
-   * The article's `<h1>`, at the top of the ramp gh#254 extended.
-   *
-   * `--size-7` is 27.4px at 320 and 64.5px at 1248 and above. `base/typography.
-   * css` sets `h1` to `--size-4` in `@layer defaults`; this is `@layer
-   * components`, which is later in the order at `styles.css:2`, so it wins on
-   * layer alone and no specificity argument is involved.
-   *
-   * `line-height: 1.05` because the stack's 1.5 is a reading value and would
-   * open a 64px headline into unrelated lines. `text-wrap: balance` so a
-   * two-word last line does not hang off a headline this size; it degrades to
-   * normal wrapping where unsupported.
+   * Article title. `--size-7` was the display ramp and it renders at
+   * ~11rem on a desktop, which is a poster, not a heading. IBM Plex Sans
+   * at `--size-3` (~28px → ~51px).
    */
   .bf-article-header .bf-page-header__heading {
-    font-size: var(--size-7);
-    line-height: 1.05;
+    font-family: var(--font-family-ui);
+    font-size: var(--size-3);
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: -0.02em;
+    line-height: 1.15;
     text-wrap: balance;
+  }
+
+  /*
+    Standfirst. `--size-0` tops out at 1.25rem (20px); line-height 1.2
+    is 24px at that step. Newsreader italic is the display face.
+  */
+  .bf-article-header .bf-page-header__tagline {
+    font-family: var(--font-family-display);
+    font-size: var(--size-0);
+    font-style: italic;
+    font-weight: var(--font-weight-normal);
+    line-height: 1.2;
+  }
+
+  /*
+    Card date (`.bf-card__text > time`) is 0.75rem. One step up that ramp
+    is `--size--1`.
+  */
+  .bf-article-header time {
+    margin: 0;
+    color: var(--color-primary-tint-70);
+    font-family: var(--font-family-ui);
+    font-size: var(--size--1);
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: var(--tracking-ui);
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  /*
+    Cover or the paper texture, behind the type. The media header's own
+    rule turns type white for a 0.70 navy scrim; this band keeps the
+    dark type, so the wash is a light tint instead.
+  */
+  .bf-article-header {
+    --color-scrim: color-mix(in srgb, var(--color-surface-page) 28%, transparent);
+  }
+
+  .bf-article-header[data-cover="photo"] {
+    --color-scrim: color-mix(in srgb, var(--color-surface-page) 78%, transparent);
+  }
+}
+
+@layer overrides {
+  .bf-article-header.bf-page-header--media {
+    color: var(--color-text);
+  }
+
+  .bf-article-header.bf-page-header--media .bf-breadcrumb {
+    --_bf-breadcrumb-separator-color: var(--color-text);
+    --_bf-breadcrumb-focus-color: var(--color-text);
+  }
+
+  .bf-article-header.bf-page-header--media .bf-breadcrumb__link,
+  .bf-article-header.bf-page-header--media .bf-breadcrumb__link:visited {
+    color: inherit;
   }
 }

@@ -31,10 +31,9 @@
  *
  * ## The four bands, in wireframe order
  *
- *  1. **Announcement — not here.** It is `bf-default`'s (gh#55), rendered
- *     between the nav and `<main>` because it is site chrome rather than page
- *     content. The wireframe put it in a `#hero` slot; the shell has no such
- *     slot, which is why this page starts at the hero.
+ *  1. **Announcement — on the hero scrim.** The shell still owns the data
+ *     (`bf-default` provides `bf-banner` and skips its own band on `/`).
+ *     This page paints it in `bfHero`'s `#overlay`, a child of the scrim.
  *  2. **Hero** — `homePage()`'s heading and description, and one primary CTA.
  *  3. **Programs** — the three `bfPrograms` rows, passed **whole**.
  *  4. **Featured projects** — the four curated flagships, with media.
@@ -51,6 +50,8 @@ import { useBfInsights } from '~/composables/data/useBfInsights'
 import { useBfPages } from '~/composables/data/useBfPages'
 import { useBfPrograms } from '~/composables/data/useBfPrograms'
 import { useBfProjects } from '~/composables/data/useBfProjects'
+import { isExternal } from '~/utils/link'
+import type { Announcement } from '~/types/bf-contracts'
 
 defineOptions({ name: 'HomePage' })
 
@@ -87,6 +88,16 @@ const featured = highlights().slice(0, 4)
  * private array (gh#91), so this slice cannot reach the payload.
  */
 const latest = active.slice(0, 6)
+
+/**
+ * The shell publishes the gated banner (`layouts/bf-default.vue`). This
+ * route is the one that paints it on the hero scrim instead of above `<main>`.
+ */
+const banner = inject<Announcement | undefined>('bf-banner')
+
+const bannerCut = banner?.message?.indexOf(' | ') ?? -1
+const bannerKicker = bannerCut > 0 ? banner!.message!.slice(0, bannerCut) : ''
+const bannerBody = bannerCut > 0 ? banner!.message!.slice(bannerCut + 3) : (banner?.message ?? '')
 </script>
 
 <template>
@@ -116,15 +127,40 @@ const latest = active.slice(0, 6)
     that. No `imageAlt`: the picture is decorative and the `<h1>` beside it
     carries the meaning.
 
-    No `scrim` either — `full` is the default, and it is the flat 0.70 navy
-    that makes white type clear 4.5:1 over any photograph BFNA ships.
+    `--color-scrim: transparent` drops the 0.70 navy wash on this band only.
+    Other routes still default to `full`.
   -->
   <bfHero
     :heading="home?.heading"
     :description="home?.description"
-    image="/images/hero/homepage.jpg"
+    image="/images/hero/homepage-capitol-square.jpg"
+    image-secondary="/images/hero/homepage-reichstag-square.jpg"
+    style="
+      --_bf-hero-media-image-position: center bottom;
+      --_bf-hero-min-height: max(60svh, min(56.25vw, 100svh));
+      --color-scrim: transparent;
+    "
   >
-    <bfButton to="/democracy" variant="primary">Explore our work</bfButton>
+    <template v-if="banner?.message" #overlay>
+      <bfNotice
+        class="bf-shell__announcement | center"
+        variant="info"
+      >
+        <a
+          v-if="banner.url"
+          :href="banner.url"
+          :data-external="isExternal(banner.url) || undefined"
+        >
+          <span v-if="bannerKicker" class="bf-announcement__kicker">{{ bannerKicker }}</span>
+          <span>{{ bannerBody }}</span>
+        </a>
+        <template v-else>
+          <span v-if="bannerKicker" class="bf-announcement__kicker">{{ bannerKicker }}</span>
+          <span>{{ bannerBody }}</span>
+        </template>
+      </bfNotice>
+    </template>
+    <bfButton to="/democracy" variant="primary" size="l">Explore our work</bfButton>
   </bfHero>
 
   <!--
@@ -204,7 +240,7 @@ const latest = active.slice(0, 6)
       />
     </ul>
 
-    <p><NuxtLink to="/projects"><strong>All projects<span aria-hidden="true"> →</span></strong></NuxtLink></p>
+    <p><NuxtLink class="bf-home-more" to="/projects">All projects<span aria-hidden="true"> →</span></NuxtLink></p>
   </bfSection>
 
   <!--
@@ -220,7 +256,7 @@ const latest = active.slice(0, 6)
     Same `data-min-width="xl"` as the band above, same reason, replacing the
     same inline `repeat(2, 1fr)`. `role="list"` likewise (gh#220).
   -->
-  <bfSection label="Insights" heading="Insights">
+  <bfSection class="bf-home-insights" label="Insights" heading="Insights">
     <ul
       class="grid"
       role="list"
@@ -253,6 +289,40 @@ const latest = active.slice(0, 6)
       :heading-level="3"
     />
 
-    <p><NuxtLink to="/insights"><strong>All insights<span aria-hidden="true"> →</span></strong></NuxtLink></p>
+    <p><NuxtLink class="bf-home-more" to="/insights">All insights<span aria-hidden="true"> →</span></NuxtLink></p>
   </bfSection>
 </template>
+
+<style>
+/*
+  The Insights band from the Paper export. Section gap is already `--space-m`
+  (30px) via `bfSection`'s default. The heading's size, weight and leading
+  already match `h2` (`--size-2` is 37.5px against Paper's 37). Paper set
+  the Insights heading in Inter; it is IBM Plex Sans. The "All … →" links
+  share one rule — Projects has the same control.
+*/
+.bf-home-insights .bf-section__heading {
+  color: var(--color-text);
+  font-family: var(--font-family-ui);
+  letter-spacing: -0.01em;
+}
+
+/*
+  Paper (Sep 21): 14px / 18px / 500 / capitalize / --color-blue, IBM Plex Sans,
+  shrink-0, width fit-content. 14px is 0.875rem; --size--1 runs 13.3px→14.6px
+  and --size-0 starts at 16px, so neither step is 14. 18px is 1.125rem;
+  --leading-body is 1.5 and --leading-display is 1.1.
+*/
+.bf-home-more {
+  color: var(--color-blue);
+  display: inline-block;
+  flex-shrink: 0;
+  font-family: var(--font-family-ui);
+  font-size: 0.875rem;
+  font-weight: var(--font-weight-medium);
+  line-height: 1.125rem;
+  text-decoration: none;
+  text-transform: capitalize;
+  width: fit-content;
+}
+</style>

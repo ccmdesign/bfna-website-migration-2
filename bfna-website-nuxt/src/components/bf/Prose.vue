@@ -215,3 +215,21 @@ const blocks = computed<Block[]>(() => {
     -->
   </div>
 </template>
+
+<style scoped>
+/*
+  The stack's one gap is a single length for every child. A paragraph and a
+  heading need a top margin of 1em of *their* font-size, so it has to be
+  restated here. `@layer components` beats `.stack > * + *` in composition.
+  The first block stays flush: the section already pads the column.
+*/
+@layer components {
+  .bf-prose > :is(p, h2, h3, h4, h5, h6) {
+    margin-block-start: 1em;
+  }
+
+  .bf-prose > :first-child {
+    margin-block-start: 0;
+  }
+}
+</style>
