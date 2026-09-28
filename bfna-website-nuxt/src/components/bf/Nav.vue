@@ -75,6 +75,54 @@
  * No Subscribe button — removed with the newsletter band (D2, and the frozen
  * source's own comment says so).
  *
+ * ## Small screens — one "Menu" disclosure (Wave 1)
+ *
+ * Below `60rem` of the nav's own width the row used to wrap to three lines
+ * above every page at 375px. Now the entries collapse behind a single
+ * **Menu** button and open as a sheet hanging under the bar:
+ *
+ * ```
+ * bfNav
+ *  ├ logo
+ *  ├ Menu button     aria-expanded / aria-controls → the menu
+ *  └ menu            every entry above plus Search; a row on desktop,
+ *                    a sheet on small screens, hidden until opened
+ * ```
+ *
+ * Same entries, same order, same `Dropdown`s — on the sheet the dropdown
+ * panels stop floating and flow as indented lists (`nav/Dropdown.vue`,
+ * whose container query uses the same `60rem`). Desktop renders exactly the
+ * row it did before; the button does not exist there (`display: none`, so it
+ * is out of the accessibility tree too).
+ *
+ * **Why a `<button aria-expanded>` here when `Dropdown` refuses one.** The
+ * dropdowns are native `<details>`, and the reasons in `Dropdown.vue` still
+ * hold for them. This disclosure cannot be one: its content must be *always
+ * visible* on desktop whatever its open state, and a closed `<details>` hides
+ * its content with no author-reachable way to overrule that across engines.
+ * So the state is one local `ref`, surfaced as `data-open` on the root for
+ * the CSS and as `aria-expanded` on the button for assistive technology.
+ * Local UI state is not data: the `menus` prop is still the only input.
+ *
+ * Behaviour, each one because a disclosure menu without it is broken:
+ *
+ * - **Esc** closes the sheet and returns focus to the button. An open
+ *   dropdown inside the sheet takes the first Esc (it marks the event
+ *   `defaultPrevented`), so Esc unwinds one level at a time.
+ * - **Focus leaving the nav** closes it. The sheet covers the top of the
+ *   page; tabbing past its last entry into content hidden underneath it is
+ *   the "focus leak" this prevents, without trapping focus — it is not a
+ *   modal and must not act like one.
+ * - **A pointer press outside** closes it, and so does **navigation**
+ *   (`route.fullPath`, the same watch `Dropdown` keeps).
+ * - The sheet is `display: none` when closed, so its links are out of the
+ *   tab order — never `opacity: 0` (see `Dropdown.vue`'s table).
+ *
+ * Before hydration the button does nothing, so a no-JS visitor on a phone
+ * has no sheet. The footer carries the same entries as plain links, which is
+ * the fallback; rendering the sheet open until hydration would instead shift
+ * every page down and back on load.
+ *
  * Presentational-only (D8): one prop in, nothing out.
  */
 import type { Menu } from '~/types/bf-contracts'
@@ -87,6 +135,65 @@ defineOptions({ name: 'BfNav' })
 defineProps<{
   menus: Menu[]
 }>()
+
+/** Whether the small-screen sheet is open. Meaningless, and never set, on desktop. */
+const open = ref(false)
+
+const root = ref<HTMLElement | null>(null)
+const toggleButton = ref<HTMLButtonElement | null>(null)
+
+/** SSR-stable, and unique per instance — `bfNav` may be mounted twice on a page. */
+const menuId = useId()
+
+const route = useRoute()
+watch(() => route.fullPath, () => {
+  open.value = false
+})
+
+function toggle() {
+  open.value = !open.value
+}
+
+/**
+ * Esc from anywhere inside the nav closes the sheet and puts focus back on the
+ * button — closing the element the user is focused inside would otherwise drop
+ * focus to `<body>`. `defaultPrevented` is how an open dropdown says it has
+ * already spent this Esc on itself.
+ */
+function onKeydown(e: KeyboardEvent) {
+  if (e.key !== 'Escape' || !open.value || e.defaultPrevented) return
+  open.value = false
+  toggleButton.value?.focus()
+}
+
+/**
+ * Focus moving to something outside the nav closes the sheet. A `null`
+ * `relatedTarget` is the window losing focus (switching apps), not the user
+ * leaving the menu, so it is left open.
+ */
+function onFocusout(e: FocusEvent) {
+  const next = e.relatedTarget as Node | null
+  if (!open.value || next === null || root.value?.contains(next)) return
+  open.value = false
+}
+
+/** A press anywhere outside the nav while the sheet is open closes it. */
+function onDocumentPointerdown(e: PointerEvent) {
+  if (!root.value?.contains(e.target as Node)) open.value = false
+}
+
+/*
+ * The document listener exists only while the sheet is open — a closed menu
+ * has no reason to see every click on the page.
+ */
+watch(open, (isOpen) => {
+  if (isOpen) document.addEventListener('pointerdown', onDocumentPointerdown)
+  else document.removeEventListener('pointerdown', onDocumentPointerdown)
+})
+
+onBeforeUnmount(() => {
+  document.removeEventListener('pointerdown', onDocumentPointerdown)
+})
 </script>
 
 <template>
@@ -95,7 +202,13 @@ defineProps<{
     a wrapper around a base component), so a consumer's `class`, `style`
     (including the `--_bf-nav-*` hooks) and `data-*` land on the `<header>`.
   -->
-  <header class="bf-nav">
+  <header
+    ref="root"
+    class="bf-nav"
+    :data-open="open || undefined"
+    @keydown="onKeydown"
+    @focusout="onFocusout"
+  >
     <nav
       class="bf-nav__bar | center cluster"
       aria-label="Main"
@@ -111,41 +224,85 @@ defineProps<{
         <bfLogo />
       </NuxtLink>
 
-      <template
-        v-for="m in menus"
-        :key="m.label"
+      <!--
+        The small-screen disclosure. Icon-only by design review, so its name
+        comes from `aria-label` — "Menu", and it stays "Menu" when open:
+        `aria-expanded` already says which state it is in, and a label that
+        flips to "Close" would announce the state twice.
+        `aria-expanded` is bound to a string so it renders `"false"` rather than
+        disappearing — an absent attribute means "not a disclosure at all".
+
+        The icon is drawn, not a glyph: three strokes that fold into a cross
+        when open (the only motion here, and none under reduced motion).
+      -->
+      <button
+        ref="toggleButton"
+        type="button"
+        class="bf-nav__toggle"
+        :aria-expanded="open ? 'true' : 'false'"
+        :aria-controls="menuId"
+        aria-label="Menu"
+        @click="toggle"
       >
-        <!--
-          Precedence matches `wfNav`: an entry that names a destination is a
-          link, whether or not it also carries `items`; only an entry with no
-          destination becomes a disclosure. `data-external` is gated on
-          `m.external` — at the top level an `href` is not by itself evidence of
-          an off-site target, unlike inside a panel (see `MenuLink`).
+        <svg
+          class="bf-nav__toggle-icon"
+          viewBox="0 0 20 20"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <path class="bf-nav__toggle-line bf-nav__toggle-line--top" d="M3 5.5h14" />
+          <path class="bf-nav__toggle-line bf-nav__toggle-line--middle" d="M3 10h14" />
+          <path class="bf-nav__toggle-line bf-nav__toggle-line--bottom" d="M3 14.5h14" />
+        </svg>
+      </button>
 
-          `|| undefined` rather than `|| false`: an attribute bound to `false` is
-          removed, but one bound to the *string* `"false"` is not, and
-          `[data-external]` matches on presence.
-        -->
-        <a
-          v-if="m.href"
-          :href="m.href"
-          class="bf-nav__link"
-          :data-external="m.external || undefined"
-          v-bind="newTabAttrs(m.href)"
-        >{{ m.label }}</a>
-        <MenuLink
-          v-else-if="m.to"
-          class="bf-nav__link"
-          :item="m"
-        />
-        <Dropdown
-          v-else
-          :label="m.label"
-          :items="m.items ?? []"
-        />
-      </template>
+      <!--
+        Every entry, in one element the button can control. On desktop it is a
+        `.cluster` row with the same gap the bar used to give the entries
+        directly, so the row renders as it did; on small screens the container
+        query below turns it into the sheet.
+      -->
+      <div
+        :id="menuId"
+        class="bf-nav__menu | cluster"
+        data-gap="s"
+      >
+        <template
+          v-for="m in menus"
+          :key="m.label"
+        >
+          <!--
+            Precedence matches `wfNav`: an entry that names a destination is a
+            link, whether or not it also carries `items`; only an entry with no
+            destination becomes a disclosure. `data-external` is gated on
+            `m.external` — at the top level an `href` is not by itself evidence of
+            an off-site target, unlike inside a panel (see `MenuLink`).
 
-      <NuxtLink to="/search" class="bf-nav__search">Search</NuxtLink>
+            `|| undefined` rather than `|| false`: an attribute bound to `false` is
+            removed, but one bound to the *string* `"false"` is not, and
+            `[data-external]` matches on presence.
+          -->
+          <a
+            v-if="m.href"
+            :href="m.href"
+            class="bf-nav__link"
+            :data-external="m.external || undefined"
+            v-bind="newTabAttrs(m.href)"
+          >{{ m.label }}</a>
+          <MenuLink
+            v-else-if="m.to"
+            class="bf-nav__link"
+            :item="m"
+          />
+          <Dropdown
+            v-else
+            :label="m.label"
+            :items="m.items ?? []"
+          />
+        </template>
+
+        <NuxtLink to="/search" class="bf-nav__search">Search</NuxtLink>
+      </div>
     </nav>
   </header>
 </template>
@@ -196,7 +353,14 @@ defineProps<{
     /** Read by `nav/Dropdown.vue` through inheritance; declared here so one place owns them. */
     --_bf-nav-open-bg: var(--color-neutral-tint-10);
     --_bf-nav-panel-border-color: var(--color-neutral-tint-40);
-    --_bf-nav-item-padding: 0.25em 0.5em;
+    /*
+      Wide bar: every top-level entry is a full-height target (see the
+      `width > 60rem` block below), so its padding is inline only, and the
+      dropdown panels indent their items by the same inline value so a panel's
+      text starts on its trigger's text. Was `0.25em 0.5em`.
+    */
+    --_bf-nav-item-padding-inline: var(--space-s);
+    --_bf-nav-item-padding: 0 var(--_bf-nav-item-padding-inline);
 
     /*
       The size container the dropdowns' narrow rule queries. Named, so the
@@ -211,13 +375,21 @@ defineProps<{
     */
     container-type: inline-size;
     container-name: bf-nav;
-
     position: sticky;
     inset-block-start: 0;
-
     background-color: var(--_bf-nav-bg);
     color: var(--_bf-nav-link-color);
-    border-block-end: var(--border-width-medium) solid var(--_bf-nav-border-color);
+
+    /*
+      Elevation instead of a rule. The grey hairline that used to close the bar
+      sat directly on the navy announcement band and read as a seam between
+      two strips; a shadow lifts the bar over the band and the hero instead,
+      and keeps doing so over whatever scrolls under the sticky bar. The deep
+      variant because the band is navy: the standard medium shadow is tinted
+      lighter than it and disappears there. The z-index below is what keeps the
+      shadow painting on top of the band that follows.
+    */
+    box-shadow: var(--_bf-nav-shadow, var(--shadow-elevation-medium-deep));
 
     /*
       Over the page. The panels take a higher one *inside* this element's
@@ -237,6 +409,34 @@ defineProps<{
     */
     min-block-size: var(--_bf-nav-height);
     padding-block: var(--space-2xs);
+  }
+
+  /*
+    Wide bar: the entries fill the bar's full height, so hover and the open
+    tint are a whole column of the bar rather than a chip floating in it, and
+    a dropdown hangs from the bar's bottom edge. The bar's block padding moves
+    into its height (same 76px band); the logo stays centred by the cluster.
+    `width > 60rem` is the exact complement of the sheet's `max-width: 60rem`
+    below, so the two never both apply. `nav/Dropdown.vue` carries the same
+    query for the summary and panel it owns.
+  */
+  @container bf-nav (width > 60rem) {
+    .bf-nav__bar {
+      min-block-size: calc(var(--_bf-nav-height) + 2 * var(--space-2xs));
+      padding-block: 0;
+    }
+
+    .bf-nav__menu {
+      align-self: stretch;
+      align-items: stretch;
+      gap: 0;
+    }
+
+    .bf-nav__link,
+    .bf-nav__search {
+      display: flex;
+      align-items: center;
+    }
   }
 
   .bf-nav__logo {
@@ -264,8 +464,13 @@ defineProps<{
       at 1x. It leaves ~12px of breathing room above and below inside the
       76px row, so the bar does not grow and nothing else in it reflows.
       Roughly 56px is the ceiling before the row itself has to give.
+
+      Then brought back down 20% by design review (2.6rem, ~42px): with the
+      menu entries set in the new type, 52px outweighed the row. Still above
+      the ~40px floor. The small-screen size is set in the container query
+      below.
     */
-    --_bf-logo-size: 3.25rem;
+    --_bf-logo-size: 2.6rem;
   }
 
   /*
@@ -285,6 +490,168 @@ defineProps<{
   .bf-nav__link:hover,
   .bf-nav__search:hover {
     text-decoration: underline;
+  }
+
+  /*
+    The disclosure button, absent on desktop. `display: none` rather than a
+    visually-hidden pattern: on a wide nav there is nothing for it to disclose,
+    so it must not be in the accessibility tree either.
+  */
+  .bf-nav__toggle {
+    display: none;
+  }
+
+  /*
+    Small screens. `60rem` is where the row stops fitting on one line beside
+    the logo (the logo, six entries and Search measure ~56rem at the body
+    size), so below it the entries move into the sheet instead of wrapping.
+    `nav/Dropdown.vue`'s container query uses the same number; container
+    queries cannot read a custom property, so the two are kept in step by
+    hand and each names the other.
+  */
+  @container bf-nav (max-width: 60rem) {
+    /*
+      30% under the original 52px (2.275rem, ~36px), by design review: beside
+      the Menu button the wordmark only has to identify the site, and the bar
+      is the one thing above every page on a phone. This sits under the ~40px
+      floor noted on `.bf-nav__logo`; the knocked-out FOUNDATION band is the
+      part to watch at 1x.
+    */
+    .bf-nav__logo {
+      --_bf-logo-size: 2.275rem;
+    }
+
+    .bf-nav__toggle {
+      /*
+        A real 44px target (WCAG 2.5.8's comfortable size, 2.75rem), in the
+        nav's own type and colour so it reads as part of the bar rather than as
+        a call to action. The hairline border is what makes it read as a
+        control at all without a filled ground competing with the logo.
+        Square now that it carries only the icon: 44px both ways.
+      */
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-block-size: 2.75rem;
+      min-inline-size: 2.75rem;
+      padding: 0;
+      border: var(--border-width-thin) solid var(--_bf-nav-border-color);
+      border-radius: var(--border-radius-s);
+      background-color: var(--_bf-nav-bg);
+      color: var(--_bf-nav-link-color);
+      font: inherit;
+      cursor: pointer;
+    }
+
+    .bf-nav[data-open] .bf-nav__toggle {
+      background-color: var(--_bf-nav-open-bg);
+    }
+
+    .bf-nav__toggle-icon {
+      inline-size: 1.25em;
+      block-size: 1.25em;
+      overflow: visible;
+    }
+
+    .bf-nav__toggle-line {
+      fill: none;
+      stroke: currentcolor;
+      stroke-width: 1.5;
+      stroke-linecap: round;
+      transform-box: fill-box;
+      transform-origin: center;
+    }
+
+    /* Open: the outer strokes cross, the middle one goes. */
+    .bf-nav[data-open] .bf-nav__toggle-line--top {
+      transform: translateY(4.5px) rotate(45deg);
+    }
+
+    .bf-nav[data-open] .bf-nav__toggle-line--middle {
+      opacity: 0;
+    }
+
+    .bf-nav[data-open] .bf-nav__toggle-line--bottom {
+      transform: translateY(-4.5px) rotate(-45deg);
+    }
+
+    /*
+      The sheet. Hangs from the header's bottom edge (`.bf-nav` is sticky, so it
+      is the containing block) and spans the full width, over the page rather
+      than pushing it down — opening the menu must not reflow the page under it.
+
+      `display: none` while closed takes every link out of the tab order.
+      Capped at the viewport below the bar and scrolls on its own, because a
+      sticky header taller than the screen has a bottom no one can reach.
+    */
+    .bf-nav__menu {
+      display: none;
+      position: absolute;
+      inset-block-start: 100%;
+      inset-inline: 0;
+      flex-flow: column nowrap;
+      align-items: stretch;
+      gap: 0;
+      max-block-size: calc(100svh - var(--_bf-nav-height) - var(--space-m));
+      overflow-y: auto;
+      overscroll-behavior: contain;
+
+      /* The bar's own inline padding, so entries start on the logo's edge. */
+      padding-block: var(--space-2xs) var(--space-s);
+      padding-inline: var(--theme-center-padding, var(--space-s));
+      background-color: var(--_bf-nav-bg);
+
+      /* No closing rule: the sheet lifts off the page on the bar's own shadow. */
+      box-shadow: var(--_bf-nav-shadow, var(--shadow-elevation-medium-deep));
+
+      /*
+        Touch-sized rows: every entry and summary in the sheet inherits this
+        instead of the desktop row's `0.25em 0.5em`.
+      */
+      --_bf-nav-item-padding: var(--space-xs) 0;
+    }
+
+    .bf-nav[data-open] .bf-nav__menu {
+      display: flex;
+    }
+
+    /* A hairline between entries, so a column of plain words reads as a list. */
+    .bf-nav__menu > * + * {
+      border-block-start: var(--border-width-thin) solid var(--_bf-nav-border-color);
+    }
+
+    .bf-nav__menu .bf-nav__link,
+    .bf-nav__menu .bf-nav__search {
+      display: block;
+    }
+  }
+
+  /*
+    One authored moment: the sheet settles in from just above its resting place
+    and the icon folds. Exponential ease-out, short, and only for visitors who
+    have not asked for less motion — under `reduce` the sheet simply appears.
+  */
+  @media (prefers-reduced-motion: no-preference) {
+    .bf-nav {
+      --_bf-nav-motion: 180ms;
+    }
+
+    .bf-nav__toggle-line {
+      transition:
+        transform var(--_bf-nav-motion) cubic-bezier(0.16, 1, 0.3, 1),
+        opacity var(--_bf-nav-motion) cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .bf-nav[data-open] .bf-nav__menu {
+      animation: bf-nav-sheet-in var(--_bf-nav-motion) cubic-bezier(0.16, 1, 0.3, 1);
+    }
+  }
+
+  @keyframes bf-nav-sheet-in {
+    from {
+      opacity: 0;
+      transform: translateY(calc(-1 * var(--space-2xs)));
+    }
   }
 }
 </style>

@@ -45,6 +45,30 @@
         11.2px 22.3px 28.1px -1.8px hsl(from var(--shadow-color-raised) h s l / 0.34),
         17px 33.9px 42.7px -2.1px hsl(from var(--shadow-color-raised) h s l / 0.34),
         25px 50px 62.9px -2.5px hsl(from var(--shadow-color-raised) h s l / 0.34);
+      /*
+        Same geometry as medium, cast in near-black navy. For a surface that
+        sits over dark grounds as well as light ones (the sticky top bar over
+        the navy announcement band): `--shadow-color-raised` is lighter than
+        navy, so over a navy ground it reads as a pale halo, not a shadow.
+      */
+      --shadow-color-deep: var(--color-navy-dark);
+      --shadow-elevation-medium-deep:
+        0.3px 0.5px 0.7px hsl(from var(--shadow-color-deep) h s l / 0.1),
+        0.8px 1.6px 2px -0.8px hsl(from var(--shadow-color-deep) h s l / 0.1),
+        2.1px 4.1px 5.2px -1.7px hsl(from var(--shadow-color-deep) h s l / 0.1),
+        5px 10px 12.6px -2.5px hsl(from var(--shadow-color-deep) h s l / 0.1);
+      /*
+        The deep shadow as it lands on a surface tucked UNDER an elevated
+        one — a dropdown hanging from the top bar. The panel is the bar's own
+        descendant, so it paints over the bar's cast shadow; this redraws that
+        shadow inside the panel's top edge. Vertical only (no x offset), so the
+        panel's sides stay clean.
+      */
+      --shadow-inset-top-deep:
+        inset 0 0.5px 0.7px hsl(from var(--shadow-color-deep) h s l / 0.1),
+        inset 0 1.6px 2px -0.8px hsl(from var(--shadow-color-deep) h s l / 0.1),
+        inset 0 4.1px 5.2px -1.7px hsl(from var(--shadow-color-deep) h s l / 0.1),
+        inset 0 10px 12.6px -2.5px hsl(from var(--shadow-color-deep) h s l / 0.1);
       /* Older names, now aliases onto the elevation scale. */
       --shadow-card: var(--shadow-elevation-low);
       --shadow-soft: var(--shadow-elevation-medium);
