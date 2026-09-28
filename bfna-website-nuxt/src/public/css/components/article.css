@@ -26,69 +26,121 @@
  * below competes with a compiled rule at all — the two `border-inline-start`
  * declarations add a property that `composition/center.css` never declares.
  *
- * ## The two classes
+ * ## The band classes
  *
- * `.bf-article-header` on the `bfPageHeader` band and `.bf-article-body` on the
- * body `bfSection`, both from `pages/insights/[slug].vue`. `class` is on
- * `bfSection`'s pass-through allow-list by name (`Section.vue:120-122`), so it
- * merges onto the band root rather than replacing `bf-section`.
+ * `.bf-article-header` on the `bfPageHeader` band, `.bf-article-notice` on the
+ * archive banner and `.bf-article-body` on the body `bfSection`, all from
+ * `pages/insights/[slug].vue`. `class` is on `bfSection`'s pass-through
+ * allow-list by name (`Section.vue:120-122`), so it merges onto the band root
+ * rather than replacing `bf-section`. Inside them, `.bf-article-meta`,
+ * `.bf-article-lede`, `.bf-article-lead` and `.bf-article-download` are the
+ * page's own blocks.
+ *
+ * ## Specificity against the SFCs
+ *
+ * Rules that restyle a `bf-*` component's own element (`bfProse`'s headings,
+ * `bfMedia`'s image) are written through the band and its `.center` —
+ * (0,3,x) — because the scoped rule they must beat compiles to
+ * `.bf-prose[data-v-…] > …`, (0,2,x) or (0,3,0), in the same layer, and a tie
+ * goes to the Vite chunk linked after this file.
  */
 
 @layer components {
   /*
-    `wide` is 90ch of this box's own font (the root 16px), which is only
-    ~72 characters of the body (`--size-0`). Scale the cap so a line of
-    prose is 90 characters of the type that is actually set. Header and
-    body share it so the columns start on the same vertical.
+    The reading column. The band's own `wide` step is 90ch of the root 16px,
+    which at the body's 20px ran a line of prose to ~110 characters. 60ch
+    of the root, scaled by the body step, is 60ch of the type that is
+    actually set: ~70 characters of IBM Plex Sans light at 20px, inside the
+    45–75 range a long read wants. Header, archive banner and body share it
+    so the three columns start on the same vertical.
   */
   .bf-article-body > .center,
+  .bf-article-notice > .center,
   .bf-article-header > .center {
-    max-inline-size: calc(90ch * var(--size-0) / 1em);
+    max-inline-size: calc(60ch * var(--size-0) / 1em);
   }
 
   .bf-article-header {
     position: relative;
   }
 
-  .bf-article-header__announcement {
-    position: absolute;
-    inset-block-start: var(--space-m);
-    inset-inline: 0;
-    z-index: 1;
-    margin-block-end: 0;
+  /*
+    The trail on one line. Its last crumb is the article's own title, which
+    the `<h1>` repeats in full one line below, so in the 60ch column a long
+    title ellipsises instead of wrapping the trail onto a second line of
+    its own. (0,3,0) through `.center`: `bfBreadcrumb`'s scoped
+    `.bf-breadcrumb__list[data-v-…]` is (0,2,0) and would win a tie.
+  */
+  .bf-article-header > .center .bf-breadcrumb__list {
+    flex-wrap: nowrap;
+  }
+
+  .bf-article-header > .center .bf-breadcrumb__item:last-child,
+  .bf-article-header > .center .bf-breadcrumb__current {
+    min-inline-size: 0;
+  }
+
+  .bf-article-header > .center .bf-breadcrumb__current {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   /*
    * Article title. `--size-7` was the display ramp and it renders at
-   * ~11rem on a desktop, which is a poster, not a heading. IBM Plex Sans
-   * at `--size-3` (~28px → ~51px).
+   * ~11rem on a desktop, which is a poster, not a heading, so the size
+   * steps down to `--size-3` (~28px → ~51px).
+   *
+   * Only the size. This rule used to swap the family to IBM Plex Sans as
+   * well, with its own weight, tracking and leading — the one `<h1>` on
+   * the site not in the display face. That was a sizing fix carrying a
+   * family change along with it, not an accessibility constraint, so Wave 1
+   * drops the rest: family, weight, leading and tracking come from
+   * `base/typography.css`'s `h1` like every other page title.
+   *
+   * The breadcrumb is wayfinding and the title is the page, so the step
+   * between them is the header's widest.
    */
   .bf-article-header .bf-page-header__heading {
-    font-family: var(--font-family-ui);
+    margin-block-start: var(--space-m);
     font-size: var(--size-3);
-    font-weight: var(--font-weight-semibold);
-    letter-spacing: -0.02em;
-    line-height: 1.15;
     text-wrap: balance;
   }
 
   /*
-    Standfirst. `--size-0` tops out at 1.25rem (20px); line-height 1.2
-    is 24px at that step. Newsreader italic is the display face.
+    Standfirst — the subheading, read as the second half of the title, so
+    it sits tight under it. Newsreader italic one step above the body
+    (`--size-1`, ~19px → ~27px): at `--size-0` it was the body's own size
+    under a 51px title, a gap too wide for one idea. `data-measure="normal"`
+    from `bfPageHeader` still caps it.
   */
   .bf-article-header .bf-page-header__tagline {
+    margin-block-start: var(--space-xs);
     font-family: var(--font-family-display);
-    font-size: var(--size-0);
+    font-size: var(--size-1);
     font-style: italic;
     font-weight: var(--font-weight-normal);
     line-height: 1.2;
+    text-wrap: balance;
+  }
+
+  /*
+    The meta row — byline or date, then the chips — set apart from the
+    title group by a full step and aligned on the chips' centre line.
+  */
+  .bf-article-meta {
+    margin-block-start: var(--space-m);
+    align-items: center;
   }
 
   /*
     Card date (`.bf-card__text > time`) is 0.75rem. One step up that ramp
-    is `--size--1`.
+    is `--size--1`. The byline's author run takes the same step and face so
+    "By … · date" reads as one line of metadata rather than a 20px name
+    beside a 14px date.
   */
-  .bf-article-header time {
+  .bf-article-header time,
+  .bf-article-header .bf-byline__author {
     margin: 0;
     color: var(--color-primary-tint-70);
     font-family: var(--font-family-ui);
@@ -99,17 +151,91 @@
     text-transform: uppercase;
   }
 
+  .bf-article-header .bf-byline {
+    margin: 0;
+    font-size: var(--size--1);
+  }
+
   /*
-    Cover or the paper texture, behind the type. The media header's own
-    rule turns type white for a 0.70 navy scrim; this band keeps the
-    dark type, so the wash is a light tint instead.
+    The paper texture, behind the type. The media header's own rule turns
+    type white for a 0.70 navy scrim; this band keeps the dark type, so the
+    wash is a light tint instead. The cover is always the texture now (the
+    page's Zone 1 comment), so there is one wash, not a second, heavier one
+    for photographs.
   */
   .bf-article-header {
     --color-scrim: color-mix(in srgb, var(--color-surface-page) 28%, transparent);
   }
 
-  .bf-article-header[data-cover="photo"] {
-    --color-scrim: color-mix(in srgb, var(--color-surface-page) 78%, transparent);
+  /*
+    The lede — the excerpt, one step above the body. Same face and weight
+    as the prose it introduces; the size alone carries the role.
+  */
+  .bf-article-lede {
+    font-size: var(--size-1);
+    line-height: 1.4;
+    text-wrap: pretty;
+  }
+
+  /*
+    The lead image breaks out of the 60ch reading column to the site
+    measure (`.center`'s own 1100px default, less the band's padding on a
+    narrow screen), centred on the column. The image inside keeps its own
+    shape (`ratio="auto"` from the page) and never scales past its pixels,
+    so a 768px-wide infographic sits centred at 768px rather than being
+    blown up to 1100.
+
+    Negative inline margins rather than a transform, so the break-out is
+    layout and the page's scroll width never sees a box wider than it is.
+    `100vw` counts a desktop scrollbar's gutter; the `--space-s` a side it
+    gives back is wider than one, and on a phone the result equals the
+    column exactly.
+  */
+  .bf-article-lead {
+    --_bf-article-lead-size: min(100vw - 2 * var(--space-s), var(--theme-center-measure, 1100px));
+
+    inline-size: var(--_bf-article-lead-size);
+    margin-inline: calc((100% - var(--_bf-article-lead-size)) / 2);
+  }
+
+  .bf-article-body .bf-article-lead > .bf-media {
+    inline-size: auto;
+    max-inline-size: 100%;
+    block-size: auto;
+    margin-inline: auto;
+  }
+
+  /*
+    Prose headings, scoped to the article. `bfProse` gives every block a
+    top margin of 1em of its own size, which put 37px above an `<h2>` and
+    20px below it — a heading nearly as close to the section it ends as to
+    the one it opens. Here the space above grows to 1.5em and the block
+    after a heading pulls in to `--space-xs`, so each heading belongs to
+    what follows it.
+  */
+  .bf-article-body > .center > .bf-prose > :is(h2, h3, h4, h5, h6) {
+    margin-block-start: 1.5em;
+    text-wrap: balance;
+  }
+
+  .bf-article-body > .center > .bf-prose > :is(h2, h3, h4, h5, h6) + * {
+    margin-block-start: var(--space-xs);
+  }
+
+  .bf-article-body > .center > .bf-prose > :first-child {
+    margin-block-start: 0;
+  }
+
+  .bf-article-body > .center > .bf-prose > :is(p, li) {
+    text-wrap: pretty;
+  }
+
+  /*
+    The download closes the piece, so it stands a full step off the last
+    paragraph rather than at the body's paragraph gap.
+  */
+  .bf-article-body .bf-article-download {
+    margin-block-start: var(--space-l);
   }
 }
 

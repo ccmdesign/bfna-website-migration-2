@@ -55,14 +55,13 @@
  * Nuxt scans `composables/` one directory deep for `index` files only, and
  * these live at `composables/data/useBf*.ts`.
  */
-import type { Announcement, Insight } from '~/types/bf-contracts'
+import type { Insight } from '~/types/bf-contracts'
 import { useBfInsights } from '~/composables/data/useBfInsights'
 import { useBfPages } from '~/composables/data/useBfPages'
 import { useBfPrograms } from '~/composables/data/useBfPrograms'
 import { useBfProjects } from '~/composables/data/useBfProjects'
 import { useProgramTheme } from '~/composables/useProgramTheme'
 import { formatLabel, monthYear } from '~/utils/format'
-import { isExternal } from '~/utils/link'
 
 defineOptions({ name: 'InsightDetailPage' })
 
@@ -120,14 +119,6 @@ useHead({ title: () => insight?.heading ?? 'Insight' })
  */
 useProgramTheme(program?.slug)
 
-/**
- * Same composition as the homepage hero and the Insights masthead: the
- * shell skips its band on `/insights/:slug` and this header paints it.
- */
-const banner = inject<Announcement | undefined>('bf-banner')
-const bannerCut = banner?.message?.indexOf(' | ') ?? -1
-const bannerKicker = bannerCut > 0 ? banner!.message!.slice(0, bannerCut) : ''
-const bannerBody = bannerCut > 0 ? banner!.message!.slice(bannerCut + 3) : (banner?.message ?? '')
 
 /**
  * Up to three more in the same programme, self excluded — the frozen page's
@@ -189,9 +180,9 @@ const crumbs = [
       Two additions, gh#254, and they are the only things distinguishing this
       band from the seven other `bfPageHeader` call sites.
 
-      `measure="wide"` gives the header the **body's** 90ch column, so the
-      `<h1>` ranges left on the same vertical as the copy beneath it instead of
-      some 300px outside it. It is a prop rather than a rule in
+      `measure="wide"` puts the header on the **body's** measure step, and
+      `article.css` narrows both to one reading column, so the `<h1>` ranges
+      left on the same vertical as the copy beneath it. It is a prop rather than a rule in
       `public/css/components/article.css`, and review is why: the first draft
       wrote `--_bf-section-measure` from that file and lost a same-specificity,
       same-layer tie to `Section.vue`'s compiled `.bf-section[data-v-…]` on
@@ -201,22 +192,46 @@ const crumbs = [
       that component's prop; it is the same mechanism the body band below uses,
       and it competes with nothing.
 
-      `bf-article-header` carries what is left: the `<h1>` at `--size-7`, and
-      the transparent half of the spine's border. `class` is on `bfSection`'s
+      `bf-article-header` carries what is left: the `<h1>` step, the header's
+      own rhythm, and the reading column. `class` is on `bfSection`'s
       pass-through allow-list by name, so it merges onto the band root rather
       than replacing `bf-page-header`.
+
+      The cover is **always the paper texture**, never the post's own image
+      (impeccable pass, Sep 2026). It used to be `insight.image` behind a 78%
+      wash whenever the post had one, which put the same picture on the page
+      twice — once washed behind the `<h1>`, once full strength as the lead
+      image directly below — and on the infographic posts it set the title
+      over the chart's own lettering. The lead image in the body now carries
+      the photograph alone, at full strength and full size.
+
+      The chips are **not** in `#chips`, which renders them above the `<h1>`
+      as an eyebrow. They are content taxonomy, not a label for the title, so
+      they join the date in one meta row under the standfirst and the heading
+      follows the breadcrumb directly.
     -->
     <bfPageHeader
       class="bf-article-header"
       measure="wide"
       label="Insight header"
-      :image="insight.image || '/images/hero/article-texture.png'"
-      :data-cover="insight.image ? 'photo' : 'texture'"
+      image="/images/hero/article-texture.png"
       :crumbs="crumbs"
       :heading="insight.heading"
       :tagline="insight.subheading"
     >
-      <template #chips>
+      <!--
+        The meta row: the byline or the date, then the chips, in one wrapping
+        cluster. `bfByline` owns the "By … · date" phrase when there is an
+        author; when there is not, the date stands alone.
+
+        Both branches render nothing when there is nothing to say — `bfByline`
+        has its own `hasContent` guard and `bfTime` renders no element for a
+        null or unparseable date. The format chip always renders, so the row
+        is never empty.
+      -->
+      <div class="bf-article-meta | cluster" data-gap="xs">
+        <bfByline v-if="authorText" :author="authorText" :date="insight.publish_date" />
+        <bfTime v-else :date="insight.publish_date" />
         <bfChip data-tone="format">{{ formatLabel(insight.format) }}</bfChip>
         <bfChip
           v-if="program"
@@ -227,38 +242,7 @@ const crumbs = [
           :key="slug"
         >{{ projectBySlug(slug)?.heading ?? slug }}</bfChip>
         <bfChip v-if="insight.archived">Archive</bfChip>
-      </template>
-      <!--
-        The meta row. `bfByline` owns the "By … · date" phrase when there is an
-        author; when there is not, the date stands alone and is wrapped in a
-        `<p>` so it is a stack child like every other block here rather than a
-        bare inline in a column.
-
-        Both branches render nothing when there is nothing to say — `bfByline`
-        has its own `hasContent` guard and `bfTime` renders no element for a
-        null or unparseable date — so a row with neither author nor date grows
-        no empty meta row.
-      -->
-      <bfByline v-if="authorText" :author="authorText" :date="insight.publish_date" />
-      <p v-else><bfTime :date="insight.publish_date" /></p>
-      <bfNotice
-        v-if="banner?.message"
-        class="bf-article-header__announcement bf-shell__announcement | center"
-        variant="info"
-      >
-        <a
-          v-if="banner.url"
-          :href="banner.url"
-          :data-external="isExternal(banner.url) || undefined"
-        >
-          <span v-if="bannerKicker" class="bf-announcement__kicker">{{ bannerKicker }}</span>
-          <span>{{ bannerBody }}</span>
-        </a>
-        <template v-else>
-          <span v-if="bannerKicker" class="bf-announcement__kicker">{{ bannerKicker }}</span>
-          <span>{{ bannerBody }}</span>
-        </template>
-      </bfNotice>
+      </div>
     </bfPageHeader>
 
     <!--
@@ -275,7 +259,12 @@ const crumbs = [
       reading "See recent work on PENDING-Q3 (Digital World retired)" would
       point at a hub that does not exist, and say so out loud.
     -->
-    <bfSection v-if="insight.archived" label="Archive banner" layout="plain">
+    <bfSection
+      v-if="insight.archived"
+      class="bf-article-notice"
+      label="Archive banner"
+      layout="plain"
+    >
       <bfNotice variant="note">
         {{ bannerText }}
         <NuxtLink v-if="program" :to="`/${program.slug}`">See recent work on {{ program.name }}</NuxtLink>
@@ -286,8 +275,9 @@ const crumbs = [
       Zone 3 — the body: excerpt dek, media, the full stored content, and the
       download when there is one.
 
-      `measure="wide"` — 90ch, the reading measure for this column. It stays
-      on the same step as the header so the two columns share a left edge.
+      `measure="wide"` puts the band on a named step; `article.css` then caps
+      the column at the reading measure, shared with the header and the
+      archive banner so all three start on the same vertical.
 
       `bf-article-body` carries the programme spine — an opaque `--color-program`
       rule down the column's left edge, tying the piece to its programme without
@@ -299,17 +289,31 @@ const crumbs = [
     -->
     <bfSection class="bf-article-body" label="Body" measure="wide">
       <!--
-        The dek. A plain string: the HTML strip and entity decode the frozen
-        page's render-time helper did now happen once, in the build-time
-        normaliser (D3).
+        The lede — the excerpt, set a step above the body in the body face. A
+        plain string: the HTML strip and entity decode the frozen page's
+        render-time helper did now happen once, in the build-time normaliser
+        (D3). Roman, not the `<em>` it used to wear: a whole paragraph of
+        italic sans reads worse than it looks, and the size step already says
+        "this is the summary".
       -->
-      <p v-if="insight.excerpt"><em>{{ insight.excerpt }}</em></p>
+      <p v-if="insight.excerpt" class="bf-article-lede">{{ insight.excerpt }}</p>
 
       <!--
+        The lead image, **only when the post supplies one**. Without an image
+        this renders nothing — no placeholder box, no reserved 16/9 space: 237
+        of the 371 rows carry no image, and `bfMedia`'s placeholder shipped an
+        empty crossed frame to a reader on every one of them.
+
+        `ratio="auto"`, not `16/9`: the lead is shown whole, at its own shape.
+        55 of the image rows are infographics, where the image *is* the piece —
+        `/insights/12-days-of-christmas-in-europe` is 768 x 2304, and a 16/9
+        `object-fit: cover` box showed about a fifth of it. The wrapper breaks
+        out of the reading column to the site measure (`article.css`), and the
+        image never scales past its own pixels.
+
         `alt` is the heading, as the frozen page sets it. These are editorial
         lead images with no separate description in the source; the heading is
-        the only honest text available, and `bfMedia` renders an `aria-hidden`
-        placeholder rather than an unlabelled box when there is no `src` at all.
+        the only honest text available.
 
         TODO(gh#234): this is a real defect, deliberately left alone here.
         Measured on `/insights/12-days-of-christmas-in-europe`, the `alt` is
@@ -329,7 +333,9 @@ const crumbs = [
         unchanged — it is a content defect on that row, not a decorative
         declaration, and it is the same defect the TODO above hands to #234.
       -->
-      <bfMedia :src="insight.image" :alt="insight.heading ?? ''" ratio="16/9" />
+      <div v-if="insight.image" class="bf-article-lead">
+        <bfMedia :src="insight.image" :alt="insight.heading ?? ''" ratio="auto" />
+      </div>
 
       <bfProse :content="insight.content" />
 
@@ -338,7 +344,7 @@ const crumbs = [
         the `[data-external]` treatment (#19); the file is served from the
         Directus host, so it leaves this origin.
       -->
-      <div v-if="insight.download">
+      <div v-if="insight.download" class="bf-article-download">
         <bfButton :href="insight.download" external>Download the report (PDF)</bfButton>
       </div>
     </bfSection>
