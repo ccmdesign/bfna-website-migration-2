@@ -51,11 +51,10 @@
  * Nuxt scans `composables/` one directory deep for `index` files only, and
  * these live at `composables/data/useBf*.ts`.
  */
-import type { Filter, Insight, Announcement } from '~/types/bf-contracts'
+import type { Filter, Insight } from '~/types/bf-contracts'
 import { useBfInsights } from '~/composables/data/useBfInsights'
 import { useBfPages } from '~/composables/data/useBfPages'
 import { useBfPrograms } from '~/composables/data/useBfPrograms'
-import { isExternal } from '~/utils/link'
 
 defineOptions({ name: 'InsightsIndexPage' })
 
@@ -85,16 +84,6 @@ const crumbs = computed(() => [
 /** The band's own title, added once by `bf-default`'s `titleTemplate`. */
 useHead({ title: () => heading.value })
 
-/**
- * Same contract as the homepage hero: the shell provides `bf-banner` and
- * skips its own band on this route. Painted on the photograph, not between
- * the nav and the hero.
- */
-const banner = inject<Announcement | undefined>('bf-banner')
-
-const bannerCut = banner?.message?.indexOf(' | ') ?? -1
-const bannerKicker = bannerCut > 0 ? banner!.message!.slice(0, bannerCut) : ''
-const bannerBody = bannerCut > 0 ? banner!.message!.slice(bannerCut + 3) : (banner?.message ?? '')
 
 /**
  * The format facet, ported verbatim from the frozen page (and identical to the
@@ -317,24 +306,6 @@ const remaining = computed<number>(() => Math.max(filtered.value.length - visibl
     </template>
 
     <div class="stack" data-gap="s">
-      <bfNotice
-        v-if="banner?.message"
-        class="bf-insights-masthead__announcement bf-shell__announcement | center"
-        variant="info"
-      >
-        <a
-          v-if="banner.url"
-          :href="banner.url"
-          :data-external="isExternal(banner.url) || undefined"
-        >
-          <span v-if="bannerKicker" class="bf-announcement__kicker">{{ bannerKicker }}</span>
-          <span>{{ bannerBody }}</span>
-        </a>
-        <template v-else>
-          <span v-if="bannerKicker" class="bf-announcement__kicker">{{ bannerKicker }}</span>
-          <span>{{ bannerBody }}</span>
-        </template>
-      </bfNotice>
       <bfBreadcrumb :items="crumbs" />
       <h1 id="insights-heading">{{ heading }}</h1>
       <p v-if="feedPage?.description" data-measure="normal">
@@ -460,19 +431,6 @@ const remaining = computed<number>(() => Math.max(filtered.value.length - visibl
   position: relative;
   isolation: isolate;
   aspect-ratio: 16 / 9;
-}
-
-/*
-  Same place as `bfHero`'s `#overlay`: on the photograph, under the nav,
-  not a band between them. The shell's `margin-block-end` is for the
-  between-nav placement; here the hero's own padding is the gap.
-*/
-.bf-insights-masthead__announcement {
-  position: absolute;
-  inset-block-start: var(--space-m);
-  inset-inline: 0;
-  z-index: 1;
-  margin-block-end: 0;
 }
 
 /*

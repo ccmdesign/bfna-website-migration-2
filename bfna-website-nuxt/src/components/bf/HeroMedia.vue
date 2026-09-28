@@ -343,10 +343,10 @@ withDefaults(defineProps<Props>(), { alt: '' })
   }
 
   /*
-    Whatever a host drops on the scrim — the site announcement, today —
-    sits in the band, above the fill. `position` + `z-index` is what puts
-    it over the scrim's own background; it still cannot climb out of this
-    layer. The block-start margin is the inset under the nav.
+    Whatever a host drops on the scrim sits in the band, above the fill —
+    nothing, today: the site announcement moved to the shell in Wave 1.
+    `position` + `z-index` is what puts it over the scrim's own background;
+    it still cannot climb out of this layer. The block-start margin is the inset under the nav.
   */
   .bf-hero-media__scrim > :slotted(*) {
     position: relative;
@@ -417,7 +417,8 @@ withDefaults(defineProps<Props>(), { alt: '' })
     }
 
     /*
-      A scrim child (the announcement) must still print. The photograph
+      A scrim child (none today; the announcement lived here before Wave 1)
+      must still print. The photograph
       stays hidden; the scrim fill is a background and drops anyway.
     */
     .bf-hero-media:has(> .bf-hero-media__scrim > *) {

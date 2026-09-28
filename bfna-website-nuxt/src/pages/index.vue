@@ -31,9 +31,10 @@
  *
  * ## The four bands, in wireframe order
  *
- *  1. **Announcement — on the hero scrim.** The shell still owns the data
- *     (`bf-default` provides `bf-banner` and skips its own band on `/`).
- *     This page paints it in `bfHero`'s `#overlay`, a child of the scrim.
+ *  1. **Announcement** — not this page's. `bf-default` renders the site
+ *     band between the nav and `<main>` on every route (Wave 1), so it sits
+ *     above the hero instead of on its photograph, where at 375px it covered
+ *     the `<h1>`.
  *  2. **Hero** — `homePage()`'s heading and description, and one primary CTA.
  *  3. **Programs** — the three `bfPrograms` rows, passed **whole**.
  *  4. **Featured projects** — the four curated flagships, with media.
@@ -50,8 +51,6 @@ import { useBfInsights } from '~/composables/data/useBfInsights'
 import { useBfPages } from '~/composables/data/useBfPages'
 import { useBfPrograms } from '~/composables/data/useBfPrograms'
 import { useBfProjects } from '~/composables/data/useBfProjects'
-import { isExternal } from '~/utils/link'
-import type { Announcement } from '~/types/bf-contracts'
 
 defineOptions({ name: 'HomePage' })
 
@@ -89,15 +88,6 @@ const featured = highlights().slice(0, 4)
  */
 const latest = active.slice(0, 6)
 
-/**
- * The shell publishes the gated banner (`layouts/bf-default.vue`). This
- * route is the one that paints it on the hero scrim instead of above `<main>`.
- */
-const banner = inject<Announcement | undefined>('bf-banner')
-
-const bannerCut = banner?.message?.indexOf(' | ') ?? -1
-const bannerKicker = bannerCut > 0 ? banner!.message!.slice(0, bannerCut) : ''
-const bannerBody = bannerCut > 0 ? banner!.message!.slice(bannerCut + 3) : (banner?.message ?? '')
 </script>
 
 <template>
@@ -136,30 +126,12 @@ const bannerBody = bannerCut > 0 ? banner!.message!.slice(bannerCut + 3) : (bann
     image="/images/hero/homepage-capitol-square.jpg"
     image-secondary="/images/hero/homepage-reichstag-square.jpg"
     style="
+
       --_bf-hero-media-image-position: center bottom;
       --_bf-hero-min-height: max(60svh, min(56.25vw, 100svh));
       --color-scrim: transparent;
     "
   >
-    <template v-if="banner?.message" #overlay>
-      <bfNotice
-        class="bf-shell__announcement | center"
-        variant="info"
-      >
-        <a
-          v-if="banner.url"
-          :href="banner.url"
-          :data-external="isExternal(banner.url) || undefined"
-        >
-          <span v-if="bannerKicker" class="bf-announcement__kicker">{{ bannerKicker }}</span>
-          <span>{{ bannerBody }}</span>
-        </a>
-        <template v-else>
-          <span v-if="bannerKicker" class="bf-announcement__kicker">{{ bannerKicker }}</span>
-          <span>{{ bannerBody }}</span>
-        </template>
-      </bfNotice>
-    </template>
     <bfButton to="/democracy" variant="primary" size="l">Explore our work</bfButton>
   </bfHero>
 
@@ -298,13 +270,14 @@ const bannerBody = bannerCut > 0 ? banner!.message!.slice(bannerCut + 3) : (bann
   The Insights band from the Paper export. Section gap is already `--space-m`
   (30px) via `bfSection`'s default. The heading's size, weight and leading
   already match `h2` (`--size-2` is 37.5px against Paper's 37). Paper set
-  the Insights heading in Inter; it is IBM Plex Sans. The "All … →" links
-  share one rule — Projects has the same control.
+  the Insights heading in Inter, and this band used to follow it in IBM Plex
+  Sans; Wave 1 puts it back in the display face with "Our Programs" and
+  "Projects" above it — three section headings on one page in two families
+  read as two systems. So no family or tracking here, only the colour. The
+  "All … →" links share one rule — Projects has the same control.
 */
 .bf-home-insights .bf-section__heading {
   color: var(--color-text);
-  font-family: var(--font-family-ui);
-  letter-spacing: -0.01em;
 }
 
 /*

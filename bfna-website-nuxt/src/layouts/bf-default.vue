@@ -230,15 +230,21 @@ const doc = announcement()
 const banner = doc?.message ? doc : undefined
 
 /**
- * Homepage, the Insights index, and insight articles paint the band on the
- * hero. Every other route keeps it here, between the nav and `<main>`.
+ * The message's own "KICKER | sentence" convention, split once.
+ *
+ * The published copy leads with a call to action and a pipe ("APPLY NOW |
+ * Bertelsmann Foundation Fellowship 2026 …"). The pipe is punctuation for a
+ * plain-text field, not something a reader should see, so the part before it
+ * becomes the band's small-caps label and the rest the sentence. A message
+ * with no pipe (or one at index 0) renders whole, with no label.
+ *
+ * This used to be copied into three page templates, each of which also
+ * painted its own band on its hero. Wave 1 put the band back here, on every
+ * route, so the split lives here too — one reader, one parse.
  */
-provide('bf-banner', banner)
-
-const route = useRoute()
-const heroClaimsBanner = computed(() =>
-  route.path === '/' || route.path === '/insights' || route.path.startsWith('/insights/')
-)
+const bannerCut = banner?.message?.indexOf(' | ') ?? -1
+const bannerKicker = banner && bannerCut > 0 ? banner.message!.slice(0, bannerCut) : ''
+const bannerBody = banner && bannerCut > 0 ? banner.message!.slice(bannerCut + 3) : (banner?.message ?? '')
 
 useHead({
   /*
@@ -286,18 +292,25 @@ useHead({
       an unpublished or missing document renders no element at all rather than
       an empty box that would still take a gap.
 
-      `variant="info"` — the announcement is site-wide information, not a
-      warning and not the neutral `note` default; `bfNotice`'s `info` colourway
-      measures ≈9.7:1 for its boundary (gh#50).
+      **One band, one place, every route** (Wave 1). The homepage, the Insights
+      index and insight articles used to skip this and paint their own copy
+      absolutely positioned on their hero — which at 375px overflowed the
+      viewport and sat on top of the `<h1>` and the breadcrumb. Here it is in
+      the shell's flow, between the nav and `<main>`, so it can push the page
+      down but never cover it, and it looks the same wherever it appears.
+
+      `variant="announcement"` — `bfNotice`'s site-wide colourway: a full-bleed
+      navy band in the UI face. The inner `.center` gives the text the nav's
+      measure and inline padding, so it starts on the logo's left edge.
 
       `announced` is left at its default `false`: the band is present at first
       render and never toggles, and a live region that is never updated is noise
       in the accessibility tree (`bfNotice`'s own contract).
 
-      The link wraps the message rather than trailing it, because the message
-      *is* the call to action ("APPLY NOW | …") and a bare "read more" beside it
-      would be a second, less useful accessible name. `url` is nullable in the
-      schema, so a document with a message and no link degrades to plain text.
+      The link wraps the label and the sentence together, because the message
+      *is* the call to action and a bare "read more" beside it would be a
+      second, less useful accessible name. `url` is nullable in the schema, so a
+      document with a message and no link degrades to plain text.
 
       `data-external` comes from `isExternal()` — `src/utils/link.ts` is the
       epic's one rule for that decision (gh#28) and `bfNav` and `bfFooter`
@@ -307,23 +320,27 @@ useHead({
       rather than `|| false`: an attribute bound to `false` is removed, but one
       bound to the *string* `"false"` is not, and `[data-external]` matches on
       presence.
-
-      `.center` gives the band the same measure and inline padding as the nav
-      bar and every page section, so the announcement lines up with the content
-      instead of running full-bleed. `|` is a real class token in this CUBE
-      dialect, separating the block from the composition primitive.
     -->
     <bfNotice
-      v-if="banner && !heroClaimsBanner"
-      class="bf-shell__announcement | center"
-      variant="info"
+      v-if="banner"
+      class="bf-shell__announcement"
+      variant="announcement"
     >
-      <a
-        v-if="banner.url"
-        :href="banner.url"
-        :data-external="isExternal(banner.url) || undefined"
-      >{{ banner.message }}</a>
-      <template v-else>{{ banner.message }}</template>
+      <div class="bf-shell__announcement-inner | center">
+        <a
+          v-if="banner.url"
+          class="bf-shell__announcement-message"
+          :href="banner.url"
+          :data-external="isExternal(banner.url) || undefined"
+        >
+          <span v-if="bannerKicker" class="bf-shell__announcement-kicker">{{ bannerKicker }}</span>
+          <span>{{ bannerBody }}</span>
+        </a>
+        <p v-else class="bf-shell__announcement-message">
+          <span v-if="bannerKicker" class="bf-shell__announcement-kicker">{{ bannerKicker }}</span>
+          <span>{{ bannerBody }}</span>
+        </p>
+      </div>
     </bfNotice>
 
     <!--
@@ -428,62 +445,38 @@ useHead({
   /*
    * The band sits between the nav and the content, in the shell's own flow
    * rather than inside `<main>` — it is site chrome, not page content, and a
-   * page's `.stack` rhythm must not have to know whether it is there.
+   * page's `.stack` rhythm must not have to know whether it is there. No
+   * margin under it: every page's first band (hero, masthead, page header)
+   * starts with its own ground, and a strip of page colour between navy and
+   * a photograph would read as a gap, not as rhythm.
    */
-  .bf-shell__announcement {
-    margin-block-end: var(--space-m);
+
+  /*
+   * Label and sentence on one line when they fit, the sentence dropping under
+   * the label when they do not — `flex-wrap` with a row gap, so a 375px
+   * screen gets two tidy lines instead of a label glued to a wrapped
+   * sentence. `baseline` keeps the smaller label on the sentence's line.
+   */
+  .bf-shell__announcement-message {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-3xs) var(--space-xs);
+    margin: 0;
   }
-}
-</style>
 
-<style>
-/*
-  Paper hero announcement (file 01M32FSKQF9YS8ZAA5CSZS6BRW): a navy bar on
-  the photograph, small-caps kicker, then the sentence. Unlayered so it
-  beats `bfNotice`'s layered box.
-*/
-.bf-hero .bf-shell__announcement,
-.bf-insights-masthead__announcement,
-.bf-article-header__announcement {
-  --_bf-notice-bg: var(--color-accent);
-  --_bf-notice-color: var(--color-text-inverse);
-  --_bf-notice-border: transparent;
-
-  display: flex;
-  align-items: baseline;
-  gap: 0.75em;
-  inline-size: min(100%, var(--theme-center-measure, 1100px));
-  margin-inline: auto;
-  margin-block-end: 0;
-  padding: 0.625rem 1rem;
-  border: 0;
-  border-inline-start: 0;
-  border-radius: var(--border-radius-m);
-  background-color: var(--color-accent);
-  color: var(--color-text-inverse);
-  font-family: var(--font-family-ui);
-  font-size: 0.875rem;
-  font-weight: var(--font-weight-normal);
-  line-height: 1.25rem;
-}
-
-.bf-hero .bf-shell__announcement a,
-.bf-insights-masthead__announcement a,
-.bf-article-header__announcement a {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 0.4em 0.75em;
-  color: inherit;
-  text-decoration: none;
-}
-
-.bf-announcement__kicker {
-  flex: none;
-  color: var(--color-text-inverse);
-  font-size: 0.75rem;
-  font-weight: var(--font-weight-semibold);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  /*
+   * The label: the message's own call to action ("APPLY NOW"), set as small
+   * caps in the semibold face so it reads as the band's label rather than as
+   * the first words of the sentence. `--size--2` is one step under the band's
+   * own `--size--1`; the tracking opens the caps up at that size.
+   */
+  .bf-shell__announcement-kicker {
+    flex: none;
+    font-size: var(--size--2);
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
 }
 </style>

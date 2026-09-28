@@ -1156,7 +1156,7 @@ export interface SectionProps {
  * matches no `[data-variant]` rule and silently renders the `note` colourway
  * under a `data-variant` attribute that claims otherwise.
  */
-export type NoticeVariant = 'note' | 'info' | 'warning'
+export type NoticeVariant = 'note' | 'info' | 'warning' | 'announcement'
 
 /**
  * `bfNotice` — the notice / banner box (issue 41), componentising the raw
@@ -1173,8 +1173,13 @@ export interface NoticeProps {
    * wireframe call sites render today.
    *
    * Every variant is drawn from semantic tokens that already exist
-   * (`--color-base-*`, `--color-info*`, `--color-warning*`); the component
-   * introduces no colour value of its own (BRIEF §5 rule 2).
+   * (`--color-base-*`, `--color-info*`, `--color-warning*`, and
+   * `--color-accent` / `--color-text-inverse` for `announcement`); the
+   * component introduces no colour value of its own (BRIEF §5 rule 2).
+   *
+   * `announcement` is the site-wide band the shell mounts once under the nav;
+   * the other three are in-content notes about the page they sit on
+   * (`Notice.vue`, "One notice system, two meanings").
    */
   variant?: NoticeVariant
   /**

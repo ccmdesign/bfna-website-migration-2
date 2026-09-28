@@ -74,8 +74,32 @@
  * size. Recorded in Decisions; probe 41 asserts the negative so a later
  * "restore parity" edit fails a row rather than landing quietly.
  *
- * The rest of the box *is* kept: the 4px inline-start rule, the padding pair,
- * the tinted ground.
+ * The tinted ground is kept. The 4px inline-start rule is not — see below.
+ *
+ * ## One notice system, two meanings (Wave 1)
+ *
+ * The site used to ship two unrelated looks for a notice: a navy "APPLY NOW"
+ * bar hand-painted by an unlayered block in the layout and three page
+ * templates, and this component's grey strip with a 4px coloured rule down
+ * one edge. Both now come from here, and the variants split on **meaning**,
+ * not on where they happen to be mounted:
+ *
+ * | variant | meaning | where |
+ * |---|---|---|
+ * | `announcement` | site-wide news from the organisation — the published `bfAnnouncements` document | once, in the shell, directly under the nav (`bf-default.vue`) |
+ * | `note` / `info` / `warning` | a fact about **this** page or result — "this item is from the archive", a search caveat | inside the content column, where the fact applies |
+ *
+ * All four share one box — the same padding pair and the same corner — so
+ * they read as one family. The announcement is the inverse (navy ground,
+ * white type) and runs full-bleed because it is chrome, not content: its
+ * slot supplies its own `.center` column so the text lines up with the nav
+ * and the page. The in-content three are tinted grounds with a hairline
+ * edge in their own hue.
+ *
+ * The 4px inline-start rule is gone. A thick coloured stripe down one edge is
+ * the stock "alert" costume; the hairline all round carries the same boundary
+ * (the ≥3:1 measurements below are about the edge's colour, not its width,
+ * and still hold) without shouting louder than the sentence inside it.
  *
  * ## Styling
  *
@@ -140,25 +164,23 @@ withDefaults(defineProps<NoticeProps>(), {
     --_bf-notice-color: var(--color-text);
 
     /*
-      The wireframe's own box: `--space-2xs` block, `--space-xs` inline, and a
-      4px rule down the inline-start edge — `--border-width-thick` is exactly
-      that length, so the literal is gone and the measurement is not.
-
-      Logical properties throughout (`border-inline-start`, `padding-block`),
-      where the frozen source writes `border-left`. Same rendering in an `ltr`
-      document, and the correct edge in an `rtl` one.
+      The box every variant shares. `--space-xs` / `--space-s` is one step up
+      from the wireframe's pair on both axes, so a two-line notice has room to
+      breathe instead of reading as a stamped label. Logical properties
+      throughout — the correct edge in an `rtl` document.
     */
-    padding-block: var(--space-2xs);
-    padding-inline: var(--space-xs);
-    border-inline-start: var(--border-width-thick) solid var(--_bf-notice-border);
+    padding-block: var(--space-xs);
+    padding-inline: var(--space-s);
+    border: var(--border-width-thin) solid var(--_bf-notice-border);
+    border-radius: var(--border-radius-m);
     background-color: var(--_bf-notice-bg);
     color: var(--_bf-notice-color);
   }
 
   /*
-    Each variant redeclares only the triplet — nothing about the box changes
-    between them, and repeating the padding here is how a later edit to one
-    variant's spacing silently diverges from the other two.
+    Each in-content variant redeclares only the triplet — nothing about the box
+    changes between them, and repeating the padding here is how a later edit to
+    one variant's spacing silently diverges from the others.
   */
   .bf-notice[data-variant='info'] {
     --_bf-notice-bg: var(--color-info-super-light);
@@ -175,6 +197,46 @@ withDefaults(defineProps<NoticeProps>(), {
     */
     --_bf-notice-border: var(--color-warning-dark);
     --_bf-notice-color: var(--color-warning-dark);
+  }
+
+  /*
+    The site announcement. The one variant that changes the box as well as the
+    triplet, because it is a band, not a box: full-bleed, square-cornered, no
+    inline padding of its own (the slot's `.center` column supplies it, so the
+    text starts on the nav's left edge), and set in the UI face one step below
+    body, which is what chrome is set in.
+
+    White on `--color-accent` (navy) is the pair `--color-text-inverse` was
+    made for; the border takes the ground's own colour so the band has no
+    visible edge to fight the nav's rule above it.
+  */
+  .bf-notice[data-variant='announcement'] {
+    --_bf-notice-bg: var(--color-accent);
+    --_bf-notice-border: var(--color-accent);
+    --_bf-notice-color: var(--color-text-inverse);
+
+    padding-inline: 0;
+    border-width: var(--border-width-none);
+    border-radius: 0;
+    font-family: var(--font-family-ui);
+    font-size: var(--size--1);
+    line-height: var(--leading-body);
+  }
+
+  /*
+    A link in the announcement is the whole message, so it takes the band's
+    colour rather than the page's link blue (which would sit at ≈1.3:1 on
+    navy) and keeps an underline on the sentence only on hover — the band
+    itself is the affordance, the same judgement `bfNav` makes for its links.
+  */
+  .bf-notice[data-variant='announcement'] :slotted(a) {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .bf-notice[data-variant='announcement'] :slotted(a:hover) {
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
   }
 }
 </style>
