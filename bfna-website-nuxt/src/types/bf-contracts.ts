@@ -773,7 +773,10 @@ export interface Menu {
 /** One row of search results, as rendered by the search template. */
 export interface SearchResultRow {
   slug: string
+  /** The visible title — for an insight, the heading minus any kicker. */
   heading: string
+  /** A format or series label shown above the title (`splitHeadingKicker`). Optional. */
+  kicker?: string
   to: string
   chip: string
   archived?: boolean

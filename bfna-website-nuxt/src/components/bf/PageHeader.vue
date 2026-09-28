@@ -22,8 +22,8 @@
  * `insights/[slug]`, `projects/index`, `projects/[slug]` — which makes it the
  * most-reused `wf-*` component after `wfSection`, and the base of every Phase 6
  * template except home and 404. The structure is therefore kept element for
- * element and attribute for attribute; what changes is the chip guard (below)
- * and the skin.
+ * element and attribute for attribute; what changes is the chip guard (below),
+ * the skin, and one optional `<p class="kicker">` before the `<h1>` (`kicker`).
  *
  * Presentational-only (D8): props in, two slots, nothing out. It knows nothing
  * about search inputs, filters or the route — a template puts those in the
@@ -130,6 +130,17 @@ interface Props {
    * The page's `<h1>`. Rendered unconditionally, exactly as the wf source does.
    */
   heading?: string | null
+  /**
+   * A short label above the `<h1>` — a format or series name split off the
+   * heading (`splitHeadingKicker`), e.g. "Infographic" or "Hidden Layers".
+   *
+   * Rendered as a `<p class="kicker">` immediately **before** the `<h1>`, not
+   * inside it: reading order then matches the picture, the `<h1>` is exactly
+   * the title, and heading navigation does not open every infographic's name
+   * with the word "Infographic". The full string stays in the document
+   * `<title>`, which the caller sets. Absent, `null` or `''` renders nothing.
+   */
+  kicker?: string | null
   /**
    * The standfirst, as one paragraph or several. A `string` renders one
    * `<p data-measure="normal">`, a `string[]` one per entry, `null` none.
@@ -334,6 +345,8 @@ const showChips = (): boolean => chipList.value.length > 0 || hasRenderedContent
       bug, and rendering an empty `<h1>` is how it stays visible instead of
       silently costing the page its top-level heading.
     -->
+    <p v-if="kicker" class="bf-page-header__kicker kicker">{{ kicker }}</p>
+
     <h1 class="bf-page-header__heading">{{ heading }}</h1>
 
     <!--

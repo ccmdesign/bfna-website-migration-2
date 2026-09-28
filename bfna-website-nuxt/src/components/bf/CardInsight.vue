@@ -44,8 +44,8 @@
  *
  * Props in, nothing out. No `queryCollection`, no store, no data composable,
  * no `useAsyncData` — the caller (a grid, #42, or a template page) fetches and
- * hands over one row. The only import beyond the type is `formatLabel`, a pure
- * function.
+ * hands over one row. The only imports beyond the type are `formatLabel` and
+ * `splitHeadingKicker`, both pure functions.
  *
  * Notably **`plain()` is not called**. `wfCardInsight.vue:19` strips HTML from
  * the excerpt at render time; that work moved into the build-time normaliser
@@ -78,9 +78,19 @@
  *   styles `:is(h2, h3, h4)` (D-20.4) because heading level belongs to the
  *   page outline; this is how a wrapper reaches the other two.
  * - **A blank heading renders no link** (#130). See `hasHeading` below.
+ *
+ * ## The kicker (Sep 2026)
+ *
+ * A heading that opens with a curated format label or series marker
+ * ("Infographic: …", "Hidden Layers: …", "Season 1, Episode 2: …") renders
+ * that prefix in `bfCard`'s `kicker` slot and only the rest as the linked
+ * title — `splitHeadingKicker()` in `utils/headingKicker.ts` owns the list.
+ * When the kicker restates the format chip ("Infographic" on an infographic)
+ * the format chip is dropped; programme, extra and `Archive` chips stay.
  */
 import type { CardWrapperProps, Insight } from '~/types/bf-contracts'
 import { formatLabel } from '~/utils/format'
+import { kickerHidesFormatChip, splitHeadingKicker } from '~/utils/headingKicker'
 
 defineOptions({
   name: 'BfCardInsight',
@@ -145,6 +155,12 @@ const props = withDefaults(defineProps<Props>(), {
 const headingText = computed(() => (props.insight.heading ?? '').trim())
 
 const hasHeading = computed(() => headingText.value !== '')
+
+/** Kicker and visible title. `title` is the whole heading when nothing splits. */
+const split = computed(() => splitHeadingKicker(headingText.value))
+
+/** The format chip, unless the kicker already says it. */
+const showFormatChip = computed(() => !kickerHidesFormatChip(split.value, props.insight.format))
 
 /**
  * …and the defect is announced rather than swallowed. Same shape as `bfCard`'s
@@ -217,15 +233,17 @@ const programSlug = computed(() => {
       nothing to announce.
     -->
     <component :is="`h${headingLevel}`" v-if="hasHeading">
-      <NuxtLink :to="`/insights/${insight.slug}`">{{ headingText }}</NuxtLink>
+      <NuxtLink :to="`/insights/${insight.slug}`">{{ split.title }}</NuxtLink>
     </component>
 
     <bfTime :date="insight.publish_date" />
 
     <p v-if="excerpt && excerptText">{{ excerptText }}</p>
 
+    <template v-if="split.kicker" #kicker>{{ split.kicker }}</template>
+
     <template #chips>
-      <bfChip data-tone="format">{{ formatLabel(insight.format) }}</bfChip>
+      <bfChip v-if="showFormatChip" data-tone="format">{{ formatLabel(insight.format) }}</bfChip>
       <bfChip
         v-if="programLabel"
         :data-program="programSlug"

@@ -58,6 +58,7 @@ import { useBfPeople } from '~/composables/data/useBfPeople'
 import { useBfPrograms } from '~/composables/data/useBfPrograms'
 import { useBfProjects } from '~/composables/data/useBfProjects'
 import { formatLabel } from '~/utils/format'
+import { kickerHidesFormatChip, splitHeadingKicker } from '~/utils/headingKicker'
 
 defineOptions({ name: 'SearchPage' })
 
@@ -350,17 +351,27 @@ const topScore = computed<number>(() => results.value[0]?.score || 1)
  * `resultCount` below is deliberately **not** this array's length: the count
  * line reports the whole matched set, which is the distinction
  * `SearchShellProps` was written around.
+ *
+ * Insight rows split their heading here, at the prop boundary, and not in
+ * the pool: the scorer matches against the **full** heading ("infographic"
+ * still finds "Infographic: Cybersecurity"), and only the visible row shows
+ * the kicker and title apart — dropping the format chip when the kicker
+ * restates it, as every insight card does.
  */
 const rows = computed<SearchResultRow[]>(() =>
-  results.value.slice(0, 20).map(row => ({
-    slug: row.slug,
-    heading: row.heading,
-    to: row.to,
-    chip: row.chip,
-    archived: row.archived,
-    date: row.date,
-    score: row.score / topScore.value
-  }))
+  results.value.slice(0, 20).map((row) => {
+    const split = row.slug.startsWith('i-') ? splitHeadingKicker(row.heading) : null
+    return {
+      slug: row.slug,
+      heading: split ? split.title : row.heading,
+      kicker: split?.kicker || undefined,
+      to: row.to,
+      chip: split && kickerHidesFormatChip(split, row.format) ? '' : row.chip,
+      archived: row.archived,
+      date: row.date,
+      score: row.score / topScore.value
+    }
+  })
 )
 </script>
 

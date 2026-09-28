@@ -429,7 +429,9 @@ if (import.meta.dev) {
 
   /*
     Kicker sits under the media and above the title. Chips close the card.
-    The row modifier puts its chips back in front — that line is chip, title, date.
+    The row modifier puts its chips back in front — that line is chip, kicker,
+    title, date. `-2` so the chips lead the kicker's `-1` rather than tying
+    with it and losing on DOM order (the kicker is inside `__text`).
   */
   .bf-card p.bf-card__kicker {
     order: -1;
@@ -438,7 +440,7 @@ if (import.meta.dev) {
   }
 
   .bf-card__chips { order: 1; }
-  .bf-card.bf-card-row .bf-card__chips { order: -1; }
+  .bf-card.bf-card-row .bf-card__chips { order: -2; }
 
   /*
     ## The row modifier — `.bf-card-row` (`bfCardRow`, gh#36 / issue 27)
@@ -513,6 +515,16 @@ if (import.meta.dev) {
 
   .bf-card.bf-card-row .bf-card__text > time {
     margin-block-start: 0;
+  }
+
+  /*
+    The heading may shrink in a row. The base rule's `flex-shrink: 0` keeps a
+    column card's title from being squeezed, but on a wrapping row it holds a
+    long title at its max-content width — wider than the row — instead of
+    wrapping it inside the row as this block's contract says.
+  */
+  .bf-card.bf-card-row :is(h2, h3, h4) {
+    flex-shrink: 1;
   }
 
   /*

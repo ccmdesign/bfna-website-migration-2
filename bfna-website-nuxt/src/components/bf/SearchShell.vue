@@ -458,7 +458,8 @@ const headingOf = (row: SearchResultRow): string => (row.heading ?? '').trim()
 
         Heading first in the DOM (the base's rule, never reordered): heading
         navigation lands at the start of the row, and `.bf-card__chips`'s
-        `order: -1` pulls the chips ahead of it visually.
+        `order: -2` (with the kicker's `-1`) pulls the chips and then the
+        kicker ahead of it visually.
       -->
       <bfCard
         v-for="(row, index) in results"
@@ -502,7 +503,9 @@ const headingOf = (row: SearchResultRow): string => (row.heading ?? '').trim()
           />
         </p>
 
-        <template #chips>
+        <template v-if="row.kicker" #kicker>{{ row.kicker }}</template>
+
+        <template v-if="row.chip || row.archived" #chips>
           <bfChip v-if="row.chip">{{ row.chip }}</bfChip>
           <bfChip v-if="row.archived">Archive</bfChip>
         </template>

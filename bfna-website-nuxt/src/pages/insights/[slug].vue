@@ -62,6 +62,7 @@ import { useBfPrograms } from '~/composables/data/useBfPrograms'
 import { useBfProjects } from '~/composables/data/useBfProjects'
 import { useProgramTheme } from '~/composables/useProgramTheme'
 import { formatLabel, monthYear } from '~/utils/format'
+import { kickerHidesFormatChip, splitHeadingKicker } from '~/utils/headingKicker'
 
 defineOptions({ name: 'InsightDetailPage' })
 
@@ -103,6 +104,18 @@ const programName = program?.name
  * names the route rather than leaving the site title alone.
  */
 useHead({ title: () => insight?.heading ?? 'Insight' })
+
+/**
+ * The visible `<h1>` and its kicker. "Infographic: Cybersecurity" shows the
+ * kicker "Infographic" above an `<h1>` reading "Cybersecurity"; an ordinary
+ * "Title: Subtitle" heading is not split (`utils/headingKicker.ts` holds the
+ * curated list). The `<title>` above, the crumb and the lead image's `alt`
+ * keep the **full** heading.
+ */
+const headingSplit = splitHeadingKicker(insight?.heading)
+
+/** The format chip, unless the kicker already says it (kicker "Infographic" on an infographic). */
+const showFormatChip = insight ? !kickerHidesFormatChip(headingSplit, insight.format) : false
 
 /**
  * The programme colour scope (gh#252). `data-program` lands on `<html>` — the
@@ -216,7 +229,8 @@ const crumbs = [
       label="Insight header"
       image="/images/hero/article-texture.png"
       :crumbs="crumbs"
-      :heading="insight.heading"
+      :kicker="headingSplit.kicker"
+      :heading="headingSplit.title"
       :tagline="insight.subheading"
     >
       <!--
@@ -226,13 +240,15 @@ const crumbs = [
 
         Both branches render nothing when there is nothing to say — `bfByline`
         has its own `hasContent` guard and `bfTime` renders no element for a
-        null or unparseable date. The format chip always renders, so the row
-        is never empty.
+        null or unparseable date. The format chip renders unless the kicker
+        above the `<h1>` already names the format ("Infographic" on an
+        infographic) — then it would say the same word twice. Both posts
+        that drop it today carry a date, so their row is not empty.
       -->
       <div class="bf-article-meta | cluster" data-gap="xs">
         <bfByline v-if="authorText" :author="authorText" :date="insight.publish_date" />
         <bfTime v-else :date="insight.publish_date" />
-        <bfChip data-tone="format">{{ formatLabel(insight.format) }}</bfChip>
+        <bfChip v-if="showFormatChip" data-tone="format">{{ formatLabel(insight.format) }}</bfChip>
         <bfChip
           v-if="program"
           :data-program="program.slug"

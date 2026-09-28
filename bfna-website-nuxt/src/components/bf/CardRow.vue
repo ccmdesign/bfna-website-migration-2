@@ -61,7 +61,8 @@
  *
  * | | Insight | Project |
  * |---|---|---|
- * | chip | `formatLabel(format)`, + `Archive` when `archived` | `kindLabel(kind)` |
+ * | kicker | curated prefix of `heading` (`splitHeadingKicker`) | — |
+ * | chip | `formatLabel(format)` unless the kicker restates it, + `Archive` when `archived` | `kindLabel(kind)` |
  * | link | `/insights/:slug` | `/projects/:slug` |
  * | date | `<bfTime :date="publish_date">` | — |
  *
@@ -84,6 +85,7 @@
  */
 import type { CardRowProps, Insight, CardRowItem } from '~/types/bf-contracts'
 import { formatLabel, kindLabel } from '~/utils/format'
+import { kickerHidesFormatChip, splitHeadingKicker } from '~/utils/headingKicker'
 
 defineOptions({
   name: 'BfCardRow',
@@ -130,6 +132,15 @@ const headingText = computed(() => (props.item.heading ?? '').trim())
 const hasHeading = computed(() => headingText.value !== '')
 
 /**
+ * Kicker and visible title — insights only. A project heading is never split:
+ * its two `Title: Subtitle` rows are titles, and the curated prefix list is
+ * built from insight headings.
+ */
+const split = computed(() => isInsight(props.item)
+  ? splitHeadingKicker(headingText.value)
+  : { kicker: '', title: headingText.value, kickerIsFormat: false })
+
+/**
  * Where the row points. Two collections, two route prefixes, and the slug is
  * on both schemas so only the prefix is a branch.
  */
@@ -143,8 +154,10 @@ const to = computed(() =>
  *
  * `kindLabel` returns `null` for a project with no `kind` (5 real rows), and
  * that `null` is filtered rather than rendered as an empty chip. `formatLabel`
- * always returns a label — it falls back to `'Article'` — so the insight
- * branch always has at least one.
+ * always returns a label — it falls back to `'Article'` — but the insight
+ * format chip is dropped when the kicker restates it ("Infographic" on an
+ * infographic), so an unarchived row of that kind has no chip; the kicker
+ * stands in its place.
  *
  * `archived` is a non-nullable `boolean` on both schemas since gh#140, so the
  * truthiness test and `=== true` now agree; the truthiness form is kept because
@@ -152,7 +165,9 @@ const to = computed(() =>
  */
 const chips = computed<string[]>(() => {
   const row = props.item
-  const first = isInsight(row) ? formatLabel(row.format) : kindLabel(row.kind)
+  const first = isInsight(row)
+    ? (kickerHidesFormatChip(split.value, row.format) ? null : formatLabel(row.format))
+    : kindLabel(row.kind)
   return [first, row.archived ? 'Archive' : null].filter(
     (label): label is string => Boolean(label)
   )
@@ -196,7 +211,7 @@ if (import.meta.dev) {
   -->
   <bfCard class="bf-card-row" :data-variant="variant" v-bind="$attrs">
     <component :is="`h${headingLevel}`" v-if="hasHeading">
-      <NuxtLink :to="to">{{ headingText }}</NuxtLink>
+      <NuxtLink :to="to">{{ split.title }}</NuxtLink>
     </component>
 
     <!--
@@ -211,6 +226,8 @@ if (import.meta.dev) {
       would need a cast.
     -->
     <bfTime v-if="insight" :date="insight.publish_date" />
+
+    <template v-if="split.kicker" #kicker>{{ split.kicker }}</template>
 
     <template v-if="chips.length" #chips>
       <bfChip v-for="chip in chips" :key="chip">{{ chip }}</bfChip>

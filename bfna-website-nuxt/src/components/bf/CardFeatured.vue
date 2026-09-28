@@ -69,6 +69,7 @@
  * asserts both branches, and that no rendered `href` contains `/wireframes/`.
  */
 import type { CardWrapperProps, Insight } from '~/types/bf-contracts'
+import { splitHeadingKicker } from '~/utils/headingKicker'
 import { isExternal, newTabAttrs } from '~/utils/link'
 
 defineOptions({
@@ -123,20 +124,16 @@ const props = withDefaults(defineProps<Props>(), {
 const headingText = computed(() => (props.item.heading ?? '').trim())
 
 /**
- * Paper splits "Latest Issue | Transponder: The Future" into a kicker and a title.
- * A heading with no pipe stays a title.
+ * Kicker and title, from `splitHeadingKicker()` (`utils/headingKicker.ts`).
+ * Paper splits "Latest Issue | Transponder: The Future" into a kicker and a
+ * title; the helper does that for a `|` or a `: ` after a **curated** format
+ * or series prefix only, so an ordinary "Title: Subtitle" stays one title.
+ * All eight curated highlight rows split. The chip here is the literal
+ * `Featured`, so no kicker ever hides it.
  */
-const kicker = computed(() => {
-  const pipe = headingText.value.indexOf('|')
-  if (pipe === -1) return ''
-  return headingText.value.slice(0, pipe).trim()
-})
-
-const titleText = computed(() => {
-  const pipe = headingText.value.indexOf('|')
-  if (pipe === -1) return headingText.value
-  return headingText.value.slice(pipe + 1).trim()
-})
+const split = computed(() => splitHeadingKicker(headingText.value))
+const kicker = computed(() => split.value.kicker)
+const titleText = computed(() => split.value.title)
 
 const hasHeading = computed(() => titleText.value !== '')
 
