@@ -1,0 +1,30 @@
+/*
+ * The facet caption — the word that names a row of filter chips ("Format",
+ * "Program") on the three list templates: `/insights`, `/search`, `/archive`.
+ *
+ * It was `/insights`' own `.bf-insights-caption` until the final pass (Sep
+ * 2026), while `/search` and `/archive` set a bare `<span>` in the body's
+ * size with a colon after it — one facet vocabulary, two captions. One rule
+ * now, in one file, because the three pages load their scoped styles only
+ * on their own routes and a class borrowed from one page's `<style>` block
+ * would be unstyled on the other two.
+ *
+ * The UI face one step under the body, in `bfResultCount`'s own secondary
+ * ink, sentence case and no colon: the caption names the chip row under it,
+ * so it is a word rather than a second run of small capitals beside the
+ * chips' own. Each bar points its accessible name at its caption with
+ * `aria-labelledby`, so the caption is also what the group announces.
+ *
+ * Static, like every file under `public/css/`: served through `<link>`, in the
+ * layer `styles.css` names, never through Vite. Tokens only, no `:not()`.
+ */
+
+@layer components {
+  .bf-facet-caption {
+    color: var(--color-base-light);
+    font-family: var(--font-family-ui);
+    font-size: var(--size--1);
+    font-weight: var(--font-weight-normal);
+    line-height: var(--leading-display);
+  }
+}

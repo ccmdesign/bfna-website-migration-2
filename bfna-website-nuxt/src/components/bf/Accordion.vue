@@ -47,7 +47,8 @@
  * removed and the affordance is redrawn as a `::after` whose `content` is the
  * **empty string**: a box with two borders, rotated. There is no glyph, so
  * there is no alternative text to get wrong and no font to fail to load. The
- * accessible name of the summary is the `label` and nothing else.
+ * accessible name of the summary is the `label` — and the `meta` after it,
+ * when a caller passes one — and nothing else.
  *
  * **3. Band rhythm from Utopia tokens.** A rule line and block padding, so a
  * stack of these reads as a list of bands inside a section without a pinned
@@ -131,8 +132,19 @@ const onToggle = (event: Event): void => {
       string, and the spec puts the composition on the caller (issue 55) rather
       than growing a slot here before there is a second occurrence to justify
       one.
+
+      `meta` is the one addition (refined pass, Sep 2026): the archive's count
+      beside each year, which had to be written into the label and so was set
+      in the year's display face. Its own span, in the meta voice below. The
+      comma is for the accessible name only — "2023, 27 pieces" rather than
+      "2023 27 pieces" — so it is visually hidden; the row's gap is the
+      visual separator. With no `meta` the summary's text is `label` alone,
+      exactly as before.
     -->
-    <summary class="bf-accordion__summary">{{ label }}</summary>
+    <summary class="bf-accordion__summary">
+      <span class="bf-accordion__label">{{ label }}</span>
+      <span v-if="meta" class="bf-accordion__meta"><span class="visually-hidden">, </span>{{ meta }}</span>
+    </summary>
 
     <!--
       A wrapper element, not a bare `<slot />`. `<details>`'s own box holds the
@@ -208,7 +220,6 @@ const onToggle = (event: Event): void => {
     align-items: baseline;
     gap: var(--_bf-accordion-gap);
     list-style: none;
-
     padding-block: var(--_bf-accordion-padding-block);
 
     /*
@@ -216,6 +227,34 @@ const onToggle = (event: Event): void => {
       over a thing that is not selectable text says the opposite.
     */
     cursor: pointer;
+  }
+
+  /*
+    The label keeps its own width and may shrink to wrap, so the meta and
+    the chevron follow it on the row, as the chevron alone did before.
+  */
+  .bf-accordion__label {
+    flex: 0 1 auto;
+    min-inline-size: 0;
+  }
+
+  /*
+    The meta — a count beside the label — in the site's meta voice: the card
+    date's face, size, weight, tracking and muted ink (`bfCard`'s
+    `.bf-card__text > time`), with tabular figures so the counts down a list
+    of years sit on one width. Its own declarations, so a caller that sets
+    the summary in a display face (`/archive`) does not set the count in it.
+  */
+  .bf-accordion__meta {
+    flex: none;
+    color: var(--color-text-muted);
+    font-family: var(--font-family-ui);
+    font-size: max(var(--size--2), 0.75rem);
+    font-style: normal;
+    font-variant-numeric: tabular-nums;
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: var(--tracking-caps);
+    line-height: 1;
   }
 
   /*
@@ -257,7 +296,6 @@ const onToggle = (event: Event): void => {
     */
     inline-size: 0.4em;
     block-size: 0.4em;
-
     border-inline-end: var(--border-width-medium) solid var(--_bf-accordion-marker-color);
     border-block-end: var(--border-width-medium) solid var(--_bf-accordion-marker-color);
 
@@ -270,7 +308,6 @@ const onToggle = (event: Event): void => {
       centred against the label's x-height rather than sitting on its feet.
     */
     translate: 0 -0.15em;
-
     transition: transform 150ms ease;
   }
 
@@ -319,8 +356,7 @@ const onToggle = (event: Event): void => {
       a custom property that silently stops working depending on what is slotted
       into it. Padding does not collapse.
     */
-    padding-block-start: var(--_bf-accordion-body-gap);
-    padding-block-end: var(--_bf-accordion-padding-block);
+    padding-block: var(--_bf-accordion-body-gap) var(--_bf-accordion-padding-block);
   }
 }
 </style>

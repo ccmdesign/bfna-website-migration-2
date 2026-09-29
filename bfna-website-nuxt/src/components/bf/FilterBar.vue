@@ -268,6 +268,10 @@ const onKeydown = (event: KeyboardEvent, index: number): void => {
 
       No `:style`, no `:class`, no `active` prop: the selected state is
       `bfChip`'s `[data-active]` rule, reached through `model-value` alone.
+
+      `tone` is `bfChip`'s typed skin: the Format facet takes the neutral
+      pill, the Program facet paints each chip in the programme its key
+      names (`program`), and no `tone` leaves the chips outlined.
     -->
     <bfChip
       v-for="(filter, index) in filters"
@@ -275,8 +279,8 @@ const onKeydown = (event: KeyboardEvent, index: number): void => {
       toggle
       :model-value="isSelected(filter.key)"
       :data-filter-key="filter.key"
-      :data-tone="tone === 'format' ? 'format' : undefined"
-      :data-program="tone === 'program' ? filter.key : undefined"
+      :tone="tone === 'program' ? 'program' : tone ? 'neutral' : undefined"
+      :program="tone === 'program' ? filter.key : undefined"
       @update:model-value="(next: boolean) => onToggle(filter.key, next)"
       @keydown="(event: KeyboardEvent) => onKeydown(event, index)"
       @focus="focusedIndex = index"

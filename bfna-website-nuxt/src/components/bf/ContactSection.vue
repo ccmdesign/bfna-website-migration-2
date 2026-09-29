@@ -96,13 +96,15 @@
  * `$attrs`. Nothing reads them today; they are what a form's controls are
  * called, and the day an endpoint lands the band already speaks `FormData`.
  *
- * ## Styling: two rules, and both are subtractions
+ * ## Styling: three rules, and all are subtractions
  *
  * No new CSS variable and no colour of any kind. The first rule neutralises
- * `base/forms.css`'s `fieldset { margin-bottom: var(--space-m) }` — see the
- * `<style>` block for why it is neutralised here rather than fixed there. The
- * second (gh#229) takes the user agent's 1em start margin off the status
- * region, which renders empty in every state this component currently has.
+ * `base/forms.css`'s `fieldset { margin-bottom: var(--space-m) }` and, since
+ * the refined pass, its border and padding too — see the `<style>` block for
+ * why it is neutralised here rather than fixed there. The second hides the
+ * legend visually, because it repeats the heading above it. The third
+ * (gh#229) takes the user agent's 1em start margin off the status region,
+ * which renders empty in every state this component currently has.
  */
 defineOptions({ name: 'BfContactSection' })
 
@@ -224,6 +226,21 @@ withDefaults(defineProps<Props>(), {
 const nameValue = ref('')
 const emailValue = ref('')
 const messageValue = ref('')
+
+/**
+ * The form column's heading id, which names the band (refined pass, Sep
+ * 2026). The band's two `<h2>`s live inside its columns, so `bfSection`'s own
+ * `heading` → `aria-labelledby` pair is not used (see the template), and the
+ * band was an unnamed container: `bfSection` warned about it in dev, and
+ * `/about` patched the name on from outside with an `aria-label` that could
+ * drift from `heading`. The band now points its own `aria-labelledby` at the
+ * form's heading — the first of the two, and the one that says what the
+ * band is for — so its region name is always the visible word.
+ *
+ * `useId()`, so it is stable across the server render and hydration and
+ * unique if a page ever mounts the band twice.
+ */
+const headingId = useId()
 </script>
 
 <template>
@@ -245,6 +262,7 @@ const messageValue = ref('')
     label="Contact"
     layout="switcher"
     gap="l"
+    :aria-labelledby="headingId"
   >
     <!--
       Left column. `.stack` with `data-gap="s"` — the wf source's own
@@ -269,7 +287,14 @@ const messageValue = ref('')
       novalidate
       @submit.prevent
     >
-      <h2 class="bf-contact-section__heading">{{ heading }}</h2>
+      <!--
+        `bf-section__heading` beside the block class: the hook `bfSection`
+        hangs its section rule on (`data-rule`, `Section.vue`). This band's
+        headings are its columns', not the band's, so a caller that rules the
+        band (`/about`) gets the rule over each column — here and on "Visit
+        us" below. Without `data-rule` the hook draws nothing.
+      -->
+      <h2 :id="headingId" class="bf-contact-section__heading bf-section__heading">{{ heading }}</h2>
 
       <!--
         NO class on the anchor, and that is load-bearing rather than an
@@ -287,7 +312,11 @@ const messageValue = ref('')
 
       <!--
         The group. `legend` is bound to the same `heading` prop the `<h2>`
-        above renders — see `Props.heading`.
+        above renders — see `Props.heading` — so it names the controls in the
+        accessibility tree and is **not shown**: printed, it read "Contact"
+        a second time directly under the heading and the address, in a boxed
+        fieldset. The stylesheet below hides it the `visually-hidden` way
+        (still announced) and takes the fieldset's box off.
 
         The three fields are `bfFormField`s, which is the half of the
         keep-vs-decompose decision that says "composed from the field
@@ -404,7 +433,7 @@ const messageValue = ref('')
       prop would offer a caller a decision that has no second answer.
     -->
     <div class="bf-contact-section__visit | stack" data-gap="s">
-      <h2>{{ visitHeading }}</h2>
+      <h2 class="bf-section__heading">{{ visitHeading }}</h2>
       <p>Bertelsmann Foundation North America</p>
       <p v-if="address">{{ address }}</p>
     </div>
@@ -430,7 +459,7 @@ const messageValue = ref('')
 
   No `:not()` appears below, complex-selector or otherwise (D-20.5, gh#29), no
   colour of any kind (BRIEF §5 rule 2, DoD-6), and no new custom property (the
-  spec's own styling requirement) — the single declaration is a zero.
+  spec's own styling requirement) — every declaration is a zero or a hide.
 -->
 <style>
 @layer components {
@@ -460,6 +489,37 @@ const messageValue = ref('')
   */
   .bf-contact-section fieldset {
     margin-block-end: 0;
+
+    /*
+      The box, too (refined pass, Sep 2026). `forms.css` draws every
+      fieldset as a bordered, padded panel with its legend in the border; in
+      this band that put a second "Contact" and a frame around three fields
+      whose column already has a heading. The group stays a group — its
+      name is the hidden legend — and the fields sit on the column's edge,
+      like the email link above them.
+    */
+    padding: 0;
+    border: 0;
+  }
+
+  /*
+    The legend, visually hidden and still announced: the group keeps its
+    accessible name ("Contact, group"), and the page no longer prints the
+    word twice. The recipe is `utils.css`'s `.visually-hidden` (gh#219),
+    restated because the legend is `bfFormGroup`'s element and this band
+    cannot put a class on it; `position: absolute` also takes a legend out
+    of the fieldset's border, where it would otherwise sit.
+  */
+  .bf-contact-section .bf-form-group__legend {
+    position: absolute;
+    overflow: hidden;
+    inline-size: 1px;
+    block-size: 1px;
+    margin: -1px;
+    padding: 0;
+    border: 0;
+    white-space: nowrap;
+    clip-path: inset(50%);
   }
 
   /*

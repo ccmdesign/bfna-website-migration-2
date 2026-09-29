@@ -1,0 +1,86 @@
+/*
+ * The "more of this" text link — `All insights →` under a band's cards.
+ *
+ * One treatment for every band that ends on a way into the full list: the
+ * home page's "All projects" and "All insights" and the program hubs' two
+ * Insights links. It was the home page's own scoped `.bf-home-more` until
+ * the final pass (Sep 2026), and the hubs drew the same two links as boxed
+ * `bfButton`s with a typed ` →` — a second answer to the same job, and the
+ * one place a Unicode arrow was left standing in for the icon system.
+ *
+ * `bfLoadMore` is the same treatment on a `<button>` (it paginates, it does
+ * not navigate) and keeps its own rules, through `bfButton`'s hooks; the two
+ * are kept alike by hand, and its docblock points here.
+ *
+ * Markup: `<NuxtLink class="bf-more-link" to="…">Words<span
+ * class="bf-more-link__arrow" aria-hidden="true" /></NuxtLink>`. The arrow is
+ * empty and `aria-hidden`, so the link's name is its words.
+ *
+ * Static, like every file under `public/css/`: served through `<link>`, in the
+ * layer `styles.css` names, never through Vite. Tokens only, no `:not()`.
+ */
+
+@layer components {
+  /*
+    Paper (Sep 21): 14px / 18px / 500 / --color-blue, IBM Plex Sans,
+    shrink-0, width fit-content. 14px is 0.875rem; --size--1 runs
+    13.3px→14.6px and --size-0 starts at 16px, so neither step is 14. 18px
+    is 1.125rem; --leading-body is 1.5 and --leading-display is 1.1.
+
+    Sentence case, as the source copy is written ("All insights"). Paper's
+    `capitalize` was dropped in the final pass: it set "All Insights" and
+    "Load More (74 Remaining)" on a site whose every other control reads in
+    sentence case, and under an accessible name that did not match.
+  */
+  .bf-more-link {
+    color: var(--color-blue);
+    display: inline-block;
+    flex-shrink: 0;
+    font-family: var(--font-family-ui);
+    font-size: 0.875rem;
+    font-weight: var(--font-weight-medium);
+    line-height: 1.125rem;
+    text-decoration: none;
+    text-decoration-thickness: var(--border-width-thin);
+    text-underline-offset: 0.2em;
+    width: fit-content;
+  }
+
+  /*
+    The arrow, drawn rather than typed — the footer search's `arrowPath` as a
+    mask over `currentcolor`, so it takes the link's blue and cannot fall
+    back to whichever face has a `→`. On hover the words underline and the
+    arrow steps along, as `bfLoadMore`'s do; still under reduced motion.
+  */
+  .bf-more-link__arrow {
+    display: inline-block;
+    inline-size: 1em;
+    block-size: 1em;
+    margin-inline-start: 0.2em;
+    vertical-align: middle;
+    background-color: currentcolor;
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z'/%3E%3C/svg%3E");
+    mask-position: center;
+    mask-repeat: no-repeat;
+    mask-size: contain;
+    transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .bf-more-link:hover {
+    text-decoration-line: underline;
+  }
+
+  .bf-more-link:hover .bf-more-link__arrow {
+    transform: translateX(0.2em);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bf-more-link__arrow {
+      transition: none;
+    }
+
+    .bf-more-link:hover .bf-more-link__arrow {
+      transform: none;
+    }
+  }
+}

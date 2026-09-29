@@ -39,10 +39,21 @@
 
   ## The two values
 
-  `content: " ↗"` is the wireframe's, kept verbatim — this is the affordance
-  being formalised, not redesigned. The leading space is load-bearing: it is the
-  only separation between the label and the arrow, and `::after` inherits the
-  anchor's `white-space`.
+  `content: " ↗"` is the wireframe's — this is the affordance being
+  formalised, not redesigned — with one change: the space is a **no-break**
+  space (`\00a0`, refined pass, Sep 2026). It is the only separation between
+  the label and the arrow, and an ordinary space is a break opportunity:
+  links in prose carry the marker now, and at 375px the arrow wrapped onto a
+  line of its own ("↗ about…" on `/insights/germanys-basic-law`). A no-break
+  space keeps it on the last word's line. (A word joiner after an ordinary
+  space does not: Chrome still breaks after the space.)
+
+  One exception, written below: an anchor that is a **flex container** — the
+  nav's top-level links (`.bf-nav__link`), a toned chip — makes `::after` a
+  flex item of its own, where a leading ordinary space collapses away. That
+  collapse is why "Podcasts↗" sits tight in the nav, and a no-break space
+  does not collapse, so those anchors keep the ordinary space. Nothing can
+  wrap between two flex items' text anyway.
 
   `font-size: 0.8em` is likewise the wireframe's literal, kept **deliberately**.
   The type scale is Utopia's fluid steps (`--size--1` … `--size-6`), each a
@@ -90,12 +101,21 @@
 */
 @layer components {
   a[data-external] {
-    --_bf-external-marker: " ↗";
+    --_bf-external-marker: "\00a0↗";
     --_bf-external-marker-font-size: 0.8em;
   }
 
   a[data-external]::after {
     content: var(--_bf-external-marker) / "";
     font-size: var(--_bf-external-marker-font-size);
+  }
+
+  /*
+    Flex anchors keep the ordinary, collapsible space — see "The two values".
+    (0,2,0), so it wins over the default above without depending on order.
+  */
+  .bf-nav__link[data-external],
+  .bf-chip[data-external] {
+    --_bf-external-marker: " ↗";
   }
 }

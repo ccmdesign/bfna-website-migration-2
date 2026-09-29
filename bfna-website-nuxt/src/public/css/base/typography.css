@@ -13,6 +13,23 @@
     color: var(--black-color);
   }
 
+  /*
+    Selected text, from the palette (refined pass, Sep 2026) — the browser's
+    own highlight was the one colour on a long read that was not the site's.
+    The programme's colour at a quarter strength over the page ground, so on
+    a hub or a programme's insight the highlight is that programme's, and
+    the neutral navy elsewhere (`--color-program` resolves at `:root` too).
+    A quarter rather than the chips' 11% tint: a selection has to be seen
+    against white and against the paper masthead, and 11% nearly vanished
+    on the paper. The ink is the page's, dark on a light highlight
+    (≥ 12.6:1 for every programme), including over the dark bands whose own
+    text is white.
+  */
+  ::selection {
+    background-color: color-mix(in srgb, var(--color-program) 24%, var(--color-surface-page));
+    color: var(--color-text);
+  }
+
   h1,
   .h1,
   h2,

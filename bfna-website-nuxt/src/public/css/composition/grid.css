@@ -15,6 +15,20 @@
     | l     | 300px       |
     | xl    | 400px       |
     | 2xl   | 500px       |
+    | quarter | max(min(11rem, 45%), 22%) |
+
+  `quarter` is proportional rather than fixed: 22% of the grid's own width,
+  never under 11rem — or under 45% of it, which is what holds a phone at two
+  columns (two 135px tracks at 320px, 155px at 375). It gives four columns
+  from ~800px of grid up and never five, three between ~560px and ~800px,
+  and two below, which no fixed floor does — the ratio between those widths
+  is ~3.4, so a floor small enough for two on a phone gives five or six on a
+  desktop. For directory-style grids: people, logos. `/about`'s Board and
+  Team lists are its first use.
+
+  The rem floor was a flat 8rem until the final pass (Sep 2026). That held
+  a tablet to the phone's floor — four 134–165px tracks at 640–768 — and a
+  card that narrow cut its text; 11rem keeps a tablet at three.
 
   The floor is wrapped in `min(<floor>, 100%)`: when the container is narrower
   than the floor the track collapses to the container instead of overflowing
@@ -75,4 +89,5 @@
   .grid[data-min-width="l"] { --_grid-min-width: 300px; }
   .grid[data-min-width="xl"] { --_grid-min-width: 400px; }
   .grid[data-min-width="2xl"] { --_grid-min-width: 500px; }
+  .grid[data-min-width="quarter"] { --_grid-min-width: max(min(11rem, 45%), 22%); }
 }

@@ -44,14 +44,18 @@
  * sighted user reads next to the results it counts, and it keeps the shell's
  * original spelling verbatim.
  *
- * ## Styling: there is none, on purpose
+ * ## Styling
  *
- * `.bf-search-shell__count` carried **no rule at all** in `SearchShell.vue`'s
- * `<style scoped>` — that block styles `__results`, `__meter`, `__rank` and
- * `__bar` and nothing else. So this file writes no `<style>` block: there was
- * nothing to carry across, and this pass may not invent a colour, size, weight,
- * spacing, radius or shadow (a11y BRIEF D23/D32). `.bf-result-count` is a hook
- * for pass 2 and for a consumer, not a rule.
+ * The a11y pass shipped this with no `<style>` block — `.bf-search-shell__count`
+ * had no rule to carry across, and that pass could not invent one (a11y BRIEF
+ * D23/D32) — and left `.bf-result-count` as the hook for a later skin. The
+ * refined pass (Sep 2026) is that skin: a status line, not a sentence of body
+ * copy. It is set in the UI face one step below the body in the secondary ink,
+ * with only the number in the text colour and a heavier weight, so the eye
+ * gets the count and the rest reads as context. Tabular figures keep the line
+ * from twitching as the number changes under a typing user. No margin is
+ * declared: the line's distance from its neighbours belongs to the caller's
+ * stack.
  *
  * `$attrs` falls through to the single root on its own (`inheritAttrs` left at
  * its default), so a caller's `class` merges with `bf-result-count` rather than
@@ -122,3 +126,26 @@ const label = computed<string>(() =>
     --><template v-if="query"> for “{{ query }}”</template>{{ suffix }}</template>
   </p>
 </template>
+
+<style scoped>
+/*
+  `@layer components` written by hand — `nuxt.config.ts` turns
+  `postcss-preset-env`'s cascade-layers polyfill off (gh#101) and
+  `scripts/check-routes.ts` gates every compiled `bf-*` stylesheet for the
+  wrapper. No `:not()` and no colour literal below.
+*/
+@layer components {
+  .bf-result-count {
+    color: var(--color-base-light);
+    font-family: var(--font-family-ui);
+    font-size: var(--size--1);
+    font-variant-numeric: tabular-nums;
+    font-weight: var(--font-weight-normal);
+  }
+
+  .bf-result-count strong {
+    color: var(--color-text);
+    font-weight: var(--font-weight-semibold);
+  }
+}
+</style>

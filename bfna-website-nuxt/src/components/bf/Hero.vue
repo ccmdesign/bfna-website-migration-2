@@ -69,11 +69,13 @@
  * horizontal rhythm is `composition/cluster.css`'s. `data-measure="normal"`
  * caps the standfirst at 75ch through the same layer.
  *
- * There is **no `font-size` anywhere below**. `h1` already resolves to
+ * There is **no `font-size` on the band's type**. `h1` already resolves to
  * `var(--size-4)` and the `<p>` to the body size, both from the Utopia scale
  * in `base/typography.css`'s `@layer defaults`. A bespoke size here is exactly
  * what the spec forbids, and would also mean this component disagreed with
- * every other `h1` in the system.
+ * every other `h1` in the system. The one size below is the pause control's
+ * — UI chrome, not the band's copy — and it is a Utopia step too
+ * (`--size--1`).
  *
  * ## The photograph and the scrim (gh#253)
  *
@@ -92,6 +94,35 @@
  * attribute that selects its mode, the inverted text colour, and the two
  * inversions a dark ground forces on the controls inside it — a visible focus
  * ring and a visible control boundary.
+ *
+ * ## The ink mode, `scrim="none"` (refined pass, Sep 2026)
+ *
+ * A light photograph whose sky or ground dark type reads over — the home
+ * page's Capitol ↔ Reichstag pair — takes no scrim and keeps the page's ink.
+ * The band is then `bf-hero--ink` instead of `bf-hero--media`, so none of the
+ * three inversions below applies: the type, the focus ring and the buttons
+ * keep their light-page paint, and `bfHeroMedia` paints no fill. The home
+ * page used to reach the same place by overriding five of this file's rules
+ * from outside, each winning by one extra class. The contrast in this mode is
+ * the photograph's, so it is measured per photograph (`HeroScrimMode`).
+ *
+ * ## The crossfade's pause control (WCAG 2.2.2)
+ *
+ * With `imageSecondary` the photographs crossfade on a 20s loop beside the
+ * `<h1>`, and anything that moves for more than five seconds next to other
+ * content needs a way to stop it. The control is this band's, not
+ * `bfHeroMedia`'s: that layer paints at `z-index: -1` under the band's
+ * content, where a button would sit beneath the content's own boxes. It is a
+ * small opaque pill in the band's bottom-end corner — opaque, so it reads
+ * over any photograph (navy on white, 11.66:1) — last in the DOM, after the
+ * actions, so the tab order is heading, call to action, then the pause.
+ *
+ * It says what it will do ("Pause" / "Play", named "… the photographs")
+ * rather than carrying `aria-pressed` under a fixed label, and it sets
+ * `data-motion="paused"` on the band, which `bfHeroMedia` reads to freeze the
+ * fade where it is. It renders only after mount, so the prerendered page has
+ * no button that does nothing before hydration, and it is hidden under
+ * `prefers-reduced-motion`, where nothing moves.
  * Every value below still comes from a token; no colour literal appears in
  * this file, which is what `docs/ds-epic/issues/37-bf-hero.md`'s narrowed
  * acceptance grep asserts (gh#249).
@@ -108,9 +139,23 @@ import type { HeroProps } from '~/types/bf-contracts'
 
 defineOptions({ name: 'BfHero' })
 
-withDefaults(defineProps<HeroProps>(), { imageAlt: '', scrim: 'full' })
+const props = withDefaults(defineProps<HeroProps>(), { imageAlt: '', imageSizes: undefined, scrim: 'full' })
 
 const slots = useSlots()
+
+/** Is the crossfade frozen by the reader? See "The crossfade's pause control". */
+const paused = ref(false)
+
+/**
+ * The control exists only once the page is interactive, and only when there
+ * is a crossfade to control.
+ */
+const hydrated = ref(false)
+onMounted(() => { hydrated.value = true })
+
+const showMotionControl = computed<boolean>(() =>
+  hydrated.value && Boolean(props.image) && Boolean(props.imageSecondary)
+)
 
 /**
  * Does the default slot actually render something?
@@ -188,8 +233,12 @@ const showActions = (): boolean => hasRenderedContent(slots.default?.())
   -->
   <section
     class="bf-hero"
-    :class="{ 'bf-hero--media': Boolean(image) }"
+    :class="{
+      'bf-hero--media': Boolean(image) && scrim !== 'none',
+      'bf-hero--ink': Boolean(image) && scrim === 'none'
+    }"
     :data-scrim="image ? scrim : undefined"
+    :data-motion="paused ? 'paused' : undefined"
   >
     <!--
       The photograph and its scrim, gh#253. A **sibling** of the inner box and
@@ -207,6 +256,7 @@ const showActions = (): boolean => hasRenderedContent(slots.default?.())
       :src="image"
       :src-secondary="imageSecondary"
       :alt="imageAlt"
+      :sizes="imageSizes"
     >
       <!--
         On the scrim, not in the content column: a child of `.bf-hero-media`
@@ -250,6 +300,25 @@ const showActions = (): boolean => hasRenderedContent(slots.default?.())
         <slot />
       </div>
     </div>
+
+    <!--
+      The crossfade's pause (header, "The crossfade's pause control"). A
+      direct child of the band, positioned in its bottom-end corner, and last
+      in the DOM so it is the last stop in the band's tab order. The icon is
+      drawn (two bars, or a triangle) and `aria-hidden`; the name is the
+      words — "Pause" or "Play" on the pill, "the photographs" after it for
+      assistive tech only, so the pill stays small over the picture and the
+      visible word still starts the accessible name (WCAG 2.5.3).
+    -->
+    <button
+      v-if="showMotionControl"
+      type="button"
+      class="bf-hero__motion"
+      @click="paused = !paused"
+    >
+      <span class="bf-hero__motion-icon" :data-state="paused ? 'play' : 'pause'" aria-hidden="true" />
+      {{ paused ? 'Play' : 'Pause' }}<span class="visually-hidden"> the photographs</span>
+    </button>
   </section>
 </template>
 
@@ -372,6 +441,75 @@ const showActions = (): boolean => hasRenderedContent(slots.default?.())
   */
   .bf-hero--media :deep(.bf-button) {
     --_bf-button-color: var(--color-text-inverse);
+  }
+
+  /*
+    The pause control. An opaque pill, so it reads over any photograph and
+    under any scrim mode: the page ground and navy (`--color-accent`,
+    11.66:1), the UI face a step under the body, and the site's pill radius
+    and low elevation. In the band's bottom-end corner, inset one step from
+    both edges; `z-index: 1` keeps it over `bfHeroMedia`'s `-1` layer and
+    over the content's boxes (the band isolates, so it cannot climb out).
+
+    `min-block-size` keeps a 24px target (WCAG 2.5.8) — `1.5rem`, because the
+    space scale has no fixed 24px step. The focus ring is the band's: it is
+    drawn outside the pill, over the band's own ground, so it inverts with
+    the band under a scrim (the rule above) and stays dark in the ink mode.
+  */
+  .bf-hero__motion {
+    position: absolute;
+    inset-block-end: var(--space-s);
+    inset-inline-end: var(--space-s);
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2xs);
+    min-block-size: 1.5rem;
+    padding: var(--space-3xs) var(--space-xs);
+    border: 0;
+    border-radius: var(--radius-pill);
+    background-color: var(--color-surface-page);
+    box-shadow: var(--shadow-elevation-low);
+    color: var(--color-accent);
+    font-family: var(--font-family-ui);
+    font-size: var(--size--1);
+    font-weight: var(--font-weight-medium);
+    line-height: 1.2;
+    cursor: pointer;
+  }
+
+  .bf-hero__motion:hover {
+    text-decoration-line: underline;
+    text-decoration-thickness: var(--border-width-thin);
+    text-underline-offset: 0.2em;
+  }
+
+  /*
+    The icon, drawn: two bars while the photographs move (the control will
+    pause them), a triangle while they are still (it will play them). An
+    empty box painted in `currentcolor`, so it is the label's navy and
+    announces nothing.
+  */
+  .bf-hero__motion-icon {
+    flex: none;
+    inline-size: 0.75em;
+    block-size: 0.75em;
+  }
+
+  /* Two bars: the box's two inline borders, with nothing between them. */
+  .bf-hero__motion-icon[data-state="pause"] {
+    border-inline: 0.26em solid currentcolor;
+  }
+
+  .bf-hero__motion-icon[data-state="play"] {
+    background-color: currentcolor;
+    clip-path: polygon(10% 0, 100% 50%, 10% 100%);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bf-hero__motion {
+      display: none;
+    }
   }
 }
 </style>

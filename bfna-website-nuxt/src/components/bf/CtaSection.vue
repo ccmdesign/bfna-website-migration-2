@@ -7,10 +7,17 @@
  * the **Microsite CTA** band on the microsite template, and the
  * **Participation path** band on the microsite and the full template alike.
  *
- * Presentational-only (D8): props in, no slot, nothing out. Every word of copy
+ * Presentational-only (D8): props in, one slot, nothing out. Every word of copy
  * arrives as a prop, so it lives in the page or the dataset and never in here —
  * which is what lets the same band carry a project's own microsite pitch on one
  * template and a participation ladder on the next.
+ *
+ * The default slot (refined pass, Sep 2026) renders **after** the actions, for
+ * what illustrates where they go rather than being one of them — the external
+ * project page's microsite preview, which used to rebuild this band element
+ * for element from `bfSection` and `bfButton` only because there was nowhere
+ * to put a figure. It adds no wrapper and no spacing of its own: the band's
+ * stack gap separates it, and the caller styles what it passes.
  *
  * ## The email-capture variant is gone, deliberately
  *
@@ -174,5 +181,11 @@ const isPrimary = (c: Cta, idx: number): ButtonVariant =>
         :variant="isPrimary(c, idx)"
       >{{ c.label }}</bfButton>
     </div>
+
+    <!--
+      After the actions, in the band's own column — see the header. Empty by
+      default, and then it renders nothing: no element, no gap.
+    -->
+    <slot />
   </bfSection>
 </template>

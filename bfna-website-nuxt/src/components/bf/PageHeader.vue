@@ -53,22 +53,63 @@
  * rank here is what keeps BRIEF §5 rule 9's sequential heading levels true by
  * construction for the eight templates that compose this.
  *
+ * ## Three grounds (refined pass, Sep 2026)
+ *
+ * Every page that composes this header opens on it — the indexes (`/projects`,
+ * `/search`, `/archive`), `/about`, the project and insight detail pages and
+ * the program hubs — so for those pages the band is the masthead, and it
+ * comes in exactly three grounds. There is no fourth, and in particular no
+ * placeholder: a header with no photograph is a typographic header, never the
+ * wireframe's crosshatch box.
+ *
+ * | ground | when | what paints |
+ * |---|---|---|
+ * | photo  | `image` is set | the photograph under a navy scrim, white type (gh#253) |
+ * | paper  | no `image`, `surface` omitted or `'paper'` | the paper texture under a light wash, dark type |
+ * | plain  | no `image`, `surface="plain"` | nothing; the band is type on the page ground |
+ *
+ * **Paper is the default** because it is what the insight article header —
+ * the page this system was refined against — already wears. Giving every
+ * index, hub-less and detail header the same ground makes "the top band of an
+ * inner page" one recognisable thing across these templates: the reader
+ * always knows where the masthead ends and the page begins, without a rule or
+ * a box. The ground is `bfSection`'s own `data-surface="paper"` (see that
+ * component): the article's texture drawn through `bfHeroMedia` under the
+ * article's 28% wash, so a header and the article it links to share one
+ * masthead pixel for pixel.
+ *
+ * This header does not cover every inner page. `/insights` builds its
+ * masthead on `bfSection` directly, and the home page and the 404 have heads
+ * of their own; none of them is bound by this table. The `/insights`
+ * masthead reaches the same paper by setting `data-surface="paper"` on its
+ * band, which is why the ground lives on `bfSection` and not here.
+ *
+ * `plain` is for the band that must not have a ground — a header that sits
+ * directly on another coloured surface, or a template that designs its own.
+ * With nothing to mark the band's edge it would float in its own padding, so
+ * it gives most of its bottom padding back and lets the next band's step do
+ * the separating.
+ *
+ * `image` always wins: a photograph is a stronger statement than a surface
+ * choice, and `surface` is ignored when one is passed.
+ *
  * ## Styling
  *
- * Almost none, and none at all until gh#253. Every value on the page still
- * comes from `bfSection`, `bfBreadcrumb` and `bfChip`'s own hooks, or from
- * `@layer composition` resolving `.cluster` + `data-gap="xs"` and
- * `data-measure="normal"`. The BEM class names below are selector hooks for a
- * template, a probe or a future skin — the pattern `bf-section__heading` and
- * `bf-hero__heading` already set — and they carry no declarations.
+ * Every value on the page still comes from `bfSection`, `bfBreadcrumb` and
+ * `bfChip`'s own hooks, or from `@layer composition` resolving `.cluster` +
+ * `data-gap="xs"` and `data-measure="normal"`, except for the ground rules
+ * above and one rhythm rule: the title stands a full `--space-m` off whatever
+ * precedes it (the trail, the chips, the kicker), because wayfinding and the
+ * page's name are different things and the stack's default `--space-s` set
+ * them as one run. It is written at `:where()` weight so a template's own
+ * header rhythm — `article.css` sets the same step for the insight page —
+ * always wins over it.
  *
- * What gh#253 adds is a handful of rules and nothing more, every one of them
- * conditional on there being a photograph: the containing block and stacking
- * context `bfHeroMedia` needs, the inverted text colour that goes with a dark
- * band, the crumb links (which do **not** inherit it — see the rule), and the
- * two inversions a dark ground forces on the controls: a visible focus ring
- * and a visible control boundary. A header with no `image` still resolves to the empty
- * stylesheet this component shipped with.
+ * The photo rules are gh#253's, every one conditional on there being a
+ * photograph: the containing block and stacking context `bfHeroMedia` needs,
+ * the inverted text colour that goes with a dark band, and the two inversions
+ * a dark ground forces on the controls: a visible focus ring and a visible
+ * control boundary.
  *
  * That block is the first `<style>` this file has ever had, so its
  * `@layer components { }` wrapper is written **by hand**:
@@ -139,6 +180,12 @@ interface Props {
    * the title, and heading navigation does not open every infographic's name
    * with the word "Infographic". The full string stays in the document
    * `<title>`, which the caller sets. Absent, `null` or `''` renders nothing.
+   *
+   * **No call site passes it** since the final pass (Sep 2026): the insight
+   * page, its one user, now sets the kicker as the first run of its meta row
+   * under the `<h1>`, as the cards do, because a label over a heading is the
+   * one placement the family bans. Kept, unused, rather than removed in a
+   * design pass; a later cleanup can drop it.
    */
   kicker?: string | null
   /**
@@ -156,10 +203,10 @@ interface Props {
    * `bfPrograms` document —
    * a Directus URL — is deliberately *not* what a hub passes here.
    *
-   * Absent or `null` and the header paints nothing at all: no bleed layer, no
-   * scrim, no `data-scrim`, no colour, and the whole stylesheet below is
-   * inert. That is what the nine call sites this item does not art-direct
-   * keep doing.
+   * Absent or `null` and no photograph paints: no `data-scrim`, no inverted
+   * colour, and the photo rules below are inert. The band then wears the
+   * `surface` ground instead — the paper texture unless the caller asks for
+   * `plain` (see "Three grounds" in the header).
    */
   image?: string | null
   /**
@@ -170,13 +217,37 @@ interface Props {
   imageAlt?: string
   /** Which scrim treatment the band wears. Ignored without an `image`. */
   scrim?: ScrimMode
+  /**
+   * The band's ground when there is no `image`: `'paper'` (the default) or
+   * `'plain'`. See "Three grounds" in the header. Ignored with an `image`.
+   *
+   * A local literal union rather than a contracts type, for the reason `Props`
+   * itself is local: nothing outside this component names it.
+   */
+  surface?: 'paper' | 'plain'
 }
 
 const props = withDefaults(defineProps<Props>(), {
   label: 'Page header',
   imageAlt: '',
-  scrim: 'full'
+  scrim: 'full',
+  surface: 'paper'
 })
+
+/**
+ * Which of the three grounds this band wears. `image` wins; otherwise the
+ * `surface` prop decides.
+ *
+ * Only the photo fills `#bleed` from here. The paper is `bfSection`'s own
+ * fallback for that slot, switched on by `data-surface="paper"` in the
+ * template, so the texture path and its wash are written once, on the base
+ * band, for this header and for `/insights` alike. `plain` renders no bleed
+ * layer at all, so its box model is the text-only band this component
+ * shipped with.
+ */
+const ground = computed<'photo' | 'paper' | 'plain'>(() =>
+  props.image ? 'photo' : props.surface
+)
 
 defineSlots<{
   /** By-lines, meta rows, header actions — and the `/search` template's input. */
@@ -286,8 +357,13 @@ const showChips = (): boolean => chipList.value.length > 0 || hasRenderedContent
   -->
   <bfSection
     class="bf-page-header"
-    :class="{ 'bf-page-header--media': Boolean(image) }"
+    :class="{
+      'bf-page-header--media': ground === 'photo',
+      'bf-page-header--paper': ground === 'paper',
+      'bf-page-header--plain': ground === 'plain'
+    }"
     :data-scrim="image ? scrim : undefined"
+    :data-surface="ground === 'paper' ? 'paper' : undefined"
     :label="label"
     gap="s"
     padded
@@ -305,8 +381,16 @@ const showChips = (): boolean => chipList.value.length > 0 || hasRenderedContent
       that — the route announcer inside `bf-default`'s `<main>`, `bfHero`'s
       inner box, and this file's own.
 
-      `class` and `data-scrim` both survive `bfSection`'s attribute
-      allow-list — `class` by name, `data-scrim` by the `data-` prefix.
+      `class`, `data-scrim` and `data-surface` all survive `bfSection`'s
+      attribute allow-list — `class` by name, the other two by the `data-`
+      prefix.
+
+      Only the photograph is passed here. The paper ground is `bfSection`'s
+      fallback for this same slot, drawn when the slot is absent and the band
+      carries `data-surface="paper"` (bound above for the paper ground only):
+      the texture with an empty `alt`, because it is a surface and not a
+      picture of anything, under `bfSection`'s own wash. Conditional on
+      `image` so the paper and plain grounds pass no slot at all.
     -->
     <template v-if="image" #bleed>
       <bfHeroMedia :src="image" :alt="imageAlt" />
@@ -372,7 +456,7 @@ const showChips = (): boolean => chipList.value.length > 0 || hasRenderedContent
   fails the build if any compiled `bf-*` stylesheet lost its wrapper.
 
   No `:not()` appears below, complex-selector or otherwise (D-20.5), and no
-  colour literal — both values are semantic tokens that already existed.
+  colour literal — every value is a semantic token that already existed.
 */
 @layer components {
   /*
@@ -386,10 +470,10 @@ const showChips = (): boolean => chipList.value.length > 0 || hasRenderedContent
     stacking context, so `bfHeroMedia`'s `z-index: -1` paints above the band's
     background and below every in-flow descendant, and cannot escape upward.
 
-    Scoped to the `--media` modifier rather than declared unconditionally,
-    because this band is composed by eight templates and seven of them pass no
-    image: a header with no photograph keeps precisely the box model it had
-    before gh#253.
+    Scoped to the photo modifier rather than declared unconditionally: the
+    paper ground gets the same pair from `bfSection`'s `data-surface` rule,
+    which draws its layer, and a `plain` header — which paints nothing —
+    keeps precisely the box model this component shipped with.
   */
   .bf-page-header--media {
     position: relative;
@@ -429,30 +513,12 @@ const showChips = (): boolean => chipList.value.length > 0 || hasRenderedContent
   }
 
   /*
-    The crumb links, explicitly — inheritance does **not** reach them, and
-    assuming it did was the one defect the browser pass caught in this item.
-
-    A linked crumb carries `class="bf-breadcrumb__link"`, so
-    `base/typography.css:75`'s `a:not([class])` does not match it and no
-    author rule colours it at all. It therefore falls all the way through to
-    the user agent's own `#0000EE`, which is not inherited and which measured
-    **1.83:1** on this band's scrim over the real photograph — a WCAG 1.4.3
-    failure, and invisible from the markup, because the element looks like it
-    is inheriting the white the rest of the header inherits.
-
-    `:visited` is stated with it: the UA colours a visited link `#551A8B`,
-    which is worse. `inherit` rather than repeating the token, so the crumbs
-    can never drift from the band's own colour — including on a band that
-    later chooses a different one.
-
-    That the link is unstyled on a *light* page too is a pre-existing gap in
-    `bfBreadcrumb` rather than something this band introduced; it is raised
-    separately.
+    The crumb links need no rule here any more. gh#253 wrote one because a
+    linked crumb fell through to the user agent's `#0000EE` (1.83:1 on this
+    scrim — a WCAG 1.4.3 failure); `bfBreadcrumb` now sets its links to
+    `inherit` on every ground, so they pick up this band's white the same way
+    the `<h1>` does.
   */
-  .bf-page-header--media :deep(.bf-breadcrumb__link),
-  .bf-page-header--media :deep(.bf-breadcrumb__link:visited) {
-    color: inherit;
-  }
 
   /*
     The focus ring, inverted. `base/focus.css:76-82` outlines with
@@ -510,6 +576,65 @@ const showChips = (): boolean => chipList.value.length > 0 || hasRenderedContent
     --_bf-button-color: var(--color-text-inverse);
 
     border-color: var(--color-text-inverse);
+  }
+
+  /*
+    The paper ground — the default for a header with no photograph — has no
+    rule here. It is `bfSection`'s `data-surface="paper"`: the containing
+    block, the 28% wash over the texture and the page's own dark ink are
+    declared once on the base band, so this header and `/insights`'
+    hand-built masthead cannot drift apart. `.bf-page-header--paper` stays on
+    the root as the ground's name, beside `--media` and `--plain`, for a
+    template or a probe to select on.
+  */
+
+  /*
+    The plain ground. With no surface to mark where the band stops, the full
+    `--space-3xl` under the standfirst reads as empty page rather than as the
+    end of a masthead, and the header drifts away from the content it
+    introduces. So the band keeps its top padding and gives most of the bottom
+    back; the next band's own step does the separating.
+
+    Two classes, (0,3,0) once scoped, because `bfSection`'s
+    `.bf-section--padded` compiles to (0,2,0) in this same layer and a tie
+    would be decided by chunk order — the `article.css` lesson.
+  */
+  .bf-page-header.bf-page-header--plain {
+    padding-block-end: var(--space-l);
+  }
+
+  /*
+    The title's step. Whatever precedes the `<h1>` — the trail, the chips, the
+    kicker — is about the page; the `<h1>` is the page. The stack's default
+    `--space-s` set the two as one run of type, so the title stands a full
+    `--space-m` off it instead.
+
+    The three things that can precede it, named, so a header with no trail
+    (`/search`) does not open with a margin on its first child. Not `* +`:
+    Vue's scoped compiler hangs the scope attribute on the `*` and then drops
+    it, leaving `+:where(…)` — an empty selector that dev never minifies and
+    `lightningcss` rejects in `nuxt generate`. `:where()` so the rule carries
+    no weight of its own: a template that tunes its header's rhythm
+    (`article.css` writes this same step for the insight page) always wins
+    over it, and the insight header is untouched by construction.
+  */
+  :where(.bf-page-header__crumbs, .bf-page-header__chips, .bf-page-header__kicker) + :where(.bf-page-header__heading) {
+    margin-block-start: var(--space-m);
+  }
+
+  /*
+    No placeholder in a masthead, ever. A template that hands the header's
+    default slot a `bfMedia` for a record that turns out to have no image gets
+    `bfMedia`'s crosshatch box — the wireframe's "image goes here" — which on
+    a finished page reads as a broken image. The header drops it and stays
+    typographic. The box is `aria-hidden` already, so removing it changes
+    nothing in the accessibility tree; a real image is untouched.
+
+    `:deep()` because the box is a child component's root in slot content,
+    which carries neither this component's scope id nor `bfSection`'s.
+  */
+  .bf-page-header :deep(.bf-media--placeholder) {
+    display: none;
   }
 }
 </style>

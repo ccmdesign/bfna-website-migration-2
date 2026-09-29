@@ -1,0 +1,97 @@
+/*
+ * The detail pages' reading column — `/insights/:slug` and `/projects/:slug`
+ * (refined pass, Sep 2026).
+ *
+ * Both pages set their masthead and their prose on one column, 60ch of the
+ * body type, and break their lead picture out of it to the site measure. The
+ * values were the insight article's (`article.css`, gh#254), and the project
+ * page restated them under its own `bf-project-*` names because that file's
+ * header says it is for the article only. Two copies of one column drift, so
+ * the shared half lives here and both pages wear these classes:
+ *
+ * | class | on | what it sets |
+ * |---|---|---|
+ * | `.bf-detail-column` | a `bfSection` band (`bfPageHeader`, `bfCtaSection` roots included) | caps the band's `.center` at the reading column |
+ * | `.bf-detail-header` | the `bfPageHeader` band | the `<h1>`'s step and size |
+ * | `.bf-detail-meta` | the masthead's meta row (a `.cluster`) | its step under the copy, and its alignment |
+ * | `.bf-detail-lead` | the lead picture's wrapper, inside a `.bf-detail-column` band | breaks out of the column to the site measure |
+ *
+ * What stays in each page is what only that page has: the article's
+ * standfirst, lede, player, summary and action strips (`article.css`), and the
+ * project page's inset trim, microsite preview and lede (its scoped block).
+ *
+ * The rule `article.css` learnt applies here too: **never write a custom
+ * property from this file that a `bf-*` SFC also writes** — their scoped
+ * specificity is not what their source looks like. The column is set with
+ * `max-inline-size`, which no SFC declares on `.center`; the band's measure
+ * step still comes from `bfSection`'s own `measure` prop at the call site.
+ * `--_bf-detail-lead-size` is this file's own.
+ *
+ * Static, like every file under `public/css/`: served through `<link>`, in the
+ * layer `styles.css` names, never through Vite.
+ */
+
+@layer components {
+  /*
+    The reading column. The band's own `wide` step is 90ch of the root 16px,
+    which at the body's 20px ran a line of prose to ~110 characters. 60ch
+    of the root, scaled by the body step, is 60ch of the type that is
+    actually set: ~70 characters of IBM Plex Sans light at 20px, inside the
+    45–75 range a long read wants. Every band of a detail page that holds
+    prose, actions or a list shares it, so they all start on one vertical;
+    a grid band (related insights) stays on the site measure.
+
+    (0,2,0) in `@layer components` against `.center`'s `@layer
+    composition`, so it wins by layer.
+  */
+  .bf-detail-column > .center {
+    max-inline-size: calc(60ch * var(--size-0) / 1em);
+  }
+
+  /*
+    The title. `--size-7` was the display ramp and it renders at ~11rem on
+    a desktop, which is a poster, not a heading, so the size steps down to
+    `--size-3` (~28px → ~51px). Only the size: family, weight, leading and
+    tracking are `base/typography.css`'s `h1`, like every page title.
+
+    The breadcrumb is wayfinding and the title is the page, so the step
+    between them is the masthead's widest.
+  */
+  .bf-detail-header .bf-page-header__heading {
+    margin-block-start: var(--space-m);
+    font-size: var(--size-3);
+    text-wrap: balance;
+  }
+
+  /*
+    The meta row — the date or byline, then the chips — set apart from the
+    title group by a full step and aligned on the chips' centre line.
+  */
+  .bf-detail-meta {
+    margin-block-start: var(--space-m);
+    align-items: center;
+  }
+
+  /*
+    The lead's width: the site measure (`.center`'s own 1100px default),
+    less the band's padding on a narrow screen. Declared on the band so
+    every break-out inside it — the lead here, the article's player and
+    summary — measures against one value. `100vw` counts a desktop
+    scrollbar's gutter; the `--space-s` a side it gives back is wider than
+    one, and on a phone the result equals the column exactly.
+  */
+  .bf-detail-column {
+    --_bf-detail-lead-size: min(100vw - 2 * var(--space-s), var(--theme-center-measure, 1100px));
+  }
+
+  /*
+    The lead picture breaks out of the 60ch column to that width, centred
+    on the column. Negative inline margins rather than a transform, so the
+    break-out is layout and the page's scroll width never sees a box wider
+    than it is.
+  */
+  .bf-detail-lead {
+    inline-size: var(--_bf-detail-lead-size);
+    margin-inline: calc((100% - var(--_bf-detail-lead-size)) / 2);
+  }
+}

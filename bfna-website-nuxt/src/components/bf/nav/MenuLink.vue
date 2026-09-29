@@ -62,7 +62,20 @@
  * be carrying meaning rather than decorating a "go here" affordance, and
  * silently hiding it would be the opposite of this fix.
  *
- * Presentational-only (D8): one prop in, nothing out. No data access.
+ * ## `aria-current` is decided on the full path (refined pass, Sep 2026)
+ *
+ * `RouterLink` marks a link `aria-current="page"` when its route is
+ * exact-active, and its exact-active test compares paths and ignores the
+ * query. So on any `/insights` URL every Insights sub-item — All Insights,
+ * Articles, Reports, Videos, Infographics, each `/insights?format=…` — was
+ * the current page at once, and a screen reader announced five of them. The
+ * attribute is bound here from a full-path match instead, query and hash
+ * included, so at most one item is current: the one whose destination *is*
+ * the page. Nothing in the nav's paint reads `aria-current`, so this changes
+ * what is announced and nothing that is drawn.
+ *
+ * Presentational-only (D8): one prop in, nothing out. No data access — the
+ * route is read to compare, never to fetch.
  */
 import { computed } from 'vue'
 import type { MenuItem } from '~/types/bf-contracts'
@@ -74,6 +87,20 @@ const props = defineProps<{ item: MenuItem }>()
 
 /** A run of arrow glyphs at the very end of a label, with any space before it. */
 const TRAILING_ARROW = /\s*[←↑→↓↖↗↘↙«»]+$/u
+
+const route = useRoute()
+const router = useRouter()
+
+/**
+ * `'page'` when this item's destination is exactly the current page, query
+ * and hash included; `undefined` otherwise. Bound on the `NuxtLink`, where a
+ * fallthrough `undefined` still wins the merge over `RouterLink`'s own
+ * path-only value (the `mergeProps` behaviour `Chip.vue` documents), so the
+ * router's answer is replaced rather than joined.
+ */
+const current = computed<'page' | undefined>(() =>
+  props.item.to && router.resolve(props.item.to).fullPath === route.fullPath ? 'page' : undefined
+)
 
 const label = computed(() => {
   const raw = props.item.label
@@ -102,6 +129,7 @@ const label = computed(() => {
     v-if="item.to"
     :to="item.to"
     class="bf-nav__item"
+    :aria-current="current"
   >
     <strong v-if="item.strong">{{ label.text }}<span v-if="label.marker" aria-hidden="true">{{ label.marker }}</span></strong>
     <template v-else>{{ label.text }}<span v-if="label.marker" aria-hidden="true">{{ label.marker }}</span></template>

@@ -71,6 +71,12 @@
  * - `full` (the default): a flat `--color-scrim` over the whole band.
  * - `panel`: `--color-scrim-panel` (0.94, white at 9.817) as a near-opaque
  *   column the width of the content box, photograph uncovered either side.
+ * - `none` (`bfHero` only): no fill — the photograph as it is, under the
+ *   page's own dark ink. See `HeroScrimMode` for when that is honest.
+ *
+ * The host also owns the crossfade's pause: `bfHero` renders the control and
+ * sets `data-motion="paused"` on the band, which this layer reads as an
+ * ancestor the same way (WCAG 2.2.2).
  *
  * ## Why `bfMedia` rather than a `background-image`
  *
@@ -84,7 +90,7 @@
  * `.frame`'s universal child rule forces `100%/100%` onto a text panel, and
  * `.imposter` supplies no containing block.
  *
- * Presentational-only (BRIEF D8): two props in, one slot (painted on the
+ * Presentational-only (BRIEF D8): four props in, one slot (painted on the
  * scrim, above it), nothing out.
  */
 defineOptions({ name: 'BfHeroMedia' })
@@ -120,9 +126,21 @@ interface Props {
    * a real string.
    */
   alt?: string
+  /**
+   * The photographs' `sizes`, screen by screen. Defaults to `100vw` on every
+   * screen — this layer is full-bleed, and in a band wider than it is tall
+   * `cover` draws the photograph at the band's width. A host whose band is
+   * taller than it is wide on a phone passes the width the photograph is
+   * really drawn at there (`HeroProps.imageSizes`). `px` or `vw` only, each
+   * behind a `screen:` prefix — the template comment has why.
+   */
+  sizes?: string
 }
 
-withDefaults(defineProps<Props>(), { alt: '' })
+withDefaults(defineProps<Props>(), {
+  alt: '',
+  sizes: 'xs:100vw sm:100vw md:100vw lg:100vw xl:100vw xxl:100vw'
+})
 </script>
 
 <template>
@@ -172,8 +190,15 @@ withDefaults(defineProps<Props>(), { alt: '' })
       replaced it; it is a footgun with no error message, so it is written
       down here rather than left for the next component to rediscover.
 
-      Every step is `100vw` because this layer is always full-bleed: `inset: 0`
-      on a band that spans the viewport.
+      Every step defaults to `100vw` because this layer is always full-bleed:
+      `inset: 0` on a band that spans the viewport. That is the photograph's
+      drawn width only while the band is wider than it is tall. In a portrait
+      band — every phone, on `/` — `cover` scales the photograph to the
+      band's **height**, so it is drawn wider than the viewport and a `100vw`
+      candidate is stretched: 1.8x at 320px on the home page's square pair.
+      So `sizes` is a prop, and a host that knows its band's shape passes the
+      real width. Only `px` and `vw` values count: `@nuxt/image` drops an entry
+      in any other unit without a word, so `xs:36rem` would simply vanish.
 
       The ladder stops at `xxl` (1536) because the source files are 1600px
       wide; `3xl`/`4xl` would ask ipx to enlarge a bitmap, which costs bytes
@@ -188,7 +213,7 @@ withDefaults(defineProps<Props>(), { alt: '' })
       :src="src"
       :alt="alt"
       ratio="auto"
-      sizes="xs:100vw sm:100vw md:100vw lg:100vw xl:100vw xxl:100vw"
+      :sizes="sizes"
       densities="1x"
       loading="eager"
       fetchpriority="high"
@@ -209,7 +234,7 @@ withDefaults(defineProps<Props>(), { alt: '' })
       :src="srcSecondary"
       alt=""
       ratio="auto"
-      sizes="xs:100vw sm:100vw md:100vw lg:100vw xl:100vw xxl:100vw"
+      :sizes="sizes"
       densities="1x"
       loading="eager"
     />
@@ -304,9 +329,12 @@ withDefaults(defineProps<Props>(), { alt: '' })
     (`tokens/` has no duration scale), so the default is a literal.
 
     `prefers-reduced-motion` stops it outright and leaves the first image.
-    What it does **not** yet have is a pause control, which WCAG 2.2.2 asks of
-    anything that auto-updates for more than five seconds beside other
-    content; recorded in the scoping notes rather than solved here.
+    The pause control WCAG 2.2.2 asks of anything that auto-updates for more
+    than five seconds beside other content is the host's (`bfHero`), because
+    this layer paints behind the band's content and a control inside it
+    would sit under that content's boxes: it sets `data-motion="paused"` on
+    the band, and the rule after the keyframes freezes the fade wherever it
+    has got to.
   */
   .bf-hero-media > .bf-hero-media__image--secondary {
     opacity: 0;
@@ -328,6 +356,10 @@ withDefaults(defineProps<Props>(), { alt: '' })
     100% {
       opacity: 0;
     }
+  }
+
+  [data-motion="paused"] .bf-hero-media > .bf-hero-media__image--secondary {
+    animation-play-state: paused;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -390,6 +422,15 @@ withDefaults(defineProps<Props>(), { alt: '' })
     `min()` rather than a media query — below the measure the panel is simply
     the band, which is the right answer on a phone.
   */
+  /*
+    `none` — the ink mode (`HeroScrimMode`). No fill at all: the photograph
+    as it is, and the host band keeps the page's dark ink. The element stays,
+    so a slotted child still has its box.
+  */
+  [data-scrim="none"] .bf-hero-media__scrim {
+    background-color: transparent;
+  }
+
   [data-scrim="panel"] .bf-hero-media__scrim {
     /* One line: stylelint's `scss/operator-no-newline-*` pair rejects a break
        on either side of the `+`. */

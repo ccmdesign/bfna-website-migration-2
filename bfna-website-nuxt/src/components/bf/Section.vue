@@ -62,7 +62,58 @@
  * band on `about.vue` — media beside text, which *is* the split shape), one
  * passes `layout="plain"`, the rest take the `stack` default, and no video
  * band exists anywhere under `pages/wireframes/`. `switcher` covers it. See
- * `SectionLayout` in `types/bf-contracts.ts` and the spec's Decisions.
+ * `SectionLayout` in `types/bf-contracts.ts` and the spec's Decisions. (The
+ * refined pass stacked `/about`'s Stiftung band, so `bfContactSection` is now
+ * the one `switcher` band on the bf site.)
+ *
+ * ## The paper ground, opt-in (refined pass, Sep 2026)
+ *
+ * One attribute, `data-surface="paper"`, gives a band the insight article's
+ * masthead ground: the paper texture drawn through `bfHeroMedia` into the
+ * `bleed` position, under a 28% wash of the page ground, with the page's own
+ * dark ink on top. It lives here, on the base band, rather than in
+ * `bfPageHeader`, so that a template which builds its masthead on this
+ * component directly (`/insights`) can wear the same paper as every header
+ * without copying the texture path or the wash.
+ *
+ * An attribute rather than a prop because the prop surface is
+ * `SectionProps` in `types/bf-contracts.ts`, and because a `data-` hook is
+ * how the bands already describe their treatment (`data-scrim`,
+ * `bfHeroMedia`). It passes the allowlist below by its prefix and lands on
+ * the `<section>`, where the ground's rule reads it.
+ *
+ * The paper is a **fallback** for the `bleed` slot: a band that passes its
+ * own `bleed` layer (a photograph) paints that instead, and must not also
+ * set the attribute, whose wash and ink are for paper only. The wash is the
+ * `--color-scrim-paper` token, so this band and any other paper cannot
+ * drift apart.
+ *
+ * ## The section rule, opt-in (refined pass, Sep 2026)
+ *
+ * `data-rule="program"` draws a hairline (`--color-rule`) across the column
+ * on the band's heading, thickened for its first `--space-xl` into a bar in
+ * the programme's colour. `/projects` and the program hubs carried identical
+ * copies of it; it is one rule here now, keyed on the same kind of `data-`
+ * hook as the paper, and it reaches a heading this component renders and a
+ * heading a template slots with the `bf-section__heading` class alike. The
+ * anchor jump that lands on a ruled band clears the sticky site bar through
+ * `base/reset.css`'s `:target` margin, not a rule of its own.
+ *
+ * **What it means, everywhere it appears** (final pass): *a new section of a
+ * landing page begins here.* Every headed band on the site's landing and
+ * index pages opens on it — `/`, `/about`, `/projects`, the program hubs —
+ * and the bar is the programme's colour only where the band is one
+ * programme's (a `/projects` group, anything on a hub, which `data-program`
+ * scopes); everywhere else it is the neutral navy `:root` default. It is not
+ * drawn on the headed bands of the detail, list and not-found templates:
+ * there the bands are one piece and its appendix (related insights, a
+ * participation path) or a list's only region (`/archive`'s "By year"), not
+ * peer sections of a page. The attribute's value is `program` because the
+ * colour it can take is the programme's; it does not mean the band is one.
+ *
+ * `bfContactSection` passes its two column headings the
+ * `bf-section__heading` class, so a ruled contact band draws the rule over
+ * each column.
  */
 import type { VNode } from 'vue'
 import type { SectionProps } from '~/types/bf-contracts'
@@ -98,6 +149,10 @@ defineSlots<{
    * that paints behind the content with a negative `z-index`,
    * `isolation: isolate`) on your own class on the root. `bfPageHeader` does
    * exactly that on `.bf-page-header--media`.
+   *
+   * The one exception is the slot's own fallback, the paper ground
+   * (`data-surface="paper"`, header docblock): this component draws that
+   * layer, so it declares that containing block itself.
    */
   bleed?: () => VNode[]
 }>()
@@ -227,6 +282,22 @@ const headingLabelledBy = computed(() => (props.heading ? headingId : undefined)
 const headingTag = computed(() => `h${props.headingLevel}`)
 
 /**
+ * The paper texture — the insight article's masthead ground, which that page
+ * now reaches through this fallback like every other paper band rather than
+ * passing the file itself. Root-relative so `bfMedia` routes it through
+ * `NuxtImg` and every paper band shares one cached rendition.
+ */
+const PAPER_TEXTURE = '/images/hero/article-texture.png'
+
+/**
+ * Does the band wear the paper ground? `data-surface="paper"` from the call
+ * site; see the header docblock. A computed over `attrs` like `rootAttrs`
+ * above: Vue 3.5 tracks reads through the attrs proxy and triggers on
+ * update, so a caller that toggles the attribute re-renders the layer.
+ */
+const wearsPaper = computed<boolean>(() => attrs['data-surface'] === 'paper')
+
+/**
  * The band's root, so the dev-time assertion below can read what this
  * component actually rendered. Never bound as an attribute; `$attrs` and
  * `rootAttrs` are untouched by it.
@@ -244,11 +315,14 @@ const root = ref<HTMLElement | null>(null)
  * behaviour **stands** (a11y BRIEF D26): this component is not changed to name
  * itself from `label`, and a `label`-only band is still deliberately unnamed.
  * What is added is a way for the call sites that got it wrong to say so out
- * loud, which is gh#230's list to work from. Measured on a clean dev load:
- * `/about` warns twice (`data-label="Bertelsmann Stiftung"` and `"Contact"`),
- * `/projects` warns not at all — its three bands slot their own `<h2>` and
- * name themselves at the call site, which is the correct pattern — and the
- * article-body band warns on the 76 insight pages whose bodies author `##`.
+ * loud, which is gh#230's list to work from. Measured on a clean dev load
+ * when this landed: `/about` warned twice (`data-label="Bertelsmann
+ * Stiftung"` and `"Contact"`) and warns not at all since the refined pass —
+ * the Stiftung band takes the `heading` prop and `bfContactSection` names
+ * itself from its form heading; `/projects` warns not at all — its three
+ * bands slot their own `<h2>` and name themselves at the call site, which is
+ * the correct pattern — and the article-body band is named by the page's
+ * `aria-label`, so the insight pages whose bodies author `##` are quiet too.
  *
  * ## Why this is a warning and not a type
  *
@@ -375,8 +449,17 @@ if (import.meta.dev) {
       which is this same `<section>` under the consumer's own class. A band
       that has no bleed layer therefore keeps exactly the box model it had,
       and this file keeps paying nothing for a feature one caller uses.
+
+      The fallback is the paper ground, and only on a band that asks for it
+      with `data-surface="paper"`: the texture, decorative (`alt=""`), with
+      `data-scrim` unset so `bfHeroMedia`'s scrim is its plain full-band fill,
+      retinted by the paper rule below. Vue renders a fallback whenever the
+      slot is absent **or** renders nothing but comments, so a caller whose
+      `#bleed` holds only a `v-if`'d-away photograph gets the paper too.
     -->
-    <slot name="bleed" />
+    <slot name="bleed">
+      <bfHeroMedia v-if="wearsPaper" :src="PAPER_TEXTURE" alt="" />
+    </slot>
 
     <!--
       The wireframe's inner box, kept exactly: `.center` gives the column its
@@ -428,10 +511,12 @@ if (import.meta.dev) {
   flatten this into unlayered rules that outrank every layer (gh#101). Probe 39
   reads the live CSSOM for this rule's layer membership.
 
-  No colour of any kind is declared here (BRIEF §5 rule 2, D5): the band paints
-  nothing, and the dashed border, the corner label and the grey ground of
-  `.wireframe .wf-slot` are wireframe *skin*, not band geometry. No `:not()`
-  appears below, complex-selector or otherwise (D-20.5).
+  No colour literal is declared here (BRIEF §5 rule 2, D5). A default band
+  paints nothing, and the dashed border, the corner label and the grey ground
+  of `.wireframe .wf-slot` are wireframe *skin*, not band geometry. The colour
+  that does appear is opt-in and all semantic tokens: the paper ground
+  (`data-surface="paper"`), the section rule (`data-rule="program"`) and the
+  heading link's arrow, all from the refined pass. No `:not()` appears below, complex-selector or otherwise (D-20.5).
 */
 @layer components {
   .bf-section {
@@ -484,6 +569,32 @@ if (import.meta.dev) {
   }
 
   /*
+    The paper ground, `data-surface="paper"` (header docblock). The template
+    draws the texture into the `bleed` position; this is the rest of it.
+
+    The containing block and stacking context `bfHeroMedia` needs: it paints
+    at `z-index: -1` and must land above the band's own background and below
+    its type.
+
+    The wash is `bfHeroMedia`'s scrim retinted rather than a second layer:
+    the scrim reads `--color-scrim`, and a band that declares it for its own
+    subtree changes the fill without touching that component. The fill is
+    `--color-scrim-paper`, 28% of the page ground over the texture — the
+    insight article's own value — so the article, the page headers and any
+    band that opts in sit on one paper. The type is the page's own ink,
+    near-black on a near-white ground, so nothing on the band needs
+    inverting and every control keeps its light-page focus ring.
+  */
+  .bf-section[data-surface="paper"] {
+    --_bf-section-paper-wash: var(--color-scrim-paper);
+    --color-scrim: var(--_bf-section-paper-wash);
+
+    position: relative;
+    isolation: isolate;
+    color: var(--color-text);
+  }
+
+  /*
     Defect 1, fixed: the break-out rule `fullWidth` never had.
 
     `margin-inline: calc(50% - 50vw)` pulls each edge out by exactly half the
@@ -521,6 +632,154 @@ if (import.meta.dev) {
     --theme-stack-space: var(--_bf-section-gap);
     --theme-switcher-space: var(--_bf-section-gap);
     --theme-center-measure: var(--_bf-section-measure);
+  }
+
+  /*
+    Band rhythm (refined pass, Sep 2026). The shell spaces its bands with
+    `<main class="stack" data-gap="xl">`, and on its own that put a band's
+    `<h2>` `--space-xl` below the grid it follows and `--space-m` above the
+    grid it introduces — close enough to 2:1 that a heading read as much the
+    footer of the band above as the title of its own.
+
+    So a band that **opens on its own heading** stands a full `--space-2xl`
+    off the band before it. Keyed on the heading, not on every band, because
+    the unheaded bands are parts of the band above them: the Insights facets
+    and the results they filter, a search box and its hits. Those stay at the
+    shell's step, together.
+
+    "Opens on" is literal — the heading is the first child of the column —
+    which covers this component's own `heading` and the linked `<h2>` a
+    template slots with the same class (`/projects`). A split band whose
+    heading sits beside something in a switcher does not open on it and
+    keeps the shell's step. (`/about`'s Stiftung band was that case until
+    the refined pass stacked it; it opens on its heading now and takes the
+    `--space-2xl`.)
+
+    `:has()` passes through `postcss-preset-env` untouched (it has no
+    lowering for it; `bfHeroMedia`'s print rule relies on the same). The
+    margin beats `.stack > * + *` because this layer outranks
+    `@layer composition`, not by specificity.
+  */
+  .bf-section + .bf-section:has(> .center > .bf-section__heading:first-child) {
+    margin-block-start: var(--space-2xl);
+  }
+
+  /*
+    The section rule, `data-rule="program"` (header docblock): a hairline
+    across the column with the programme's colour for its first
+    `--space-xl`. Drawn on the heading, not the band, because the heading's
+    box is exactly the column's content box — `.center` has inline padding,
+    so a border on it would overhang the cards by a gutter on each side.
+
+    The bar sits on the hairline (top edges aligned) and runs
+    `--border-width-thick` down, so it reads as the rule thickening at its
+    start. It is decoration, `content: ""`, so it announces nothing. The
+    colour is `--color-program`, the fill tier — every programme's measures
+    >= 4.55:1 against white, well over the 3:1 a graphic would need if it
+    carried meaning, and it does not carry meaning alone: the heading beside
+    it names the program. Under no `data-program` scope it is the neutral
+    navy default.
+
+    Two hooks, so a page can retune the pair without restating the rule:
+    `--_bf-section-rule-color` and `--_bf-section-rule-bar`. `:deep()` so a
+    heading slotted with the class gets the rule too.
+  */
+  .bf-section[data-rule="program"] {
+    --_bf-section-rule-color: var(--color-rule);
+    --_bf-section-rule-bar: var(--space-xl);
+  }
+
+  .bf-section[data-rule="program"] :deep(.bf-section__heading) {
+    position: relative;
+    padding-block-start: var(--space-s);
+    border-block-start: var(--border-width-thin) solid var(--_bf-section-rule-color);
+  }
+
+  .bf-section[data-rule="program"] :deep(.bf-section__heading::before) {
+    content: "";
+    position: absolute;
+    inset-block-start: calc(var(--border-width-thin) * -1);
+    inset-inline-start: 0;
+    inline-size: var(--_bf-section-rule-bar);
+    block-size: var(--border-width-thick);
+    background-color: var(--color-program);
+  }
+
+  /*
+    The heading itself. Balanced, so a two-line program name
+    ("Transatlantic Relations & Global Challenges" at 375px) breaks into two
+    even lines instead of leaving one word on the second. `:deep()` so a
+    slotted heading wearing the hook gets it too.
+  */
+  .bf-section :deep(.bf-section__heading) {
+    text-wrap: balance;
+  }
+
+  /*
+    A heading that links — the program bands on `/projects`, whose `<h2>`
+    goes to the program hub — is a heading first and a link second.
+
+    Before this rule it was neither. The template's `NuxtLink` renders
+    `class=""`, so `base/typography.css`'s `a:not([class])` never matched it:
+    no author rule coloured it and it fell through to the user agent's
+    `#0000EE` with an underline, and `typography.css`'s `a { font-weight:
+    light }` set the words in the body's light face inside a bold heading.
+
+    Now it takes the heading's own colour and weight and carries one quiet
+    affordance: a primary-blue arrow after the words, which slides a step on
+    hover while the words take an underline.
+
+    The arrow is drawn, not typed. It is the footer search's own arrow —
+    `arrowPath` in `bfFooter`, the same 24×24 geometry and stroke — painted
+    as a mask over a `--color-primary` fill, so it is one icon system with
+    the rest of the site rather than a `→` glyph at the mercy of whichever
+    face the heading is set in. Empty generated content, so there is nothing
+    to announce and the link's name is the program's name and nothing else.
+    `vertical-align: middle` centres the box on the lowercase, where the
+    words' own weight sits.
+
+    `:deep()` because the heading is slot content: it carries the template's
+    scope id, not this component's. Compiles to (0,3,1) and wins over the
+    base `a` rules by layer in any case. An external heading link would lose
+    `external-link.css`'s `↗` to this arrow; none exists, and a heading that
+    leaves the site should say so in its words.
+  */
+  .bf-section :deep(.bf-section__heading a) {
+    color: inherit;
+    font-weight: inherit;
+    text-decoration-line: none;
+    text-decoration-thickness: var(--border-width-medium);
+    text-underline-offset: 0.12em;
+  }
+
+  .bf-section :deep(.bf-section__heading a::after) {
+    content: "";
+    display: inline-block;
+    inline-size: 0.6em;
+    block-size: 0.6em;
+    margin-inline-start: 0.2em;
+    vertical-align: middle;
+    background-color: var(--color-primary);
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z'/%3E%3C/svg%3E");
+    mask-position: center;
+    mask-repeat: no-repeat;
+    mask-size: contain;
+    transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .bf-section :deep(.bf-section__heading a:hover) {
+    text-decoration-line: underline;
+    text-decoration-color: var(--color-primary);
+  }
+
+  .bf-section :deep(.bf-section__heading a:hover::after) {
+    transform: translateX(0.2em);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bf-section :deep(.bf-section__heading a::after) {
+      transition: none;
+    }
   }
 }
 </style>

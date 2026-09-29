@@ -243,7 +243,7 @@ const statusId = useId()
       :aria-describedby="announcement ? statusId : undefined"
       @click="onActivate"
     >
-      {{ label }}<span aria-hidden="true"> →</span>
+      {{ label }}<span class="bf-load-more__arrow" aria-hidden="true" />
     </bfButton>
 
     <!--
@@ -295,11 +295,16 @@ const statusId = useId()
   }
 
   /*
-    Same treatment as `.bf-home-more` on `/` (Paper, Sep 21): 14/18 medium
-    blue, no box. The homepage control is a `NuxtLink`; this one stays a
-    `<button>` because it paginates, it does not navigate. Hooks reset the
-    `bfButton` chrome; the type metrics have to be restated because they
-    are not hooks.
+    Same treatment as the shared `.bf-more-link`
+    (`public/css/components/more-link.css`, the home page's and the hubs'
+    "All … →" links; Paper, Sep 21): 14/18 medium blue, no box, sentence
+    case. Those are `NuxtLink`s; this one stays a `<button>` because it
+    paginates, it does not navigate. Hooks reset the `bfButton` chrome; the
+    type metrics have to be restated because they are not hooks.
+
+    No `text-transform`. Paper's `capitalize` rendered "Load More (74
+    Remaining)" over the accessible name "Load more (74 remaining)", on a
+    site whose every other control is in sentence case (final pass).
   */
   .bf-load-more .bf-load-more__button {
     --_bf-button-border: none;
@@ -311,8 +316,60 @@ const statusId = useId()
     font-weight: var(--font-weight-medium);
     line-height: 1.125rem;
     text-align: start;
-    text-transform: capitalize;
     width: fit-content;
+  }
+
+  /*
+    Hover, refined pass (Sep 2026): the same answer the band headings on
+    `/projects` give — the words take an underline clear of the descenders
+    and the arrow slides a step — so every "more of this" control on the site
+    responds the same way. An unavailable control (`aria-disabled`, dimmed
+    by `bfButton`) does not respond at all.
+
+    The arrow is drawn, not a `→` glyph: the footer search's own arrow
+    (`arrowPath` in `bfFooter`, same 24×24 geometry), painted as a mask over
+    `currentcolor` so it takes the label's blue and `bfButton`'s dimming with
+    it. An empty `aria-hidden` span, so it can move without the label and
+    adds nothing to the button's name; `inline-block` because a transform
+    does nothing on an inline box, and a 1em box because the label is small
+    type and the arrow inside the box is two-thirds of it.
+  */
+  .bf-load-more .bf-load-more__arrow {
+    display: inline-block;
+    inline-size: 1em;
+    block-size: 1em;
+    margin-inline-start: 0.2em;
+    vertical-align: middle;
+    background-color: currentcolor;
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z'/%3E%3C/svg%3E");
+    mask-position: center;
+    mask-repeat: no-repeat;
+    mask-size: contain;
+    transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .bf-load-more .bf-load-more__button:hover {
+    text-decoration-line: underline;
+    text-decoration-thickness: var(--border-width-thin);
+    text-underline-offset: 0.2em;
+  }
+
+  .bf-load-more .bf-load-more__button:hover .bf-load-more__arrow {
+    transform: translateX(0.2em);
+  }
+
+  .bf-load-more .bf-load-more__button[aria-disabled='true']:hover {
+    text-decoration-line: none;
+  }
+
+  .bf-load-more .bf-load-more__button[aria-disabled='true']:hover .bf-load-more__arrow {
+    transform: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bf-load-more .bf-load-more__arrow {
+      transition: none;
+    }
   }
 
   /*

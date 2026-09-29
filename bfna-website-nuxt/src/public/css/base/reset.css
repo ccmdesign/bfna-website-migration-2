@@ -156,8 +156,27 @@
     min-height: 10em;
   }
 
-  /* Anything that has been anchored to should have extra scroll margin */
+  /*
+    The sticky site bar's height, published for anything that scrolls an
+    element to the top of the viewport (refined pass, Sep 2026). `bfNav`'s
+    bar is `--_bf-nav-height` (`--space-xl`) with a `--space-2xs` above and
+    below it — 76px at a desktop width, 56px on a phone — and that is the
+    sum written here. A root property rather than a read of the nav's own
+    hook, because the nav's hooks are declared on the nav and cannot reach
+    the root; a change to the bar's geometry in `Nav.vue` changes it here.
+  */
+  :root {
+    --bf-sticky-offset: calc(var(--space-xl) + 2 * var(--space-2xs));
+  }
+
+  /*
+    Anything that has been anchored to should have extra scroll margin. At
+    the top that is the sticky bar plus a breath, so an in-page jump —
+    `/projects#democracy`, a hub's "Explore our work", `/about#team`, an
+    archive year — lands its target a step below the bar instead of under
+    it; `5ex` alone was shorter than the bar. The bottom keeps the `5ex`.
+  */
   :target {
-    scroll-margin-block: 5ex;
+    scroll-margin-block: calc(var(--bf-sticky-offset) + var(--space-s)) 5ex;
   }
 }

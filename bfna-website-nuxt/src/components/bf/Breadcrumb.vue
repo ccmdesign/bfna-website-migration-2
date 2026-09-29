@@ -66,6 +66,13 @@
  * was nothing there. The same reasoning as `bfTime`'s absent-date branch
  * (gh#27): the honest render of nothing is nothing.
  *
+ * ## Skin
+ *
+ * The trail is set in the band's own ink: the links inherit their colour and
+ * keep an underline, the separator is a muted slash, the current page is plain
+ * text. On a photograph the band inverts the ink and the trail follows it with
+ * no rule of its own.
+ *
  * Presentational-only (BRIEF D8): one prop in, nothing else. No route
  * derivation — every `wfPageHeader` call site in the wireframe pages already
  * pre-builds its `crumbs` array, and pages keep that job (spec §Out of scope).
@@ -262,6 +269,39 @@ const crumbs = computed(() =>
   .bf-breadcrumb__item + .bf-breadcrumb__item::before {
     content: var(--_bf-breadcrumb-separator);
     color: var(--_bf-breadcrumb-separator-color);
+  }
+
+  /*
+    The crumb links take the trail's own colour — the ink of whatever band
+    they sit on — and keep the underline as the only thing that says "link".
+
+    Stated because nothing else reaches them. A linked crumb carries
+    `class="bf-breadcrumb__link"`, so `base/typography.css`'s
+    `a:not([class])` never matches it, and until this rule it fell through
+    to the user agent's own `#0000EE` (and `#551A8B` once visited): a
+    saturated blue that is not in the palette, on every light page header on
+    the site. `bfPageHeader`'s photo band had already worked around it with
+    its own `inherit`; the insight article worked around it again in
+    `article.css`. The fix belongs here, once.
+
+    `inherit` rather than a token, so the trail follows its band: near-black
+    on the page and the paper, white on a photograph's scrim, with no rule
+    per ground. The underline stays the UA's own — thickness, offset and
+    colour — which is exactly what the insight article's header shipped with,
+    so that page renders pixel for pixel as it did.
+  */
+  .bf-breadcrumb__link,
+  .bf-breadcrumb__link:visited {
+    color: inherit;
+  }
+
+  /*
+    Hover thickens the underline rather than changing the colour: the trail
+    is wayfinding, not a call to action, and a colour change here would be
+    the loudest thing in the header.
+  */
+  .bf-breadcrumb__link:hover {
+    text-decoration-thickness: var(--border-width-medium);
   }
 
   /*
