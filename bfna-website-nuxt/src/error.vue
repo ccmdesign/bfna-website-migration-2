@@ -19,6 +19,35 @@
  * error page is what a route that never reached a page hits, and it was the one
  * place still hand-rolling the block. This closes the finding end to end.
  *
+ * ## One not-found page (refined pass, Sep 2026)
+ *
+ * The block alone was a dead end: a heading, a sentence and one link home.
+ * This page now renders `bfNotFound`, the layout every not-found path is meant
+ * to share — the same `bfEmptyState` heading block on the paper masthead
+ * ground, then a search field and the programs and indexes to start from, then
+ * the three most recent insights. The three per-route branches —
+ * `pages/insights/[slug].vue`, `pages/projects/[slug].vue` and the defensive
+ * one in `pages/[program].vue` — render the same component with their own
+ * heading and back link, so every dead end on the site is this one page. Only
+ * this file passes `announced`: it is the one reached by a client-side swap,
+ * where the others are prerendered. See `components/bf/NotFound.vue` for the
+ * bands and why the heading block is still `bfEmptyState` (gh#224's gate
+ * reads its root).
+ *
+ * ## Data
+ *
+ * `bfNotFound` is presentational (D8), so the programs and the recent insights
+ * are read here, the way a page reads them: two awaited composables, imported
+ * explicitly because they live at `composables/data/useBf*.ts`. `nuxt-root`
+ * renders this file inside its `<Suspense>`, which is what makes the top-level
+ * `await` legal, exactly as `bf-default`'s own `await useBfSite()` is.
+ *
+ * Neither read can take the error page down with it. `useAsyncData` catches a
+ * failed query into its own `error` ref, and both composables fall back to an
+ * empty list, so an error raised *by* the content layer renders this page
+ * with the heading block and the search field and without the two data bands
+ * — `bfNotFound` renders each only when it has rows.
+ *
  * The file it replaces hand-rolled all of it: its own `h1` element reading
  * "404", a centred wrapper, a pill button, and a `<style scoped>` block
  * carrying four `hsl()` colour declarations. Every one of those is something
@@ -37,15 +66,18 @@
  * is styled wrongly and silently.
  *
  * The layout's slot-partition (residual #179) sees exactly one root here, and
- * it is not a `NuxtPage`, so the "no page outlet" branch applies and the empty
- * state renders inside `<main id="main">` — which is where a page's only
- * content belongs.
+ * it is not a `NuxtPage`, so the "no page outlet" branch applies and the
+ * not-found page renders inside `<main id="main">` — which is where a page's
+ * only content belongs. `bfNotFound`'s three bands are that one root's
+ * fragment, so they land as `<main>`'s own children and take its band rhythm,
+ * as every page's bands do.
  *
  * ## One `h1`, and it is not in this file
  *
- * `bfEmptyState` defaults `headingLevel` to `1` precisely because this block is
- * what a page shows *instead of* its content: it **is** the page heading. So
- * this file writes no heading element of its own — the spec's acceptance greps
+ * `bfEmptyState` — which `bfNotFound` renders as its first band — defaults
+ * `headingLevel` to `1` precisely because this block is what a page shows
+ * *instead of* its content: it **is** the page heading. So this file writes no
+ * heading element of its own — the spec's acceptance greps
  * `error.vue` for an opening `h1` tag and requires **zero**, which is also why
  * no line below spells one out, and the rendered page has exactly one.
  * Repeating the status code as a giant "404" above the sentence, the way the
@@ -71,6 +103,8 @@
  * ## The back link is a plain link, not `clearError`
  *
  * `bfEmptyState` renders `backTo` through `NuxtLink`, and that is deliberate.
+ * (The search field's submit is a `navigateTo` for the same reason — it is a
+ * client navigation, and leaving this page clears the error on its own.)
  * Nuxt already clears the error on any client-side navigation —
  * `nuxt/dist/pages/runtime/plugins/router.js` does
  * `if (import.meta.client && !nuxtApp.isHydrating && error.value) await nuxtApp.runWithContext(clearError)`
@@ -80,6 +114,9 @@
  * the spec names, for behaviour that is already the behaviour. Recorded in the
  * spec's Decisions.
  */
+import { useBfInsights } from '~/composables/data/useBfInsights'
+import { useBfPrograms } from '~/composables/data/useBfPrograms'
+
 defineOptions({ name: 'BfErrorPage' })
 
 /**
@@ -126,6 +163,17 @@ const message = computed<string>(() =>
 useHead({
   title: computed(() => (isNotFound.value ? 'Page not found' : 'Error'))
 })
+
+/*
+ * The two data bands' rows. `programs()` is the client's curated order;
+ * `active` is newest first, and `bfNotFound` draws the first three of it, so
+ * the head is taken here and the rest is never handed down.
+ */
+const { programs } = await useBfPrograms()
+const { active } = await useBfInsights()
+
+const programList = programs()
+const recentInsights = active.slice(0, 3)
 </script>
 
 <template>
@@ -142,14 +190,18 @@ useHead({
       Not conditional on `isNotFound`: a 500 replaces the page just as silently
       as a 404 does, and the branch would be a distinction without a
       difference. Prop, not a hand-written `role` attribute, so the decision
-      stays the component's contract rather than this file's markup.
+      stays the component's contract rather than this file's markup —
+      `bfNotFound` forwards it to its `bfEmptyState` untouched, so the region
+      is the heading block and not the search field or the cards below it.
     -->
-    <bfEmptyState
+    <bfNotFound
       :heading="heading"
       :message="message"
       back-label="Back to home"
       back-to="/"
       announced
+      :programs="programList"
+      :insights="recentInsights"
     />
   </NuxtLayout>
 </template>
