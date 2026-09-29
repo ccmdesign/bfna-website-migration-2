@@ -3,71 +3,105 @@
  * `bfProse` — the body-string renderer.
  *
  * Ports `components/wireframe/wfProse.vue` (frozen, D2 — read, never edited),
- * whose whole job is to take one body field and render it as block-level text.
- * Bodies arrive from the `data` collections as **plain strings** in one of two
- * shapes, and this component handles both:
+ * whose job is to take one body field and render it as block-level text. The
+ * port kept wfProse's parser character for character, and that parser kept
+ * only headings, `-` lists and paragraphs: every link lost its URL, inline
+ * images printed as `!caption` or as a raw URL, blockquotes printed their
+ * `>`. wfProse's own comment said where the fix belonged ("swap for a real
+ * renderer when production styling needs bold/links preserved"), and the
+ * refined article page is that moment. The parser now lives in
+ * `utils/proseBlocks.ts`; its header has the measurements and the rules.
  *
- *  - **markdown-lite** — `##` / `###` line-leading heading markers, `- ` and
- *    `* ` list markers, everything else a paragraph, with the inline marks
- *    (`**bold**`, `*italic*`, `` `code` ``, `[label](url)`) stripped to their
- *    text;
- *  - **legacy HTML** — the Directus-era bodies, detected by `/<[a-z][^>]*>/i`,
- *    whose block closers become newlines, whose remaining tags are dropped and
- *    whose `&amp;` / `&nbsp;` entities are decoded, after which the same
- *    line loop runs.
+ * ## What it renders
  *
- * ## What is ported verbatim, and why that is the point
+ * Paragraphs with emphasis, code, links and footnote references; headings
+ * `h2`–`h6`; bulleted and numbered lists; blockquotes; rules; figures, with a
+ * caption when the body writes one; YouTube embeds; pipe tables; and a Notes
+ * list for footnotes, each note linked back to where it is cited. Every block
+ * is styled in `public/css/components/prose.css`, not here — see "No scoped
+ * styles" below.
  *
- * `inline()`, the legacy pre-pass, the line loop and the `Block` union are the
- * wf source's own, character for character. The epic's rule 10 is that a `bf-*`
- * component renders the same data its `wf-*` counterpart renders in the
- * matching slot; for a parser, "the same data" means the same *parse*, so any
- * improvement here — nested lists, ordered lists, preserved emphasis — would be
- * a behaviour change dressed as a port. The wf source's own comment says where
- * that work belongs ("swap for a real renderer when production styling needs
- * bold/links preserved"), and it is not this issue.
+ * ## Still no `v-html`, and now an allow-list as well
  *
- * The one deliberate divergence is the **empty-body case**: the wf source
- * prints a `[body copy]` placeholder and this component renders nothing
- * (residual #186, taken in gh#61). Reasoning at the template below.
+ * The parser returns plain data and this component renders it through the
+ * template and `h()`, so every string from the body is text interpolation or
+ * an attribute binding — no markup from the body is ever inserted as markup.
+ * That was the original construction's safety argument and it is unchanged.
+ *
+ * What changed is that a body can now put a value in `href` and `src`, which
+ * Vue does not police. So links, images and embeds pass
+ * `safeHref` / `safeImageSrc` / `safeEmbedId` first: `http(s)`, `mailto:`,
+ * `tel:`, root-relative and `#` targets only, images over `https` only, and an
+ * embed only when it is a YouTube video, kept as its id alone — every URL
+ * this component writes for it is built from that id by `utils/youtube.ts`.
+ * A `javascript:` link renders its text and no anchor.
+ *
+ * Links that leave the site take the system's own treatment: `data-external`
+ * (the `↗` of `external-link.css`) and `newTabAttrs` (`utils/link.ts`), the
+ * same pair `bfButton`'s anchor branch spreads.
  *
  * ## Heading ranks start at 2, and cannot start lower
  *
- * `##` and `#` alike map to rank 2; `###`–`######` map to ranks 3–6, each to
- * itself (gh#223 — before it, `####` and deeper fell through to the paragraph
- * branch and an authored subsection lost its element and its place in the
- * outline while still looking like a heading on the page). Nothing in this
- * file emits a rank-1 heading, and nothing can: a legacy body's rank-1 heading is
- * flattened to a paragraph line by the tag-strip pass *before* the line loop
- * ever sees it, so the element is gone and only its text survives. That keeps
- * the page's single rank-1 heading — `bfPageHeader`'s or `bfHero`'s — unique
- * (BRIEF §5 rule 9). It is a preserved constraint rather than a new fix, and it
- * is asserted by name on probe 45 because it is easy to regress.
+ * Nothing here emits an `h1` — the page's single rank-1 heading is
+ * `bfPageHeader`'s or `bfHero`'s (BRIEF §5 rule 9) — and a legacy body's `<h1>`
+ * is flattened by the parser's tag strip before the line loop sees it. The
+ * authored ranks are also compacted and clamped, so a body whose first
+ * heading is `###` opens on `h2` and never skips a rank (the 22 pages
+ * `scripts/check-routes.ts` records in `HEADING_SKIP_KNOWN`).
  *
- * ## No `v-html`
+ * ## A video loads nothing from YouTube until the reader presses play
  *
- * Every block's text goes through interpolation, so Vue escapes it. That is the
- * wf source's construction, kept — which is also why "sanitising untrusted
- * input" being out of scope costs nothing here: no markup from the body is ever
- * inserted as markup.
+ * The one legacy `<iframe>` (`/insights/disrupting-democracy`) renders the
+ * way the insight page's own video does (`pages/insights/[slug].vue`): a
+ * poster that is a plain link to the video on YouTube — so it works before
+ * hydration and without JavaScript — holding YouTube's `hq` still (lazy, so
+ * it costs nothing until it is scrolled near; upgraded to the sharp `maxres`
+ * one once it has loaded, when that exists) and a "Play video" pill. A plain
+ * click swaps in the privacy-enhanced player, autoplaying because that is
+ * what the press asked for, and moves focus into it, so a keyboard user is
+ * not dropped to the top of the page when the link they pressed is
+ * replaced. A modified click (new tab, new window) is left to the browser.
  *
- * ## No `data-measure`, and no stylesheet
+ * The link and the player are named after what the video shows — the
+ * `label` the parser takes from the text around it — never a generic "Video
+ * (YouTube)". The styles mirror `article.css`'s `.bf-article-video__*` in
+ * `prose.css`, because this component renders on project pages too.
  *
- * The line-length cap is the **caller's**, exactly as in the wf source, which
- * carries no measure attribute either: every call site wraps this component in
- * `<bfSection measure="narrow">`, whose inner `.center[data-measure="narrow"]`
- * resolves `--_center-measure: 60ch` in `@layer composition`. A cap declared
- * here would fight that one and would make a wide-measure call site impossible.
+ * ## Images that no longer exist
  *
- * There is no `<style>` block at all. `.stack[data-gap="s"]` already sets the
- * block rhythm and the ambient type scale already sets the type; a rule in this
- * file could only restate the composition layer or add something the spec
- * forbids. No new CSS variables, no colour, and no `:not()` of any shape
- * (D-20.5).
+ * 31 of the 113 inline images point at Contentful assets that now answer
+ * 404. A figure whose image fails is hidden (`v-show`) once the failure is
+ * known — from the `error` event, or, for one that failed before hydration,
+ * from `complete && naturalWidth === 0` on mount — rather than leaving a
+ * broken-image glyph and its caption in the column. The server render always
+ * includes the figure, so hydration never mismatches.
+ *
+ * ## One instance per page
+ *
+ * Footnote anchors are `#bf-fn-<id>` / `#bf-fnref-<id>` and the Notes heading
+ * is `#bf-prose-notes`. Every call site renders a single body, so the ids are
+ * unique; a page that ever renders two bodies with notes would need a prefix
+ * prop first.
+ *
+ * ## No `data-measure`, and no scoped styles
+ *
+ * The line-length cap is the **caller's**: `bfSection`'s `measure`, narrowed
+ * further on the article by `article.css`. A cap declared here would fight
+ * that one.
+ *
+ * The styles are in `public/css/components/prose.css` because most of what
+ * this component renders is built by `h()` inside a local functional
+ * component, which carries no scope id — a scoped rule could not reach an
+ * `<a>` or an `<em>`. One stylesheet for every block keeps the rules in one
+ * place and in one specificity regime.
  *
  * Presentational-only (D8): one prop in, nothing out, no collection, no store.
  */
+import { h, type FunctionalComponent, type VNodeChild } from 'vue'
 import type { ProseProps } from '~/types/bf-contracts'
+import { newTabAttrs } from '~/utils/link'
+import { parseProse, type ProseInline } from '~/utils/proseBlocks'
+import { youtubeEmbedUrl, youtubePoster, youtubeWatchUrl } from '~/utils/youtube'
 
 defineOptions({ name: 'BfProse' })
 
@@ -80,156 +114,228 @@ defineOptions({ name: 'BfProse' })
  */
 const props = defineProps<ProseProps>()
 
-/**
- * One parsed block. A discriminated union rather than a `tag` plus optional
- * fields, so the template's branches are exhaustive by construction and a `ul`
- * can carry `items` while every other member carries `text`.
- *
- * The rank set is closed on purpose and is now `h2`–`h6` (gh#223). It was
- * `h2 | h3`, the wf source's own, and that was a silent lossy cap: a body
- * authoring `#### ` was flattened to a paragraph, so a fourth-level subsection
- * lost both its element and its place in the outline while looking fine on the
- * page. `h1` stays out of the set — see the file header; that exclusion is the
- * one thing keeping the page's single rank-1 heading unique.
- */
-type Block =
-  | { tag: 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p', text: string }
-  | { tag: 'ul', items: string[] }
+/** The body, parsed — deterministic, so the server and the client agree. */
+const blocks = computed(() => parseProse(props.content))
+
+/** An authored footnote id, reduced to what an `id` attribute should hold. */
+const noteId = (id: string) => id.replace(/[^\w-]/g, '-')
 
 /**
- * Strip inline markdown marks, leaving the text.
- *
- * Ported verbatim. Link text survives and the URL does not — which is the
- * documented limitation, not an oversight: preserving links needs a real
- * renderer and a decision about `rel`/`target` that this issue does not make.
+ * Inline nodes → vnodes. Text is returned as a string child, which Vue
+ * escapes; every element is one of six known tags.
  */
-const inline = (s: string) => s
-  .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
-  .replace(/\*\*([^*]+)\*\*/g, '$1')
-  .replace(/\*([^*]+)\*/g, '$1')
-  .replace(/`([^`]+)`/g, '$1')
-  .trim()
-
-/**
- * The body, parsed. The wf source's, with the heading branch widened (gh#223).
- *
- * The legacy pre-pass runs first and only when the content actually looks like
- * markup, so a markdown body containing a stray `<` is not mangled by it. After
- * it, both paths are the same line loop: heading (`#`–`######`, floored at rank
- * 2), list item — appended to the open list if the previous block is one — else
- * paragraph.
- *
- * The legacy path is deliberately not widened with it. A legacy `<h4>` is
- * flattened to a paragraph line by the tag-strip pass above, before the loop
- * ever sees it — the same mechanism, and the same line of code, that flattens a
- * legacy `<h1>` and is what makes the "cannot emit rank 1" guarantee true.
- * Recovering rank from stripped legacy markup is a different change with a
- * different risk, and it is not this one. Measured: of the 433 documents in
- * `content/bf/**`, two carry legacy HTML bodies and neither contains an
- * `<h4>`–`<h6>` tag.
- */
-const blocks = computed<Block[]>(() => {
-  let src = props.content ?? ''
-  // Legacy HTML bodies: turn block closers into line breaks, drop tags
-  if (/<[a-z][^>]*>/i.test(src)) {
-    src = src.replace(/<\/(p|h[1-6]|li|div)>/gi, '\n').replace(/<br\s*\/?>/gi, '\n')
-      .replace(/<[^>]+>/g, '').replace(/&(amp|nbsp);/g, m => m === '&amp;' ? '&' : ' ')
+const renderInline = (nodes: ProseInline[]): VNodeChild[] => nodes.map((n): VNodeChild => {
+  switch (n.t) {
+    case 'text': return n.v
+    case 'code': return h('code', n.v)
+    case 'em': return h('em', renderInline(n.c))
+    case 'strong': return h('strong', renderInline(n.c))
+    case 'link': return h('a', {
+      'href': n.href,
+      'data-external': n.external || undefined,
+      ...newTabAttrs(n.href)
+    }, renderInline(n.c))
+    case 'fnref': return h('sup', { class: 'bf-prose__ref' }, n.linked
+      ? h('a', {
+          'href': `#bf-fn-${noteId(n.id)}`,
+          'id': n.first ? `bf-fnref-${noteId(n.id)}` : undefined,
+          'aria-label': `Note ${n.n}`
+        }, String(n.n))
+      : String(n.n))
   }
-  const out: Block[] = []
-  for (const line of src.split(/\n+/).map(l => l.trim()).filter(Boolean)) {
-    /*
-      One branch for every authored depth (gh#223). The wf source had two —
-      `###` and `##?` — and everything deeper fell through to the paragraph
-      branch, so a `####` subsection was silently demoted to body text.
-
-      `Math.max(2, …)` is the floor, and it is the *only* clamp: `#` still maps
-      to rank 2, exactly as before, because nothing in this component may emit
-      an `h1` (file header, BRIEF §5 rule 9). The upper end needs no clamp —
-      the pattern matches at most six hashes.
-    */
-    const marker = /^#{1,6}\s/.exec(line)?.[0]
-    if (marker !== undefined) {
-      /* The marker is the hashes plus the one whitespace character the pattern
-         matched, so the rank is its length less that character. */
-      const level = Math.max(2, marker.length - 1) as 2 | 3 | 4 | 5 | 6
-      out.push({ tag: `h${level}`, text: inline(line.slice(marker.length)) })
-    }
-    else if (/^[-*]\s/.test(line)) {
-      const last = out[out.length - 1]
-      if (last?.tag === 'ul') last.items.push(inline(line.slice(2)))
-      else out.push({ tag: 'ul', items: [inline(line.slice(2))] })
-    }
-    else out.push({ tag: 'p', text: inline(line) })
-  }
-  return out
 })
+
+/** The inline renderer as a component, so the template can place it in any block. */
+const ProseText: FunctionalComponent<{ nodes: ProseInline[] }> = p => renderInline(p.nodes)
+ProseText.props = ['nodes']
+
+const root = ref<HTMLElement | null>(null)
+
+/** Figure `src`s whose image failed to load. Client-only state; empty on the server. */
+const broken = reactive(new Set<string>())
+
+onMounted(() => {
+  root.value?.querySelectorAll<HTMLImageElement>('.bf-prose__figure img').forEach((img) => {
+    if (img.complete && img.naturalWidth === 0) broken.add(img.getAttribute('src') ?? '')
+  })
+})
+
+/* ---------------------------------------------------------------- video */
+
+/** Indices of the embeds the reader has pressed play on. A new body starts with none. */
+const playing = reactive(new Set<number>())
+watch(() => props.content, () => playing.clear())
+
+/**
+ * Poster stills by video id: `hq` until it has loaded, then `maxres` when
+ * YouTube has one — for some videos it answers with a 120px grey
+ * placeholder instead, which is why the probe checks the width first.
+ */
+const posters = reactive(new Map<string, string>())
+const probed = new Set<string>()
+
+function upgradePoster(id: string) {
+  if (probed.has(id)) return
+  probed.add(id)
+  const probe = new Image()
+  probe.onload = () => {
+    if (probe.naturalWidth > 120) posters.set(id, probe.src)
+  }
+  probe.src = youtubePoster(id, 'maxres')
+}
+
+/* A poster that loaded before hydration fired its `load` with no listener attached. */
+onMounted(() => {
+  blocks.value.forEach((b, i) => {
+    if (b.tag !== 'embed') return
+    const img = root.value?.querySelector<HTMLImageElement>(`[data-embed="${i}"] img`)
+    if (img?.complete && img.naturalWidth > 0) upgradePoster(b.id)
+  })
+})
+
+/** Play in place; see "A video loads nothing from YouTube" above. */
+async function play(event: MouseEvent, i: number) {
+  if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return
+  event.preventDefault()
+  playing.add(i)
+  await nextTick()
+  root.value?.querySelector<HTMLIFrameElement>(`[data-embed="${i}"] iframe`)?.focus()
+}
 </script>
 
 <template>
   <!--
-    One root, `.stack[data-gap="s"]` — the wf source's own, kept element for
-    element. The rhythm between blocks is the composition layer's; nothing here
-    restates it.
+    One root, `.stack[data-gap="s"]` — the wf source's own. The rhythm between
+    blocks starts from the composition layer's gap and is refined per block in
+    `prose.css`.
   -->
-  <div class="bf-prose | stack" data-gap="s">
-    <!--
-      No `v-if="blocks.length"` guard around the loop: an empty list renders no
-      children on its own, and the guard only existed to select between the
-      blocks and the placeholder that is now gone.
-    -->
+  <div ref="root" class="bf-prose | stack" data-gap="s">
     <template v-for="(b, i) in blocks" :key="i">
-      <ul v-if="b.tag === 'ul'">
-        <li v-for="li in b.items" :key="li">{{ li }}</li>
-      </ul>
-      <p v-else-if="b.tag === 'p'">{{ b.text }}</p>
-      <!--
-        Every heading rank through one `<component :is>` (gh#223), rather than
-        the `h2`/`h3` pair the wf source hard-coded and the `h4`/`h5`/`h6` that
-        pair would now need beside it. `b.tag` is a closed union of tag-name
-        strings, so this can only ever resolve to a real heading element — the
-        same idiom, and the same guarantee, as `bfSection` and the card
-        wrappers (D27).
+      <p v-if="b.tag === 'p'" :data-subhead="b.solo || undefined"><ProseText :nodes="b.c" /></p>
 
-        The `ul` and `p` branches come first so this one is the `v-else`: the
-        union's other two members are named, and what is left is a heading by
-        construction rather than by a list of ranks somebody has to keep in
-        step with `Block`.
+      <ul v-else-if="b.tag === 'ul'">
+        <li v-for="(item, j) in b.items" :key="j"><ProseText :nodes="item" /></li>
+      </ul>
+
+      <ol v-else-if="b.tag === 'ol'" :start="b.start === 1 ? undefined : b.start">
+        <li v-for="(item, j) in b.items" :key="j"><ProseText :nodes="item" /></li>
+      </ol>
+
+      <blockquote v-else-if="b.tag === 'blockquote'">
+        <p v-for="(para, j) in b.paras" :key="j"><ProseText :nodes="para" /></p>
+      </blockquote>
+
+      <hr v-else-if="b.tag === 'hr'">
+
+      <!--
+        `alt` is the body's own string, passed through as authored (gh#222: the
+        text is content, never invented). Many are file names; that is a
+        content fix, and the same one gh#234 carries for lead images.
       -->
-      <component :is="b.tag" v-else>{{ b.text }}</component>
+      <figure v-else-if="b.tag === 'figure'" v-show="!broken.has(b.src)" class="bf-prose__figure">
+        <img :src="b.src" :alt="b.alt" loading="lazy" decoding="async" @error="broken.add(b.src)">
+        <figcaption v-if="b.caption"><ProseText :nodes="b.caption" /></figcaption>
+      </figure>
+
+      <!--
+        A video: the poster link until the press, then the privacy-enhanced
+        player (the docblock's "A video loads nothing…"). The poster is
+        decorative (`alt=""`); the link's name starts with the words it shows,
+        "Play video". "Watch on YouTube" is for the reader who would rather,
+        with the site's off-site marker, as on the insight page.
+      -->
+      <figure v-else-if="b.tag === 'embed'" class="bf-prose__embed" :data-embed="i">
+        <div class="bf-prose__embed-frame">
+          <iframe
+            v-if="playing.has(i)"
+            :src="youtubeEmbedUrl(b.id, { autoplay: true })"
+            :title="`Video: ${b.label}`"
+            allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+            allowfullscreen
+            referrerpolicy="strict-origin-when-cross-origin"
+          />
+          <a
+            v-else
+            class="bf-prose__embed-facade"
+            :href="youtubeWatchUrl(b.id)"
+            :aria-label="`Play video: ${b.label}`"
+            @click="play($event, i)"
+          >
+            <img
+              class="bf-prose__embed-poster"
+              :src="posters.get(b.id) ?? youtubePoster(b.id)"
+              alt=""
+              loading="lazy"
+              decoding="async"
+              @load="upgradePoster(b.id)"
+            >
+            <span class="bf-prose__embed-play" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="12" /><path d="M9.75 7.5v9l7-4.5z" /></svg>
+              Play video
+            </span>
+          </a>
+        </div>
+        <p class="bf-prose__embed-source">
+          <a :href="youtubeWatchUrl(b.id)" data-external v-bind="newTabAttrs(youtubeWatchUrl(b.id))">Watch on YouTube</a>
+        </p>
+      </figure>
+
+      <!--
+        A pipe table. The wrapper scrolls sideways on a narrow screen instead
+        of widening the page, so it is focusable and named — a keyboard user
+        must be able to reach what is off to the side. The name is the
+        table's own (`label`: its lead-in or its header row, numbered when
+        the body has several), so two tables are two distinct regions.
+      -->
+      <div v-else-if="b.tag === 'table'" class="bf-prose__table" role="region" :aria-label="b.label" tabindex="0">
+        <table>
+          <thead>
+            <tr>
+              <th v-for="(cell, j) in b.head" :key="j" scope="col" :style="b.align[j] ? { textAlign: b.align[j] } : undefined"><ProseText :nodes="cell" /></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(row, r) in b.rows" :key="r">
+              <td v-for="(cell, j) in row" :key="j" :style="b.align[j] ? { textAlign: b.align[j] } : undefined"><ProseText :nodes="cell" /></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!--
+        Notes, in the order the text first cites them. Each carries the id its
+        reference links to, and a way back when the text cites it. The heading
+        is an `h2`: the notes are a section of the piece, like any other.
+      -->
+      <section v-else-if="b.tag === 'footnotes'" class="bf-prose__notes" aria-labelledby="bf-prose-notes">
+        <h2 id="bf-prose-notes">Notes</h2>
+        <ol>
+          <li v-for="note in b.items" :id="`bf-fn-${noteId(note.id)}`" :key="note.id" :value="note.n">
+            <ProseText :nodes="note.c" />
+            <a
+              v-if="note.referenced"
+              class="bf-prose__back"
+              :href="`#bf-fnref-${noteId(note.id)}`"
+              :aria-label="`Back to note ${note.n} in the text`"
+            ><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false"><path d="M8 13V3M3.5 7.5 8 3l4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" /></svg></a>
+          </li>
+        </ol>
+      </section>
+
+      <!--
+        Every heading rank through one `<component :is>` (gh#223). `b.tag` is a
+        closed union of tag names, so this can only resolve to a heading
+        element; the other members are named above, which makes this the
+        `v-else` by construction.
+      -->
+      <component :is="b.tag" v-else :data-caps="b.caps || undefined"><ProseText :nodes="b.c" /></component>
     </template>
     <!--
-      Empty content renders **nothing** — residual #186, decided here for every
-      template at once. The frozen `wfProse` writes a visible `[body copy]`
-      placeholder, and #45 ported it deliberately: in a wireframe, a body that
-      failed to arrive is a content defect a reviewer must be able to see on the
-      page. On the public site it is scaffolding shipped to a visitor — 97 of
-      the 354 `bfInsights` rows and 3 `bfProjects` rows store a null body
-      (video and infographic items, where the media *is* the body), and every
-      one of those pages was printing `[body copy]` to a reader.
-
-      So the component emits no placeholder and no empty `<p>`: the `.stack`
-      root stays, childless, and contributes no gap. The wireframe keeps its own
-      placeholder untouched (D2) — `wfProse` is not edited, and the two
-      renderers now differ here on purpose. Probe 45 asserts the new behaviour
-      by the same two rows that used to assert the old one.
+      Empty content renders **nothing** — residual #186. 97 of the 354
+      `bfInsights` rows and 3 `bfProjects` rows store a null body (video and
+      infographic items, where the media *is* the body), and the wireframe's
+      `[body copy]` placeholder is scaffolding a visitor must never see. The
+      `.stack` root stays, childless, and contributes no gap.
     -->
   </div>
 </template>
-
-<style scoped>
-/*
-  The stack's one gap is a single length for every child. A paragraph and a
-  heading need a top margin of 1em of *their* font-size, so it has to be
-  restated here. `@layer components` beats `.stack > * + *` in composition.
-  The first block stays flush: the section already pads the column.
-*/
-@layer components {
-  .bf-prose > :is(p, h2, h3, h4, h5, h6) {
-    margin-block-start: 1em;
-  }
-
-  .bf-prose > :first-child {
-    margin-block-start: 0;
-  }
-}
-</style>

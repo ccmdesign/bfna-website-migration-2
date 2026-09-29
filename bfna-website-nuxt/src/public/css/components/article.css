@@ -22,9 +22,18 @@
  * **The rule that came out of it: never write a custom property from this file
  * that a `bf-*` SFC also writes.** Its compiled specificity is not what its
  * source looks like, and it is not visible from here. The measure is set
- * through `bfSection`'s own `measure` prop from the page instead, so nothing
- * below competes with a compiled rule at all — the two `border-inline-start`
- * declarations add a property that `composition/center.css` never declares.
+ * through `bfSection`'s own `measure` prop from the page instead, and the
+ * reading column itself is `max-inline-size` on `.center`, a property no SFC
+ * declares there, so nothing competes with a compiled rule at all.
+ *
+ * ## What moved to `detail.css`
+ *
+ * The column, the `<h1>`'s step, the meta row's step and the lead picture's
+ * break-out are shared with `/projects/:slug` and live in `detail.css`
+ * (refined pass, Sep 2026), as `.bf-detail-column`, `.bf-detail-header`,
+ * `.bf-detail-meta` and `.bf-detail-lead`; the page wears those classes
+ * beside its own. This file keeps what only the article has, and reads the
+ * shared lead width (`--_bf-detail-lead-size`) for its player and summary.
  *
  * ## The band classes
  *
@@ -33,36 +42,35 @@
  * `pages/insights/[slug].vue`. `class` is on `bfSection`'s pass-through
  * allow-list by name (`Section.vue:120-122`), so it merges onto the band root
  * rather than replacing `bf-section`. Inside them, `.bf-article-meta`,
- * `.bf-article-lede`, `.bf-article-lead` and `.bf-article-download` are the
- * page's own blocks.
+ * `.bf-article-lede`, `.bf-article-lead`, `.bf-article-video`,
+ * `.bf-article-summary` and `.bf-article-actions` (`--start` before the text,
+ * `--end` closing the piece) are the page's own blocks — the last three are
+ * the content-type openings the page's "One layout, four openings" comment
+ * describes.
+ *
+ * The header is paper because `bfPageHeader`'s default ground is: the page
+ * passes no `image`, so the band wears `bfSection`'s `data-surface="paper"`
+ * — the texture under `--color-scrim-paper`, in the page's dark ink — like
+ * every other inner masthead. It used to reach the paper by passing the
+ * texture as a photograph and undoing the photo band's white type here.
  *
  * ## Specificity against the SFCs
  *
  * Rules that restyle a `bf-*` component's own element (`bfProse`'s headings,
  * `bfMedia`'s image) are written through the band and its `.center` —
- * (0,3,x) — because the scoped rule they must beat compiles to
- * `.bf-prose[data-v-…] > …`, (0,2,x) or (0,3,0), in the same layer, and a tie
- * goes to the Vite chunk linked after this file.
+ * (0,3,x). `bfMedia`'s scoped rule compiles to `.bf-media[data-v-…]`, (0,2,0),
+ * in the same layer, and a tie goes to the Vite chunk linked after this file.
+ * `bfProse` has no scoped rules any more — its blocks are styled in
+ * `prose.css` at (0,1,x)–(0,2,x) — and the (0,3,x) spelling is kept for it so
+ * the article's refinements win on specificity, not on file order.
  */
 
 @layer components {
   /*
-    The reading column. The band's own `wide` step is 90ch of the root 16px,
-    which at the body's 20px ran a line of prose to ~110 characters. 60ch
-    of the root, scaled by the body step, is 60ch of the type that is
-    actually set: ~70 characters of IBM Plex Sans light at 20px, inside the
-    45–75 range a long read wants. Header, archive banner and body share it
-    so the three columns start on the same vertical.
+    The reading column is `detail.css`'s `.bf-detail-column`, on the header,
+    the archive banner and the body alike, so the three start on the same
+    vertical.
   */
-  .bf-article-body > .center,
-  .bf-article-notice > .center,
-  .bf-article-header > .center {
-    max-inline-size: calc(60ch * var(--size-0) / 1em);
-  }
-
-  .bf-article-header {
-    position: relative;
-  }
 
   /*
     The trail on one line. Its last crumb is the article's own title, which
@@ -87,25 +95,12 @@
   }
 
   /*
-   * Article title. `--size-7` was the display ramp and it renders at
-   * ~11rem on a desktop, which is a poster, not a heading, so the size
-   * steps down to `--size-3` (~28px → ~51px).
-   *
-   * Only the size. This rule used to swap the family to IBM Plex Sans as
-   * well, with its own weight, tracking and leading — the one `<h1>` on
-   * the site not in the display face. That was a sizing fix carrying a
-   * family change along with it, not an accessibility constraint, so Wave 1
-   * drops the rest: family, weight, leading and tracking come from
-   * `base/typography.css`'s `h1` like every other page title.
-   *
-   * The breadcrumb is wayfinding and the title is the page, so the step
-   * between them is the header's widest.
+   * The article title's size and step are `detail.css`'s
+   * `.bf-detail-header`. It used to swap the family to IBM Plex Sans as
+   * well — the one `<h1>` on the site not in the display face — which was
+   * a sizing fix carrying a family change along with it, so Wave 1 dropped
+   * the rest: family, weight, leading and tracking are `base/typography.css`'s.
    */
-  .bf-article-header .bf-page-header__heading {
-    margin-block-start: var(--space-m);
-    font-size: var(--size-3);
-    text-wrap: balance;
-  }
 
   /*
     Standfirst — the subheading, read as the second half of the title, so
@@ -125,24 +120,37 @@
   }
 
   /*
-    The meta row — byline or date, then the chips — set apart from the
-    title group by a full step and aligned on the chips' centre line.
+    The meta row — byline or date, then the chips — takes its step and its
+    alignment from `detail.css`'s `.bf-detail-meta`; the type of its date
+    and byline is below.
   */
-  .bf-article-meta {
-    margin-block-start: var(--space-m);
-    align-items: center;
-  }
 
   /*
     Card date (`.bf-card__text > time`) is 0.75rem. One step up that ramp
     is `--size--1`. The byline's author run takes the same step and face so
     "By … · date" reads as one line of metadata rather than a 20px name
-    beside a 14px date.
+    beside a 14px date. The kicker — a heading's format or series prefix
+    (`utils/headingKicker.ts`) — is the first run of the same line, as it
+    is on the cards (`INFOGRAPHIC · SEP 2023`), never a label over the
+    `<h1>`. The body's reading time ("23 min read",
+    `.bf-article-actions__meta`) is the same kind of fact and wears the same.
+
+    Two inks, because the two sit on two grounds. The masthead's meta is on
+    the paper — the texture under `--color-scrim-paper`, ~#EEF1F4 at its
+    median and #E1E4E7 at its darkest pixel — and takes `--color-accent`:
+    9.1:1 at the darkest pixel. The muted step it used to wear measured
+    4.98:1 on **white** and 3.9–4.4:1 on the paper this text actually sits
+    on, under the 4.5:1 small text needs (WCAG 1.4.3). The contrast gate
+    now measures both on that ground (`accent-on-paper`,
+    `text-muted-on-paper` in `scripts/check-contrast.ts`). The reading time
+    is on the body's white page, where `--color-text-muted` clears 4.96:1,
+    and keeps it.
   */
   .bf-article-header time,
-  .bf-article-header .bf-byline__author {
+  .bf-article-header .bf-byline__author,
+  .bf-article-meta__run,
+  .bf-article-actions__meta {
     margin: 0;
-    color: var(--color-primary-tint-70);
     font-family: var(--font-family-ui);
     font-size: var(--size--1);
     font-weight: var(--font-weight-semibold);
@@ -151,20 +159,52 @@
     text-transform: uppercase;
   }
 
-  .bf-article-header .bf-byline {
-    margin: 0;
-    font-size: var(--size--1);
+  .bf-article-header time,
+  .bf-article-header .bf-byline__author,
+  .bf-article-meta__run {
+    color: var(--color-accent);
+  }
+
+  .bf-article-actions__meta {
+    color: var(--color-text-muted);
   }
 
   /*
-    The paper texture, behind the type. The media header's own rule turns
-    type white for a 0.70 navy scrim; this band keeps the dark type, so the
-    wash is a light tint instead. The cover is always the texture now (the
-    page's Zone 1 comment), so there is one wash, not a second, heavier one
-    for photographs.
+    The kicker's run: the prefix, then the byline or the date, one phrase
+    with `bfCard`'s `·` between (`.bf-card__meta`) — `GRAPHIC IMAGES · BY
+    ANTHONY T. SILBERFELD · MAR 2022`. Its own small gap, so the run reads
+    as one item of the meta row and the row's wider gap separates it from
+    the chips.
+
+    The byline's box is dissolved into the run (`display: contents`), so its
+    author and date wrap as two items of it rather than as one block that
+    drops whole to a second line. Each `·` is drawn *inside* the item it
+    precedes, so it wraps with that item and is never stranded at the end
+    of a line or alone at the start of one. The `<p>`
+    keeps its text in the accessibility tree; only its box goes. (0,3,0)
+    against the byline's scoped (0,2,0).
   */
-  .bf-article-header {
-    --color-scrim: color-mix(in srgb, var(--color-surface-page) 28%, transparent);
+  .bf-article-meta__run {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3xs);
+  }
+
+  .bf-article-header .bf-article-meta__run > .bf-byline {
+    display: contents;
+  }
+
+  .bf-article-meta__run > time::before,
+  .bf-article-meta__run .bf-byline__author::before,
+  .bf-article-meta__run .bf-byline__date::before {
+    content: "·" / "";
+    margin-inline-end: var(--space-3xs);
+  }
+
+  .bf-article-header .bf-byline {
+    margin: 0;
+    font-size: var(--size--1);
   }
 
   /*
@@ -179,23 +219,17 @@
 
   /*
     The lead image breaks out of the 60ch reading column to the site
-    measure (`.center`'s own 1100px default, less the band's padding on a
-    narrow screen), centred on the column. The image inside keeps its own
-    shape (`ratio="auto"` from the page) and never scales past its pixels,
-    so a 768px-wide infographic sits centred at 768px rather than being
-    blown up to 1100.
+    measure — `detail.css`'s `.bf-detail-lead`, which the page puts on its
+    wrapper. The image inside keeps its own shape (`ratio="auto"` from the
+    page) and never scales past its pixels, so a 768px-wide infographic
+    sits centred at 768px rather than being blown up to 1100.
 
-    Negative inline margins rather than a transform, so the break-out is
-    layout and the page's scroll width never sees a box wider than it is.
-    `100vw` counts a desktop scrollbar's gutter; the `--space-s` a side it
-    gives back is wider than one, and on a phone the result equals the
-    column exactly.
+    The player breaks out the same way, to the same width
+    (`--_bf-detail-lead-size`, declared on the band by `detail.css`).
   */
-  .bf-article-lead {
-    --_bf-article-lead-size: min(100vw - 2 * var(--space-s), var(--theme-center-measure, 1100px));
-
-    inline-size: var(--_bf-article-lead-size);
-    margin-inline: calc((100% - var(--_bf-article-lead-size)) / 2);
+  .bf-article-video {
+    inline-size: var(--_bf-detail-lead-size);
+    margin-inline: calc((100% - var(--_bf-detail-lead-size)) / 2);
   }
 
   .bf-article-body .bf-article-lead > .bf-media {
@@ -231,26 +265,233 @@
   }
 
   /*
-    The download closes the piece, so it stands a full step off the last
-    paragraph rather than at the body's paragraph gap.
+    The buttons off the page — the download and the post's outside link —
+    in one of two places.
   */
-  .bf-article-body .bf-article-download {
+  .bf-article-actions {
+    --_cluster-space: var(--space-s) var(--space-m);
+
+    align-items: center;
+  }
+
+  /*
+    `--start`, before the text: a long report's or an infographic's download,
+    its reading time, and the outside link when there is one. A hairline
+    above and below makes it read as the document's own controls, set
+    between the summary and the text, not as a promotion dropped into the
+    column. It is drawn only when a download leads it — a strip holding one
+    outside link would be a box around a lone button.
+
+    The reading time takes the header's date face — its selector is in that
+    rule — so "23 min read" reads as metadata about the piece.
+  */
+  .bf-article-actions--start {
+    padding-block: var(--space-s);
+    border-block: var(--border-width-thin) solid var(--color-base-super-light);
+  }
+
+  /* A step off whatever precedes it; flush when it opens the band (a report with no excerpt). */
+  .bf-article-body > .center > * + .bf-article-actions--start {
+    margin-block-start: var(--space-m);
+  }
+
+  /*
+    `--end` closes the piece — the download, and the outside link when the
+    start strip did not already carry it (a documentary's "Watch the
+    documentary" under its trailer). No rule around it: it is the last thing
+    in the column, so it stands a full step off the last paragraph instead of
+    at the body's paragraph gap.
+  */
+  .bf-article-body .bf-article-actions--end {
     margin-block-start: var(--space-l);
   }
+
+  /*
+    The player. A 16:9 frame at the site measure, navy until something is in
+    it. Before the press it holds a link: the poster, cover-cropped (YouTube's
+    `hq` still is letterboxed 4:3, and the crop removes exactly the bars), a
+    light navy veil, and one pill — the only thing on the frame that asks for
+    attention, so there is no mistaking what the frame does.
+
+    The link fills the frame and clips its own poster (so the hover scale
+    stays inside), not the frame, so its focus ring — drawn outside it, on
+    the page — is never cut off.
+  */
+  .bf-article-video__frame {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    background: var(--color-accent);
+  }
+
+  .bf-article-video__frame > iframe {
+    position: absolute;
+    inset: 0;
+    inline-size: 100%;
+    block-size: 100%;
+    border: 0;
+  }
+
+  .bf-article-video__facade {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    color: var(--color-accent);
+    text-decoration: none;
+  }
+
+  .bf-article-video__facade::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: color-mix(in srgb, var(--color-accent) 22%, transparent);
+    transition: background-color 400ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .bf-article-video__poster {
+    position: absolute;
+    inset: 0;
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+    transition: transform 700ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .bf-article-video__play {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    padding-block: var(--space-2xs);
+    padding-inline: var(--space-2xs) var(--space-m);
+    border-radius: var(--radius-pill);
+    background: var(--color-surface-page);
+    box-shadow: var(--shadow-elevation-medium);
+    font-family: var(--font-family-ui);
+    font-size: var(--size-0);
+    font-weight: var(--font-weight-semibold);
+    line-height: 1;
+    transition:
+      background-color 300ms cubic-bezier(0.16, 1, 0.3, 1),
+      color 300ms cubic-bezier(0.16, 1, 0.3, 1),
+      transform 300ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .bf-article-video__play svg {
+    inline-size: 2em;
+    block-size: 2em;
+    fill: var(--color-accent);
+  }
+
+  .bf-article-video__play svg path {
+    fill: var(--color-surface-page);
+  }
+
+  .bf-article-video__facade:hover .bf-article-video__poster {
+    transform: scale(1.03);
+  }
+
+  .bf-article-video__facade:hover::after {
+    background: color-mix(in srgb, var(--color-accent) 36%, transparent);
+  }
+
+  .bf-article-video__facade:is(:hover, :focus-visible) .bf-article-video__play {
+    transform: scale(1.04);
+  }
+
+  .bf-article-video__source {
+    margin-block-start: var(--space-xs);
+    font-family: var(--font-family-ui);
+    font-size: var(--size--1);
+  }
+
+  /*
+    The summary: an image and the excerpt, for the 50 posts that have
+    nothing else. Stacked, the image leads, whole — capped on a phone so a
+    tall cover leaves the words on the first screen, and on a tablet so a
+    square show-art does not take the screen.
+
+    Side by side, the excerpt keeps the **whole** reading column, on the
+    header's left edge, and the image takes only the margin the site measure
+    leaves to the right of it (the overhang, less the gap) — never less than
+    12rem, so a cover is still a cover. At the 1100px measure the overhang is
+    ~190px, so the image sits at 12rem and the excerpt keeps ~94% of the
+    column; below ~1120px the overhang drops under 12rem and every pixel the
+    image needs would come out of the words, so the summary stacks instead.
+    (It used to take up to 40% of the row from 768px, which held the excerpt
+    to ~40 characters a line under a 70-character header.)
+  */
+  .bf-article-summary {
+    display: grid;
+    gap: var(--space-m) var(--space-l);
+    align-items: start;
+  }
+
+  /* (0,3,0) through the band: `bfMedia`'s scoped `.bf-media[data-v-…]` is (0,2,0). */
+  .bf-article-body .bf-article-summary__media > .bf-media {
+    inline-size: auto;
+    max-inline-size: 100%;
+    block-size: auto;
+    max-block-size: 70svh;
+  }
+
+  .bf-article-summary__text > * + * {
+    margin-block-start: var(--space-m);
+  }
+
+  /* The excerpt's first line starts on the image's top edge, not a paragraph margin below it. */
+  .bf-article-summary__text > :first-child {
+    margin-block-start: 0;
+  }
+
+  @media (width > 768px) {
+    .bf-article-body .bf-article-summary__media > .bf-media {
+      max-block-size: 24rem;
+    }
+  }
+
+  @media (width >= 1120px) {
+    .bf-article-summary {
+      --_bf-article-summary-overhang: max(0px, (var(--_bf-detail-lead-size) - 100%) / 2);
+
+      grid-template-areas: "text media";
+
+      /*
+        The media track is the overhang less the gap, floored at 12rem. Inside
+        a track list `100%` is the summary's own width — the column plus the
+        overhang — so the overhang there is the lead size less that width, not
+        the custom property above (whose `100%` is the column's).
+      */
+      grid-template-columns: minmax(0, 1fr) max(12rem, var(--_bf-detail-lead-size) - 100% - var(--space-l));
+      inline-size: calc(100% + var(--_bf-article-summary-overhang));
+      margin-inline-end: calc(-1 * var(--_bf-article-summary-overhang));
+    }
+
+    /* Trim the lede's leading above its capitals, so the first line and the image share a top edge. */
+    .bf-article-summary__text > :first-child {
+      text-box: trim-start cap alphabetic;
+    }
+
+    .bf-article-summary__text {
+      grid-area: text;
+    }
+
+    .bf-article-summary__media {
+      grid-area: media;
+    }
+
+    .bf-article-body .bf-article-summary__media > .bf-media {
+      max-block-size: 30rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bf-article-video__facade:hover .bf-article-video__poster,
+    .bf-article-video__facade:is(:hover, :focus-visible) .bf-article-video__play {
+      transform: none;
+    }
+  }
 }
 
-@layer overrides {
-  .bf-article-header.bf-page-header--media {
-    color: var(--color-text);
-  }
-
-  .bf-article-header.bf-page-header--media .bf-breadcrumb {
-    --_bf-breadcrumb-separator-color: var(--color-text);
-    --_bf-breadcrumb-focus-color: var(--color-text);
-  }
-
-  .bf-article-header.bf-page-header--media .bf-breadcrumb__link,
-  .bf-article-header.bf-page-header--media .bf-breadcrumb__link:visited {
-    color: inherit;
-  }
-}

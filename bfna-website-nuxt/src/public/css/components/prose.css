@@ -1,22 +1,22 @@
 @layer components {
   .prose {
     --_prose-space: var(--space-s);
-  
+
     * + * { margin-top: var(--_prose-space); }
-    
+
     :is(h1, h2, h3, h4, h5, h6) {
-      --_prose-space: var(--space-l); 
-  
+      --_prose-space: var(--space-l);
+
       line-height: 1.35;
-    } 
+    }
   }
-  
-  
+
+
   .prose {
     hgroup {
       h4 ~ h2,
       h4 ~ h3 { margin-top: 0; }
-  
+
       h4:first-child {
         font-weight: 800;
         text-transform: uppercase;
@@ -24,10 +24,388 @@
       }
     }
   }
-  
-  
+
+
   .prose-layout {
     --_prose-padding-inline: 1rem;
     --_prose-max-width: 70ch;
+  }
+}
+
+/*
+ * `bfProse` — every block the body renderer emits (`components/bf/Prose.vue`,
+ * parsed by `utils/proseBlocks.ts`).
+ *
+ * The rules live here rather than in the component's scoped block because
+ * most of what `bfProse` renders — links, emphasis, footnote references — is
+ * built by `h()` in a local functional component that carries no scope id, so
+ * a scoped rule could not reach it. One stylesheet, one specificity regime:
+ * everything below is (0,1,x) or (0,2,x) through `.bf-prose`, and the article
+ * page's own refinements in `article.css` are written through the band and
+ * its `.center` at (0,3,x), so they win without a tie to break.
+ *
+ * The rhythm is the reading column's. The `.stack` gap is one length for
+ * every child; a paragraph, a list and a heading take 1em of their own size
+ * above them instead, and the set-pieces — a quotation, a figure, a table, a
+ * rule — stand a full `--space-l` off the text on both sides, so each reads
+ * as an interruption the column returns from.
+ */
+@layer components {
+  .bf-prose {
+    /* A URL written out in full breaks inside the column rather than widening the page. */
+    overflow-wrap: break-word;
+  }
+
+  .bf-prose > :is(p, h2, h3, h4, h5, h6, ul, ol) {
+    margin-block-start: 1em;
+  }
+
+  .bf-prose > :is(blockquote, figure, hr, .bf-prose__table),
+  .bf-prose > :is(blockquote, figure, hr, .bf-prose__table) + * {
+    margin-block-start: var(--space-l);
+  }
+
+  /* The UA's 40px side margins on `figure` and `blockquote` survive the reset; the column sets the width. */
+  .bf-prose > :is(blockquote, figure) {
+    margin-inline: 0;
+  }
+
+  /* The first block stays flush: the section already pads the column. */
+  .bf-prose > :first-child {
+    margin-block-start: 0;
+  }
+
+  /*
+    Links in running text are underlined: the link blue against the body's
+    near-black is a hue difference, not a 3:1 luminance one, so colour alone
+    would not mark them (WCAG 1.4.1). The line is a hairline at 40% of the
+    link's own colour, clear of the descenders, and comes up to full strength
+    on hover. Colour is the base rule's (`a:not([class])`).
+  */
+  .bf-prose a {
+    text-decoration-line: underline;
+    text-decoration-thickness: max(var(--border-width-thin), 0.06em);
+    text-decoration-color: color-mix(in srgb, currentcolor 40%, transparent);
+    text-underline-offset: 0.22em;
+    transition: text-decoration-color 160ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .bf-prose a:hover {
+    text-decoration-color: currentcolor;
+  }
+
+  .bf-prose code {
+    padding-inline: 0.2em;
+    border-radius: var(--radius-s);
+    background: var(--color-primary-alpha-05);
+    font-size: 0.9em;
+  }
+
+  /*
+    Lists hang their markers in the gutter the body text already leaves, in
+    the programme's colour — the one place in the running text the programme
+    shows, and a quiet one.
+  */
+  .bf-prose :is(ul, ol) {
+    padding-inline-start: 1.25em;
+  }
+
+  .bf-prose li + li {
+    margin-block-start: var(--space-2xs);
+  }
+
+  .bf-prose li::marker {
+    color: var(--color-program-on-light);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /*
+    An authored subhead that is not a heading — a paragraph that is one bold
+    run (`__Democratic Party (PD)__`) — keeps its element but takes a
+    heading's spacing: more room above than below, so it belongs to the
+    paragraph it introduces.
+  */
+  .bf-prose > p[data-subhead] {
+    margin-block-start: 1.75em;
+  }
+
+  .bf-prose > p[data-subhead] + * {
+    margin-block-start: var(--space-2xs);
+  }
+
+  /*
+    Headings the source wrote in capitals (PDF-derived reports: "ARE GERMANS
+    DIFFERENT WHEN IT COMES TO ISSUES OF WAR AND PEACE?"). Capitals set at a
+    heading's size and the display face's tight tracking shout; one step down
+    and opened slightly, they read as the heading they are.
+  */
+  .bf-prose > h2[data-caps] {
+    font-size: var(--size-1);
+    letter-spacing: var(--tracking-caps);
+  }
+
+  .bf-prose > :is(h3, h4, h5, h6)[data-caps] {
+    font-size: var(--size-0);
+    letter-spacing: var(--tracking-caps);
+  }
+
+  /*
+    The quotation. Most are pull quotes that restate a line of the piece, a
+    few are cited passages; both are set in the standfirst's voice —
+    Newsreader italic one step above the body — with a hanging opening mark
+    in the programme colour instead of a rule down the side. The mark is
+    typography, decorative to assistive technology (`/ ""`).
+  */
+  .bf-prose blockquote {
+    position: relative;
+    padding-inline-start: 1.1em;
+    font-size: var(--size-1);
+  }
+
+  /* 2.4em of the quotation's own size — no step of the ramp means "a mark this much larger than the text beside it". */
+  .bf-prose blockquote::before {
+    content: "\201C" / "";
+    position: absolute;
+    inset-block-start: -0.12em;
+    inset-inline-start: -0.06em;
+    color: var(--color-program-on-light);
+    font-family: var(--font-family-display);
+    font-size: 2.4em;
+    font-weight: var(--font-weight-bold);
+    line-height: 1;
+  }
+
+  /* `margin-block: 0` because `base/reset.css` removes only the block-end margin, and the UA's 1em would open the quote. */
+  .bf-prose blockquote p {
+    margin-block: 0;
+    font-family: var(--font-family-display);
+    font-size: inherit;
+    font-style: italic;
+    font-weight: var(--font-weight-normal);
+    line-height: 1.35;
+    text-wrap: pretty;
+  }
+
+  .bf-prose blockquote p + p {
+    margin-block-start: var(--space-xs);
+  }
+
+  /* A section break: a short centred hairline, not a full-width divider. */
+  .bf-prose > hr {
+    inline-size: var(--space-2xl);
+    block-size: 0;
+    margin-inline: auto;
+    border: 0;
+    border-block-start: var(--border-width-thin) solid var(--color-base-light);
+  }
+
+  /*
+    Figures sit inside the column at their own size, never scaled past their
+    pixels. The caption is set in the UI face a step below the body, so it is
+    plainly apparatus and not text.
+  */
+  .bf-prose__figure img {
+    display: block;
+    max-inline-size: 100%;
+    block-size: auto;
+    margin-inline: auto;
+  }
+
+  .bf-prose__figure figcaption {
+    margin-block-start: var(--space-xs);
+    color: var(--color-text-muted);
+    font-family: var(--font-family-ui);
+    font-size: var(--size--1);
+    line-height: 1.45;
+    text-wrap: pretty;
+  }
+
+  /*
+    A video: the insight page's player (`article.css`, `.bf-article-video__*`)
+    at the column's width — rule for rule, so a video in a body and a video
+    post read as the same object. Keep the two in step. A 16:9 frame, navy
+    until something is in it; before the press, a link filling it with the
+    poster cover-cropped (the `hq` still is letterboxed 4:3, and the crop
+    removes exactly the bars), a light navy veil and one pill. The link clips
+    its own poster, not the frame, so its focus ring is never cut off.
+  */
+  .bf-prose__embed-frame {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    background: var(--color-accent);
+  }
+
+  .bf-prose__embed-frame > iframe {
+    position: absolute;
+    inset: 0;
+    inline-size: 100%;
+    block-size: 100%;
+    border: 0;
+  }
+
+  /* (0,2,0): the running-text underline, `.bf-prose a`, is (0,1,1). */
+  .bf-prose .bf-prose__embed-facade {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    color: var(--color-accent);
+    text-decoration-line: none;
+  }
+
+  .bf-prose__embed-facade::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: color-mix(in srgb, var(--color-accent) 22%, transparent);
+    transition: background-color 400ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .bf-prose__embed-poster {
+    position: absolute;
+    inset: 0;
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+    transition: transform 700ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .bf-prose__embed-play {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    padding-block: var(--space-2xs);
+    padding-inline: var(--space-2xs) var(--space-m);
+    border-radius: var(--radius-pill);
+    background: var(--color-surface-page);
+    box-shadow: var(--shadow-elevation-medium);
+    font-family: var(--font-family-ui);
+    font-size: var(--size-0);
+    font-weight: var(--font-weight-semibold);
+    line-height: 1;
+    transition:
+      background-color 300ms cubic-bezier(0.16, 1, 0.3, 1),
+      color 300ms cubic-bezier(0.16, 1, 0.3, 1),
+      transform 300ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .bf-prose__embed-play svg {
+    inline-size: 2em;
+    block-size: 2em;
+    fill: var(--color-accent);
+  }
+
+  .bf-prose__embed-play svg path {
+    fill: var(--color-surface-page);
+  }
+
+  .bf-prose__embed-facade:hover .bf-prose__embed-poster {
+    transform: scale(1.03);
+  }
+
+  .bf-prose__embed-facade:hover::after {
+    background: color-mix(in srgb, var(--color-accent) 36%, transparent);
+  }
+
+  .bf-prose__embed-facade:is(:hover, :focus-visible) .bf-prose__embed-play {
+    transform: scale(1.04);
+  }
+
+  .bf-prose__embed-source {
+    margin-block-start: var(--space-xs);
+    font-family: var(--font-family-ui);
+    font-size: var(--size--1);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bf-prose__embed-facade:hover .bf-prose__embed-poster,
+    .bf-prose__embed-facade:is(:hover, :focus-visible) .bf-prose__embed-play {
+      transform: none;
+    }
+  }
+
+  /* A table scrolls inside its own box on a narrow screen; the page never scrolls sideways. */
+  .bf-prose__table {
+    overflow-x: auto;
+  }
+
+  .bf-prose__table table {
+    min-inline-size: 100%;
+    font-size: var(--size--1);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /*
+    Footnote references: a small raised number in the UI face, not
+    underlined (the number is the link), with a little padding so the
+    target is larger than the glyph.
+  */
+  .bf-prose__ref {
+    font-family: var(--font-family-ui);
+    font-size: 0.7em;
+    font-weight: var(--font-weight-semibold);
+    line-height: 0;
+    vertical-align: super;
+  }
+
+  .bf-prose .bf-prose__ref a {
+    padding-inline: 0.15em;
+    text-decoration-line: none;
+  }
+
+  /*
+    Notes close the piece: a hairline, a small label-sized heading, and the
+    notes a step below the body. A jump to a note (or back) lands clear of
+    the sticky nav, and the note jumped to is tinted so the eye finds it.
+  */
+  .bf-prose__notes {
+    padding-block-start: var(--space-m);
+    border-block-start: var(--border-width-thin) solid var(--color-base-super-light);
+  }
+
+  .bf-prose > .bf-prose__notes {
+    margin-block-start: var(--space-xl);
+  }
+
+  .bf-prose__notes h2 {
+    font-family: var(--font-family-ui);
+    font-size: var(--size--1);
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: var(--tracking-ui);
+    text-transform: uppercase;
+  }
+
+  .bf-prose__notes ol {
+    margin-block: var(--space-s) 0;
+    padding-inline-start: 1.75em;
+  }
+
+  .bf-prose__notes li {
+    font-size: var(--size--1);
+    line-height: 1.5;
+  }
+
+  .bf-prose :is(.bf-prose__notes li, .bf-prose__ref a):target {
+    scroll-margin-block-start: var(--space-3xl);
+  }
+
+  .bf-prose__notes li:target {
+    background-color: var(--color-program-tint);
+    box-shadow: 0 0 0 var(--space-3xs) var(--color-program-tint);
+  }
+
+  .bf-prose__back {
+    display: inline-flex;
+    margin-inline-start: var(--space-3xs);
+    color: var(--link-color);
+    vertical-align: middle;
+  }
+
+  .bf-prose__back svg {
+    inline-size: 1em;
+    block-size: 1em;
   }
 }

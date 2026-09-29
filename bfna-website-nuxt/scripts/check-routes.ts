@@ -106,15 +106,15 @@
  * legacy HTML, so an unmasked read would find `<h3>` inside a JSON string and
  * report a skip on a page that has none.
  *
- * 23 pages are **recorded, not excused**, in `HEADING_SKIP_KNOWN` — a debt
+ * One page is **recorded, not excused**, in `HEADING_SKIP_KNOWN` — a debt
  * ledger in the shape of `.github/typecheck-baseline.txt` and
- * `check-contrast.ts`'s `KNOWN_FAILURES`. One is `/insights`, the call site
- * a11y BRIEF §0 measured; 22 are insight detail pages this gate found, whose
- * bodies author `###` with no `##` above it. Every one is fixed in a page
- * template or a content document, neither of which gh#223 may edit. The ledger
- * stores the *exact* skip each page produces, so the debt can be paid but not
- * deepened, and a stale entry is printed rather than failed — see the comment
- * on the map.
+ * `check-contrast.ts`'s `KNOWN_FAILURES`: `/insights`, the call site a11y
+ * BRIEF §0 measured. There were 23; the other 22 were insight detail pages
+ * whose bodies author `###` with no `##` above it, paid in the refined pass
+ * (Sep 2026) when `bfProse` began compacting and clamping body heading ranks
+ * (`utils/proseBlocks.ts`). The ledger stores the *exact* skip each page
+ * produces, so the debt can be paid but not deepened, and a stale entry is
+ * printed rather than failed — see the comment on the map.
  *
  * **DoD-A4 — lists are lists** (a11y epic, gh#220). Two halves, because the
  * acceptance sentence has two. The **per-route** half runs in the browser and
@@ -1515,18 +1515,22 @@ const HEADING_SKIP_TREES = ['wireframes/', 'docs/']
  * `heading`, so nothing sits between the page's `h1` and the card titles.
  * **gh#230**'s call site.
  *
- * The 22 `insights/<slug>` pages — a finding this gate made, not one the audit
- * carried in. Their bodies author `### ` as the first heading with no `## `
- * above it, and the article-body band (`insights/[slug].vue:280`) passes
- * `label="Body"` and no `heading`, so `bfProse` emits an `h3` straight under
- * the page's `h1`. Two possible fixes and neither is this row's: normalise the
- * authored depth in `content/bf/insights/**` (editorial, Irene), or give the
- * body band a heading (a visible design change). Filed as a residual off
- * gh#223.
+ * The 22 `insights/<slug>` pages this gate found are **gone from it**. Their
+ * bodies author `### ` as the first heading with no `## ` above it, and
+ * `bfProse` used to emit that as an `h3` straight under the page's `h1`. It
+ * now compacts the depths a body uses onto 2, 3, 4 … and clamps each to one
+ * rank below the heading before it (`utils/proseBlocks.ts`), so those bodies
+ * open on `h2` and none skips — without touching `content/bf/insights/**` or
+ * giving the body band a visible heading, the two fixes this note used to
+ * name.
  *
- * `/search` is **not** here. Its measured `1 → 3` (BRIEF §0) exists only after
- * hydration, once a query renders result cards; the prerendered idle page has
- * no skip and this static gate correctly reports none.
+ * `/search` is **not** here, and never needed to be: its measured `1 → 3`
+ * (BRIEF §0) existed only after hydration, once a query rendered result
+ * cards, and the prerendered idle page has no skip. It is gone after
+ * hydration too since the refined pass: the result rows are `h2`
+ * (`headingLevel` 2) directly under the page's `h1`. This static gate cannot
+ * see that state; a per-route assertion of `h1 → h2` on `/search?q=democracy`
+ * would be the one to stop it coming back.
  *
  * ## The value is the skip, not just the key
  *
@@ -1548,30 +1552,7 @@ const HEADING_SKIP_TREES = ['wireframes/', 'docs/']
  */
 const HEADING_SKIP_KNOWN: ReadonlyMap<string, string> = new Map([
   /* gh#230 — the call site a11y BRIEF §0 measured. */
-  ['insights/index.html', 'h1 → h3'],
-  /* Bodies whose first authored heading is `###`. Residual off gh#223. */
-  ['insights/a-new-constellation/index.html', 'h1 → h3'],
-  ['insights/a-new-role-for-france/index.html', 'h1 → h3'],
-  ['insights/autocratization-and-the-decline-of-international-cooperation/index.html', 'h1 → h3'],
-  ['insights/dialogue-with-professor-carol-anderson/index.html', 'h1 → h3'],
-  ['insights/from-idea-to-impact/index.html', 'h1 → h3'],
-  ['insights/germanys-coalition-agreement/index.html', 'h1 → h3'],
-  ['insights/in-search-of-the-center/index.html', 'h1 → h3'],
-  ['insights/infographic-ai-research-and-development-in-the-u-s-eu-and-china/index.html', 'h1 → h3'],
-  ['insights/inside-turkeys-economy/index.html', 'h1 → h3'],
-  ['insights/interview-with-john-blackburn/index.html', 'h1 → h3'],
-  ['insights/meddle-meets-mettle/index.html', 'h1 → h3'],
-  ['insights/nafta-renegotiation-recalibrating-north-american-economic-relations/index.html', 'h1 → h3'],
-  ['insights/open-debate-and-unlikely-bedfellows/index.html', 'h1 → h3'],
-  ['insights/protecting-europes-family-ties-in-trying-times/index.html', 'h1 → h3'],
-  ['insights/shifting-identities-from-victims-to-changemakers/index.html', 'h1 → h3'],
-  ['insights/the-end-of-panda-politics/index.html', 'h1 → h3'],
-  ['insights/the-far-right-foundation/index.html', 'h1 → h3'],
-  ['insights/the-gambler/index.html', 'h1 → h3'],
-  ['insights/the-international-response-to-crisis-in-the-middle-east/index.html', 'h1 → h3'],
-  ['insights/the-turkish-german-tug-of-war/index.html', 'h1 → h3'],
-  ['insights/trans-atlantic-trade-at-the-crossroads/index.html', 'h1 → h3'],
-  ['insights/transatlantic-digital-trade/index.html', 'h1 → h3']
+  ['insights/index.html', 'h1 → h3']
 ])
 
 /**

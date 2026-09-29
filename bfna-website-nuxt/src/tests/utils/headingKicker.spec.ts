@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { splitHeadingKicker, kickerHidesFormatChip } from '../../utils/headingKicker'
+import { displayHeading, splitHeadingKicker, kickerHidesFormatChip } from '../../utils/headingKicker'
 
 /**
  * `src/utils/headingKicker.ts`. Fixtures are real `bfInsights` headings.
@@ -76,5 +76,21 @@ describe('kickerHidesFormatChip', () => {
   it('never hides for a series or a format with no chip equivalent', () => {
     expect(kickerHidesFormatChip(splitHeadingKicker('Hidden Layers: X'), 'report')).toBe(false)
     expect(kickerHidesFormatChip(splitHeadingKicker('Podcast | The Transponder'), null)).toBe(false)
+  })
+})
+
+describe('displayHeading — a heading that ends on a colon', () => {
+  it('joins a colon-ended heading to its subheading', () => {
+    expect(displayHeading('Pianissimo:', 'Brussels’ Silence on Italy’s Democratic Decline'))
+      .toBe('Pianissimo: Brussels’ Silence on Italy’s Democratic Decline')
+    expect(displayHeading('  Seven Months to Midnight: ', ' The CDU’s Governance Gamble in Saxony-Anhalt '))
+      .toBe('Seven Months to Midnight: The CDU’s Governance Gamble in Saxony-Anhalt')
+  })
+
+  it('leaves every other heading as it is, trimmed', () => {
+    expect(displayHeading('Lithium Rising', 'The Race for Critical Minerals')).toBe('Lithium Rising')
+    expect(displayHeading(' The Nuclear Option ')).toBe('The Nuclear Option')
+    expect(displayHeading('Pianissimo:', '   ')).toBe('Pianissimo:')
+    expect(displayHeading(null, 'Orphan subheading')).toBe('')
   })
 })

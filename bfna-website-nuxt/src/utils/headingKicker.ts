@@ -4,7 +4,9 @@
  * Some insight headings open with a label that is not part of the title:
  * a *format* ("Infographic: Cybersecurity", "New Publication | Lithium
  * Rising…") or a *recurring series / episode* marker ("Hidden Layers: …",
- * "Season 2, Episode 3: …"). Those render as a kicker above the title. Every
+ * "Season 2, Episode 3: …"). Those render as a kicker on the meta line under
+ * the title — the cards' `.bf-card__meta` and the article's meta row, never
+ * a label over the heading. Every
  * other `Prefix: Title` shape — an ordinary title and subtitle, "A Developing
  * Dilemma: …", "Lithium Rising: …", "Cordoned Off: …" — keeps the whole
  * heading as its title.
@@ -124,4 +126,26 @@ export function splitHeadingKicker(heading: string | null | undefined): HeadingK
 export function kickerHidesFormatChip(split: HeadingKicker, format: string | null | undefined): boolean {
   if (!split.kickerIsFormat || !split.formatType) return false
   return (format ?? 'article').split('|')[0] === split.formatType
+}
+
+/**
+ * The heading a card or row shows, when the stored heading is only the first
+ * half of the title.
+ *
+ * Three insights store a heading that ends on a colon and carry the rest of
+ * their title as the subheading — "Pianissimo:" + "Brussels' Silence on
+ * Italy's Democratic Decline". A card shows the heading and never the
+ * subheading, so it printed "Pianissimo:" with a dangling colon. For a
+ * heading that ends on `:` and a subheading that is set, the two are joined
+ * into the one title they are ("Pianissimo: Brussels' Silence on…"); every
+ * other heading is returned trimmed and unchanged, subheading or not — an
+ * ordinary subheading is a standfirst, and the detail page shows it as one.
+ *
+ * Presentation, not data: the stored fields are untouched, and the detail
+ * page still sets heading and standfirst apart.
+ */
+export function displayHeading(heading: string | null | undefined, subheading?: string | null): string {
+  const full = (heading ?? '').trim()
+  const rest = (subheading ?? '').trim()
+  return full.endsWith(':') && rest ? `${full} ${rest}` : full
 }
