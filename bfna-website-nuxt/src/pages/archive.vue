@@ -663,6 +663,15 @@ onMounted(() => {
   */
   .bf-archive-list {
     --_bf-card-row-chips-min: 7rem;
+
+    /*
+      Room around each title. The archive is a long list of titles and little
+      else, and at the row's default (no space above, `xs` below) they read
+      as one crammed column; `s` on both sides and body-like leading on a
+      wrapped title give each row its own line.
+    */
+    --_bf-card-row-padding-block: var(--space-s);
+    --_bf-card-row-title-leading: 1.3;
   }
 
   @media (prefers-reduced-motion: no-preference) {

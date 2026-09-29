@@ -764,7 +764,13 @@ if (import.meta.dev) {
     flex-flow: row wrap;
     align-items: baseline;
     gap: var(--space-2xs) var(--_bf-card-row-gap);
-    padding: 0 0 var(--space-xs);
+    /*
+      `--_bf-card-row-padding-block` is the room above and below each row
+      (one value, or start and end). The default is the tight list the
+      search results want; a long list of titles alone (`/archive`) opens it.
+    */
+    padding-block: var(--_bf-card-row-padding-block, 0 var(--space-xs));
+    padding-inline: 0;
     border-block-end: var(--border-width-thin) solid var(--color-base-super-light);
     border-radius: 0;
     background-color: transparent;
@@ -825,6 +831,12 @@ if (import.meta.dev) {
   */
   .bf-card.bf-card-row :is(h2, h3, h4) {
     flex: 1 1 0;
+
+    /*
+      `--leading-display` is set for a card's two-line title; a row title
+      that wraps reads crammed on it, so the row can open its leading.
+    */
+    line-height: var(--_bf-card-row-title-leading, var(--leading-display));
   }
 
   /*
