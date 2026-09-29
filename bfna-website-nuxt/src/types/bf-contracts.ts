@@ -996,6 +996,15 @@ export interface CardRowProps extends CardWrapperProps {
    * rather than handing the row a copy that says `archived: false`.
    */
   archiveChip?: boolean
+  /**
+   * How an insight's curated kicker (`splitHeadingKicker()`) renders.
+   * `'split'` (default): the kicker's own `.kicker` line ahead of the title,
+   * as on cards. `'inline'`: one line in the title's own face,
+   * `Kicker: Title` — for a dense list (`/archive`) where a second typeface
+   * per row reads as noise (the user's call, 2026-09-28). Either way the
+   * format chip the kicker restates is dropped.
+   */
+  kicker?: 'split' | 'inline'
 }
 
 /**

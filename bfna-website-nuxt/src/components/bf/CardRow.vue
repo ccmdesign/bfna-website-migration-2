@@ -110,7 +110,8 @@ const props = withDefaults(defineProps<CardRowProps>(), {
   headingLevel: 3,
   variant: undefined,
   kindChip: true,
-  archiveChip: true
+  archiveChip: true,
+  kicker: 'split'
 })
 
 /**
@@ -151,6 +152,18 @@ const hasHeading = computed(() => headingText.value !== '')
 const split = computed(() => isInsight(props.item)
   ? splitHeadingKicker(headingText.value)
   : { kicker: '', title: headingText.value, kickerIsFormat: false })
+
+/**
+ * `kicker="inline"` folds the kicker back into the title as `Kicker: Title`,
+ * one line in one face. The normalised kicker, not the raw heading, so the
+ * source's "New Documentary| …" and "NEW PODCAST: …" read as "Documentary: …"
+ * and "Podcast: …" like every other row.
+ */
+const inlineKicker = computed(() => props.kicker === 'inline' && split.value.kicker !== '')
+
+const titleText = computed(() => inlineKicker.value
+  ? `${split.value.kicker}: ${split.value.title}`
+  : split.value.title)
 
 /**
  * Where the row points. Two collections, two route prefixes, and the slug is
@@ -232,7 +245,7 @@ if (import.meta.dev) {
   -->
   <bfCard class="bf-card-row" :data-variant="variant" v-bind="$attrs">
     <component :is="`h${headingLevel}`" v-if="hasHeading">
-      <NuxtLink :to="to">{{ split.title }}</NuxtLink>
+      <NuxtLink :to="to">{{ titleText }}</NuxtLink>
     </component>
 
     <!--
@@ -248,7 +261,7 @@ if (import.meta.dev) {
     -->
     <bfTime v-if="insight" :date="insight.publish_date" />
 
-    <template v-if="split.kicker" #kicker>{{ split.kicker }}</template>
+    <template v-if="split.kicker && !inlineKicker" #kicker>{{ split.kicker }}</template>
 
     <template v-if="chips.length" #chips>
       <bfChip v-for="chip in chips" :key="chip" tone="neutral">{{ chip }}</bfChip>

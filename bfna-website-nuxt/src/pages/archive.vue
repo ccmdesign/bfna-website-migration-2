@@ -506,7 +506,10 @@ onMounted(() => {
             the archive and the chip sat on all 256 rows. `:kind-chip` drops
             the format chip once a format is chosen: under `?format=video`
             all 57 rows would carry an identical `VIDEO` beside a facet and a
-            count that already say "videos". The item is passed as it is.
+            count that already say "videos". `kicker="inline"` keeps a curated
+            prefix in the title's own line and face — "Hidden Layers: …" — since
+            a separate kicker on every row of a dense list read as noise (the
+            user's call, 2026-09-28). The item is passed as it is.
 
             Keyed on `slug`, which is unique across this list — every row is an
             insight, and the archived slugs are 256 distinct values since #151.
@@ -527,6 +530,7 @@ onMounted(() => {
             :heading-level="3"
             :archive-chip="false"
             :kind-chip="!selectedFormat"
+            kicker="inline"
           />
         </ul>
       </bfAccordion>
