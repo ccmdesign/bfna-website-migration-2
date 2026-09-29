@@ -169,7 +169,7 @@ const to = computed(() =>
  * always returns a label — it falls back to `'Article'` — but the insight
  * format chip is dropped when the kicker restates it ("Infographic" on an
  * infographic), so an unarchived row of that kind has no chip; the kicker
- * on the meta run after the title names the format instead.
+ * before the title names the format instead.
  *
  * `archived` is a non-nullable `boolean` on both schemas since gh#140, so the
  * truthiness test and `=== true` now agree; the truthiness form is kept because
@@ -225,10 +225,10 @@ if (import.meta.dev) {
     attribute bound to `undefined`), so an unstyled row carries no empty hook.
 
     Order is `bfCard`'s, not this file's: the heading is **first in the DOM**
-    so heading navigation lands at the start of the row, with the chips
-    pulled ahead of it visually and the kicker set after it, in the meta run
-    with the date, by the base's row modifier. Never reorder the markup to
-    change the picture.
+    so heading navigation lands at the start of the row, with the chips and
+    then the kicker pulled ahead of it visually by the base's row modifier —
+    chips, kicker, title, date, as 1899ef6 read it (the user's call,
+    2026-09-28). Never reorder the markup to change the picture.
   -->
   <bfCard class="bf-card-row" :data-variant="variant" v-bind="$attrs">
     <component :is="`h${headingLevel}`" v-if="hasHeading">

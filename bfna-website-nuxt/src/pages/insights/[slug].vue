@@ -155,12 +155,14 @@ useHead({ title: () => insight ? (insight.heading ?? 'Insight') : 'Insight not f
 
 /**
  * The visible `<h1>` and its kicker. "Infographic: Cybersecurity" sets an
- * `<h1>` reading "Cybersecurity" and puts "Infographic" at the head of the
- * meta row under it (`INFOGRAPHIC · SEP 2023`), where the cards put it too —
- * never above the heading, the one placement the family bans. An ordinary
- * "Title: Subtitle" heading is not split (`utils/headingKicker.ts` holds the
- * curated list). The `<title>` above, the crumb and the lead image's `alt`
- * keep the **full** heading.
+ * `<h1>` reading "Cybersecurity" with "Infographic" as a kicker **above** it
+ * (`bfPageHeader`'s `kicker` prop), where the cards put it too. The refined
+ * pass had moved it into the meta row under the title; the user chose the
+ * kicker above the title on 2026-09-28, so it is back where 1899ef6 set it,
+ * with the step to the `<h1>` at 85% of the old `--space-m` (`article.css`).
+ * An ordinary "Title: Subtitle" heading is not split
+ * (`utils/headingKicker.ts` holds the curated list). The `<title>` above,
+ * the crumb and the lead image's `alt` keep the **full** heading.
  */
 const headingSplit = splitHeadingKicker(insight?.heading)
 
@@ -347,37 +349,35 @@ async function play(event: MouseEvent) {
 
       The chips are **not** in `#chips`, which renders them above the `<h1>`
       as an eyebrow. They are content taxonomy, not a label for the title, so
-      they join the date in one meta row under the standfirst and the heading
-      follows the breadcrumb directly. The kicker is not passed to
-      `bfPageHeader` either, for the same reason: its `kicker` prop sets the
-      word over the `<h1>`, and it runs in the meta row instead (below).
+      they join the date in one meta row under the standfirst, and nothing
+      but the kicker (below) stands between the breadcrumb and the heading.
+
+      The kicker **is** passed to `bfPageHeader`: its `kicker` prop sets the
+      format or series word as a `<p class="kicker">` between the breadcrumb
+      and the `<h1>`. The user chose that placement on 2026-09-28 (the refined
+      pass had moved the word into the meta row); `article.css` sets the step
+      from it to the `<h1>` at 85% of 1899ef6's `--space-m`.
     -->
     <bfPageHeader
       class="bf-article-header bf-detail-header bf-detail-column"
       measure="wide"
       label="Insight header"
       :crumbs="crumbs"
+      :kicker="headingSplit.kicker"
       :heading="headingSplit.title"
       :tagline="insight.subheading"
     >
       <!--
-        The meta row: the kicker, the byline or the date, then the chips, in
-        one wrapping cluster. `bfByline` owns the "By … · date" phrase when
-        there is an author; when there is not, the date stands alone.
-
-        A split heading's kicker leads the row as one run with the byline or
-        the date — `INFOGRAPHIC · SEP 2023`, in the date's own label type,
-        exactly as `bfCardInsight` sets it under a card title. The run is one
-        item of the cluster, so the row's gap still falls between it and the
-        chips; `article.css` draws the `·` inside it.
+        The meta row: the byline or the date, then the chips, in one wrapping
+        cluster. `bfByline` owns the "By … · date" phrase when there is an
+        author; when there is not, the date stands alone.
 
         Both branches render nothing when there is nothing to say — `bfByline`
         has its own `hasContent` guard and `bfTime` renders no element for a
         null or unparseable date. The format chip renders unless the kicker
-        already names the format ("Infographic" on an infographic) — then the
-        row would say the same word twice. Both posts that drop it today
-        carry a date, and the kicker itself is in the row, so it is never
-        empty.
+        above the `<h1>` already names the format ("Infographic" on an
+        infographic) — then it would say the same word twice. Both posts that
+        drop it today carry a date, so their row is not empty.
 
         `data-chip-tone="neutral"` is `bfChip`'s container default, the hook
         `bfCard`'s chip row uses: the project and `Archive` chips, which
@@ -385,15 +385,8 @@ async function play(event: MouseEvent) {
         programme chip names its own tone and wins.
       -->
       <div class="bf-article-meta bf-detail-meta | cluster" data-gap="xs" data-chip-tone="neutral">
-        <span v-if="headingSplit.kicker" class="bf-article-meta__run">
-          <span class="bf-article-meta__kicker">{{ headingSplit.kicker }}</span>
-          <bfByline v-if="authorText" :author="authorText" :date="insight.publish_date" />
-          <bfTime v-else :date="insight.publish_date" />
-        </span>
-        <template v-else>
-          <bfByline v-if="authorText" :author="authorText" :date="insight.publish_date" />
-          <bfTime v-else :date="insight.publish_date" />
-        </template>
+        <bfByline v-if="authorText" :author="authorText" :date="insight.publish_date" />
+        <bfTime v-else :date="insight.publish_date" />
         <bfChip v-if="showFormatChip" tone="neutral">{{ formatLabel(insight.format) }}</bfChip>
         <bfChip
           v-if="program"

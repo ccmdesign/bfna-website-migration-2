@@ -98,11 +98,12 @@
  * Every value on the page still comes from `bfSection`, `bfBreadcrumb` and
  * `bfChip`'s own hooks, or from `@layer composition` resolving `.cluster` +
  * `data-gap="xs"` and `data-measure="normal"`, except for the ground rules
- * above and one rhythm rule: the title stands a full `--space-m` off whatever
- * precedes it (the trail, the chips, the kicker), because wayfinding and the
- * page's name are different things and the stack's default `--space-s` set
- * them as one run. It is written at `:where()` weight so a template's own
- * header rhythm — `article.css` sets the same step for the insight page —
+ * above and one rhythm rule: the title stands a full `--space-m` off the
+ * trail or the chips, because wayfinding and the page's name are different
+ * things and the stack's default `--space-s` set them as one run, and 85% of
+ * that off a kicker, which labels the title itself (the user's call,
+ * 2026-09-28). It is written at `:where()` weight so a template's own
+ * header rhythm — `article.css` sets the same steps for the insight page —
  * always wins over it.
  *
  * The photo rules are gh#253's, every one conditional on there being a
@@ -181,11 +182,11 @@ interface Props {
    * with the word "Infographic". The full string stays in the document
    * `<title>`, which the caller sets. Absent, `null` or `''` renders nothing.
    *
-   * **No call site passes it** since the final pass (Sep 2026): the insight
-   * page, its one user, now sets the kicker as the first run of its meta row
-   * under the `<h1>`, as the cards do, because a label over a heading is the
-   * one placement the family bans. Kept, unused, rather than removed in a
-   * design pass; a later cleanup can drop it.
+   * Its one caller is the insight page (`pages/insights/[slug].vue`). The
+   * refined pass (Sep 2026) had moved that page's kicker into the meta row
+   * under the `<h1>` and left this prop unused; the user chose the kicker
+   * above the title on 2026-09-28, so the page passes it again. The step
+   * from the kicker to the `<h1>` is 85% of the title's `--space-m`.
    */
   kicker?: string | null
   /**
@@ -604,22 +605,30 @@ const showChips = (): boolean => chipList.value.length > 0 || hasRenderedContent
   }
 
   /*
-    The title's step. Whatever precedes the `<h1>` — the trail, the chips, the
-    kicker — is about the page; the `<h1>` is the page. The stack's default
+    The title's step. Whatever precedes the `<h1>` — the trail, the chips —
+    is about the page; the `<h1>` is the page. The stack's default
     `--space-s` set the two as one run of type, so the title stands a full
     `--space-m` off it instead.
 
-    The three things that can precede it, named, so a header with no trail
+    The kicker is the exception: it labels the title rather than the page,
+    so it sits closer — 85% of that step. The user chose the kicker above
+    the title on 2026-09-28, with the gap 15% tighter than 1899ef6's.
+
+    The things that can precede it, named, so a header with no trail
     (`/search`) does not open with a margin on its first child. Not `* +`:
     Vue's scoped compiler hangs the scope attribute on the `*` and then drops
     it, leaving `+:where(…)` — an empty selector that dev never minifies and
     `lightningcss` rejects in `nuxt generate`. `:where()` so the rule carries
     no weight of its own: a template that tunes its header's rhythm
-    (`article.css` writes this same step for the insight page) always wins
+    (`article.css` writes these same steps for the insight page) always wins
     over it, and the insight header is untouched by construction.
   */
-  :where(.bf-page-header__crumbs, .bf-page-header__chips, .bf-page-header__kicker) + :where(.bf-page-header__heading) {
+  :where(.bf-page-header__crumbs, .bf-page-header__chips) + :where(.bf-page-header__heading) {
     margin-block-start: var(--space-m);
+  }
+
+  :where(.bf-page-header__kicker) + :where(.bf-page-header__heading) {
+    margin-block-start: calc(var(--space-m) * 0.85);
   }
 
   /*

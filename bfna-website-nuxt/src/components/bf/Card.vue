@@ -14,9 +14,8 @@
  *
  * Presentational-only (BRIEF D8): one prop in, four slots (default, `kicker`,
  * `chips`, `media`), nothing else. No `queryCollection`, no store, no data
- * composable. (`kicker` is the row's slot — see "No label sits above a
- * heading" below. A column card that fills it gets the label at the end of
- * its text block, on the meta voice, rather than above its title.)
+ * composable. (`kicker` sets a short label above the title — see "The
+ * kicker" below.)
  *
  * ## The family, in one place (Sep 2026)
  *
@@ -40,11 +39,15 @@
  * (the cards after it drop their pictures), and a group that still mixes the
  * two stops stretching its cards (see "Mixed groups" below).
  *
- * **No label sits above a heading.** A curated prefix split out of a title
- * ("Documentary", "Latest Issue" — `utils/headingKicker.ts`) is a run on the
- * meta line under it, `DOCUMENTARY · JUL 2026`, never an eyebrow. The column
- * wrappers render that line themselves as `.bf-card__meta`; the `kicker`
- * slot is the row modifier's, which sets it in the same run after the title.
+ * **The kicker.** A curated prefix split out of a title ("Documentary",
+ * "Latest Issue" — `utils/headingKicker.ts`) goes in the `kicker` slot and
+ * renders above the title, in the global `.kicker` type: on a column card
+ * as the first line of the text block, under the picture; on a row before
+ * the title (chips, kicker, title, date). The refined pass (Sep 2026) had
+ * moved it to the meta line under the title; the user chose the kicker
+ * above the title on 2026-09-28, with the step to the title 15% tighter
+ * than the title stack's `--space-3xs`. The date stays alone on the meta
+ * line.
  *
  * ## The card is an `<li>`
  *
@@ -209,9 +212,9 @@ if (import.meta.dev) {
         <slot />
 
         <!--
-          The row modifier's label, set after the title in the meta run.
-          Last in the DOM and never pulled above the heading: a column card
-          writes its own `.bf-card__meta` line under the title instead.
+          The kicker. Last in the DOM, so the heading stays the first
+          content, and pulled above the title with `order` — see "The
+          kicker" in the stylesheet.
         -->
         <p v-if="$slots.kicker" class="bf-card__kicker kicker">
           <slot name="kicker" />
@@ -347,7 +350,8 @@ if (import.meta.dev) {
 
   /*
     Title stack is 4px (`gap-1`): kicker, title, date. The excerpt opens that
-    up with its own margin below.
+    up with its own margin below; the kicker takes 15% of it back (see "The
+    kicker").
   */
   .bf-card__text {
     display: flex;
@@ -458,14 +462,9 @@ if (import.meta.dev) {
     letting the one fact every card carries shrink to chip size.
 
     It is the bare date (`> time`, so a `<time>` inside an excerpt is not
-    restyled), or — when a wrapper split a curated prefix out of the title —
-    a `.bf-card__meta` run of prefix and date. The row's `kicker` slot takes
-    the same voice. The global `.kicker` it also carries (blue, condensed,
-    bold, 16px) sits in `@layer defaults`, which this layer outranks.
+    restyled). The kicker is not on this line (see "The kicker" below).
   */
-  .bf-card__text > time,
-  .bf-card__text > .bf-card__meta,
-  .bf-card p.bf-card__kicker {
+  .bf-card__text > time {
     flex-shrink: 0;
     margin: 0;
     color: var(--color-text-muted);
@@ -478,21 +477,23 @@ if (import.meta.dev) {
   }
 
   /*
-    `DOCUMENTARY · JUL 2026`. A wrapping flex run, so a long prefix on a
-    narrow card breaks between its facts rather than inside one. The dot is
-    drawn, and named empty for assistive tech (`/ ""`), so a screen reader
-    reads the two facts and not "middle dot". `* + *`, so a row without a
-    date (`bfTime` renders nothing) carries no stray separator.
-  */
-  .bf-card__meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-3xs);
-  }
+    ## The kicker
 
-  .bf-card__meta > * + *::before {
-    content: "·" / "";
-    margin-inline-end: var(--space-3xs);
+    Above the title, as 1899ef6 set it: the first line of the text block
+    (under the picture on a media card), pulled there with `order` because
+    it is last in the DOM. It wears the global `.kicker` (blue, condensed,
+    bold, 16px, `base/typography.css`) untouched — this rule sets no type.
+
+    The user chose the kicker above the title on 2026-09-28, with the step
+    to the title at 85% of the title stack's `--space-3xs` gap: the negative
+    end margin takes 15% of the gap back, and the rest of the card's rhythm
+    is the stack's own.
+  */
+  .bf-card p.bf-card__kicker {
+    flex-shrink: 0;
+    order: -1;
+    margin: 0;
+    margin-block-end: calc(var(--space-3xs) * 0.85 - var(--space-3xs));
   }
 
   /*
@@ -675,6 +676,14 @@ if (import.meta.dev) {
   }
 
   /*
+    …but not above the kicker, which that plain `> p` also reaches: it
+    leads the text block, so the excerpt's step would open a gap over it.
+  */
+  .bf-card[data-span="full"]:has(> .bf-card__media) ~ .bf-card .bf-card__text > p.bf-card__kicker {
+    margin-block-start: 0;
+  }
+
+  /*
     ## Mixed groups
 
     The grids never mix — they decide media for the whole group — but a
@@ -693,7 +702,7 @@ if (import.meta.dev) {
     ## The row modifier — `.bf-card-row` (`bfCardRow`, gh#36 / issue 27)
 
     The dense list row used by search results and the archive accordion:
-    chips, linked heading, then kicker and date on **one line**, wrapping
+    chips, kicker, linked heading and date on **one line**, wrapping
     gracefully rather than stacking — and, below 36rem of row, stacked in
     the same order so every title starts at the left edge.
 
@@ -772,12 +781,13 @@ if (import.meta.dev) {
   }
 
   /*
-    The row puts its chips back in front, and sets the kicker after the
-    title as the first half of the meta run: chips, title, kicker · date,
-    then anything else a caller adds — the one-line excerpt a search row
-    carries (see "The row's excerpt" below). The kicker is last in the DOM,
-    so every item of `__text` takes an explicit place; the heading keeps DOM
-    order's lead either way.
+    The row puts its chips back in front, then the kicker before the title,
+    as 1899ef6 read it: chips, kicker, title, date, then anything else a
+    caller adds — the one-line excerpt a search row carries (see "The row's
+    excerpt" below). The user chose the kicker before the title on
+    2026-09-28, undoing the refined pass's `title, kicker · date` run. The
+    kicker is last in the DOM, so every item of `__text` takes an explicit
+    place; the heading keeps DOM order's lead either way.
   */
   .bf-card.bf-card-row .bf-card__chips {
     order: -2;
@@ -792,26 +802,11 @@ if (import.meta.dev) {
   }
 
   .bf-card.bf-card-row .bf-card__text > p.bf-card__kicker {
-    order: 1;
+    order: -1;
   }
 
   .bf-card.bf-card-row .bf-card__text > time {
     order: 2;
-  }
-
-  /*
-    `TRANSPONDER ISSUE #4 · JUN 2023`: the kicker and the date are two items
-    of the line, so the separator is drawn on the date, named empty for
-    assistive tech, and the gap between the two is taken back to the meta
-    line's own spacing. Both only when both are present.
-  */
-  .bf-card.bf-card-row:has(.bf-card__text > time) p.bf-card__kicker {
-    margin-inline-end: calc(var(--space-3xs) - var(--_bf-card-row-gap));
-  }
-
-  .bf-card.bf-card-row:has(p.bf-card__kicker) .bf-card__text > time::before {
-    content: "·" / "";
-    margin-inline-end: var(--space-3xs);
   }
 
   /*
@@ -886,6 +881,11 @@ if (import.meta.dev) {
     Written as every `<p>` of the row, then the kicker handed back its own
     layout, rather than as a `:not(.kicker)` (D-20.5 bans new `:not()`).
     The kicker rule is one class more specific, so it wins in any order.
+    Its type is handed back with `revert-layer`, which drops this layer's
+    colour, size and leading so the global `.kicker`'s (`@layer defaults`)
+    apply, as on a column card. Its end margin is zeroed: the 15% the
+    column cards take back from their title stack is theirs, and the row
+    keeps its own gaps.
   */
   .bf-card.bf-card-row .bf-card__text > p {
     display: -webkit-box;
@@ -904,9 +904,10 @@ if (import.meta.dev) {
     display: block;
     flex-basis: auto;
     overflow: visible;
-    color: var(--color-text-muted);
-    font-size: max(var(--size--2), 0.75rem);
-    line-height: 1;
+    margin-block-end: 0;
+    color: revert-layer;
+    font-size: revert-layer;
+    line-height: revert-layer;
     -webkit-line-clamp: unset;
     line-clamp: none;
   }

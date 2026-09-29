@@ -4,9 +4,10 @@
  * Some insight headings open with a label that is not part of the title:
  * a *format* ("Infographic: Cybersecurity", "New Publication | Lithium
  * Rising…") or a *recurring series / episode* marker ("Hidden Layers: …",
- * "Season 2, Episode 3: …"). Those render as a kicker on the meta line under
- * the title — the cards' `.bf-card__meta` and the article's meta row, never
- * a label over the heading. Every
+ * "Season 2, Episode 3: …"). Those render as a kicker **above** the title —
+ * `bfCard`'s `kicker` slot and `bfPageHeader`'s `kicker` prop. (The refined
+ * pass had moved it to the meta line under the title; the user chose the
+ * kicker above the title on 2026-09-28.) Every
  * other `Prefix: Title` shape — an ordinary title and subtitle, "A Developing
  * Dilemma: …", "Lithium Rising: …", "Cordoned Off: …" — keeps the whole
  * heading as its title.

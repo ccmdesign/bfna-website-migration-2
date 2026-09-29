@@ -136,10 +136,11 @@ const headingText = computed(() => (props.item.heading ?? '').trim())
  * All eight curated highlight rows split. The chip here is the literal
  * `Featured`, so no kicker ever hides it.
  *
- * Paper sets the kicker above the title; this card sets it on the meta line
- * under it (`bfCard`'s `.bf-card__meta`), because no label sits above a
- * heading anywhere in the family. The curated rows carry no date, so the
- * line is the prefix alone — `LATEST ISSUE`, `DOCUMENTARY`.
+ * Paper sets the kicker above the title, and so does this card, in
+ * `bfCard`'s `kicker` slot. The refined pass had moved it to the meta line
+ * under the title; the user chose the kicker above the title on 2026-09-28,
+ * so it is back where 1899ef6 set it, with the step to the title 15% tighter
+ * (`bfCard`'s "The kicker").
  */
 const split = computed(() => splitHeadingKicker(headingText.value))
 const kicker = computed(() => split.value.kicker)
@@ -223,9 +224,10 @@ if (import.meta.dev) {
 <template>
   <!--
     Order is `bfCard`'s, not this file's: heading **first in the DOM** so
-    heading navigation lands at the start of the card, then the meta line,
-    the excerpt and the chip on the bottom edge; only the media is pulled
-    above the heading visually. Never reorder the markup to change the picture.
+    heading navigation lands at the start of the card, then the date, the
+    excerpt and the chip on the bottom edge; only the media and the kicker
+    are pulled above the heading visually. Never reorder the markup to
+    change the picture.
   -->
   <bfCard v-bind="$attrs">
     <!--
@@ -263,18 +265,11 @@ if (import.meta.dev) {
       <NuxtLink v-else :to="`/insights/${item.slug}`">{{ titleText }}</NuxtLink>
     </component>
 
-    <!--
-      The meta line — the prefix and the date as one run when there is a
-      prefix, the bare `<time>` otherwise. Same markup as `bfCardInsight`;
-      see the note there.
-    -->
-    <div v-if="kicker" class="bf-card__meta">
-      <span class="bf-card__kicker">{{ kicker }}</span>
-      <bfTime :date="item.publish_date" />
-    </div>
-    <bfTime v-else :date="item.publish_date" />
+    <bfTime :date="item.publish_date" />
 
     <p v-if="excerptText">{{ excerptText }}</p>
+
+    <template v-if="kicker" #kicker>{{ kicker }}</template>
 
     <template #chips>
       <!--

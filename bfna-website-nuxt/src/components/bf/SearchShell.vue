@@ -491,8 +491,8 @@ const headingOf = (row: SearchResultRow): string => (row.heading ?? '').trim()
         where the slug tells them apart.
 
         Heading first in the DOM (the base's rule, never reordered): heading
-        navigation lands at the start of the row, the chips are pulled ahead
-        of it visually, and the kicker and date follow it as one meta run —
+        navigation lands at the start of the row, the chips and then the
+        kicker are pulled ahead of it visually, and the date follows it —
         the same row `bfCardRow` draws on `/archive`.
 
         `data-score` is the ranking as data (see "No relevance meter" in the

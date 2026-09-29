@@ -83,11 +83,13 @@
  *
  * A heading that opens with a curated format label or series marker
  * ("Infographic: …", "Hidden Layers: …", "Season 1, Episode 2: …") renders
- * that prefix on the meta line **under** the title, as a run with the date
- * (`INFOGRAPHIC · MAR 2026`, `bfCard`'s `.bf-card__meta`), and only the rest
- * as the linked title — `splitHeadingKicker()` in `utils/headingKicker.ts`
- * owns the list. The prefix stays out of the title (1899ef6) and never sits
- * above it: a label over a heading is the one placement the family bans.
+ * that prefix in `bfCard`'s `kicker` slot, **above** the title, and only the
+ * rest as the linked title — `splitHeadingKicker()` in
+ * `utils/headingKicker.ts` owns the list. The date stays alone on the meta
+ * line under the title. The refined pass had moved the prefix onto that
+ * line (`INFOGRAPHIC · MAR 2026`); the user chose the kicker above the
+ * title on 2026-09-28, so it is back where 1899ef6 set it, with the step
+ * to the title 15% tighter (`bfCard`'s "The kicker").
  * When the kicker restates the format chip ("Infographic" on an infographic)
  * the format chip is dropped; programme, extra and `Archive` chips stay.
  *
@@ -242,10 +244,10 @@ const programSlug = computed(() => programSlugForName(props.insight.program))
 <template>
   <!--
     Order is `bfCard`'s, not this file's: heading **first in the DOM** so
-    heading navigation lands at the start of the card, then the meta line, the
+    heading navigation lands at the start of the card, then the date, the
     excerpt, and the chips, which the base pins to the card's bottom edge. The
-    thumbnail is the only thing pulled above the heading visually. Never
-    reorder the markup to change the picture.
+    thumbnail and the kicker are the only things pulled above the heading
+    visually. Never reorder the markup to change the picture.
   -->
   <bfCard v-bind="$attrs">
     <!--
@@ -258,20 +260,11 @@ const programSlug = computed(() => programSlugForName(props.insight.program))
       <NuxtLink :to="`/insights/${insight.slug}`">{{ split.title }}</NuxtLink>
     </component>
 
-    <!--
-      The meta line. With a split prefix it is the prefix and the date as one
-      run — a `<div>`, not a `<p>`, so `bfCard`'s excerpt rule never reaches
-      it; `bfCard` draws the separator, and `bfTime` renders nothing for a
-      null date, which leaves the prefix alone on the line. Without one it is
-      the bare `<time>`, as it always was.
-    -->
-    <div v-if="split.kicker" class="bf-card__meta">
-      <span class="bf-card__kicker">{{ split.kicker }}</span>
-      <bfTime :date="insight.publish_date" />
-    </div>
-    <bfTime v-else :date="insight.publish_date" />
+    <bfTime :date="insight.publish_date" />
 
     <p v-if="excerpt && excerptText">{{ excerptText }}</p>
+
+    <template v-if="split.kicker" #kicker>{{ split.kicker }}</template>
 
     <template #chips>
       <bfChip v-if="showFormatChip" tone="neutral">{{ formatLabel(insight.format) }}</bfChip>

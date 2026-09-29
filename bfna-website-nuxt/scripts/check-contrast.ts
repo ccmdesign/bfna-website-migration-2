@@ -859,8 +859,10 @@ function buildPairs(): Pair[] {
     can land on, as the scrim pairs below take a blown-out photograph; the
     texture's median under the same wash is ~#EEF1F4.
 
-    - `--color-accent` is the masthead's small meta ink (the article's date,
-      byline and kicker, 13–15px semibold), so it is held to 4.5.
+    - `--color-accent` is the masthead's small meta ink (the article's date
+      and byline, 13–15px semibold), so it is held to 4.5. The kicker sits
+      above the `<h1>` again (the user's call, 2026-09-28) in the global
+      `.kicker`'s `--color-blue`, not in this ink.
     - `--color-text-muted` is held to 3:1 only — large text and graphics.
       It measures ~3.9 here and ~4.4 on the median: under 4.5 either way,
       so it is not a small-text colour on paper, and this pair is the

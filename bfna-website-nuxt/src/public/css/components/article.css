@@ -103,6 +103,20 @@
    */
 
   /*
+    The kicker — a heading's format or series prefix
+    (`utils/headingKicker.ts`), `bfPageHeader`'s `<p class="kicker">` — sits
+    between the breadcrumb and the `<h1>`, in the global `.kicker` type. The
+    user chose that placement on 2026-09-28, undoing the refined pass's move
+    of the word into the meta row. The breadcrumb-to-kicker step is the
+    header stack's own `--space-s`, as at 1899ef6; the kicker-to-title step
+    is 85% of the `--space-m` it had then, so the label reads as part of the
+    title group. (0,3,0), above `detail.css`'s (0,2,0) `<h1>` step.
+  */
+  .bf-article-header .bf-page-header__kicker + .bf-page-header__heading {
+    margin-block-start: calc(var(--space-m) * 0.85);
+  }
+
+  /*
     Standfirst — the subheading, read as the second half of the title, so
     it sits tight under it. Newsreader italic one step above the body
     (`--size-1`, ~19px → ~27px): at `--size-0` it was the body's own size
@@ -129,10 +143,7 @@
     Card date (`.bf-card__text > time`) is 0.75rem. One step up that ramp
     is `--size--1`. The byline's author run takes the same step and face so
     "By … · date" reads as one line of metadata rather than a 20px name
-    beside a 14px date. The kicker — a heading's format or series prefix
-    (`utils/headingKicker.ts`) — is the first run of the same line, as it
-    is on the cards (`INFOGRAPHIC · SEP 2023`), never a label over the
-    `<h1>`. The body's reading time ("23 min read",
+    beside a 14px date. The body's reading time ("23 min read",
     `.bf-article-actions__meta`) is the same kind of fact and wears the same.
 
     Two inks, because the two sit on two grounds. The masthead's meta is on
@@ -148,7 +159,6 @@
   */
   .bf-article-header time,
   .bf-article-header .bf-byline__author,
-  .bf-article-meta__run,
   .bf-article-actions__meta {
     margin: 0;
     font-family: var(--font-family-ui);
@@ -160,46 +170,12 @@
   }
 
   .bf-article-header time,
-  .bf-article-header .bf-byline__author,
-  .bf-article-meta__run {
+  .bf-article-header .bf-byline__author {
     color: var(--color-accent);
   }
 
   .bf-article-actions__meta {
     color: var(--color-text-muted);
-  }
-
-  /*
-    The kicker's run: the prefix, then the byline or the date, one phrase
-    with `bfCard`'s `·` between (`.bf-card__meta`) — `GRAPHIC IMAGES · BY
-    ANTHONY T. SILBERFELD · MAR 2022`. Its own small gap, so the run reads
-    as one item of the meta row and the row's wider gap separates it from
-    the chips.
-
-    The byline's box is dissolved into the run (`display: contents`), so its
-    author and date wrap as two items of it rather than as one block that
-    drops whole to a second line. Each `·` is drawn *inside* the item it
-    precedes, so it wraps with that item and is never stranded at the end
-    of a line or alone at the start of one. The `<p>`
-    keeps its text in the accessibility tree; only its box goes. (0,3,0)
-    against the byline's scoped (0,2,0).
-  */
-  .bf-article-meta__run {
-    display: inline-flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: var(--space-3xs);
-  }
-
-  .bf-article-header .bf-article-meta__run > .bf-byline {
-    display: contents;
-  }
-
-  .bf-article-meta__run > time::before,
-  .bf-article-meta__run .bf-byline__author::before,
-  .bf-article-meta__run .bf-byline__date::before {
-    content: "·" / "";
-    margin-inline-end: var(--space-3xs);
   }
 
   .bf-article-header .bf-byline {
