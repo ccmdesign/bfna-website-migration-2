@@ -3,18 +3,43 @@
  * `bfSearchShell` — the search UI shell (issue 43 / gh#52).
  *
  * The search page's four moving parts — the query control, the facet row, the
- * result list with its bespoke relevance meter, and the empty state — lifted
- * out of `pages/wireframes/search.vue` (frozen, D2) into one props-in/
- * events-out organism.
+ * ranked result list and the empty state — lifted out of
+ * `pages/wireframes/search.vue` (frozen, D2) into one props-in/events-out
+ * organism.
  *
  * **It computes nothing it draws.** No `queryCollection`, no `useWfContent`,
  * no store, no ranking, no `topScore` normalisation, no indexing (BRIEF D8;
- * spec § Out of scope). Every number on the screen — the count, the rank, the
- * percentage, the width of the bar — is read from a value issue 54's page
- * handed over. The one piece of state this component owns is the *draft* of
- * what has been typed since the last debounce window closed, and it owns that
- * only because it now owns the emit boundary that the wireframe's page-local
- * `ref` used to own.
+ * spec § Out of scope). The count and the order of the rows are read from
+ * values issue 54's page handed over. The one piece of state this component
+ * owns is the *draft* of what has been typed since the last debounce window
+ * closed, and it owns that only because it now owns the emit boundary that
+ * the wireframe's page-local `ref` used to own.
+ *
+ * ## No relevance meter (refined pass, Sep 2026)
+ *
+ * Every row used to end in `#1 · 100%` and a black bar — the frozen source's
+ * picture of `score`. It was a debugging readout: the scorer is lexical (D4),
+ * so twenty rows for "democracy" all read `100%`, and the one fact it could
+ * carry — the ranking — is already the `<ol>`'s order and the count line's
+ * "ranked by relevance". The visitor sees the order; nobody sees the number.
+ *
+ * `score` stays in the contract and still arrives normalised to 0–1. It is
+ * written onto each row as `data-score`, so the ranking stays inspectable in
+ * the DOM — by a probe, or by whoever tunes the weights — without drawing
+ * anything.
+ *
+ * ## Two slots, both optional
+ *
+ * - **`facets`** replaces the single facet row. `SearchShellProps.filters` is
+ *   one flat group; `/search` wants two captioned groups (Format, Program),
+ *   the same pair `/insights` shows, so a reader meets one facet vocabulary
+ *   on both pages. A page that fills the slot passes an empty `filters` and
+ *   owns its bars. Unfilled, the shell renders `filters` as before.
+ * - **`empty`** replaces the no-results block. The shell cannot tell *why*
+ *   there are no rows — no query yet, nothing matched, or facets that
+ *   filtered every match away — and each wants different words and a
+ *   different way out. The page knows; unfilled, the frozen source's
+ *   "No results" block renders as before.
  *
  * ## What it composes, and what it deliberately does not
  *
@@ -160,9 +185,9 @@
  *   looks like a tidy-up. The markup, the role and the dropped-when-empty query
  *   clause moved across unchanged (D27); this component's behaviour did not
  *   change at all.
- * - The meter bar is `aria-hidden`: it is a picture of the percentage in the
- *   text label beside it, and announcing it twice is worse than once. The
- *   frozen source made the same call.
+ * - The count line drops its ", ranked by relevance" clause at zero: there is
+ *   no order to describe, and "0 results for “x”, ranked by relevance" is a
+ *   sentence about nothing.
  * - `#130`: a row with an empty heading renders **no heading and no anchor**
  *   rather than a card-sized stretched link with no accessible name.
  */
@@ -261,38 +286,25 @@ watch(
 
 onBeforeUnmount(cancel)
 
-/* --- the relevance meter ------------------------------------------------- */
-
-/**
- * The wireframe's own arithmetic, with the normalisation removed.
- *
- * `search.vue:59-62` writes `Math.round((r.score / topScore) * 100)` for the
- * label and `Math.max(6, that * 1.6)` px for the bar. The division is the
- * page's job here (issue 54 owns `topScore`), so `score` arrives already in
- * 0–1 and this only clamps it: a score outside the range is a page bug, and a
- * page bug must not become a bar wider than its container.
- */
-const percentOf = (row: SearchResultRow): number =>
-  Math.round(Math.min(Math.max(row.score, 0), 1) * 100)
-
-/**
- * The width, as a custom property rather than as an inline `width:`.
- *
- * The distinction is the whole point of the port (spec § Scope): an inline
- * `width` declaration cannot be outranked by any author rule, so the frozen
- * source's bar is un-restyleable by a consumer — the `bfMedia` lesson from
- * gh#26. A custom property is *data* the CSS rule reads, so the rule keeps
- * owning the property and a consumer can still override either one.
- *
- * `Math.max(6, …)` is the frozen source's floor, kept: a bar for a
- * near-zero score should still be visible as an empty-ish bar rather than
- * vanish, because a missing bar reads as "no meter" rather than "low score".
- */
-const meterStyle = (row: SearchResultRow): Record<string, string> => ({
-  '--_bf-search-shell-meter-width': `${Math.max(6, percentOf(row) * 1.6)}px`
-})
-
 /* --- rows ---------------------------------------------------------------- */
+
+/**
+ * The score as data, not as a picture — see "No relevance meter" above.
+ *
+ * Clamped, because `score` is contracted to 0–1 and a value outside it is a
+ * page bug that should read as the nearest bound rather than as a new number;
+ * and fixed to two places, because the attribute is for reading and a float
+ * with sixteen digits is not.
+ */
+const scoreOf = (row: SearchResultRow): string =>
+  Math.min(Math.max(row.score, 0), 1).toFixed(2)
+
+/**
+ * The count line's trailing clause — only while there is an order to name.
+ */
+const countSuffix = computed<string | undefined>(() =>
+  props.resultCount > 0 ? ', ranked by relevance' : undefined
+)
 
 /**
  * `#130`, as on every card wrapper: an empty heading means no heading element
@@ -333,11 +345,18 @@ const headingOf = (row: SearchResultRow): string => (row.heading ?? '').trim()
       A block box that becomes the stack's **first** child, so `.stack > * + *`
       still draws the same gap between the same visible boxes as before, and
       `.bf-form-field`'s own root rule (`FormField.vue:290`) declares no block
-      margin for `.stack > * { margin-block: 0 }` to have been zeroing. No
-      layout rule of its own is needed and none is written — D23/D32: this pass
-      adds no visual property.
+      margin for `.stack > * { margin-block: 0 }` to have been zeroing.
+
+      `data-measure="normal"` (refined pass): a query is a sentence, not a
+      table row, and a field running the full 1100px column left a caret
+      adrift in a white bar at desktop. Capped at the reading measure the
+      page's tagline and prompt already use, it lines up with them.
     -->
-    <form class="bf-search-shell__form" @submit.prevent="onSubmit">
+    <form
+      class="bf-search-shell__form"
+      data-measure="normal"
+      @submit.prevent="onSubmit"
+    >
       <!--
         The query control. `type="search"` needs no widening: `FormFieldProps.
         type` is a deliberately open `string` handed straight to
@@ -385,9 +404,20 @@ const headingOf = (row: SearchResultRow): string => (row.heading ?? '').trim()
       array `bfFilterBar` emits is forwarded **as it arrives** — it is already
       a new array, never the mutated prop, which is a guarantee this component
       would only weaken by rebuilding it.
+
+      A filled `facets` slot takes the row's place, in the same position and
+      under the same hooks, so the count line and the results follow it
+      exactly as they follow the single bar.
     -->
+    <div
+      v-if="$slots.facets"
+      class="bf-search-shell__facets"
+      data-bf-search-shell="facets"
+    >
+      <slot name="facets" />
+    </div>
     <bfFilterBar
-      v-if="filters.length"
+      v-else-if="filters.length"
       class="bf-search-shell__facets"
       data-bf-search-shell="facets"
       :filters="filters"
@@ -414,14 +444,15 @@ const headingOf = (row: SearchResultRow): string => (row.heading ?? '').trim()
       *look* like #233 had landed.
 
       `suffix` carries the comma. How the trailing clause joins the sentence is
-      this caller's sentence to write, not the atom's to guess.
+      this caller's sentence to write, not the atom's to guess — and it is
+      written only while there are rows to be in an order (`countSuffix`).
     -->
     <bfResultCount
       class="bf-search-shell__count"
       data-bf-search-shell="count"
       :count="resultCount"
       :query="query"
-      suffix=", ranked by relevance"
+      :suffix="countSuffix"
     />
 
     <!--
@@ -449,23 +480,30 @@ const headingOf = (row: SearchResultRow): string => (row.heading ?? '').trim()
         D-43.1 in the block comment above for why this is the base plus its
         row modifier rather than `<bfCardRow>`.
 
-        Keyed on `to`, **not** on `slug`. A slug is unique within a collection
-        and this list is deliberately cross-collection — issue 54's ranking
-        pool merges insights, projects and people, and a person and a project
-        may honestly share one. Two rows with the same key is a Vue warning at
-        best and a row rendering another row's content at worst; `to` is the
-        route, which is unique by construction (review finding gh#52-P2-1).
+        Keyed on `to` **and** `slug`, neither alone. A slug is unique within a
+        collection and this list is deliberately cross-collection — issue 54's
+        ranking pool merges insights, projects and people, and a person and a
+        project may honestly share one (review finding gh#52-P2-1). But `to`
+        is not unique either: every person routes to `/about#team`, so a query
+        matching two people ("nato") keyed two rows alike — a Vue warning,
+        and a row free to render another's content (refined pass, Sep 2026).
+        Together they are: rows that share a route come from one collection,
+        where the slug tells them apart.
 
         Heading first in the DOM (the base's rule, never reordered): heading
-        navigation lands at the start of the row, and `.bf-card__chips`'s
-        `order: -2` (with the kicker's `-1`) pulls the chips and then the
-        kicker ahead of it visually.
+        navigation lands at the start of the row, the chips are pulled ahead
+        of it visually, and the kicker and date follow it as one meta run —
+        the same row `bfCardRow` draws on `/archive`.
+
+        `data-score` is the ranking as data (see "No relevance meter" in the
+        block comment); it draws nothing.
       -->
       <bfCard
-        v-for="(row, index) in results"
-        :key="row.to"
+        v-for="row in results"
+        :key="`${row.to} ${row.slug}`"
         class="bf-card-row bf-search-shell__row"
         data-bf-search-shell="row"
+        :data-score="scoreOf(row)"
       >
         <component :is="`h${headingLevel}`" v-if="headingOf(row)">
           <NuxtLink :to="row.to">{{ headingOf(row) }}</NuxtLink>
@@ -482,32 +520,28 @@ const headingOf = (row: SearchResultRow): string => (row.heading ?? '').trim()
         <bfTime v-if="row.date" :date="row.date" />
 
         <!--
-          The relevance meter. `flex-basis: 100%` in this file's own layer puts
-          it on its own line under the row rather than in the baseline run with
-          the chip, the heading and the date — the frozen source's arrangement.
-
-          The bar is `aria-hidden`: it is a picture of the percentage already
-          in the text beside it.
+          The excerpt, when the page hands one over: a line of its own under
+          the title and meta run, clamped to one line by the row modifier
+          ("The row's excerpt" in `Card.vue`). It tells two similar titles
+          apart before either is opened. A plain string, like every other
+          field of the row.
         -->
-        <p
-          class="bf-search-shell__meter | cluster"
-          data-gap="xs"
-          data-bf-search-shell="meter"
-          :style="meterStyle(row)"
-        >
-          <span class="bf-search-shell__rank">#{{ index + 1 }} · {{ percentOf(row) }}%</span>
-          <span
-            class="bf-search-shell__bar"
-            data-bf-search-shell="bar"
-            aria-hidden="true"
-          />
-        </p>
+        <p v-if="row.excerpt">{{ row.excerpt }}</p>
 
         <template v-if="row.kicker" #kicker>{{ row.kicker }}</template>
 
-        <template v-if="row.chip || row.archived" #chips>
-          <bfChip v-if="row.chip">{{ row.chip }}</bfChip>
-          <bfChip v-if="row.archived">Archive</bfChip>
+        <!--
+          Filled on every row, chips or none, so every row has the chip
+          cluster: on a wide row it is the fixed track the titles line up
+          after (see "The chip track" at the foot of this file), and a row
+          whose kicker already names its format keeps the track open as an
+          empty cell rather than pulling its title back to the edge. Empty,
+          it holds only Vue's comment anchors, so it names nothing to
+          assistive tech, and a narrow row drops it.
+        -->
+        <template #chips>
+          <bfChip v-if="row.chip" tone="neutral">{{ row.chip }}</bfChip>
+          <bfChip v-if="row.archived" tone="neutral">Archive</bfChip>
         </template>
       </bfCard>
     </ol>
@@ -531,15 +565,28 @@ const headingOf = (row: SearchResultRow): string => (row.heading ?? '').trim()
       `2`, not `headingLevel`: the rows' rank is a caller's choice, but this
       heading is the band's own, one level under the page title, whatever the
       rows are. Probe 43 § 6 asserts the element, not just the text.
+
+      Since the refined pass the block is the **fallback** of the `empty`
+      slot, inside one wrapper that carries the class and the `data-` hook
+      whichever renders — so a page that says something else in this place
+      is still addressed by the same name. The wrapper is a `stack`, because
+      a page's answer here is usually more than one thing: a reply, then a
+      way on.
     -->
-    <bfEmptyState
+    <div
       v-else
-      class="bf-search-shell__empty"
+      class="bf-search-shell__empty | stack"
+      data-gap="l"
       data-bf-search-shell="empty"
-      heading="No results"
-      message="No records matched — try fewer or different words."
-      :heading-level="2"
-    />
+    >
+      <slot name="empty">
+        <bfEmptyState
+          heading="No results"
+          message="No records matched — try fewer or different words."
+          :heading-level="2"
+        />
+      </slot>
+    </div>
   </search>
 </template>
 
@@ -555,12 +602,22 @@ const headingOf = (row: SearchResultRow): string => (row.heading ?? '').trim()
   mis-lowers a `:not()` containing a complex selector and silently breaks the
   rule. Nothing here needs one.
 
-  No new colour (BRIEF §5 rule 2). The bar's paint is `--color-text`, the same
-  existing semantic token the frozen source's `#222` resolves to, reached
-  through a hook so a consumer can retune it without a second declaration.
+  No colour at all: the rows are `bfCard`'s row modifier and the empty state
+  is `bfEmptyState`, each painting itself. The relevance meter's three hooks
+  and its bar went with the meter (refined pass, Sep 2026). What the shell
+  sets on its rows from outside is the chip track: a floor through `bfCard`'s
+  hook on the list, and one `@layer overrides` rule at the foot of the file.
 */
 @layer components {
   .bf-search-shell__results {
+    /*
+      The rows' chip track, inherited by every row — see the foot of this
+      file — and the excerpt set under the titles rather than under the
+      chips: the floor plus the row's column gap (`bfCard`'s `xs` default).
+    */
+    --_bf-card-row-chips-min: 12.5rem;
+    --_bf-card-row-excerpt-indent: calc(var(--_bf-card-row-chips-min) + var(--space-xs));
+
     /*
       An `<ol>` inside `@layer composition`'s `.stack` — the markers and the
       indent are the browser's defaults, and the frozen source turns both off
@@ -578,78 +635,39 @@ const headingOf = (row: SearchResultRow): string => (row.heading ?? '').trim()
     list-style: none;
     padding-inline-start: 0;
   }
+}
 
-  .bf-search-shell__meter {
-    /*
-      The meter's three hooks, declared **here** rather than on the bar itself,
-      and that placement is load-bearing rather than tidy.
+/*
+  ## The chip track
 
-      The `:style` binding in the template sets
-      `--_bf-search-shell-meter-width` on *this* element. A custom property
-      declared in a rule on the **bar** would then beat the value inherited
-      from this element — a declaration on the element always wins over
-      inheritance, whatever the layer — and every bar would silently draw at
-      the 6px floor with the per-row value sitting one node up, unused. (It
-      did, on the first run; probe 43 § 2 caught it.)
+  A wide row is one line: chips, then the title. The chips' width set where
+  each title began, so a list mixing `ARTICLE`, `ARTICLE · ARCHIVE` and
+  `INFOGRAPHIC · ARCHIVE` started its titles up to ~120px apart, and a reader
+  scanning down the title column lost its edge from row to row. The relevance
+  meter used to hide that ragged edge; with the meter gone it showed.
 
-      Declared on the element the inline property lands on, the cascade
-      resolves the way it reads: inline value if there is one, this default
-      otherwise, inherited by the bar either way.
-    */
-    --_bf-search-shell-meter-width: 6px;
-    --_bf-search-shell-meter-height: 6px;
-    --_bf-search-shell-meter-color: var(--color-text);
+  So the list gives the rows' chip cluster a floor as wide as the widest chip
+  set a result can carry, through `bfCard`'s own `--_bf-card-row-chips-min`
+  hook ("The chip track" in `Card.vue`, which owns the container condition),
+  and every title starts at the same x. The widest set is `INFOGRAPHIC` +
+  `ARCHIVE`: 196.7px at the top of the fluid ramp (the chip text is a fixed
+  step, the padding and the gap grow), so `12.5rem` covers it with a few
+  pixels to spare at every width. A documented floor, not a token: it is a
+  measurement of these labels, not a step of the scale. A new chip label
+  wider than `INFOGRAPHIC` needs it re-measured. Set on the list (the
+  `.bf-search-shell__results` rule above), and inherited by every row.
 
-    /*
-      A full-width flex item, so the meter wraps onto its own line beneath the
-      chip/heading/date run instead of joining it. `.bf-card.bf-card-row` is
-      `flex-wrap: wrap`, which is what makes a 100% basis a line break rather
-      than an overflow.
-    */
-    flex-basis: 100%;
-
-    /*
-      The row's own baseline alignment is right for three runs of text and
-      wrong for a text label beside a 6px bar, which would sit on the text's
-      baseline rather than through it.
-    */
-    align-items: center;
-
-    /* `.cluster` is `flex-wrap: wrap`; a bar that wrapped under its own label
-       would read as a second, empty row. The pair is one unit. */
-    flex-wrap: nowrap;
-    margin-block: 0;
-    font-size: var(--size--1);
-  }
-
-  .bf-search-shell__rank {
-    /*
-      A floor, not a fixed width: it keeps the bars of consecutive rows
-      left-aligned with each other (the frozen source's `min-width: 4.5rem`)
-      while still letting a three-digit rank push the bar right rather than
-      overflow the label.
-    */
-    min-inline-size: 4.5rem;
-  }
-
-  .bf-search-shell__bar {
-    /*
-      Consumes the three hooks and declares none of them — see the note on
-      `.bf-search-shell__meter` above for why re-declaring them here would
-      shadow the per-row inline value rather than default it.
-
-      The width arrives as a custom **property**, which is data this rule
-      reads; an inline `width:` declaration — which is what the frozen
-      `search.vue:61` writes — would be un-outrankable by any author rule
-      (the `bfMedia` lesson, gh#26). Probe 43 § 2 asserts both halves: the
-      widths differ per score, and no element in the meter carries an inline
-      `width`.
-    */
-    display: inline-block;
-    flex: none;
-    inline-size: var(--_bf-search-shell-meter-width);
-    block-size: var(--_bf-search-shell-meter-height);
-    background-color: var(--_bf-search-shell-meter-color);
+  Below the row's 36rem the row stacks (chips on a line of their own, the
+  title under them from the left edge), which already aligns every title;
+  there the empty cluster of a chipless row would only add a blank line, so
+  it goes. `@layer overrides`: that one rule reaches into `bfCard`'s row from
+  outside it.
+*/
+@layer overrides {
+  @container bf-card-row (max-width: 36rem) {
+    .bf-search-shell__row :deep(.bf-card__chips:empty) {
+      display: none;
+    }
   }
 }
 </style>

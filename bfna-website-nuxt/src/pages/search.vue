@@ -23,7 +23,7 @@
  *
  * ## What this page owns, and what it does not
  *
- * Three things, and `bfSearchShell` (gh#52) draws all of them:
+ * Four things, and `bfSearchShell` (gh#52) draws most of them:
  *
  * 1. **The pool.** `useBfInsights().items` + `useBfProjects().projects()` +
  *    `useBfPeople().people()`, each mapped to the `SearchResultRow`
@@ -41,7 +41,15 @@
  * 3. **The URL.** `q`, `program` and `format` are read from `route.query` and
  *    written back through `navigateTo`, so `/search?q=democracy` deep-links,
  *    survives a reload and prerenders. The wireframe's three page-local `ref`s
- *    are gone; this page holds no query state of its own at all.
+ *    are gone; the only state this page holds is how many rows are showing.
+ * 4. **The three states** (refined pass, Sep 2026) — the words and the way
+ *    on for each, through the shell's `facets` and `empty` slots:
+ *    - *not asked yet* — the prompt, then a way to browse instead;
+ *    - *nothing matched* — the frozen source's "No results", then the same
+ *      way to browse;
+ *    - *facets filtered every match away* — says so, counts what the query
+ *      found without them, and offers to clear them. Telling that reader to
+ *      "try different words" sends them to fix the one thing that worked.
  *
  * ## `/search` is not seeded into `nitro.prerender.routes`
  *
@@ -57,8 +65,9 @@ import { useBfInsights } from '~/composables/data/useBfInsights'
 import { useBfPeople } from '~/composables/data/useBfPeople'
 import { useBfPrograms } from '~/composables/data/useBfPrograms'
 import { useBfProjects } from '~/composables/data/useBfProjects'
+import { programChipLabel } from '~/utils/bf-card-program'
 import { formatLabel } from '~/utils/format'
-import { kickerHidesFormatChip, splitHeadingKicker } from '~/utils/headingKicker'
+import { displayHeading, kickerHidesFormatChip, splitHeadingKicker } from '~/utils/headingKicker'
 
 defineOptions({ name: 'SearchPage' })
 
@@ -88,33 +97,21 @@ const FORMATS: Filter[] = [
 ]
 
 /**
- * One flat vocabulary, with the family carried in the key.
+ * The program facets, keyed by **slug** and labelled with the site's one
+ * programme chip label (`programChipLabel`) — the same split and the same
+ * words `/insights` uses for its `area` facet, so `?program=democracy` is a URL a
+ * person can read and type, and the same key `bfFilterBar`'s `tone="program"`
+ * paints each chip from.
  *
- * `SearchShellProps` takes a single `Filter[]` and a single `selectedFilters:
- * string[]`, and its contract note says why: *"which facets exist, and whether
- * they are one group or two, is a page decision. This shell renders exactly
- * the group it is given."* The frozen source writes two hand-rolled chip rows
- * with identical markup; here the two families are distinguished by a
- * `program:` / `format:` key prefix and mapped back onto the two separate
- * query parameters below. One group, one accessible name, two URL keys.
- *
- * Programs are keyed by **slug** and labelled by name — the same split
- * `/insights` makes for its `area` facet, so `?program=democracy` is a URL a
- * person can read and type.
+ * Two vocabularies, two bars. Until the refined pass this page folded both
+ * families into one `Filter[]` with a `program:`/`format:` key prefix, because
+ * `bfSearchShell` rendered exactly one bar; it now takes a `facets` slot, so
+ * the page draws the captioned Format and Program pair `/insights` draws, and
+ * a reader meets one facet vocabulary on both pages.
  */
-const PROGRAM_PREFIX = 'program:'
-const FORMAT_PREFIX = 'format:'
-
-const filters = computed<Filter[]>(() => [
-  ...programs().map(program => ({
-    key: `${PROGRAM_PREFIX}${program.slug}`,
-    label: program.name
-  })),
-  ...FORMATS.map(format => ({
-    key: `${FORMAT_PREFIX}${format.key}`,
-    label: format.label
-  }))
-])
+const programFilters = computed<Filter[]>(() =>
+  programs().map(program => ({ key: program.slug, label: programChipLabel(program.name) }))
+)
 
 /* --- URL state ----------------------------------------------------------- */
 
@@ -140,13 +137,8 @@ const selectedFormat = computed<string | undefined>(() => readQuery('format'))
  */
 const hasQuery = computed<boolean>(() => query.value.trim().length > 1)
 
-/** The selection, projected out of the two query parameters. */
-const selectedFilters = computed<string[]>(() =>
-  [
-    selectedProgram.value ? `${PROGRAM_PREFIX}${selectedProgram.value}` : undefined,
-    selectedFormat.value ? `${FORMAT_PREFIX}${selectedFormat.value}` : undefined
-  ].filter((key): key is string => key !== undefined)
-)
+/** One parameter as a `bfFilterBar` selection: none, or the one key. */
+const asSelection = (value: string | undefined): string[] => (value ? [value] : [])
 
 /**
  * Write the URL. The whole query is rebuilt from the current values plus the
@@ -188,24 +180,44 @@ const go = (
 const onQuery = (value: string) => go({ q: value || undefined }, true)
 
 /**
- * Facets, back into two parameters. Single-select per family, as the frozen
+ * A facet, back into its parameter. Single-select per family, as the frozen
  * source behaves: `bfFilterBar` emits the full new selection, so the key that
- * is not the current one is the one just switched on, and an empty family is
- * the current one switched off.
+ * is not the current one is the one just switched on, and an empty selection
+ * is the current one switched off.
  */
-const onFilters = (selection: string[]) => {
-  const pick = (prefix: string, current: string | undefined): string | undefined => {
-    const keys = selection
-      .filter(key => key.startsWith(prefix))
-      .map(key => key.slice(prefix.length))
+const onFacet = (family: 'program' | 'format', selection: string[]) => {
+  const current = family === 'program' ? selectedProgram.value : selectedFormat.value
+  const next = selection.find(key => key !== current) ?? selection[0]
+  return family === 'program' ? go({ program: next }) : go({ format: next })
+}
 
-    return keys.find(key => key !== current) ?? keys[0]
-  }
+/**
+ * The way out of a filtered-to-nothing result: both families off, query kept.
+ *
+ * Then focus moves, because the control that was pressed does not survive
+ * the press. "Clear filters" lives in the empty state, and clearing brings
+ * the rows back in its place, so the focused button leaves the DOM and a
+ * keyboard or screen-reader reader is dropped onto `<body>`, at the top of
+ * the page, just as their results arrive (WCAG 2.4.3). Once the URL has
+ * changed and the rows have rendered, focus goes to the first result's link:
+ * the thing they cleared the filters to reach, and it announces itself. The
+ * count line has already said how many there are.
+ *
+ * Clearing always brings rows back (`filteredOut` means the query matched
+ * without the facets), so the fallback, the count line made focusable for
+ * this once, is a guard rather than a path.
+ */
+const clearFacets = async () => {
+  await go({ program: undefined, format: undefined })
+  await nextTick()
 
-  return go({
-    program: pick(PROGRAM_PREFIX, selectedProgram.value),
-    format: pick(FORMAT_PREFIX, selectedFormat.value)
-  })
+  const target
+    = document.querySelector<HTMLElement>('[data-bf-search-shell="row"] :is(h2, h3, h4) a')
+    ?? document.querySelector<HTMLElement>('[data-bf-search-shell="count"]')
+
+  if (!target) return
+  if (target.tagName !== 'A') target.setAttribute('tabindex', '-1')
+  target.focus()
 }
 
 /* --- the pool ------------------------------------------------------------ */
@@ -230,8 +242,8 @@ type PoolRow = Omit<SearchResultRow, 'score'> & {
  * (the three collections' slugs are unique within a collection, not across
  * three), retargeted from `/wireframes/*` to the real routes.
  *
- * Two deliberate departures from the frozen source, both forced by components
- * that did not exist when it was written:
+ * Three deliberate departures from the frozen source, the first two forced by
+ * components that did not exist when it was written:
  *
  * - `date` is the raw `publish_date`, **not** `monthYear(publish_date)`.
  *   `bfSearchShell` renders it through `bfTime`, which needs a parseable value
@@ -243,18 +255,25 @@ type PoolRow = Omit<SearchResultRow, 'score'> & {
  *   and there is no detail page to land on. `transponder-magazine` — the one
  *   such row in the snapshot — carries a null `external_url`, so the fallback
  *   is the internal route and not `href="null"`.
+ * - each row carries an `excerpt` (a person's is the job title), which the
+ *   shell sets as one clamped line under the title, so similar titles
+ *   ("Disrupting Democracy", "Disrupting Democracy | Italy") can be told
+ *   apart in the list. `||` rather than `??`: an empty string is no line.
+ *   An insight whose heading ends on a colon is titled with its subheading
+ *   joined on (`displayHeading()`), as its card is.
  */
 const pool: PoolRow[] = [
   ...items.map(insight => ({
     slug: `i-${insight.slug}`,
-    heading: insight.heading ?? '',
+    heading: displayHeading(insight.heading, insight.subheading),
     haystack: `${insight.heading ?? ''} ${insight.excerpt ?? ''}`,
     chip: formatLabel(insight.format),
     archived: !!insight.archived,
     program: insight.program ?? '',
     format: (insight.format ?? 'article').split('|')[0] ?? '',
     to: `/insights/${insight.slug}`,
-    date: insight.publish_date ?? undefined
+    date: insight.publish_date ?? undefined,
+    excerpt: insight.excerpt || undefined
   })),
   ...projects().map(project => ({
     slug: `p-${project.slug}`,
@@ -267,7 +286,8 @@ const pool: PoolRow[] = [
     to: project.external_only && project.external_url
       ? project.external_url
       : `/projects/${project.slug}`,
-    date: undefined
+    date: undefined,
+    excerpt: project.excerpt || undefined
   })),
   ...people().map(person => ({
     slug: `pe-${person.slug}`,
@@ -278,7 +298,8 @@ const pool: PoolRow[] = [
     program: '',
     format: '',
     to: '/about#team',
-    date: undefined
+    date: undefined,
+    excerpt: person.job_title || undefined
   }))
 ]
 
@@ -343,10 +364,45 @@ const results = computed(() => {
 const topScore = computed<number>(() => results.value[0]?.score || 1)
 
 /**
+ * The query matched, and the facets removed every match. The one empty state
+ * whose way out is not "different words" — see state 4 in the header.
+ */
+const filteredOut = computed<boolean>(() =>
+  ranked.value.length > 0 && results.value.length === 0
+)
+
+/** What the query found before the facets — the reason to clear them. */
+const filteredOutMessage = computed<string>(() => {
+  const n = ranked.value.length
+  return `${n} ${n === 1 ? 'result matches' : 'results match'} “${query.value.trim()}” across every program and format.`
+})
+
+/* --- paging -------------------------------------------------------------- */
+
+/**
+ * The frozen source's page size, `results.slice(0, 20)` — kept as the first
+ * page, and no longer as the last. The count line reports the whole matched
+ * set ("46 results"), and until the refined pass rows 21–46 could not be
+ * reached at all: a number on the page promising results the page would not
+ * show. `bfLoadMore` below the list pages through them, the control
+ * `/insights` uses for the same job.
+ */
+const PAGE_SIZE = 20
+
+const visible = ref<number>(PAGE_SIZE)
+
+/** A new question starts from its first page. */
+watch([query, selectedProgram, selectedFormat], () => {
+  visible.value = PAGE_SIZE
+})
+
+const remaining = computed<number>(() => Math.max(results.value.length - visible.value, 0))
+
+/**
  * The rows handed over, projected down to exactly `SearchResultRow` — the
  * three page-only fields do not cross the prop boundary — with `score`
- * normalised into the 0–1 the shell's contract asks for and the first twenty
- * taken (the frozen source's `results.slice(0, 20)`).
+ * normalised into the 0–1 the shell's contract asks for, and the rows shown
+ * so far taken (the frozen source's `slice(0, 20)`, paged; see above).
  *
  * `resultCount` below is deliberately **not** this array's length: the count
  * line reports the whole matched set, which is the distinction
@@ -359,7 +415,7 @@ const topScore = computed<number>(() => results.value[0]?.score || 1)
  * restates it, as every insight card does.
  */
 const rows = computed<SearchResultRow[]>(() =>
-  results.value.slice(0, 20).map((row) => {
+  results.value.slice(0, visible.value).map((row) => {
     const split = row.slug.startsWith('i-') ? splitHeadingKicker(row.heading) : null
     return {
       slug: row.slug,
@@ -369,6 +425,7 @@ const rows = computed<SearchResultRow[]>(() =>
       chip: split && kickerHidesFormatChip(split, row.format) ? '' : row.chip,
       archived: row.archived,
       date: row.date,
+      excerpt: row.excerpt,
       score: row.score / topScore.value
     }
   })
@@ -398,86 +455,280 @@ const rows = computed<SearchResultRow[]>(() =>
   />
 
   <!--
-    The shell. Everything it draws is a value computed above; it computes
-    nothing (D8).
-
-    `:filters` is empty until there is a query — the shell renders no facet row
-    for an empty vocabulary, which is how the frozen source's `v-if="q.length >
-    1"` on its Refine band is reproduced without a rule of our own. `:results`
-    is likewise empty, so the idle page is the search control and the prompt
-    below it.
-
-    `data-bf-search` is the idle/active hook the scoped rule below reads. It is
-    an attribute, not a prop: it falls through `$attrs` onto the shell's single
-    root, which is exactly what that root is documented to do.
+    The band: the shell, then the pager. `aria-label` names it as a region —
+    the rows' `<h2>`s (and every empty state's) sit inside it, and a band
+    holding headings with no name of its own is a generic container that
+    `bfSection` warns about at dev time. The shell's own `<search>` landmark
+    sits inside it, unnamed, so the two do not announce the same words.
   -->
-  <!--
-    `.center` — same utility and class token `bfSection` gives the heading
-    above (and every sibling page's content bands): caps this band's measure
-    and inline padding so the search control and results line up with the top
-    bar, the footer and the heading instead of running full-bleed. One wrapper
-    element, so it becomes this stack's second band rather than collapsing the
-    header band into it.
-  -->
-  <bfSection label="Search">
+  <bfSection label="Search" aria-label="Search results">
+    <!--
+      The shell. Everything it draws is a value computed above; it computes
+      nothing (D8).
+
+      `:filters` and `:selected-filters` are empty because this page fills
+      the shell's `facets` slot with its own two bars instead — see
+      `programFilters`. The slot is filled only once there is a query, which
+      is how the frozen source's `v-if="q.length > 1"` on its Refine band is
+      reproduced: an idle page is the search control and the prompt below it.
+
+      `:heading-level="2"`: the result titles are the band's headings, one
+      rank under the page's `<h1>`. At the shell's default `3` a populated
+      search jumped `h1 → h3` (BRIEF §5 rule 9) — the skip `check-routes.ts`
+      recorded as measurable only after hydration.
+
+      `data-bf-search` is the idle/active hook the scoped rule below reads. It
+      is an attribute, not a prop: it falls through `$attrs` onto the shell's
+      single root, which is exactly what that root is documented to do.
+    -->
     <bfSearchShell
       class="bf-search"
       :data-bf-search="hasQuery ? 'active' : 'idle'"
       :query="query"
-      :filters="hasQuery ? filters : []"
-      :selected-filters="selectedFilters"
+      :filters="[]"
+      :selected-filters="[]"
       :results="rows"
       :result-count="results.length"
+      :heading-level="2"
       label="Search insights, projects and people"
       @update:query="onQuery"
-      @update:selected-filters="onFilters"
-    />
+    >
+      <!--
+        The facets — the captioned pair `/insights` shows, in its order, its
+        skins and its caption (`.bf-facet-caption`). Each bar points its accessible name at its visible caption
+        (`aria-labelledby` wins over `bfFilterBar`'s own `aria-label`), so two
+        groups on one page never both announce as "Filters".
+      -->
+      <template v-if="hasQuery" #facets>
+        <div class="bf-search__facets | cluster" data-gap="l">
+          <div class="stack" data-gap="xs">
+            <span id="search-facet-format" class="bf-facet-caption">Format</span>
+            <bfFilterBar
+              aria-labelledby="search-facet-format"
+              label="Format"
+              tone="format"
+              :filters="FORMATS"
+              :model-value="asSelection(selectedFormat)"
+              @update:model-value="selection => onFacet('format', selection)"
+            />
+          </div>
+          <div class="stack" data-gap="xs">
+            <span id="search-facet-program" class="bf-facet-caption">Program</span>
+            <bfFilterBar
+              aria-labelledby="search-facet-program"
+              label="Program"
+              tone="program"
+              :filters="programFilters"
+              :model-value="asSelection(selectedProgram)"
+              @update:model-value="selection => onFacet('program', selection)"
+            />
+          </div>
+        </div>
+      </template>
+
+      <!--
+        Whatever stands where the rows would — the three states in the header,
+        in the order a reader can reach them. Each empty state is rank 2: the
+        header above owns the `<h1>` (residual #173).
+      -->
+      <template #empty>
+        <bfEmptyState
+          v-if="filteredOut"
+          :heading-level="2"
+          heading="No results with these filters"
+          :message="filteredOutMessage"
+        >
+          <div>
+            <bfButton @click="clearFacets">
+              Clear filters
+            </bfButton>
+          </div>
+        </bfEmptyState>
+
+        <bfEmptyState
+          v-else-if="hasQuery"
+          :heading-level="2"
+          heading="No results"
+          message="No records matched — try fewer or different words."
+        />
+
+        <!--
+          The idle prompt. The shell's count line is a persistent live region
+          by design (residual #169) and would otherwise announce “0 results” to
+          a reader who has not typed anything — a failed search reported before
+          one was made. So the idle state hides the count line (below) and
+          says this instead.
+        -->
+        <p v-else class="bf-search__prompt" data-measure="narrow">
+          Start typing above to search across insights, projects and people.
+          Results are ranked by relevance, and the query lives in the URL — so
+          a search can be bookmarked or shared.
+        </p>
+
+        <!--
+          The way on, when words are the problem or have not been tried: the
+          three programs as their own coloured chips (the program pages are
+          where the site's work is grouped), then the three indexes. Not shown
+          under a filtered-out result — that reader's way on is the button.
+
+          The chips' list takes its name from the sentence that introduces it.
+        -->
+        <div
+          v-if="!filteredOut"
+          class="bf-search__browse | stack"
+          data-gap="s"
+          data-measure="normal"
+        >
+          <p id="search-browse" class="bf-search__browse-lead">
+            Or start from one of our programs:
+          </p>
+          <ul
+            class="cluster"
+            role="list"
+            data-gap="xs"
+            aria-labelledby="search-browse"
+          >
+            <li v-for="program in programs()" :key="program.slug">
+              <bfChip
+                :to="`/${program.slug}`"
+                tone="program"
+                :program="program.slug"
+              >
+                {{ programChipLabel(program.name) }}
+              </bfChip>
+            </li>
+          </ul>
+          <p class="bf-search__browse-more">
+            You can also browse <NuxtLink to="/insights">all insights</NuxtLink>,
+            <NuxtLink to="/projects">every project</NuxtLink>, or
+            <NuxtLink to="/archive">the archive of past work</NuxtLink>.
+          </p>
+        </div>
+      </template>
+    </bfSearchShell>
 
     <!--
-      The idle prompt. The shell's count line is a persistent live region by
-      design (residual #169) and would otherwise announce “0 results, ranked by
-      relevance” to a reader who has not typed anything — a failed search
-      reported before one was made. So the idle state hides the count line and
-      the empty state (below) and says this instead.
+      The pager, outside the shell and straight after its list. The two
+      counts drive its own live region, so a page arriving is announced
+      instead of appended in silence; the label carries the remainder, as the
+      `/insights` pager's does.
     -->
-    <p v-if="!hasQuery" class="bf-search__prompt" data-measure="normal">
-      Start typing above to search across insights, projects and people. Results
-      are ranked by relevance, and the query lives in the URL — so a search can
-      be bookmarked or shared.
-    </p>
+    <bfLoadMore
+      v-if="hasQuery && results.length > PAGE_SIZE"
+      :has-more="remaining > 0"
+      :label="`Load more (${remaining} remaining)`"
+      :visible-count="rows.length"
+      :total-count="results.length"
+      @load="visible += PAGE_SIZE"
+    />
   </bfSection>
 </template>
 
 <style scoped>
 /*
-  The one page-level rule in this template, and it exists because
+  `@layer components` for this page's own elements — the prompt and the
+  browse block — and `@layer overrides` for the one rule that
+  reaches into the shell. No `:not()` anywhere (D-20.5, gh#29), no colour
+  that is not already a semantic token.
+*/
+@layer components {
+  /*
+    The prompt is the idle page's content, so it speaks at body size; the
+    browse block under it is the secondary voice. Its measure is `narrow`
+    because it is set a step larger than the field above it and the browse
+    block below — 60ch of body text lands at or near the end edge of their
+    75ch of UI text, so the three read as one column rather than three.
+  */
+  .bf-search__prompt {
+    text-wrap: pretty;
+  }
+
+  /*
+    The browse block follows a reply (an empty state) or the prompt. A
+    hairline above it marks the turn from "your search" to "somewhere else to
+    start", at the measure the prompt sets (`data-measure`, in the markup).
+  */
+  .bf-search__browse {
+    padding-block-start: var(--space-m);
+    border-block-start: var(--border-width-thin) solid var(--color-base-super-light);
+  }
+
+  /*
+    The chips' list items hug their chips. A bare `li` is a line box at the
+    body's size and leading, taller than the pill inside it, and it carries
+    the global list-item bottom margin, so the wrapped program chips stood a
+    line apart on a phone. The cluster's gap is the only space between them.
+  */
+  .bf-search__browse li {
+    display: flex;
+    margin: 0;
+  }
+
+  .bf-search__browse-lead,
+  .bf-search__browse-more {
+    color: var(--color-base-light);
+    font-size: var(--size--1);
+  }
+
+  /*
+    `NuxtLink` renders `class=""`, which `a:not([class])` does not match, so
+    these would be the user agent's blue. Sentence-level links: the link
+    colour and a considered underline, thicker on hover — `bfEmptyState`'s
+    back link, in the same words.
+  */
+  .bf-search__browse-more a {
+    color: var(--color-link);
+    font-weight: var(--font-weight-normal);
+    text-decoration-line: underline;
+    text-decoration-thickness: var(--border-width-thin);
+    text-underline-offset: 0.2em;
+  }
+
+  .bf-search__browse-more a:hover {
+    text-decoration-thickness: var(--border-width-medium);
+  }
+}
+
+/*
+  The one rule that reaches into the shell, and it exists because
   `bfSearchShell` has no “not asked yet” state to pass it.
 
   The shell's count line is rendered in **every** state on purpose — a live
   region inserted into the DOM already holding its message is not reliably
-  announced (residual #169) — and its empty state follows the count line
-  whenever `results` is empty. Both are right once a query exists and wrong
-  before one does: an unqueried `/search` would open on “0 results” and a
-  `<h2>No results</h2>`.
+  announced (residual #169). That is right once a query exists and wrong
+  before one does: an unqueried `/search` would open on “0 results”.
 
-  So the idle state hides those two parts, through the `data-bf-search-shell`
-  selector hooks the component publishes for exactly this kind of addressing,
-  and the page renders its own prompt instead. The trade-off is stated rather
-  than hidden: while idle, the region is out of the accessibility tree, so the
-  **first** query's count may not be announced; every count after it is, which
-  is the guarantee #169 is actually about. No component is edited and no
-  contract changes.
+  So the idle state hides the count line, through the `data-bf-search-shell`
+  selector hook the component publishes for exactly this kind of addressing.
+  The trade-off is stated rather than hidden: while idle, the region is out of
+  the accessibility tree, so the **first** query's count may not be announced;
+  every count after it is, which is the guarantee #169 is actually about. No
+  component is edited and no contract changes.
 
-  `@layer overrides` — last in the house order (BRIEF §5 rule 4), so this
-  outranks the shell's own `@layer components` rules without an unlayered
+  The empty block is no longer hidden alongside it: since the refined pass
+  the page fills the shell's `empty` slot with the idle prompt itself, so
+  there is nothing wrong there to hide.
+
+  The empty states sit in a stack that already spaces them — the shell's gap
+  above, off the count line, and the empty wrapper's own gap below, before
+  the browse block — so their inline `--space-xl` of padding would double
+  both. Retuned to none through `bfEmptyState`'s own hook, on the element
+  that declares it (the block renders in this page's slot content, so it
+  carries this page's scope). One value, not a start/end pair: the build
+  lowers the component's `padding-block` to `padding-top`/`padding-bottom`,
+  each taking the hook whole, so a pair would be invalid on both.
+
+  `@layer overrides` — last in the house order (BRIEF §5 rule 4), so these
+  outrank the components' own `@layer components` rules without an unlayered
   declaration that nothing could ever outrank in turn.
-
-  No `:not()` anywhere (D-20.5, gh#29).
 */
 @layer overrides {
-  .bf-search[data-bf-search='idle'] :deep([data-bf-search-shell='count']),
-  .bf-search[data-bf-search='idle'] :deep([data-bf-search-shell='empty']) {
+  .bf-search[data-bf-search='idle'] :deep([data-bf-search-shell='count']) {
     display: none;
+  }
+
+  .bf-search .bf-empty-state {
+    --_bf-empty-state-padding-block: 0;
   }
 }
 </style>
