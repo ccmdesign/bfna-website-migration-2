@@ -26,6 +26,26 @@
       --color-dark: var(--color-base);
       --color-light: var(--color-base-tint-02);
       --color-text: var(--color-base);
+      /*
+       * Secondary text — a card's date, a meta line. Blue-tinted rather than
+       * grey so it reads as the navy family, and one ladder step darker than
+       * Paper's `--color-primary-tint-70` (#6E93B2, 3.24:1), which fails AA
+       * at the 11px semibold the card date is set in. `-tint-90` is #45749C,
+       * 4.96:1 on --color-surface-page — asserted by `check-contrast.ts`
+       * (pair `text-muted-on-page`).
+       */
+      --color-text-muted: var(--color-primary-tint-90);
+      /*
+       * The hairline (refined pass, Sep 2026) — a section rule, an index
+       * entry's rule, a list's divider. Blue-tinted for the same reason
+       * `--color-text-muted` is: it reads as the navy family rather than as
+       * a grey. There was no semantic name for a rule, so `/projects` and the
+       * program hubs reached for the `--color-primary-tint-20` ladder step
+       * directly and the other rules on the site each picked a different
+       * grey. Decoration, not a boundary a control depends on, so it carries
+       * no contrast floor (WCAG 1.4.11 does not apply).
+       */
+      --color-rule: var(--color-primary-tint-20);
       /* Same paint as --color-surface-inverse below; that one is the name to
          reach for when the intent is specifically an inverted ground. */
       --color-neutral: var(--color-black);
@@ -109,6 +129,15 @@
        */
       --color-scrim: hsl(var(--hsl-navy), 0.70);
       --color-scrim-panel: hsl(var(--hsl-navy), 0.94);
+      /*
+       * The paper wash (refined pass, Sep 2026): the light counterpart of the
+       * pair above, laid over the paper texture every inner masthead wears
+       * (`bfSection`'s `data-surface="paper"`). 28% of the page ground, so the
+       * texture shows through and the page's own dark ink sits on it — the
+       * insight article's value, now written once instead of in each band
+       * that wanted the same paper.
+       */
+      --color-scrim-paper: color-mix(in srgb, var(--color-surface-page) 28%, transparent);
       --color-link: var(--color-blue);
       --color-link-visited: var(--color-navy);
   
@@ -257,6 +286,17 @@
      *   --color-program-on-light  text on --color-surface-page, >= 4.5:1.
      *   --color-program-on-dark   text on a dark ground, >= 4.5:1.
      *
+     * Plus a fourth, the chip pair (Sep 2026), because a programme chip is a
+     * light pill rather than a solid fill:
+     *
+     *   --color-program-tint      the pill ground — the programme colour at
+     *                             11% over white, the `-tint-11` ladder's mix.
+     *   --color-program-on-tint   the pill's label, >= 4.5:1 on that tint at
+     *                             the chip's 11px semibold. Same hue as the
+     *                             programme, lower lightness; the raw tier
+     *                             itself falls short on its own tint (teal
+     *                             4.32, red 3.91, amber 4.01).
+     *
      * Every ratio below is measured by `scripts/check-contrast.ts`. All nine
      * programme pairs it declares are asserted as of gh#253; only the `:root`
      * defaults are still not declared as pairs at all — the remaining half of
@@ -302,6 +342,7 @@
       --hsl-program: var(--hsl-navy); /* #003C5C — 11.66:1 on white */
       --hsl-program-on-light: var(--hsl-navy); /* 11.66:1 on --color-surface-page */
       --hsl-program-on-dark: 201, 100%, 45%; /* #0095E6 — 6.14:1 on --color-surface-inverse */
+      --hsl-program-on-tint: var(--hsl-navy); /* #003C5C — 9.58:1 on its tint, #E3EAED */
     }
 
     /* Democracy — teal. Production's Democracy was green. */
@@ -309,6 +350,7 @@
       --hsl-program: var(--hsl-green); /* #027A8D — white on it, 5.03:1 */
       --hsl-program-on-light: 188, 97%, 29%; /* #027F92 — 4.72:1 on --color-surface-page */
       --hsl-program-on-dark: 188, 97%, 41%; /* #03B3CE — 7.96:1 on --color-surface-inverse */
+      --hsl-program-on-tint: 188, 97%, 25%; /* #026D7E — 5.16:1 on its tint, #E3F0F2 */
     }
 
     /*
@@ -324,6 +366,7 @@
       --hsl-program: var(--hsl-red); /* #CF4457 — white on it, 4.55:1 */
       --hsl-program-on-light: 352, 59%, 54%; /* #CF4457 — 4.55:1 on --color-surface-page */
       --hsl-program-on-dark: 352, 59%, 67%; /* #DC7986 — 6.79:1 on --color-surface-inverse */
+      --hsl-program-on-tint: 352, 59%, 46%; /* #BB3043 — 4.99:1 on its tint, #FAEAED */
     }
 
     /*
@@ -352,6 +395,14 @@
       --hsl-program: 36, 83%, 35%; /* #A3680F — white on it, 4.62:1 */
       --hsl-program-on-light: 36, 83%, 35%; /* #A3680F — 4.62:1 on --color-surface-page */
       --hsl-program-on-dark: 36, 83%, 48%; /* #E08F15 — 7.73:1 on --color-surface-inverse */
+      /*
+       * The one on-tint value with no ladder step to borrow: amber's raw tier
+       * is already the deepest amber that carries white, and it measures 4.01
+       * on its own tint. 30% is the same hue pushed down until the pill label
+       * clears 4.5 with margin. Programme axis only — `--hsl-yellow` stays
+       * where `SHIPPED_BASELINE` locks it.
+       */
+      --hsl-program-on-tint: 36, 83%, 30%; /* #8C590D — 5.14:1 on its tint, #F5EEE5 */
     }
 
     /*
@@ -373,5 +424,7 @@
       --color-program: hsl(var(--hsl-program));
       --color-program-on-light: hsl(var(--hsl-program-on-light));
       --color-program-on-dark: hsl(var(--hsl-program-on-dark));
+      --color-program-tint: color-mix(in srgb, var(--color-program) 11%, white 89%);
+      --color-program-on-tint: hsl(var(--hsl-program-on-tint));
     }
 }

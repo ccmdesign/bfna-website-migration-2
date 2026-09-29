@@ -144,11 +144,13 @@ const label = computed(() =>
 @layer components {
   /*
    * One property, one rule. No colour, no token, no typography: `<time>`
-   * inherits the surrounding type, which is what a date in a card footer or a
-   * byline should do, and the spec's Styling section says as much.
+   * inherits the surrounding type, which is what a date in a byline should
+   * do, and the spec's Styling section says as much. The card family's date
+   * (small muted capitals under the title) is `bfCard`'s `.bf-card__text >
+   * time` rule, reaching in from the context rather than living here.
    *
    * `nowrap` is here because the label is a two-token string — `Mar 2024` — and
-   * the slots this atom was built for (card footers, `bfByline` (29), the
+   * the slots this atom was built for (card meta lines, `bfByline` (29), the
    * archive's per-year rows (55)) are the narrowest columns on the site. A date
    * broken across two lines reads as two facts.
    *

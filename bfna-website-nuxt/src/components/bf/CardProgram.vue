@@ -70,13 +70,18 @@
  * asserts the **href string**, which is the contract, rather than a successful
  * navigation.
  *
- * ## No media, and no `short`/`media`/`excerptLength` props
+ * ## The thumbnail (Sep 2026), and no `short`/`excerptLength` props
  *
- * `bfProgramSchema` carries an `image`, and this card does not render it: the
- * spec's Scope is a heading and a tagline, the wireframe row is a text
- * `switcher`, and the one consumer (issue 47's home "Programs" band) asks for
- * nothing more. BRIEF §5's rule of three — a prop earns its place on the second
- * call site that needs it, not on the first one that might.
+ * `bfProgramSchema` carries an `image` — all three rows, a square architectural
+ * photograph each — and the card now renders it, under the family's one media
+ * rule: the row's image when it has one, **no media box** when it does not.
+ * It used to be text-only by the spec's original Scope; the refined pass
+ * flagged three text-only programme cards against image-led project and
+ * insight bands as the odd ones out. `media` is the opt-out for a band that
+ * wants the text-only card back (Paper's home artboard draws it that way).
+ *
+ * `short` and `excerptLength` stay absent — BRIEF §5's rule of three: a prop
+ * earns its place on the second call site that needs it.
  */
 import type { CardWrapperProps, Program } from '~/types/bf-contracts'
 
@@ -100,11 +105,17 @@ interface Props extends CardWrapperProps {
    * the `{ slug, name, tagline?, short? }` shape the wireframe declared inline.
    */
   program: Program
+  /**
+   * Show the programme's photograph when the row has one. On by default; pass
+   * `:media="false"` for the text-only card.
+   */
+  media?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
   /* The no-change level; see `CardWrapperProps`. */
-  headingLevel: 3
+  headingLevel: 3,
+  media: true
 })
 
 /**
@@ -158,8 +169,8 @@ if (import.meta.dev) {
 <template>
   <!--
     Order is `bfCard`'s, not this file's: heading **first in the DOM**, so
-    heading navigation lands at the start of the card. This card provides
-    neither the `chips` nor the `media` slot, so nothing is pulled above it.
+    heading navigation lands at the start of the card. No `chips` slot; the
+    photograph is the one thing pulled above the heading visually.
   -->
   <bfCard v-bind="$attrs">
     <component :is="`h${headingLevel}`" v-if="hasName">
@@ -176,5 +187,14 @@ if (import.meta.dev) {
     </component>
 
     <p v-if="taglineText">{{ taglineText }}</p>
+
+    <!--
+      Decorative (`alt=""`, gh#222): the heading names the programme. The
+      source files are square; `3/2` crops them to the card's landscape slot
+      through `bfMedia`'s ratio hook, centred by `object-fit: cover`.
+    -->
+    <template v-if="media && program.image" #media>
+      <bfMedia :src="program.image" alt="" ratio="3/2" />
+    </template>
   </bfCard>
 </template>

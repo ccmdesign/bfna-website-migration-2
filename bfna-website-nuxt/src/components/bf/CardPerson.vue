@@ -161,8 +161,8 @@ if (import.meta.dev) {
   <!--
     Order is `bfCard`'s, not this file's: heading **first in the DOM** so
     heading navigation lands at the start of the card, with the portrait pulled
-    above it visually by `order: -2` in the base's stylesheet. Never reorder the
-    markup to change the picture.
+    above it visually by the base's stylesheet. Never reorder the markup to
+    change the picture.
   -->
   <bfCard v-bind="$attrs">
     <!--
@@ -185,7 +185,7 @@ if (import.meta.dev) {
     -->
     <p>{{ jobTitle }}</p>
 
-    <template #media>
+    <template v-if="person.image" #media>
       <!--
         Decorative: the heading above already names the person, so alt text
         would repeat it rather than describe anything. `alt=""` is the
@@ -196,9 +196,12 @@ if (import.meta.dev) {
         `1/1` is hard-coded rather than a `mediaRatio` prop: one call site
         (issue 53's two `/about` grids), so the rule of three is not met. It is
         `bfMedia`'s `ratio`, which lands as a `--_bf-media-ratio` declaration a
-        consumer stylesheet can still re-proportion. A row with no `image`
-        falls through to `bfMedia`'s `aria-hidden` placeholder box at the same
-        square ratio, so a grid of portraits keeps its rhythm.
+        consumer stylesheet can still re-proportion.
+
+        Only when the row carries an image (all thirteen do today). The family's
+        media rule (Sep 2026): no `image`, no slot — never `bfMedia`'s
+        placeholder box — so a person without a portrait reads as a name card
+        rather than an empty frame.
       -->
       <bfMedia :src="person.image" alt="" ratio="1/1" />
     </template>

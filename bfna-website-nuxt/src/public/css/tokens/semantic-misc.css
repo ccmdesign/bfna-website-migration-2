@@ -70,9 +70,16 @@
         inset 0 4.1px 5.2px -1.7px hsl(from var(--shadow-color-deep) h s l / 0.1),
         inset 0 10px 12.6px -2.5px hsl(from var(--shadow-color-deep) h s l / 0.1);
       /* Older names, now aliases onto the elevation scale. */
-      --shadow-card: var(--shadow-elevation-low);
       --shadow-soft: var(--shadow-elevation-medium);
       --shadow-strong: var(--shadow-elevation-high);
+      /*
+        The card pair (`bfCard`, Sep 2026). A card rests one step up the
+        scale and lifts one more under the pointer. `--shadow-card` used to
+        alias `low` with no consumer; it now names the card's actual rest
+        state, so the family reads its depth from one place.
+      */
+      --shadow-card: var(--shadow-elevation-medium);
+      --shadow-card-hover: var(--shadow-elevation-high);
       --outline-focus: 0 0 0 3px color-mix(in srgb, var(--color-blue) 45%, transparent);
       --link-color: var(--color-primary);
       --link-color-visited: var(--color-navy);
@@ -109,5 +116,12 @@
       /* Tracking (letter-spacing) */
       --tracking-display: 0.005em;
       --tracking-ui: 0;
+      /* Card titles in `--font-family-condensed` (Paper node 1B-0). */
+      --tracking-condensed: -0.01em;
+      /*
+        Small uppercase labels — chips and the card date. Open tracking is
+        what keeps 11px capitals from clotting.
+      */
+      --tracking-caps: 0.02em;
     }
 }

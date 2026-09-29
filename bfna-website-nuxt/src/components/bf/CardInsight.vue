@@ -56,10 +56,10 @@
  * ## 4. No stylesheet
  *
  * This component ships no `<style>` block at all, deliberately. Everything it
- * renders — the heading and its stretched link, the excerpt paragraph, the
- * bottom-aligned `<time>`, the chip cluster — is styled by `bfCard`'s own
- * `@layer components` rules and by the `--_bf-time-*` / `--_bf-chip-*` hooks
- * the two atoms bring. A wrapper stylesheet would have to re-answer the layer
+ * renders — the heading and its stretched link, the `<time>` under it, the
+ * excerpt paragraph, the chip cluster, the thumbnail — is styled by `bfCard`'s
+ * own `@layer components` rules and by the `--_bf-time-*` / `--_bf-chip-*` /
+ * `--_bf-media-*` hooks the atoms bring. A wrapper stylesheet would have to re-answer the layer
  * question and the `:not()` ban (D-20.5) for no new pixels.
  *
  * ## The one content delta from the wireframe
@@ -83,14 +83,34 @@
  *
  * A heading that opens with a curated format label or series marker
  * ("Infographic: …", "Hidden Layers: …", "Season 1, Episode 2: …") renders
- * that prefix in `bfCard`'s `kicker` slot and only the rest as the linked
- * title — `splitHeadingKicker()` in `utils/headingKicker.ts` owns the list.
+ * that prefix on the meta line **under** the title, as a run with the date
+ * (`INFOGRAPHIC · MAR 2026`, `bfCard`'s `.bf-card__meta`), and only the rest
+ * as the linked title — `splitHeadingKicker()` in `utils/headingKicker.ts`
+ * owns the list. The prefix stays out of the title (1899ef6) and never sits
+ * above it: a label over a heading is the one placement the family bans.
  * When the kicker restates the format chip ("Infographic" on an infographic)
  * the format chip is dropped; programme, extra and `Archive` chips stay.
+ *
+ * ## Thumbnail and chip tones (Sep 2026)
+ *
+ * The card shows the row's `image` when it has one — 117 of the 354 live
+ * rows — and renders **no media box at all** when it does not, so a text-first
+ * card never carries an empty slot or a placeholder. Decorative (`alt=""`):
+ * the heading names the piece. `media` turns it off, and `bfGridInsights`
+ * does exactly that for any group in which not every row has an image — a
+ * picture card beside a text card leaves the text card hollow.
+ *
+ * Chips are toned (`bfChip`'s `tone`): the programme chip takes its own
+ * programme's colour, everything else — format, extra chips, `Archive` — is
+ * the neutral navy pill. The programme slug comes from `programSlugForName()`
+ * (`utils/bf-card-program.ts`, derived from the `bfPrograms` files), not from
+ * a label map in this file; a `program` value that is not one of the three
+ * resolves no slug and the chip stays neutral.
  */
 import type { CardWrapperProps, Insight } from '~/types/bf-contracts'
 import { formatLabel } from '~/utils/format'
-import { kickerHidesFormatChip, splitHeadingKicker } from '~/utils/headingKicker'
+import { displayHeading, kickerHidesFormatChip, splitHeadingKicker } from '~/utils/headingKicker'
+import { programChipLabel, programSlugForName } from '~/utils/bf-card-program'
 
 defineOptions({
   name: 'BfCardInsight',
@@ -115,6 +135,13 @@ interface Props extends CardWrapperProps {
   excerpt?: boolean
   /** Character budget for the excerpt before it is cut and given an ellipsis. */
   excerptLength?: number
+  /**
+   * Show the row's thumbnail when it has one. On by default; a row with no
+   * `image` renders no media box either way. `bfGridInsights` passes `false`
+   * to every card of a group that is not all pictures — the same switch, and
+   * the same default, as `bfCardProject.media`.
+   */
+  media?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -127,7 +154,8 @@ const props = withDefaults(defineProps<Props>(), {
   headingLevel: 3,
   extraChips: undefined,
   excerpt: true,
-  excerptLength: 140
+  excerptLength: 140,
+  media: true
 })
 
 /**
@@ -151,8 +179,14 @@ const props = withDefaults(defineProps<Props>(), {
  *
  * `''` is treated as `null`: a heading of one space is no more nameable than a
  * missing one, and `.trim()` is what tells them apart from a real title.
+ *
+ * A heading that ends on a colon is only the first half of its title — three
+ * rows ("Pianissimo:", "Seven Months to Midnight:", "People and Places Left
+ * Behind:") keep the rest in `subheading`, which a card never shows — so
+ * `displayHeading()` joins the two and the card no longer prints a dangling
+ * colon. Every other heading is the trimmed heading, as before.
  */
-const headingText = computed(() => (props.insight.heading ?? '').trim())
+const headingText = computed(() => displayHeading(props.insight.heading, props.insight.subheading))
 
 const hasHeading = computed(() => headingText.value !== '')
 
@@ -198,32 +232,20 @@ const excerptText = computed(() => {
     : text
 })
 
-const PROGRAM_SLUGS: Record<string, string> = {
-  'Democracy': 'democracy',
-  'Transatlantic Relations & Global Challenges': 'transatlantic-relations-global-challenges',
-  'Future Leadership': 'future-leadership'
-}
+/** The programme chip's label — the site's one chip label for it (`programChipLabel`). */
+const programLabel = computed(() => programChipLabel(props.insight.program))
 
-const programLabel = computed(() => {
-  const name = props.insight.program
-  if (!name) return ''
-  if (name === 'Transatlantic Relations & Global Challenges') return 'Transatlantic Rel.'
-  if (name.startsWith('RE-TAG') || name.startsWith('PENDING')) return 'Re-tag'
-  return name
-})
-
-const programSlug = computed(() => {
-  const name = props.insight.program
-  return name ? PROGRAM_SLUGS[name] : undefined
-})
+/** A real programme's slug, or `undefined` — see "Thumbnail and chip tones". */
+const programSlug = computed(() => programSlugForName(props.insight.program))
 </script>
 
 <template>
   <!--
     Order is `bfCard`'s, not this file's: heading **first in the DOM** so
-    heading navigation lands at the start of the card, with the chips pulled
-    above it visually by `order: -1` in the base's stylesheet. Never reorder
-    the markup to change the picture.
+    heading navigation lands at the start of the card, then the meta line, the
+    excerpt, and the chips, which the base pins to the card's bottom edge. The
+    thumbnail is the only thing pulled above the heading visually. Never
+    reorder the markup to change the picture.
   -->
   <bfCard v-bind="$attrs">
     <!--
@@ -236,25 +258,46 @@ const programSlug = computed(() => {
       <NuxtLink :to="`/insights/${insight.slug}`">{{ split.title }}</NuxtLink>
     </component>
 
-    <bfTime :date="insight.publish_date" />
+    <!--
+      The meta line. With a split prefix it is the prefix and the date as one
+      run — a `<div>`, not a `<p>`, so `bfCard`'s excerpt rule never reaches
+      it; `bfCard` draws the separator, and `bfTime` renders nothing for a
+      null date, which leaves the prefix alone on the line. Without one it is
+      the bare `<time>`, as it always was.
+    -->
+    <div v-if="split.kicker" class="bf-card__meta">
+      <span class="bf-card__kicker">{{ split.kicker }}</span>
+      <bfTime :date="insight.publish_date" />
+    </div>
+    <bfTime v-else :date="insight.publish_date" />
 
     <p v-if="excerpt && excerptText">{{ excerptText }}</p>
 
-    <template v-if="split.kicker" #kicker>{{ split.kicker }}</template>
-
     <template #chips>
-      <bfChip v-if="showFormatChip" data-tone="format">{{ formatLabel(insight.format) }}</bfChip>
+      <bfChip v-if="showFormatChip" tone="neutral">{{ formatLabel(insight.format) }}</bfChip>
       <bfChip
         v-if="programLabel"
-        :data-program="programSlug"
+        :tone="programSlug ? 'program' : 'neutral'"
+        :program="programSlug"
       >{{ programLabel }}</bfChip>
-      <bfChip v-for="chip in extraChips" :key="chip">{{ chip }}</bfChip>
+      <bfChip v-for="chip in extraChips" :key="chip" tone="neutral">{{ chip }}</bfChip>
       <!--
         `archived` is a non-nullable `boolean` since gh#140 (it was
         `boolean | null`), so truthiness and `=== true` agree; 256 of the 371
         real rows are archived.
       -->
-      <bfChip v-if="insight.archived">Archive</bfChip>
+      <bfChip v-if="insight.archived" tone="neutral">Archive</bfChip>
+    </template>
+
+    <!--
+      Only when the row carries an image and the group shows pictures: no
+      `image` or `:media="false"`, no slot, no media box. Decorative — the
+      heading already names the piece, so alt text would announce the title
+      twice. `alt=""` is the deliberate declaration `bfMedia` requires
+      (gh#222).
+    -->
+    <template v-if="media && insight.image" #media>
+      <bfMedia :src="insight.image" alt="" ratio="16/9" />
     </template>
   </bfCard>
 </template>

@@ -21,12 +21,17 @@
  *
  * They take the same entity and they are still two components, per the
  * inventory and the spec's Out-of-scope paragraph. The two cards disagree on
- * every presentational decision a flag would have to fork: this one always
- * shows media (`bfCardInsight` has no media slot at all), always shows the
- * literal chip `Featured` (rather than `formatLabel(format)`, `extraChips` and
- * `Archive`), shows **no** `<time>`, and does not truncate its excerpt. A
- * `featured` boolean would branch four ways inside one template and leave both
- * cards harder to read than either is alone.
+ * the presentational decisions a flag would have to fork: this one always
+ * shows the literal chip `Featured` (rather than `formatLabel(format)`, a
+ * programme chip, `extraChips` and `Archive`), links off-site when the row
+ * points there, and does not truncate its excerpt. A `featured` boolean would
+ * branch three ways inside one template and leave both cards harder to read
+ * than either is alone. (Both now show the row's thumbnail under the same
+ * rule — an image when the row has one, no media box when it does not — so
+ * that is no longer one of the forks. On the homepage the strip sits under
+ * the full-width Transponder card, and `bfCard`'s lead-and-list rule hides
+ * every picture after that lead: the first highlight is the magazine's own
+ * latest issue, the same cover under a second asset id.)
  *
  * ## Thin by design — the rule of three, applied
  *
@@ -130,6 +135,11 @@ const headingText = computed(() => (props.item.heading ?? '').trim())
  * or series prefix only, so an ordinary "Title: Subtitle" stays one title.
  * All eight curated highlight rows split. The chip here is the literal
  * `Featured`, so no kicker ever hides it.
+ *
+ * Paper sets the kicker above the title; this card sets it on the meta line
+ * under it (`bfCard`'s `.bf-card__meta`), because no label sits above a
+ * heading anywhere in the family. The curated rows carry no date, so the
+ * line is the prefix alone — `LATEST ISSUE`, `DOCUMENTARY`.
  */
 const split = computed(() => splitHeadingKicker(headingText.value))
 const kicker = computed(() => split.value.kicker)
@@ -213,9 +223,9 @@ if (import.meta.dev) {
 <template>
   <!--
     Order is `bfCard`'s, not this file's: heading **first in the DOM** so
-    heading navigation lands at the start of the card, with the chip and the
-    media pulled above it visually by `order: -1` / `-2` in the base's
-    stylesheet. Never reorder the markup to change the picture.
+    heading navigation lands at the start of the card, then the meta line,
+    the excerpt and the chip on the bottom edge; only the media is pulled
+    above the heading visually. Never reorder the markup to change the picture.
   -->
   <bfCard v-bind="$attrs">
     <!--
@@ -253,11 +263,18 @@ if (import.meta.dev) {
       <NuxtLink v-else :to="`/insights/${item.slug}`">{{ titleText }}</NuxtLink>
     </component>
 
-    <bfTime :date="item.publish_date" />
+    <!--
+      The meta line — the prefix and the date as one run when there is a
+      prefix, the bare `<time>` otherwise. Same markup as `bfCardInsight`;
+      see the note there.
+    -->
+    <div v-if="kicker" class="bf-card__meta">
+      <span class="bf-card__kicker">{{ kicker }}</span>
+      <bfTime :date="item.publish_date" />
+    </div>
+    <bfTime v-else :date="item.publish_date" />
 
     <p v-if="excerptText">{{ excerptText }}</p>
-
-    <template v-if="kicker" #kicker>{{ kicker }}</template>
 
     <template #chips>
       <!--
@@ -265,10 +282,15 @@ if (import.meta.dev) {
         `format: null`, and the word this card exists to say is the *curation*
         ("we picked this"), which is not a field on the row.
       -->
-      <bfChip data-tone="format">Featured</bfChip>
+      <bfChip tone="neutral">Featured</bfChip>
     </template>
 
-    <template #media>
+    <!--
+      Only when the row carries an image (all eight curated rows do today). No
+      `image`, no slot: the card reads text-first rather than carrying an empty
+      box, the rule every card in the family follows.
+    -->
+    <template v-if="item.image" #media>
       <!--
         Decorative: the heading already names the destination, so a second
         announcement of the same title would be a duplicate rather than a

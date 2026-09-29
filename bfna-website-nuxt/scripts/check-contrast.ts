@@ -788,6 +788,113 @@ function buildPairs(): Pair[] {
   }
 
   /*
+    The card family (Sep 2026). Every text/ground pair the refined cards paint
+    that is not already asserted above: the muted date and the navy title on
+    the card's white ground, the neutral chip pill, and the programme chip
+    pill — the `:root` navy default plus one per programme. All small text at
+    11px semibold, so all 4.5.
+
+    The programme pill tokens are declared once in the shared
+    `:root, [data-program]` rule and vary through `--hsl-program` (the tint's
+    source) and `--hsl-program-on-tint` (the label), so those are the two
+    `requireScoped` names — the same reasoning the note on `Pair.requireScoped`
+    gives for the other programme pairs.
+  */
+  pairs.push(
+    {
+      id: 'text-muted-on-page',
+      label: '--color-text-muted on --color-surface-page (card date)',
+      fg: { kind: 'token', name: '--color-text-muted' },
+      bg: { kind: 'token', name: '--color-surface-page' },
+      floor: 4.5,
+      scope: ROOT
+    },
+    {
+      id: 'card-title-on-page',
+      label: '--color-accent on --color-surface-page (card title)',
+      fg: { kind: 'token', name: '--color-accent' },
+      bg: { kind: 'token', name: '--color-surface-page' },
+      floor: 4.5,
+      scope: ROOT
+    },
+    {
+      id: 'chip-neutral',
+      label: '--color-accent on --color-accent-super-light (neutral chip)',
+      fg: { kind: 'token', name: '--color-accent' },
+      bg: { kind: 'token', name: '--color-accent-super-light' },
+      floor: 4.5,
+      scope: ROOT
+    },
+    {
+      id: 'program-on-tint--default',
+      label: '--color-program-on-tint on --color-program-tint [:root default] (chip)',
+      fg: { kind: 'token', name: '--color-program-on-tint' },
+      bg: { kind: 'token', name: '--color-program-tint' },
+      floor: 4.5,
+      scope: ROOT
+    }
+  )
+
+  for (const program of PROGRAMS) {
+    pairs.push({
+      id: `program-on-tint--${program.slug}`,
+      label: `--color-program-on-tint on --color-program-tint [${program.slug}] (chip)`,
+      fg: { kind: 'token', name: '--color-program-on-tint' },
+      bg: { kind: 'token', name: '--color-program-tint' },
+      floor: 4.5,
+      scope: programScope(program.slug),
+      requireScoped: ['--hsl-program-on-tint', '--hsl-program']
+    })
+  }
+
+  /*
+    The paper masthead (Sep 2026) — `bfSection`'s `data-surface="paper"`,
+    the ground of every inner page's header. The pairs above measure type on
+    the white page; this one is not white, and a pair on white is what let
+    the article's muted date and byline ship under 4.5 on it.
+
+    The ground is the wash, `--color-scrim-paper` (28% of the page ground),
+    composited over `PAPER_TEXTURE_DARKEST` — the darkest pixel in
+    `public/images/hero/article-texture.png`. The worst case a line of type
+    can land on, as the scrim pairs below take a blown-out photograph; the
+    texture's median under the same wash is ~#EEF1F4.
+
+    - `--color-accent` is the masthead's small meta ink (the article's date,
+      byline and kicker, 13–15px semibold), so it is held to 4.5.
+    - `--color-text-muted` is held to 3:1 only — large text and graphics.
+      It measures ~3.9 here and ~4.4 on the median: under 4.5 either way,
+      so it is not a small-text colour on paper, and this pair is the
+      number that says so.
+  */
+  const PAPER_TEXTURE_DARKEST: ColorRef = { kind: 'literal', value: '#D6DADE' }
+  const PAPER: ColorRef = {
+    kind: 'over',
+    top: { kind: 'token', name: '--color-scrim-paper' },
+    under: PAPER_TEXTURE_DARKEST
+  }
+
+  pairs.push(
+    {
+      id: 'accent-on-paper',
+      label: '--color-accent on the paper masthead (meta row)',
+      fg: { kind: 'token', name: '--color-accent' },
+      bg: PAPER,
+      floor: 4.5,
+      scope: ROOT,
+      note: 'worst-case ground: the wash over the texture\'s darkest pixel'
+    },
+    {
+      id: 'text-muted-on-paper',
+      label: '--color-text-muted on the paper masthead (large text only)',
+      fg: { kind: 'token', name: '--color-text-muted' },
+      bg: PAPER,
+      floor: 3,
+      scope: ROOT,
+      note: 'under 4.5 on paper: small text there takes --color-accent'
+    }
+  )
+
+  /*
     The two scrim modes, live since gh#253. Both measure the worst case a
     photograph can present — a blown-out white frame, which is BFNA's house
     style — so a pass here is a pass over any image the site can ship.

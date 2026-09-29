@@ -12,8 +12,39 @@
  * card-shaped thing no wrapper covers composes it here rather than growing an
  * eighth wrapper.
  *
- * Presentational-only (BRIEF D8): one prop in, three slots, nothing else. No
- * `queryCollection`, no store, no data composable.
+ * Presentational-only (BRIEF D8): one prop in, four slots (default, `kicker`,
+ * `chips`, `media`), nothing else. No `queryCollection`, no store, no data
+ * composable. (`kicker` is the row's slot — see "No label sits above a
+ * heading" below. A column card that fills it gets the label at the end of
+ * its text block, on the meta voice, rather than above its title.)
+ *
+ * ## The family, in one place (Sep 2026)
+ *
+ * Every visual decision the seven wrappers share is made in this file's
+ * stylesheet and nowhere else: the white surface on `--shadow-card`, one
+ * hover (a small lift, the deeper shadow, the title underlining, the picture
+ * easing in inside its frame) for any card whose heading is a link, the
+ * condensed navy title, the muted meta line under it, the excerpt on the
+ * body ramp, the chips on the bottom edge. The chip row declares
+ * `data-chip-tone="neutral"`, so an untoned chip a call site drops into it
+ * still reads as the family's navy pill (`bfChip`'s tone axis).
+ *
+ * **Media is a group decision, not a card's.** A wrapper renders its media
+ * slot only when its row carries an image, so no card shows an empty box —
+ * but a grid that mixed picture cards and text cards stretched the text ones
+ * to the picture ones' height, leaving a hollow of white between excerpt and
+ * chips. So the grids (`bfGridInsights`, `bfGridProjects`) show thumbnails
+ * only when **every** row they render has one, and otherwise none. Two rules
+ * in this stylesheet back that up for the card groups a page composes by
+ * hand: a group led by a full-width picture card reads as a lead and a list
+ * (the cards after it drop their pictures), and a group that still mixes the
+ * two stops stretching its cards (see "Mixed groups" below).
+ *
+ * **No label sits above a heading.** A curated prefix split out of a title
+ * ("Documentary", "Latest Issue" — `utils/headingKicker.ts`) is a run on the
+ * meta line under it, `DOCUMENTARY · JUL 2026`, never an eyebrow. The column
+ * wrappers render that line themselves as `.bf-card__meta`; the `kicker`
+ * slot is the row modifier's, which sets it in the same run after the title.
  *
  * ## The card is an `<li>`
  *
@@ -29,18 +60,21 @@
  * grids (#42) put a card group on, and `base/reset.css`'s `ul[class]` rule
  * already strips the marker, margin and padding from any `<ul>` carrying one.
  *
- * ## Heading first in the DOM, chips and media first on the screen
+ * ## Heading first in the DOM; media first on the screen
  *
  * `wfCard.vue`'s comment states the rule and this file keeps it: the heading
  * (with its link) comes **first in source order**, so heading-navigation lands
- * at the start of the card and not in the middle of a chip row. Chips and
- * media sit *after* it in the DOM and are pulled up visually with CSS `order`
- * — `-1` and `-2` — never by reordering the markup.
+ * at the start of the card and not in the middle of a chip row. Every card
+ * then reads, in DOM and on screen alike, title → meta → excerpt → chips, the
+ * chips pinned to the card's bottom edge (Paper node 1B-0). Only the media
+ * box is pulled above the heading visually with CSS `order: -1`, never by
+ * reordering the markup. The row modifier alone puts its chips back in front
+ * of the line (`order: -2`).
  *
- * The two orders are allowed to disagree here because nothing in the visual
- * order is focusable or is a reading-order dependency: chips are text, the
- * media box is decorative or `alt`-described, and the one interactive thing in
- * a default card is the heading link itself, which is first either way. (A
+ * The two orders are allowed to disagree there because nothing moved is
+ * focusable or is a reading-order dependency: the media box is decorative or
+ * `alt`-described, and the one interactive thing in a default card is the
+ * heading link itself, which is first either way. (A
  * card that puts a *focusable* control in the chips slot would create a
  * tab-order/visual-order mismatch — WCAG 2.4.3 — which is why the wrappers
  * that need one, e.g. an external CTA, put it in the default slot.)
@@ -166,27 +200,35 @@ if (import.meta.dev) {
       Heading stays the first content in the DOM. The picture is a later
       sibling pulled above this block with `order`.
 
-      `__text` is the part that grows on a text card (the excerpt) and, together
-      with the picture, the part that grows on a media card. Chips stay a
-      fixed-height sibling so they sit on the bottom edge.
+      `__text` is the part that grows — it takes the slack an equal-height row
+      gives the card — so the chips, a fixed-height sibling after it, sit on
+      the bottom edge. The picture never grows.
     -->
     <div class="bf-card__copy">
       <div class="bf-card__text">
         <slot />
 
+        <!--
+          The row modifier's label, set after the title in the meta run.
+          Last in the DOM and never pulled above the heading: a column card
+          writes its own `.bf-card__meta` line under the title instead.
+        -->
         <p v-if="$slots.kicker" class="bf-card__kicker kicker">
           <slot name="kicker" />
         </p>
       </div>
 
       <!--
-        Chip gap is 8px on text cards (`gap-2`) and 15px on media cards
-        (`gap-3.75`). `--space-2xs` / `--space-xs`.
+        Chip gap is Paper's 8px (`gap-2`) on every card: `--space-2xs`.
+        `data-chip-tone` is `bfChip`'s container hook — an untoned chip in
+        this row takes the neutral pill, so a call site that never heard of
+        `tone` (the search results row) still matches the family.
       -->
       <div
         v-if="$slots.chips"
         class="bf-card__chips | cluster"
-        :data-gap="$slots.media ? 'xs' : '2xs'"
+        data-gap="2xs"
+        data-chip-tone="neutral"
       >
         <slot name="chips" />
       </div>
@@ -206,7 +248,7 @@ if (import.meta.dev) {
   `data-v-…` id, never this component's. So a `scoped` block here would emit
   `.bf-card h3 a[data-v-card]::after` — a selector that cannot match a heading
   the caller passed in, which is every heading this component will ever hold.
-  The stretched link, the `> time` baseline and the raised non-heading links
+  The stretched link, the `> time` date and the raised non-heading links
   all style slotted DOM, so the block has to be global.
 
   (`:slotted()` would compile the same rules against a slot-scope id. It is
@@ -231,52 +273,51 @@ if (import.meta.dev) {
       un-overridable as an inline `aspect-ratio` was in `wfMedia.vue` (gh#26).
       Declared here, a consumer outranks any of them with an ordinary rule.
 
-      No new colour (BRIEF §5 rule 2). `.wf-card`'s `#999` border and `#222`
-      hover are the existing semantic pair `--color-base-light` /
-      `--color-text`; neither `--color-surface` nor `--color-border` (which the
-      spec names) exists in `tokens/semantic-colors.css`, and adding one is
-      forbidden.
+      The surface (Paper node 1B-0, as tuned since): white, no border, the
+      card elevation pair from `tokens/semantic-misc.css`, the large radius.
+      `--border-radius-l` is the fallback while `--border-radius-xl` is new.
     */
     --_bf-card-padding: var(--space-m);
-    /*
-      Paper card gap is 16px. `--space-xs` lands on 15px at the top of the
-      scale; `--space-s` lands on 20.
-    */
-    --_bf-card-gap: var(--space-xs);
-    --_bf-card-border-width: 0;
-    --_bf-card-border-color: var(--color-base-light);
-    --_bf-card-border: var(--_bf-card-border-width) solid var(--_bf-card-border-color);
+    /* Media to copy. Paper's half card opens 24px there; `--space-s` is 20. */
+    --_bf-card-gap: var(--space-s);
+    --_bf-card-radius: var(--border-radius-xl, var(--border-radius-l));
+    --_bf-card-bg: var(--color-surface-page);
+    --_bf-card-shadow: var(--shadow-card);
+    --_bf-card-shadow-hover: var(--shadow-card-hover);
+    /* How far a linked card rises under the pointer. */
+    --_bf-card-lift: calc(-1 * var(--space-3xs));
+    --_bf-card-title-color: var(--color-accent);
     --_bf-card-focus-color: var(--color-text);
-    --_bf-card-hover-color: var(--color-text);
     --_bf-card-link-z-index: 1;
+    /*
+      One motion for the family: an exponential ease-out, short enough that a
+      pointer sweeping a grid does not leave a wake.
+    */
+    --_bf-card-motion: 240ms cubic-bezier(0.16, 1, 0.3, 1);
 
     /* The containing block for the heading link's stretched `::before`. */
     position: relative;
-
     display: flex;
     flex-direction: column;
     gap: var(--_bf-card-gap);
-    block-size: 100%;
-    padding: var(--_bf-card-padding);
-    border: var(--_bf-card-border);
-    border-radius: var(--border-radius-xl);
-    background-color: var(--color-surface-page);
-    --_bf-card-shadow: var(--shadow-elevation-medium);
-    --_bf-card-shadow-hover: var(--shadow-elevation-high);
-    box-shadow: var(--_bf-card-shadow);
-    transition: all 200ms ease;
 
-    * {
-      transition: all 200ms ease;
-    }
     /*
+      No `block-size: 100%`. A card is a grid or switcher item, and both
+      stretch their items to the row by default — but only while the item's
+      block size is `auto`. A percentage opted the card out of the stretch in
+      the flex-based `.switcher`, which is why the three home programme cards
+      stood at three different heights.
+
       `base/typography.css` sets `li { margin-bottom: 0.5em }` in
       `@layer defaults`, which this beats from `components`. Zeroing it makes
       the group's `gap` the single source of card spacing, so row gaps equal
-      column gaps whatever the column count — the bug the frozen skin fixes
-      with an unlayered rule of its own.
+      column gaps whatever the column count.
     */
     margin-block: 0;
+    padding: var(--_bf-card-padding);
+    border-radius: var(--_bf-card-radius);
+    background-color: var(--_bf-card-bg);
+    box-shadow: var(--_bf-card-shadow);
 
     /*
       Redundant while `display: flex` holds (a flex container is no longer a
@@ -285,175 +326,381 @@ if (import.meta.dev) {
       `base/reset.css` covers the group; this covers the item.
     */
     list-style: none;
-  }
-
-  .bf-card * {
-    position: relative;
-    top: 0;
-    transition: all 200ms ease;
+    transition:
+      transform var(--_bf-card-motion),
+      box-shadow var(--_bf-card-motion);
   }
 
   /*
-    Translate only when the card has media. Text cards keep the scale
-    from `.bf-card:has(a):hover` below and nothing else.
+    The copy block — text, then chips — takes whatever height the row gives
+    the card, and inside it the text block grows. That is what pins the chip
+    row to the card's bottom edge in an equal-height grid: the excerpt region
+    absorbs the slack, the chips sit last.
   */
-  .bf-card:has(.bf-card__media)[data-span="full"]:hover {
-    transform: scale(1.05) translateY(-30px);
-    box-shadow: var(--shadow-elevation-high);
-    transition: all 200ms ease;
-  }
-
-  .bf-card:has(.bf-card__media):not([data-span="full"]):hover {
-    .bf-card__media {
-      top: -80px;
-      box-shadow: var(--shadow-elevation-medium);
-    }
-    .bf-card__copy { top: -40px; }
-    .bf-card__chips { top: 10px; }
-  }
-
-  /*
-    The "special" card inside a card grid — the Transponder issue leading the
-    homepage Insights grid. `1 / -1` is the whole row at every column count, so
-    it cannot overflow when an `auto-fill` grid collapses to one column;
-    `span 2` could and did. The heavier border is what makes it read as special
-    rather than merely wide, and it is a hook override rather than a second
-    `border` declaration so a consumer can retune one without restating both.
-  */
-  .bf-card[data-span="full"] {
-    display: grid;
-    grid-column: 1 / -1;
-    gap: 0;
-    padding: 0;
-    block-size: auto;
-  }
-
-  /*
-    Picture and the copy share whatever height the row gives the card.
-    `flex-basis: auto` keeps each at its content size; `flex-grow` splits
-    the extra, which is the mock's `flex-1` on the media and on the text block.
-  */
-  .bf-card__media,
   .bf-card__copy {
+    display: flex;
     flex: 1 1 auto;
+    flex-direction: column;
+    gap: var(--space-xs);
     min-block-size: 0;
   }
 
-  .bf-card__copy {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-xs);
-  }
-
   /*
-    Title stack is 4px (`gap-1`). The excerpt opens that up: 16px on a text
-    card (`gap-4` around a `flex-1` body), 24px on a media card (`gap-6`
-    inside the text block).
+    Title stack is 4px (`gap-1`): kicker, title, date. The excerpt opens that
+    up with its own margin below.
   */
   .bf-card__text {
     display: flex;
-    flex-direction: column;
     flex: 1 1 auto;
+    flex-direction: column;
     gap: var(--space-3xs);
     min-block-size: 0;
-    overflow: hidden;
   }
 
   .bf-card__chips {
     flex-shrink: 0;
   }
 
-  .bf-card[data-span="full"] .bf-card__copy {
-    grid-area: 1 / 1;
-    justify-self: end;
-    align-self: end;
-    z-index: 1;
-    flex: none;
-    inline-size: 50%;
-    padding: var(--space-m);
-    gap: var(--space-s);
-    color: var(--color-text-inverse);
-  }
-
-  .bf-card[data-span="full"] .bf-card__media {
-    position: relative;
-    grid-area: 1 / 1;
-    border-radius: inherit;
-  }
-
   /*
-    Dark scrim from the corner the type sits in (bottom-end). Same token as
-    the hero media layer so white type clears 4.5:1 over the photograph.
+    ## A pending marker — `.bf-card__pending`
+
+    Not a chip. A chip is taxonomy — what a piece is, whose it is — and a
+    marker that says content is still owed (the Transponder's "External link
+    pending Q6", `bfCardProduct`) set in the same filled pill read as one
+    more category beside "Magazine". It sits in the chip row, because that
+    is where the card says what it is and is not, but as an open placeholder:
+    no fill, a dashed hairline in the text's own colour, sentence case in the
+    body's light italic. The wireframe's `[data-pending]` flag is the same
+    idea in the frozen skin.
+
+    `currentcolor` throughout, so it is the card's ink on the white card and
+    white over the full-width card's photograph and scrim, where the copy is
+    inverted — no colour of its own to measure. The chip's size and height,
+    so the row keeps one line box.
   */
-  .bf-card[data-span="full"] .bf-card__media::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      to top left,
-      var(--color-scrim) 0%,
-      color-mix(in srgb, var(--color-scrim) 72%, transparent) 42%,
-      transparent 72%
-    );
-    pointer-events: none;
-  }
-
-  .bf-card[data-span="full"] :is(h2, h3, h4),
-  .bf-card[data-span="full"] .bf-card__text > p:not(.kicker) {
-    color: var(--color-text-inverse);
-  }
-
-  .bf-card[data-span="full"] .bf-media {
-    block-size: 100%;
-    object-fit: cover;
+  .bf-card__pending {
+    display: inline-flex;
+    align-items: center;
+    max-inline-size: 100%;
+    padding: var(--space-3xs) var(--space-xs);
+    border: var(--border-width-thin) dashed currentcolor;
+    border-radius: var(--radius-pill);
+    font-family: var(--font-family-ui);
+    font-size: max(var(--size--2), 0.75rem);
+    font-style: italic;
+    font-weight: var(--font-weight-light);
+    line-height: 1.1;
   }
 
   /*
+    ## Media
+
+    Rendered only when the data carries an image — every wrapper guards the
+    slot on its row's `image`, and the grids switch it off for a whole group
+    unless every row has one — so there is no empty-box state to style. The
+    box is content-sized (`flex: none`): it used to share the row's slack
+    with the copy, and an equal-height grid stretched it past its picture,
+    leaving a grey band under the image. The ground is only ever seen while
+    a large original is still arriving.
+
     Visual order, the CSS half of "heading first in the DOM". Never markup
     order — see the component comment.
   */
   .bf-card__media {
-    order: -1;
     display: flex;
-    border-radius: var(--border-radius-m);
+    flex: none;
+    order: -1;
     overflow: hidden;
-    background-color: var(--color-base-tint-10);
+    border-radius: var(--border-radius-m);
+    background-color: var(--color-base-super-light);
   }
 
   .bf-card__media .bf-media {
     flex: 1 1 auto;
-    block-size: 100%;
     min-block-size: 0;
     object-fit: cover;
+    transition: transform var(--_bf-card-motion);
   }
 
   /*
-    Kicker sits under the media and above the title. Chips close the card.
-    The row modifier puts its chips back in front — that line is chip, kicker,
-    title, date. `-2` so the chips lead the kicker's `-1` rather than tying
-    with it and losing on DOM order (the kicker is inside `__text`).
+    ## Type
+
+    Title: IBM Plex Sans Condensed 400 in navy, on `--leading-display` — the
+    Paper spec. Named `:is(h2, h3, h4)` because heading level belongs to the
+    page outline (#128). The anchor inherits colour and weight: it would
+    otherwise take `base/typography.css`'s 300 and — because NuxtLink renders
+    `class=""`, which `a:not([class])` does not match — the UA's link blue.
   */
-  .bf-card p.bf-card__kicker {
-    order: -1;
+  .bf-card :is(h2, h3, h4) {
     flex-shrink: 0;
-    margin: 0;
+    color: var(--_bf-card-title-color);
+    font-family: var(--font-family-condensed);
+    font-size: var(--size-1);
+    font-weight: var(--font-weight-normal);
+    letter-spacing: var(--tracking-condensed);
+    line-height: var(--leading-display);
+    text-wrap: balance;
   }
 
-  .bf-card__chips { order: 1; }
-  .bf-card.bf-card-row .bf-card__chips { order: -2; }
+  .bf-card :is(h2, h3, h4) a {
+    color: inherit;
+    font-weight: inherit;
+    text-decoration-line: none;
+    text-decoration-thickness: var(--border-width-thin);
+    text-underline-offset: 0.18em;
+  }
+
+  /*
+    The meta line follows the title: small semibold capitals in the muted
+    navy, with the chips' tracking so the card has one label voice. Paper
+    sets it at 12px, a notch above the 11px chips; `--size--2` holds at
+    11.1px on the fluid scale, so the step is floored at 0.75rem rather than
+    letting the one fact every card carries shrink to chip size.
+
+    It is the bare date (`> time`, so a `<time>` inside an excerpt is not
+    restyled), or — when a wrapper split a curated prefix out of the title —
+    a `.bf-card__meta` run of prefix and date. The row's `kicker` slot takes
+    the same voice. The global `.kicker` it also carries (blue, condensed,
+    bold, 16px) sits in `@layer defaults`, which this layer outranks.
+  */
+  .bf-card__text > time,
+  .bf-card__text > .bf-card__meta,
+  .bf-card p.bf-card__kicker {
+    flex-shrink: 0;
+    margin: 0;
+    color: var(--color-text-muted);
+    font-family: var(--font-family-ui);
+    font-size: max(var(--size--2), 0.75rem);
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: var(--tracking-caps);
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  /*
+    `DOCUMENTARY · JUL 2026`. A wrapping flex run, so a long prefix on a
+    narrow card breaks between its facts rather than inside one. The dot is
+    drawn, and named empty for assistive tech (`/ ""`), so a screen reader
+    reads the two facts and not "middle dot". `* + *`, so a row without a
+    date (`bfTime` renders nothing) carries no stray separator.
+  */
+  .bf-card__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3xs);
+  }
+
+  .bf-card__meta > * + *::before {
+    content: "·" / "";
+    margin-inline-end: var(--space-3xs);
+  }
+
+  /*
+    Excerpt. Paper sets it at 18px against the title's 27; the fluid body
+    step reaches 20px at desktop, which flattens that ratio, so the excerpt
+    rides the ramp and stops at 18. On a phone that is the ramp's own 16px.
+    The space above it is Paper's 16px (`--space-xs`, net of the stack gap).
+  */
+  .bf-card__text > p:not(.kicker) {
+    margin-block-start: calc(var(--space-xs) - var(--space-3xs));
+    color: var(--color-text);
+    font-family: var(--font-family-ui);
+    font-size: min(var(--size-0), 1.125rem);
+    font-weight: var(--font-weight-light);
+    line-height: var(--leading-body);
+  }
+
+  /*
+    Media cards: more air between the picture-led title stack and the
+    excerpt, and the excerpt clamps at four lines so a row of media cards
+    keeps one rhythm whatever each excerpt's length.
+  */
+  .bf-card:has(> .bf-card__media) .bf-card__text > p:not(.kicker) {
+    display: -webkit-box;
+    overflow: hidden;
+    margin-block-start: calc(var(--space-s) - var(--space-3xs));
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 4;
+    line-clamp: 4;
+  }
+
+  /*
+    ## The full-width card — `span="full"`
+
+    The "special" card inside a card grid — the Transponder issue leading the
+    homepage Insights grid. `1 / -1` is the whole row at every column count,
+    so it cannot overflow when an `auto-fill` grid collapses to one column;
+    `span 2` could and did.
+
+    Two layouts, chosen by the card's **own** width through a container query
+    rather than by the viewport, because the card's width is what decides
+    whether copy fits over the picture:
+
+    - narrow (the default): a media card like its neighbours — picture, then
+      copy on white. At 375px the old overlay squeezed the copy into half of a
+      300px card, one word per line, and pushed a chip out of the card.
+    - wide (`>= 48rem` of card): the picture fills the card and the copy sits
+      over its bottom-end corner on a scrim.
+
+    The card is a one-column grid in both, so the wide layout can stack the
+    two in one cell. Padding moves onto the children for the same reason: a
+    container query styles the container's descendants, never the container.
+  */
+  .bf-card[data-span="full"] {
+    display: grid;
+    grid-column: 1 / -1;
+    gap: 0;
+    padding: 0;
+    container-type: inline-size;
+  }
+
+  .bf-card[data-span="full"] .bf-card__media {
+    margin: var(--_bf-card-padding) var(--_bf-card-padding) 0;
+  }
+
+  .bf-card[data-span="full"] .bf-card__copy {
+    padding: var(--_bf-card-gap) var(--_bf-card-padding) var(--_bf-card-padding);
+  }
+
+  /* No picture: nothing sits above the copy, so it takes the full padding. */
+  .bf-card[data-span="full"] .bf-card__copy:only-child {
+    padding-block-start: var(--_bf-card-padding);
+  }
+
+  /*
+    …and its text keeps a reading measure. A lone project on a program hub
+    leads its row as a full-span text card, and its excerpt ran the whole
+    1100px row, ~150 characters a line. 75ch of the excerpt's own size is
+    the long end of a comfortable line; the chips below keep the card's
+    full width, on the same left edge.
+  */
+  .bf-card[data-span="full"] .bf-card__copy:only-child .bf-card__text {
+    max-inline-size: 75ch;
+  }
+
+  @container (min-width: 48rem) {
+    .bf-card[data-span="full"] .bf-card__media {
+      position: relative;
+      grid-area: 1 / 1;
+      margin: 0;
+      border-radius: inherit;
+    }
+
+    .bf-card[data-span="full"] .bf-card__media .bf-media {
+      block-size: 100%;
+    }
+
+    /*
+      Dark scrim from the corner the type sits in (bottom-end). Same token as
+      the hero media layer so white type clears 4.5:1 over the photograph.
+    */
+    .bf-card[data-span="full"] .bf-card__media::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to top left,
+        var(--color-scrim) 0%,
+        color-mix(in srgb, var(--color-scrim) 72%, transparent) 42%,
+        transparent 72%
+      );
+      pointer-events: none;
+    }
+
+    .bf-card[data-span="full"]:has(> .bf-card__media) .bf-card__copy {
+      z-index: 1;
+      flex: none;
+      grid-area: 1 / 1;
+      place-self: end end;
+      inline-size: 50%;
+      padding: var(--_bf-card-padding);
+      gap: var(--space-s);
+      color: var(--color-text-inverse);
+    }
+
+    /*
+      Over media, type is white — `semantic-colors.css`'s scrim rule: no
+      programme or muted colour survives the scrim as text. The meta line
+      goes white with the title for the same reason.
+    */
+    .bf-card[data-span="full"]:has(> .bf-card__media) :is(h2, h3, h4),
+    .bf-card[data-span="full"]:has(> .bf-card__media) .bf-card__text > *,
+    .bf-card[data-span="full"]:has(> .bf-card__media) p.bf-card__kicker {
+      color: var(--color-text-inverse);
+    }
+
+    /*
+      Over the photograph the excerpt is whole; there is room for it. Plain
+      `> p`, which also reaches the kicker harmlessly: it undoes only a clamp
+      the kicker never had, and it keeps the ban on new `:not()` (D-20.5).
+      Same specificity as the clamp rule above, and later, so it wins.
+    */
+    .bf-card[data-span="full"]:has(> .bf-card__media) .bf-card__text > p {
+      display: block;
+      -webkit-line-clamp: unset;
+      line-clamp: none;
+    }
+  }
+
+  /*
+    ## A lead and a list
+
+    A group led by a full-width picture card — the Transponder issue on the
+    homepage — gives the picture to the lead, and the cards after it read
+    text-only. The first card under the magazine was its own latest issue,
+    and the curation carries the same cover under a second asset id, so at
+    375px the two stacked as the same picture twice in a row; no `src`
+    comparison can see that. Dropping one picture would have left a text
+    card beside a picture card, which is the hollow a group must not have
+    (see the component comment). So the whole list goes text-only, the
+    grid stays uniform, and the lead is the band's one image.
+
+    `display: none` on the box, because the wrapper cannot know its
+    neighbours and the page composes this group by hand. `bfMedia` loads
+    lazily, and a lazy image that is never rendered is never fetched.
+    The excerpt then sets as on any text card: whole, and at the text
+    card's spacing, undoing the media-card clamp above at a higher
+    specificity. Plain `> p`, as in the overlay block, to keep the ban on
+    new `:not()`.
+  */
+  .bf-card[data-span="full"]:has(> .bf-card__media) ~ .bf-card > .bf-card__media {
+    display: none;
+  }
+
+  .bf-card[data-span="full"]:has(> .bf-card__media) ~ .bf-card .bf-card__text > p {
+    display: block;
+    margin-block-start: calc(var(--space-xs) - var(--space-3xs));
+    -webkit-line-clamp: unset;
+    line-clamp: none;
+  }
+
+  /*
+    ## Mixed groups
+
+    The grids never mix — they decide media for the whole group — but a
+    page that composes its own card list could, the day one of its rows
+    loses its image. A text card (its copy is the card's only child) beside
+    a picture card would then stretch to the picture card's height and pin
+    its chips under a hollow. Such a group stops stretching instead: ragged
+    bottoms, chips straight after the excerpt, no empty box. Nothing on the
+    site matches this today; it is the guard, not the design.
+  */
+  :is(ul, ol):has(> .bf-card > .bf-card__media):has(> .bf-card > .bf-card__copy:only-child) {
+    align-items: start;
+  }
 
   /*
     ## The row modifier — `.bf-card-row` (`bfCardRow`, gh#36 / issue 27)
 
-    The dense list row used by search results and the archive accordion: chip,
-    linked heading and date on **one line**, wrapping gracefully rather than
-    stacking.
+    The dense list row used by search results and the archive accordion:
+    chips, linked heading, then kicker and date on **one line**, wrapping
+    gracefully rather than stacking — and, below 36rem of row, stacked in
+    the same order so every title starts at the left edge.
 
     It lives here, in the base's own stylesheet, rather than in a stylesheet of
     its own. It is a *modifier of this card* and every declaration below undoes
-    exactly one thing a rule a few lines up declared — a second file would have
-    had to re-specify `.bf-card__chips`'s `order` and `.bf-card > time`'s
-    `margin` from outside, and would have raced this block for both.
+    exactly one thing a rule above declared — a second file would have to
+    re-specify them from outside, and would race this block for each.
 
     A **class** rather than a `data-*` attribute, unlike `data-span="full"`.
     `span` is a value out of a closed set and reads as a state; "this card is a
@@ -465,9 +712,13 @@ if (import.meta.dev) {
 
     Every selector below is written `.bf-card.bf-card-row` — (0,2,x) — so the
     modifier outranks the base rule it overrides on specificity rather than on
-    source order. At (0,1,x) `.bf-card > time { margin-block-start: auto }`
-    would tie with the row's zero and win on document order, which is a bug
-    waiting for someone to reorder this block.
+    source order.
+
+    **Flat, not floating** (Sep 2026). A list of 256 archive rows was 256
+    shadowed, rounded cards, each shadow cut off by the next — a stack of
+    tiles rather than an index. A row is a line: no ground, no shadow, no
+    radius, and a hairline under it. The list's own `gap` is the space above
+    each line; the row's bottom padding is the space above the rule.
 
     Tokens only. No new colour, and no `:not()` anywhere — D-20.5 (#29) bans
     `:not()` around a complex selector, and this modifier needs none.
@@ -481,40 +732,86 @@ if (import.meta.dev) {
     --_bf-card-row-gap: var(--space-xs);
 
     /*
+      The row is its own query container, so it can choose between one line
+      and a stacked row by the width it actually has (see "Narrow rows"
+      below) rather than by the viewport.
+    */
+    container: bf-card-row / inline-size;
+
+    /*
       One line, not a stack. `wrap` — never `nowrap` — is what makes the row
       degrade into two or three lines at narrow widths instead of overflowing
       its container. That is the spec's "wraps gracefully" clause, and it is
       why the heading gets no `white-space` and no fixed-width column here or
       anywhere: a 980-character heading has to wrap *inside* the row.
-    */
-    flex-direction: row;
-    flex-wrap: wrap;
 
-    /*
-      `baseline` rather than `center`. The chip, the heading and the date are
+      `baseline` rather than `center`: the chip, the heading and the date are
       three runs of text at three different sizes; aligning their boxes'
       centres would leave three visibly different text baselines on one line.
-    */
-    align-items: baseline;
-    block-size: auto;
 
-    gap: var(--_bf-card-row-gap);
+      The hook is the gap along the line. Between wrapped lines it is the
+      step below, so a title and the meta line under it stay one group.
+    */
+    flex-flow: row wrap;
+    align-items: baseline;
+    gap: var(--space-2xs) var(--_bf-card-row-gap);
+    padding: 0 0 var(--space-xs);
+    border-block-end: var(--border-width-thin) solid var(--color-base-super-light);
+    border-radius: 0;
+    background-color: transparent;
+    box-shadow: none;
   }
 
   /*
-    `margin-block-start: auto` floats the date to a *column's* bottom edge, and
-    that is what it does on every other card. On the cross axis of a row an
-    auto margin overrides `align-items` outright and drops the `<time>` to the
-    row's bottom edge, off the baseline everything else shares. Zeroed, the
-    date sits on the line with the rest of the row.
+    The copy and text wrappers dissolve, so the heading, the date, the kicker
+    and the chip cluster are all items of the one wrapping line.
   */
   .bf-card.bf-card-row .bf-card__copy,
   .bf-card.bf-card-row .bf-card__text {
     display: contents;
   }
 
+  /*
+    The row puts its chips back in front, and sets the kicker after the
+    title as the first half of the meta run: chips, title, kicker · date,
+    then anything else a caller adds — the one-line excerpt a search row
+    carries (see "The row's excerpt" below). The kicker is last in the DOM,
+    so every item of `__text` takes an explicit place; the heading keeps DOM
+    order's lead either way.
+  */
+  .bf-card.bf-card-row .bf-card__chips {
+    order: -2;
+  }
+
+  .bf-card.bf-card-row .bf-card__text > * {
+    order: 3;
+  }
+
+  .bf-card.bf-card-row .bf-card__text > :is(h2, h3, h4) {
+    order: 0;
+  }
+
+  .bf-card.bf-card-row .bf-card__text > p.bf-card__kicker {
+    order: 1;
+  }
+
   .bf-card.bf-card-row .bf-card__text > time {
-    margin-block-start: 0;
+    order: 2;
+  }
+
+  /*
+    `TRANSPONDER ISSUE #4 · JUN 2023`: the kicker and the date are two items
+    of the line, so the separator is drawn on the date, named empty for
+    assistive tech, and the gap between the two is taken back to the meta
+    line's own spacing. Both only when both are present.
+  */
+  .bf-card.bf-card-row:has(.bf-card__text > time) p.bf-card__kicker {
+    margin-inline-end: calc(var(--space-3xs) - var(--_bf-card-row-gap));
+  }
+
+  .bf-card.bf-card-row:has(p.bf-card__kicker) .bf-card__text > time::before {
+    content: "·" / "";
+    margin-inline-end: var(--space-3xs);
   }
 
   /*
@@ -522,73 +819,117 @@ if (import.meta.dev) {
     column card's title from being squeezed, but on a wrapping row it holds a
     long title at its max-content width — wider than the row — instead of
     wrapping it inside the row as this block's contract says.
+
+    And it starts from nothing and takes the line's slack (`1 1 0`). With an
+    `auto` basis a long title was measured at its max-content width, did not
+    fit beside the chips, and dropped to a line of its own — so at 1280 the
+    archive's longest titles started at the left edge and the rest after
+    their chips, the same alternation the narrow rows had. From a zero basis
+    every title fits beside its chips and wraps inside its own box, and the
+    meta run it pushes ahead of it lines up down the list's end edge.
   */
   .bf-card.bf-card-row :is(h2, h3, h4) {
-    flex-shrink: 1;
+    flex: 1 1 0;
   }
 
   /*
-    Date follows the title. `> time`, so a `<time>` inside an excerpt is not restyled.
+    ## The chip track — `--_bf-card-row-chips-min`
+
+    A wide row is one line, chips then title, so the chips' width sets where
+    each title begins, and a list mixing `ARTICLE` and `INFOGRAPHIC ·
+    ARCHIVE` starts its titles at different x. A list that wants one title
+    edge gives the chip cluster a floor as wide as the widest set its rows
+    can carry, and the cluster becomes a fixed track (`flex: none`).
+
+    The floor is a measurement of a list's own labels, so the list sets it:
+    `/search` 12.5rem, `/archive` 7rem. Read with a fallback rather than
+    declared on the row, so it inherits — a list sets it once on itself, not
+    on every row. Unset, the floor is 0 and the cluster keeps its content
+    width, as before.
+
+    `width > 36rem` is the exact complement of the narrow-row query below,
+    so at no width do the two layouts both apply: a stacked row already
+    starts every title at the left edge.
   */
-  .bf-card__text > time {
-    flex-shrink: 0;
-    margin: 0;
-    color: var(--color-primary-tint-70);
-    font-family: var(--font-family-ui);
-    font-size: 0.75rem;
-    font-weight: var(--font-weight-semibold);
-    letter-spacing: var(--tracking-ui);
-    line-height: 1;
-    text-transform: uppercase;
-  }
+  @container bf-card-row (width > 36rem) {
+    .bf-card.bf-card-row .bf-card__chips {
+      flex: none;
+      min-inline-size: var(--_bf-card-row-chips-min, 0);
+    }
 
-  .bf-card :is(h2, h3, h4) {
-    flex-shrink: 0;
-    color: var(--color-navy);
-    font-family: var(--font-family-condensed);
-    font-size: var(--size-1);
-    font-weight: var(--font-weight-normal);
-    letter-spacing: -0.01em;
-    line-height: calc(var(--leading-display) * 1.25);
-  }
-
-  .bf-card :is(h2, h3, h4) a {
-    color: inherit;
-    font-weight: inherit;
-    text-decoration: none;
-  }
-
-  .bf-card__text > p:not(.kicker) {
     /*
-      Text cards: the body is the `flex-1 overflow-clip` region, so it takes
-      the space between the title stack and the chips and clips the rest.
-      18px / 26px. `--size-0` is 20px at desktop, which makes the body line
-      as tall as the title's 30px line.
+      A row's excerpt (below) can start on the title column rather than
+      under the chips: `--_bf-card-row-excerpt-indent`, the chip floor plus
+      the row's gap, set by the list beside the floor. Unset, it is 0, and
+      the line starts at the row's edge. The kicker is handed back its own
+      zero, one class more specific.
     */
-    flex: 1 1 auto;
-    min-block-size: 0;
-    overflow: hidden;
-    margin-block-start: calc(var(--space-xs) - var(--space-3xs));
-    color: var(--color-text);
-    font-family: var(--font-family-ui);
-    font-size: 1.125rem;
-    font-weight: var(--font-weight-light);
-    line-height: calc(26 / 18);
+    .bf-card.bf-card-row .bf-card__text > p {
+      margin-inline-start: var(--_bf-card-row-excerpt-indent, 0);
+    }
+
+    .bf-card.bf-card-row .bf-card__text > p.bf-card__kicker {
+      margin-inline-start: 0;
+    }
   }
 
   /*
-    Media cards: the text *block* is what grows (`flex-1` beside the picture),
-    not the excerpt. The excerpt stays content-sized and the gap above it is
-    the block's 24px.
+    ## The row's excerpt
+
+    A row that carries a paragraph — a search result's excerpt, so
+    "Disrupting Democracy" and "Disrupting Democracy | Italy" can be told
+    apart before either is opened — sets it as a line of its own under the
+    title and meta run, clamped to one line: a hint of what the piece is,
+    not a second reading of it. One step under the card excerpt and in the
+    secondary ink, so the title and the date stay the row's first facts.
+
+    Written as every `<p>` of the row, then the kicker handed back its own
+    layout, rather than as a `:not(.kicker)` (D-20.5 bans new `:not()`).
+    The kicker rule is one class more specific, so it wins in any order.
   */
-  .bf-card:has(.bf-card__media):not([data-span="full"]) .bf-card__text > p:not(.kicker) {
-    flex: 0 1 auto;
-    margin-block-start: calc(var(--space-s) - var(--space-3xs));
+  .bf-card.bf-card-row .bf-card__text > p {
     display: -webkit-box;
+    flex-basis: 100%;
     overflow: hidden;
+    margin-block-start: 0;
+    color: var(--color-base-light);
+    font-size: min(var(--size-0), 1rem);
+    line-height: var(--leading-body);
     -webkit-box-orient: vertical;
-    -webkit-line-clamp: 4;
-    line-clamp: 4;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+  }
+
+  .bf-card.bf-card-row .bf-card__text > p.bf-card__kicker {
+    display: block;
+    flex-basis: auto;
+    overflow: visible;
+    color: var(--color-text-muted);
+    font-size: max(var(--size--2), 0.75rem);
+    line-height: 1;
+    -webkit-line-clamp: unset;
+    line-clamp: none;
+  }
+
+  /*
+    ## Narrow rows
+
+    Below 36rem of row the one line cannot hold chips, title and date
+    together, and letting it wrap where it fell gave two layouts that
+    alternated by title length down a 256-row index: a short title beside
+    its chips, a long one under them, the date on the title line or on its
+    own. The eye lost the title's left edge from one row to the next.
+
+    So a narrow row stacks the same items in the same order, always:
+    chips on one line, the title on the next from the left edge, the meta
+    run under it — the card family's title-then-meta order. Wider rows keep
+    the single line above.
+  */
+  @container bf-card-row (max-width: 36rem) {
+    .bf-card.bf-card-row .bf-card__chips,
+    .bf-card.bf-card-row .bf-card__text > :is(h2, h3, h4) {
+      flex-basis: 100%;
+    }
   }
 
   /*
@@ -598,6 +939,13 @@ if (import.meta.dev) {
     correctly holds an `h3` while the same card under an `h3` holds an `h4`.
     `:is()` takes the specificity of its most specific argument, so this is
     (0,1,2) — identical to what `.wf-card h3 a::after` scored.
+
+    The overlay is positioned against the **card**, and only works while
+    nothing between the card and the anchor is itself positioned. A
+    `.bf-card * { position: relative }` rule (Sep 2026) made every heading its
+    own containing block and shrank the hit area of every card in the site to
+    its title text; it is gone, and nothing in this block positions a
+    descendant of the card except the anchors raised further down.
 
     ## Why `::before` and not `::after` (D-27.1, gh#138)
 
@@ -613,14 +961,10 @@ if (import.meta.dev) {
     applies unopposed. Nothing else changes: the overlay is
     `position: absolute`, so it is out of flow and generates no inline box in
     the anchor's text — `::before` and `::after` differ only in the tree
-    position of a box that has been taken out of the tree. Both pseudo-elements
-    paint after the anchor's own background either way, and only these two
-    exist, so the stacking within the anchor is unchanged too.
+    position of a box that has been taken out of the tree.
 
     The overlay stays anonymous either way: it has no text, so it adds nothing
-    to any accessible name. Probe 20 asserts all three halves of this — the
-    marker's `content` is non-empty, the overlay is on `::before`, and the card
-    is still hit-testable over its whole area.
+    to any accessible name.
   */
   .bf-card :is(h2, h3, h4) a::before {
     content: "";
@@ -629,28 +973,49 @@ if (import.meta.dev) {
   }
 
   /*
-    Hover on a card that actually goes somewhere. 5% scale, and one step up
-    the elevation scale. `z-index` lifts it over the neighbours it now overlaps.
+    ## Hover and focus — one treatment for the family
+
+    Only a card that goes somewhere responds, so the selector requires the
+    heading link: a person card and the unlinked product card stay still (an
+    affordance on something that does not go anywhere is a lie).
+
+    The card rises a few pixels onto the deeper shadow, the title underlines,
+    and a picture eases in by 3% inside its own clipped frame. It replaces a
+    5% scale that pushed each card over its neighbours' gutter and a media
+    shift that lifted pictures 80px out of the card, over the section heading
+    above it. Keyboard focus gets the same title underline, so the two ways
+    of arriving at a card read alike.
   */
   .bf-card:has(:is(h2, h3, h4) a):hover {
     z-index: 1;
-    transform: scale(1.05);
     box-shadow: var(--_bf-card-shadow-hover);
+    transform: translateY(var(--_bf-card-lift));
+  }
+
+  .bf-card:has(:is(h2, h3, h4) a):hover :is(h2, h3, h4) a,
+  .bf-card :is(h2, h3, h4) a:focus-visible {
+    text-decoration-line: underline;
+  }
+
+  .bf-card:has(:is(h2, h3, h4) a):hover .bf-card__media .bf-media {
+    transform: scale(1.03);
+  }
+
+  /* A row is a line in a list: it underlines, and does not rise. */
+  .bf-card.bf-card-row:has(:is(h2, h3, h4) a):hover {
+    box-shadow: none;
+    transform: none;
   }
 
   @media (prefers-reduced-motion: reduce) {
     .bf-card,
-    .bf-card * {
+    .bf-card__media .bf-media {
       transition: none;
     }
 
     .bf-card:has(:is(h2, h3, h4) a):hover,
-    .bf-card:has(.bf-card__media)[data-span="full"]:hover {
+    .bf-card:has(:is(h2, h3, h4) a):hover .bf-card__media .bf-media {
       transform: none;
-    }
-
-    .bf-card:has(.bf-card__media):not([data-span="full"]):hover :is(.bf-card__media, .bf-card__copy, .bf-card__chips) {
-      top: 0;
     }
   }
 
@@ -661,7 +1026,9 @@ if (import.meta.dev) {
     focus target of a hit area the size of the whole card (WCAG 2.4.7, and the
     2.4.11 focus-appearance intent). Two rings, as gh#24 established: the
     `outline` survives forced-colors mode, where `box-shadow` is dropped, and
-    `--outline-focus` supplies the halo.
+    `--outline-focus` supplies the halo. The outline follows the card's
+    radius, so on a borderless white card the ring is the card's own edge,
+    drawn in ink.
   */
   .bf-card:has(:is(h2, h3, h4) a:focus-visible) {
     outline: var(--border-width-medium) solid var(--_bf-card-focus-color);
@@ -709,67 +1076,6 @@ if (import.meta.dev) {
   .bf-card :is(h2, h3, h4) a {
     position: static;
     z-index: auto;
-  }
-}
-</style>
-
-<style>
-@layer overrides {
-  /*
-    Filled pills. Keyed on the chip's own attributes so a card and a filter
-    bar that set `data-tone` / `data-program` get one skin. Untoned chips
-    inside a card (Archive, extras) still take the accent fill via `.bf-card`.
-
-    The chip's own rule sets `--_bf-chip-*` in `@layer components`, so this
-    has to live in a later layer to win.
-  */
-  .bf-card .bf-chip,
-  .bf-chip[data-tone="format"],
-  .bf-chip[data-program] {
-    --_bf-chip-bg: var(--color-accent-tint-11);
-    --_bf-chip-color: var(--color-accent);
-    --_bf-chip-padding: 0 var(--space-xs);
-    --_bf-chip-font-size: var(--size--2);
-    --_bf-chip-border: 0;
-
-    /*
-      Paper pill is 21px tall: 11px type plus ~5px above and below.
-      `--size--2` is the 11px step; `--space-3xs` is the 4–5px step.
-    */
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    block-size: calc(var(--size--2) + 2 * var(--space-3xs));
-    font-family: var(--font-family-ui);
-    font-weight: var(--font-weight-semibold);
-    letter-spacing: 0.02em;
-    line-height: 1;
-    text-transform: uppercase;
-    white-space: nowrap;
-  }
-
-  /* Format / Featured / Magazine — `--color-fail-tint-11` on `--color-red`. */
-  .bf-chip[data-tone="format"] {
-    --_bf-chip-bg: var(--color-fail-tint-11);
-    --_bf-chip-color: var(--color-red);
-  }
-
-  /* Topic — `--color-secondary-tint-11` on `--color-green`. */
-  .bf-chip[data-program] {
-    --_bf-chip-bg: var(--color-secondary-tint-11);
-    --_bf-chip-color: var(--color-green);
-  }
-
-  /*
-    Toggle chips (the filter bar) still have to show selection. This layer
-    outranks `.bf-chip[data-active]` in `@layer components`, so the inverse
-    fill is restated here. Border stays 0 so the box does not grow.
-  */
-  .bf-chip[data-tone="format"][data-active],
-  .bf-chip[data-program][data-active] {
-    --_bf-chip-bg: var(--color-surface-inverse);
-    --_bf-chip-color: var(--color-text-inverse);
-    --_bf-chip-border: 0;
   }
 }
 </style>

@@ -35,11 +35,19 @@
  * and dropped: a prop that typechecks and does nothing is worse than one that
  * does not exist.
  *
- * `media` is likewise not forwarded. `bfCardProject.media` is off by default
- * and the one call site that turns it on is the homepage's "Featured projects"
- * band, which the spec puts out of scope — issue 47's home template owns that
- * grid directly. Adding the pass-through here on speculation would be the
- * unified-base mistake in miniature.
+ * ## Media is the grid's decision (Sep 2026)
+ *
+ * `bfCardProject.media` is on by default and a card shows its thumbnail
+ * when its row has an `image`. This grid decides whether its cards may, by
+ * the rule `bfGridInsights` documents: pictures only when **every** project
+ * it renders has one, otherwise none for the whole group. `/projects` and
+ * the Democracy hub mixed two picture cards with two text cards in a
+ * checkerboard, and each text card stood about 300px of white tall to match
+ * its neighbour. Each band on `/projects` is its own grid, so the decision
+ * is per programme: Future Leadership, all pictures, keeps them.
+ *
+ * Still no `media` prop: the rows already say it, and a caller-set switch
+ * could only contradict them.
  */
 import type { GridProjectsProps } from '~/types/bf-contracts'
 
@@ -68,6 +76,9 @@ const props = withDefaults(defineProps<GridProjectsProps>(), {
   excerptLength: undefined,
   headingLevel: undefined
 })
+
+/** Pictures for the whole group, or for none of it. See the note above. */
+const media = computed(() => props.projects.every(p => Boolean(p.image)))
 </script>
 
 <template>
@@ -97,6 +108,7 @@ const props = withDefaults(defineProps<GridProjectsProps>(), {
       :project="p"
       :excerpt-length="props.excerptLength"
       :heading-level="props.headingLevel"
+      :media="media"
     />
   </ul>
 </template>

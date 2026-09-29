@@ -51,8 +51,10 @@
  *
  * Today the one real product, `transponder-magazine`, carries
  * `external_url: null` and `pending: "Q6"`, so the *unlinked* branch is the one
- * the live site renders. The pending chip carries that status instead of a
- * broken link, exactly as `wfCardProduct.vue` decides it.
+ * the live site renders. The pending marker carries that status instead of a
+ * broken link, exactly as `wfCardProduct.vue` decides it — `bfCard`'s
+ * `.bf-card__pending`, an open placeholder rather than a chip, so it does not
+ * read as a second category beside "Magazine".
  *
  * ## D-26.1 — the external marker is decided by `isExternal()`, not asserted
  *
@@ -70,21 +72,14 @@
  * asked rather than assumed. The rendered output is identical for every product
  * the data actually carries; the probe asserts both branches.
  *
- * ### What the marker renders on a card heading: nothing, by cascade
+ * ### What the marker renders on a card heading
  *
- * `external-link.css` paints the `↗` through `a[data-external]::after`
- * — specificity (0,1,1). `bfCard`'s stretched link is
- * `.bf-card :is(h2, h3, h4) a::after { content: ""; position: absolute; inset: 0 }`
- * — (0,1,2), because `:is()` takes the specificity of its most specific
- * argument. Same layer, so the more specific rule wins and the arrow's
- * `content` is overwritten by the empty string that makes the card clickable.
- *
- * That is **the frozen skin's behaviour too** (`.wf-card h3 a::after` against
- * `.wireframe a[data-external]::after`, the same arithmetic), so it is parity
- * rather than a regression, and this component does not invent a visible marker
- * the wireframe never showed. It is recorded here because it is genuinely
- * surprising, and the probe measures the resolved `content` rather than
- * trusting this paragraph.
+ * The `↗`, since gh#138. `external-link.css` paints it through
+ * `a[data-external]::after`, and `bfCard`'s stretched overlay used to sit on
+ * the same pseudo-element at a higher specificity, which silently erased the
+ * marker on every card heading. The overlay moved to `::before` (D-27.1 in
+ * `Card.vue`), so the two no longer compete and a linked product shows the
+ * arrow like every other external card heading.
  *
  * ## `plain()` is not called
  *
@@ -198,7 +193,7 @@ const blurb = computed(() => {
 })
 
 /**
- * The quarter the external URL is expected in, for the pending chip. `Q6` is
+ * The quarter the external URL is expected in, for the pending marker. `Q6` is
  * the frozen source's fallback and `pending` is `z.string().optional()`, so
  * both halves are real.
  */
@@ -231,8 +226,8 @@ if (import.meta.dev) {
     (#29) and nothing about it is restated here.
 
     Order is `bfCard`'s, not this file's: heading **first in the DOM** so
-    heading navigation lands at the start of the card, with the chips and the
-    media pulled above it visually by `order: -1` / `-2` in the base's
+    heading navigation lands at the start of the card, with the chips last and
+    the media drawn behind (wide) or above (narrow) the copy by the base's
     stylesheet. Never reorder the markup to change the picture.
   -->
   <bfCard span="full" v-bind="$attrs">
@@ -244,7 +239,7 @@ if (import.meta.dev) {
       <!--
         A raw `<a>`, never a `NuxtLink`: the destination is another site, and
         there is no internal route for a product to fall back to. When there is
-        no `external_url` the heading is plain text — the pending chip below
+        no `external_url` the heading is plain text — the pending marker below
         carries that status, which is `wfCardProduct.vue`'s own decision.
       -->
       <a
@@ -264,17 +259,24 @@ if (import.meta.dev) {
         `kind` reads `podcast` on the Transponder document, which is the legacy
         CMS's noise rather than a description of a magazine.
       -->
-      <bfChip data-tone="format">Magazine</bfChip>
+      <bfChip tone="neutral">Magazine</bfChip>
 
       <!--
-        Only on the unlinked branch. This chip is the whole reason a heading may
-        render without an anchor: it says *why* the title is not a link, rather
-        than leaving a reader to wonder.
+        Only on the unlinked branch. This marker is the whole reason a heading
+        may render without an anchor: it says *why* the title is not a link,
+        rather than leaving a reader to wonder. A placeholder for content still
+        owed, not a category, so it is `bfCard`'s `.bf-card__pending` — an
+        open dashed outline — and not a chip beside "Magazine".
       -->
-      <bfChip v-if="!hasLink">External link pending {{ pendingLabel }}</bfChip>
+      <span v-if="!hasLink" class="bf-card__pending">External link pending {{ pendingLabel }}</span>
     </template>
 
-    <template #media>
+    <!--
+      Only when the row carries an image. Without one the full-width card has
+      nothing to overlay its copy on, and `bfCard` lays it out as a plain
+      text card across the row instead — never an empty picture box.
+    -->
+    <template v-if="product.image" #media>
       <!--
         Decorative: the heading already names the publication, so a second
         announcement of the same title would be a duplicate rather than a

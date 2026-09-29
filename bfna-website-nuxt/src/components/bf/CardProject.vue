@@ -19,7 +19,7 @@
  * `headingLevel` comes from the shared `CardWrapperProps` (#128) — see the
  * heading note below.
  *
- * ## The heading always links. `pending` is a chip, not a branch.
+ * ## The heading always links. `pending` is not a branch — or a chip.
  *
  * This is the one thing about this card that reads like a contradiction and is
  * not. An **external** project — one carrying `external_url` — still gets an
@@ -38,9 +38,13 @@
  * putting it on an anchor that navigates to `/projects/…` would make it lie.
  * The reasoning is recorded as D-22.3 in the spec.
  *
- * `pending` likewise only adds a chip. `wfCardProject.vue` has no unlinked
- * branch, and inventing one here would take a real page away from two of the
- * 38 real projects.
+ * `pending` changes nothing a reader sees. `wfCardProject.vue` renders it as
+ * a chip ("Copy pending Q7") and has no unlinked branch; the chip went in the
+ * refined pass (Sep 2026) — it is a migration note addressed to the client,
+ * not reader copy, and it sat on project cards on `/projects`, the hubs and
+ * the home page. The pending question stays where it belongs, in
+ * `content/bf/**` and the review seed. Inventing an unlinked branch for it
+ * would take a real page away from two of the 38 real projects.
  *
  * ## The excerpt falls back with `??`, not `||`
  *
@@ -54,6 +58,16 @@
  * the build-time normaliser (issue 07) and the helper is retired (issue 10), so
  * both fields arrive as plain text and re-deriving the strip here would be a
  * second, drifting copy of it.
+ *
+ * ## Thumbnail (Sep 2026)
+ *
+ * On by default now, under the family's one media rule: the card shows the
+ * row's `image` when it has one (32 of the 38 live rows) and renders **no media
+ * box** when it does not, so no card carries an empty slot. `media` is the
+ * opt-out, and `bfGridProjects` uses it: a group in which not every project
+ * has a picture goes text-only as a whole, because a text card stretched
+ * beside a picture card is a hollow box of its own. All chips are the neutral
+ * tone.
  */
 import type { CardWrapperProps, Project } from '~/types/bf-contracts'
 import { kindLabel } from '~/utils/format'
@@ -73,9 +87,10 @@ interface Props extends CardWrapperProps {
   /** One `bfProjects` row. Passed whole; this component fetches nothing. */
   project: Project
   /**
-   * Render the media slot. **Off by default**, unlike `bfCardInsight`'s
-   * `excerpt`: most project grids are text-only, and the home page's
-   * "Featured projects" band is the call site that turns it on.
+   * Show the row's thumbnail when it has one. **On by default** (Sep 2026) —
+   * see "Thumbnail" above; `bfGridProjects` passes `:media="false"` to every
+   * card of a group that is not all pictures. A row with no `image` renders
+   * no media box either way.
    */
   media?: boolean
   /** CSS `aspect-ratio` for the media box, handed straight to `bfMedia`. */
@@ -90,12 +105,11 @@ const props = withDefaults(defineProps<Props>(), {
   /* The no-change level; see `CardWrapperProps`. */
   headingLevel: 3,
   /*
-   * Stated explicitly where the frozen source leaves it undeclared (and
-   * therefore `undefined`, which is falsy and behaves identically). The spec
-   * writes `media = false`, and a declared default is the one a reader of the
-   * component can see.
+   * `true` since Sep 2026 — the family's media rule. The frozen source left it
+   * undeclared (falsy); the home "Featured projects" band, the one call site
+   * that passed `media`, renders exactly as before, and no longer passes it.
    */
-  media: false,
+  media: true,
   mediaRatio: '3/2',
   chips: true,
   excerptLength: 140
@@ -150,11 +164,11 @@ const excerptText = computed(() => {
  * `bfCard` renders its chip wrapper on `v-if="$slots.chips"`, so a slot
  * provided but empty would still emit a `.bf-card__chips` element, and an
  * empty flex child contributes a `gap`. `cepi-2010` — no kind, no
- * `external_url`, no `pending` — is the real row that proves it.
+ * `external_url` — is the real row that proves it.
  */
 const hasChips = computed(() =>
   props.chips
-  && Boolean(kind.value || props.project.external_url || props.project.pending)
+  && Boolean(kind.value || props.project.external_url)
 )
 
 if (import.meta.dev) {
@@ -173,9 +187,9 @@ if (import.meta.dev) {
 <template>
   <!--
     Order is `bfCard`'s, not this file's: heading **first in the DOM** so
-    heading navigation lands at the start of the card, with the chips and the
-    media pulled above it visually by `order: -1` / `-2` in the base's
-    stylesheet. Never reorder the markup to change the picture.
+    heading navigation lands at the start of the card, the chips last on the
+    bottom edge, and only the media pulled above the heading visually. Never
+    reorder the markup to change the picture.
   -->
   <bfCard v-bind="$attrs">
     <component :is="`h${headingLevel}`" v-if="hasHeading">
@@ -197,12 +211,11 @@ if (import.meta.dev) {
     <p v-if="excerptText">{{ excerptText }}</p>
 
     <template v-if="hasChips" #chips>
-      <bfChip v-if="kind" data-tone="format">{{ kind }}</bfChip>
-      <bfChip v-if="project.external_url">External platform</bfChip>
-      <bfChip v-if="project.pending">Copy pending {{ project.pending }}</bfChip>
+      <bfChip v-if="kind" tone="neutral">{{ kind }}</bfChip>
+      <bfChip v-if="project.external_url" tone="neutral">External platform</bfChip>
     </template>
 
-    <template v-if="media" #media>
+    <template v-if="media && project.image" #media>
       <!--
         Decorative: the heading already names the destination, so a second
         announcement of the same title would be a duplicate rather than a

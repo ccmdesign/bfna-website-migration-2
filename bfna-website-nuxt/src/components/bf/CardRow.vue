@@ -62,7 +62,7 @@
  * | | Insight | Project |
  * |---|---|---|
  * | kicker | curated prefix of `heading` (`splitHeadingKicker`) | — |
- * | chip | `formatLabel(format)` unless the kicker restates it, + `Archive` when `archived` | `kindLabel(kind)` |
+ * | chip | `formatLabel(format)` unless the kicker restates it, + `Archive` when `archived` | `kindLabel(kind)`, + `Archive` when `archived` |
  * | link | `/insights/:slug` | `/projects/:slug` |
  * | date | `<bfTime :date="publish_date">` | — |
  *
@@ -80,12 +80,18 @@
  * that with a 980-character heading.
  *
  * Chips go in the base's `chips` slot, so they arrive inside the
- * `.bf-card__chips | cluster` wrapper with its own `data-gap="xs"` — the same
- * cluster the frozen `archive.vue:17` row builds by hand.
+ * `.bf-card__chips | cluster` wrapper — the same cluster the frozen
+ * `archive.vue:17` row builds by hand — and are the neutral tone.
+ *
+ * ## No thumbnail, deliberately
+ *
+ * The one card in the family that does not take the media rule. A row is a
+ * line in a dense index — 256 of them on `/archive` — and a picture per line
+ * would turn a scannable list into a feed. The cards are where images live.
  */
 import type { CardRowProps, Insight, CardRowItem } from '~/types/bf-contracts'
 import { formatLabel, kindLabel } from '~/utils/format'
-import { kickerHidesFormatChip, splitHeadingKicker } from '~/utils/headingKicker'
+import { displayHeading, kickerHidesFormatChip, splitHeadingKicker } from '~/utils/headingKicker'
 
 defineOptions({
   name: 'BfCardRow',
@@ -102,7 +108,9 @@ defineOptions({
 const props = withDefaults(defineProps<CardRowProps>(), {
   /* The no-change level; see `CardWrapperProps` in `bf-contracts.ts`. */
   headingLevel: 3,
-  variant: undefined
+  variant: undefined,
+  kindChip: true,
+  archiveChip: true
 })
 
 /**
@@ -125,9 +133,13 @@ const insight = computed<Insight | null>(() =>
 /**
  * The heading text, trimmed. `bfInsightSchema` types `heading` as nullable and
  * `bfProjectSchema` types it as a non-nullable `string` that can still be
- * empty, so the two defects converge on one check.
+ * empty, so the two defects converge on one check. An insight heading that
+ * ends on a colon takes its subheading, the rest of its title, as the cards
+ * do (`displayHeading()`).
  */
-const headingText = computed(() => (props.item.heading ?? '').trim())
+const headingText = computed(() => isInsight(props.item)
+  ? displayHeading(props.item.heading, props.item.subheading)
+  : (props.item.heading ?? '').trim())
 
 const hasHeading = computed(() => headingText.value !== '')
 
@@ -157,21 +169,29 @@ const to = computed(() =>
  * always returns a label — it falls back to `'Article'` — but the insight
  * format chip is dropped when the kicker restates it ("Infographic" on an
  * infographic), so an unarchived row of that kind has no chip; the kicker
- * stands in its place.
+ * on the meta run after the title names the format instead.
  *
  * `archived` is a non-nullable `boolean` on both schemas since gh#140, so the
  * truthiness test and `=== true` now agree; the truthiness form is kept because
  * it is the shape every other consumer uses.
+ *
+ * `kindChip` and `archiveChip` switch either one off for a list whose every
+ * row would carry the same label (see `CardRowProps`). The item itself is
+ * never rewritten to get there: a row handed `archived: false` to hide a chip
+ * would be a row misstating its data at the prop boundary.
  */
-const chips = computed<string[]>(() => {
+const typeChip = computed<string | null>(() => {
   const row = props.item
-  const first = isInsight(row)
-    ? (kickerHidesFormatChip(split.value, row.format) ? null : formatLabel(row.format))
-    : kindLabel(row.kind)
-  return [first, row.archived ? 'Archive' : null].filter(
+  if (!props.kindChip) return null
+  if (!isInsight(row)) return kindLabel(row.kind)
+  return kickerHidesFormatChip(split.value, row.format) ? null : formatLabel(row.format)
+})
+
+const chips = computed<string[]>(() =>
+  [typeChip.value, props.archiveChip && props.item.archived ? 'Archive' : null].filter(
     (label): label is string => Boolean(label)
   )
-})
+)
 
 /**
  * #130, as on every wrapper: an empty heading means **no heading element and
@@ -205,8 +225,9 @@ if (import.meta.dev) {
     attribute bound to `undefined`), so an unstyled row carries no empty hook.
 
     Order is `bfCard`'s, not this file's: the heading is **first in the DOM**
-    so heading navigation lands at the start of the row, with the chips pulled
-    ahead of it visually by the base's `order: -1`. Never reorder the markup to
+    so heading navigation lands at the start of the row, with the chips
+    pulled ahead of it visually and the kicker set after it, in the meta run
+    with the date, by the base's row modifier. Never reorder the markup to
     change the picture.
   -->
   <bfCard class="bf-card-row" :data-variant="variant" v-bind="$attrs">
@@ -230,7 +251,7 @@ if (import.meta.dev) {
     <template v-if="split.kicker" #kicker>{{ split.kicker }}</template>
 
     <template v-if="chips.length" #chips>
-      <bfChip v-for="chip in chips" :key="chip">{{ chip }}</bfChip>
+      <bfChip v-for="chip in chips" :key="chip" tone="neutral">{{ chip }}</bfChip>
     </template>
   </bfCard>
 </template>

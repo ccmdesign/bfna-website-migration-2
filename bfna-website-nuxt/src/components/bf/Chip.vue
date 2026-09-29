@@ -61,7 +61,9 @@
  * Unlike `bfButton`, this component sets **no** inline custom properties and
  * has no `cssVars` computed. The `--_bf-chip-*` hooks are declared with their
  * defaults in `@layer components` and re-pointed by one `.bf-chip[data-active]`
- * rule in the same layer.
+ * rule in the same layer — and, since Sep 2026, by the tone rules, which are
+ * selected on the `data-tone` / `data-program` attributes the props render
+ * rather than bound inline, for the same reason.
  *
  * That is deliberate, and it is what the spec's acceptance asks for. BRIEF §5
  * rule 4's style-binding pattern governs **prop-derived overrides** — the
@@ -105,6 +107,46 @@
  * selected ground is the semantic layer's own instruction — it names "the
  * ground an inverted block sits on", which is exactly what a selected chip
  * is. `--color-text-inverse` on it is ≈21:1.
+ *
+ * ## The tone axis — `tone` / `program` (Sep 2026)
+ *
+ * The card family's filled pills, moved into the atom from `bfCard`'s
+ * stylesheet, where they used to live as an `@layer overrides` block keyed on
+ * the raw attributes. Opt-in: with no `tone` the chip above is untouched, so
+ * FilterBar, Nav, PageHeader, Notice and SearchShell render exactly what they
+ * rendered before.
+ *
+ * | tone | ground | label |
+ * |---|---|---|
+ * | `neutral` | `--color-accent-super-light` | `--color-accent` (navy, 9.58:1) |
+ * | `program` | `--color-program-tint` | `--color-program-on-tint` (≥ 4.99:1) |
+ *
+ * Both pairs are asserted by `scripts/check-contrast.ts`. Paper's red format
+ * chip and teal programme chip were loose examples (the user's call): a format,
+ * a kind or a curation label is neutral navy, and a programme chip takes **its
+ * own** programme's colour. `program` lands as `data-program` on the chip, so
+ * the token scope in `semantic-colors.css` resolves per chip — a grid mixing
+ * three programmes paints three colours, and a chip beats a page-level
+ * `html[data-program]` because it declares the tokens on itself.
+ *
+ * Every call site passes the props now — `bfFilterBar`, the card wrappers,
+ * the detail pages' meta rows — so the two raw attribute spellings that
+ * predated them (`data-tone="format"`, a bare `data-program` on the chip) no
+ * longer resolve. A parent may still set the tone for the untoned chips it
+ * holds with `data-chip-tone="neutral"` (see the tone rules below).
+ *
+ * A toned **toggle** answers the pointer: a hairline ring in its own label
+ * colour on hover, drawn inside the pill (`inset`), so the pill does not
+ * grow and the label keeps the contrast its pair was measured at. A deeper
+ * tint was the obvious cue and fails: the programme labels clear 4.5:1 on
+ * their 11% tint by a margin of 0.5 or less. The ring is also what tells a
+ * filter chip from the passive label pill of the same colour in a card
+ * below it — the one moves, the other does not.
+ *
+ * Toned chips carry no border — a transparent one of the same width, so a
+ * toned chip and an outlined one are the same height side by side — and set
+ * `white-space: normal`, so a long label (a project's name in a card's chip
+ * row) wraps inside a narrow card instead of pushing out of it.
  *
  * ## What the passive `active` state does
  *
@@ -182,7 +224,23 @@ const props = withDefaults(defineProps<ChipProps>(), {
    * declaring the default explicitly is what keeps "unbound" distinguishable
    * from "bound to false". `toggleState` below is what reads it.
    */
-  modelValue: undefined
+  modelValue: undefined,
+  tone: undefined,
+  program: undefined
+})
+
+/**
+ * The tone hooks. `data-program` only on a programme chip — a neutral chip
+ * that carried one would repaint itself in that programme's colour. Spread
+ * **before** `$attrs`, like every other attribute this component derives, so
+ * a caller's own attribute of the same name still wins the merge.
+ */
+const toneAttrs = computed((): Record<string, string> => {
+  if (!props.tone) return {}
+  if (props.tone === 'program' && props.program) {
+    return { 'data-tone': 'program', 'data-program': props.program }
+  }
+  return { 'data-tone': props.tone }
 })
 
 const emit = defineEmits<{
@@ -317,7 +375,7 @@ const onToggle = () => {
     class="bf-chip"
     data-element="toggle"
     :data-active="pressed || undefined"
-    v-bind="$attrs"
+    v-bind="{ ...toneAttrs, ...$attrs }"
     :aria-pressed="ariaPressed"
     @click="onToggle"
   >
@@ -330,7 +388,7 @@ const onToggle = () => {
     class="bf-chip"
     data-element="link"
     :data-active="pressed || undefined"
-    v-bind="{ ...currentAttrs, ...$attrs }"
+    v-bind="{ ...toneAttrs, ...currentAttrs, ...$attrs }"
   >
     <slot />
   </NuxtLink>
@@ -342,7 +400,7 @@ const onToggle = () => {
     data-element="anchor"
     :data-external="external || undefined"
     :data-active="pressed || undefined"
-    v-bind="{ ...currentAttrs, ...$attrs }"
+    v-bind="{ ...toneAttrs, ...currentAttrs, ...$attrs }"
   >
     <slot />
   </a>
@@ -352,7 +410,7 @@ const onToggle = () => {
     class="bf-chip"
     data-element="span"
     :data-active="pressed || undefined"
-    v-bind="$attrs"
+    v-bind="{ ...toneAttrs, ...$attrs }"
   >
     <slot />
   </span>
@@ -497,6 +555,95 @@ const onToggle = () => {
     outline: var(--border-width-medium) solid var(--_bf-chip-focus-color);
     outline-offset: var(--border-width-medium);
     box-shadow: var(--outline-focus);
+  }
+
+  /*
+    ## Tones — the filled pills (see the component comment)
+
+    The tone selectors score (0,3,0) once scoped, like `[data-active]` above,
+    so the order inside this file decides between them: base, active, the
+    tones, and the toned active state last at (0,4,0).
+
+    `[data-chip-tone="neutral"] > .bf-chip` is the container default: a parent
+    that holds chips (`bfCard`'s chip row, the insight page's meta row)
+    declares the tone its untoned chips take, so a chip whose call site never
+    names a `tone` — a project or `Archive` chip — still reads as one family
+    with the rest of the row. An explicit `tone` on the chip itself wins,
+    because its rule comes later at the same specificity.
+
+    Paper pill: 11px caps, ~5px above and below, 12px either side, semibold,
+    0.02em. `--space-3xs` / `--space-xs` are those steps on the fluid scale.
+  */
+  [data-chip-tone="neutral"] > .bf-chip,
+  .bf-chip[data-tone] {
+    --_bf-chip-border: var(--border-width-none) solid transparent;
+    --_bf-chip-padding: var(--space-3xs) var(--space-xs);
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    max-inline-size: 100%;
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: var(--tracking-caps);
+    line-height: 1.1;
+
+    /*
+      A long label wraps inside its container rather than overflowing it —
+      a project's name in a 375px card. Balanced, so a two-line pill splits
+      evenly instead of stranding one word.
+    */
+    white-space: normal;
+    text-wrap: balance;
+  }
+
+  /* Neutral — formats, kinds, curation labels. */
+  [data-chip-tone="neutral"] > .bf-chip,
+  .bf-chip[data-tone="neutral"] {
+    --_bf-chip-bg: var(--color-accent-super-light);
+    --_bf-chip-color: var(--color-accent);
+  }
+
+  /*
+    Programme — the tokens resolve on the chip itself, because the chip
+    carries the `data-program` scope.
+  */
+  .bf-chip[data-tone="program"] {
+    --_bf-chip-bg: var(--color-program-tint);
+    --_bf-chip-color: var(--color-program-on-tint);
+  }
+
+  /*
+    A toned toggle still has to show selection: the inverse fill and the
+    underline cue from `[data-active]` above, restated because the tone rules
+    come later. The border stays the tone's zero width, so the pill does not
+    grow by a pixel as it toggles.
+  */
+  [data-chip-tone="neutral"] > .bf-chip[data-active],
+  .bf-chip[data-tone][data-active] {
+    --_bf-chip-bg: var(--color-surface-inverse);
+    --_bf-chip-color: var(--color-text-inverse);
+    --_bf-chip-border: var(--border-width-none) solid transparent;
+  }
+
+  /*
+    A toned toggle under the pointer (see the component comment): a hairline
+    ring in the label's own colour, inside the pill. `box-shadow` rather than
+    the border, which a toned chip holds at zero width, so the pill does not
+    move by a pixel. On a selected chip the label is white, so the ring is a
+    white line inside the navy fill.
+
+    The focus halo is a `box-shadow` too, so a chip that is hovered while it
+    has keyboard focus keeps both: the ring, then `--outline-focus` outside
+    it. The outline ring of the focus rule above is untouched either way.
+  */
+  [data-chip-tone="neutral"] > .bf-chip[data-element='toggle']:hover,
+  .bf-chip[data-tone][data-element='toggle']:hover {
+    box-shadow: inset 0 0 0 var(--border-width-thin) currentcolor;
+  }
+
+  [data-chip-tone="neutral"] > .bf-chip[data-element='toggle']:hover:focus-visible,
+  .bf-chip[data-tone][data-element='toggle']:hover:focus-visible {
+    box-shadow: inset 0 0 0 var(--border-width-thin) currentcolor, var(--outline-focus);
   }
 }
 </style>

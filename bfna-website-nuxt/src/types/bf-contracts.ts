@@ -196,7 +196,28 @@ export interface ChipProps {
    * and still emits on every activation (gh#117 / #111).
    */
   modelValue?: boolean
+  /**
+   * The filled-pill skin (Sep 2026). Absent, the chip is the outlined default
+   * every non-card call site uses, unchanged. `'neutral'` is the navy pill for
+   * formats, kinds and curation labels ("Featured", "Archive"); `'program'`
+   * paints the pill in the programme named by `program`. Rendered as
+   * `data-tone`. The raw `data-tone="format"` spelling that predated this
+   * prop no longer resolves; every call site passes `tone`. A parent can set
+   * the tone its untoned chips take with `data-chip-tone="neutral"`.
+   */
+  tone?: ChipTone
+  /**
+   * Programme slug for `tone="program"`, rendered as `data-program` **on the
+   * chip**, so the `[data-program]` token scope applies to this chip alone —
+   * a mixed-programme grid works, and a chip beats a page-level
+   * `html[data-program]`. Ignored for any other tone. A value that is not a
+   * programme slug resolves the neutral navy default, never a wrong colour.
+   */
+  program?: Program['slug']
 }
+
+/** The chip's filled-pill skins. See `ChipProps.tone`. */
+export type ChipTone = 'neutral' | 'program'
 
 /**
  * Props of `bfFilterBar` (issue 30 / gh#39).
@@ -236,9 +257,11 @@ export interface FilterBarProps {
    */
   label?: string
   /**
-   * Card-chip skin, forwarded onto every chip as the same attributes
-   * `bfCardInsight` sets: `format` → `data-tone="format"`, `program` →
-   * `data-program` (the filter key). Omitted, the chips stay outlined.
+   * Card-chip skin, forwarded onto every chip as `bfChip`'s own `tone` /
+   * `program` props — the pair `bfCardInsight` passes: `format` → the
+   * neutral pill (`tone="neutral"`), `program` → `tone="program"` with the
+   * filter key as the programme slug, so each chip takes its own
+   * programme's colour. Omitted, the chips stay outlined.
    */
   tone?: 'format' | 'program'
 }
@@ -435,12 +458,20 @@ export interface AccordionProps {
    * The summary text — a plain string, not a slot.
    *
    * The wireframe's archive page writes `<summary><strong>{{ y.year }}</strong>
-   * ({{ y.items.length }})</summary>`, and the caller (issue 55) composes that
-   * `'2024 (17)'` string before passing it in. A richer summary — a count as a
-   * real badge with its own markup — would be a `summary` slot, added as a
-   * **second** occurrence under the rule of three, not speculatively now.
+   * ({{ y.items.length }})</summary>`; `/archive` now passes the year alone
+   * here and the count as `meta`. A summary with markup of its own would be a
+   * `summary` slot — still not needed: the second occurrence the rule of
+   * three waited for was the count, and a string covers it.
    */
   label: string
+  /**
+   * A quieter fact after the label — a count, a date range — in its own
+   * `<span>`, set in the site's meta voice (the card date's) rather than in
+   * the label's. `/archive` passes `"27 pieces"` beside the year. Absent
+   * renders no element. Part of the summary's accessible name, after the
+   * label and a comma: "2023, 27 pieces".
+   */
+  meta?: string
   /**
    * The open state, mapped onto the `open` content attribute — the initial
    * state on first render, and **two-way from then on** (gh#228). The
@@ -558,8 +589,9 @@ export interface LoadMoreProps {
 export type EmptyStateHeadingLevel = 1 | 2 | 3 | 4
 
 /**
- * Props of `bfEmptyState` — and therefore of `bfNotFound`, which is the same
- * component under a second auto-import name, not a second contract.
+ * Props of `bfEmptyState`. `bfNotFound`, the not-found page layout, renders
+ * this block as its first band and takes five of these props through
+ * `NotFoundProps` below.
  *
  * Five props and a default slot, for a block whose whole job is to be the
  * *only* thing on a page: a 404, a hub with nothing published in it yet, a
@@ -643,6 +675,33 @@ export interface EmptyStateProps {
 }
 
 /**
+ * Props of `bfNotFound` — the not-found page layout (refined pass, Sep 2026):
+ * `bfEmptyState` on the paper masthead ground, a search field with the
+ * programs and the indexes to start from, and the newest insights.
+ *
+ * Five props are `bfEmptyState`'s, forwarded unchanged — `heading`,
+ * `message`, `backLabel`, `backTo` and `announced` — so the page's one `h1`
+ * and gh#224's live region stay on that block. `headingLevel` is not among
+ * them: a not-found page is always the page. The two data props are the
+ * caller's reads (D8: the component reads no collection).
+ */
+export type NotFoundProps = Pick<EmptyStateProps, 'heading' | 'message' | 'backLabel' | 'backTo' | 'announced'> & {
+  /**
+   * The programs, in the order the caller wants them — `useBfPrograms()
+   * .programs()`, which is the client's curated order. Rendered as program
+   * chips linking to each hub. Absent or empty and the chip row does not
+   * render; the sentence of indexes under it still does.
+   */
+  programs?: Pick<Program, 'slug' | 'name'>[]
+  /**
+   * The most recent insights, newest first — `useBfInsights().active`. At most
+   * three are drawn, so a caller may pass the head of the list or the whole of
+   * it. Absent or empty and the band does not render.
+   */
+  insights?: Insight[]
+}
+
+/**
  * Props of `bfHero` — the homepage hero band.
  *
  * Two optional strings and a default slot, which is the whole contract: the
@@ -712,9 +771,27 @@ export interface HeroProps {
    */
   imageSecondary?: string | null
   /**
-   * Which scrim treatment the band wears. Ignored without an `image`.
+   * The photographs' `sizes`, in `@nuxt/image`'s screen-keyed form, handed to
+   * `bfHeroMedia`. Omitted, every screen is `100vw` — right for a band that is
+   * wider than it is tall, where `object-fit: cover` draws the photograph at
+   * the viewport's width.
+   *
+   * A band that is **taller** than it is wide on some screens draws the
+   * photograph at the band's height instead, wider than the viewport, and a
+   * `100vw` candidate is then too small and stretched. Such a caller says how
+   * wide the photograph is drawn per screen — `/`'s square pair on a 36rem
+   * phone band is `"xs:576px sm:640px md:100vw lg:100vw xl:100vw xxl:100vw"`.
+   * Each value must be `px` or `vw`: `@nuxt/image` silently drops any other
+   * unit (a `rem` entry vanishes from the srcset), and an entry with no
+   * `screen:` prefix resolves to a one-pixel width (`bfHeroMedia` has the
+   * account).
    */
-  scrim?: ScrimMode
+  imageSizes?: string
+  /**
+   * Which scrim treatment the band wears. Ignored without an `image`.
+   * `bfHero` alone also takes `'none'` — see `HeroScrimMode`.
+   */
+  scrim?: HeroScrimMode
 }
 
 /**
@@ -726,10 +803,31 @@ export interface HeroProps {
  * - `panel` — `--color-scrim-panel` (0.94) as a near-opaque column behind the
  *   copy, photograph uncovered either side.
  *
- * Shared by `HeroProps` and `bfPageHeader`'s local prop bag, which is why it
- * is declared here rather than inline in either (BRIEF §5 rule 11).
+ * Shared by `bfPageHeader`'s local prop bag and, with `'none'` added, by
+ * `HeroProps` (`HeroScrimMode` below), which is why it is declared here
+ * rather than inline in either (BRIEF §5 rule 11).
  */
 export type ScrimMode = 'full' | 'panel'
+
+/**
+ * `bfHero`'s scrim modes: the two above, plus `'none'` — the ink mode.
+ *
+ * - `none` — no scrim at all, and the band keeps the **page's ink**: dark
+ *   type, the light-page focus ring, the controls' own paint. For a light
+ *   photograph whose sky or ground dark type reads over — the home page's
+ *   Capitol ↔ Reichstag pair, whose worst pixel under the standfirst
+ *   measured 5.78:1 in navy and at best 3.0:1 in white.
+ *
+ * There is no token pair for it in `scripts/check-contrast.ts`, and there
+ * cannot be: with no scrim the ground is the photograph itself, so the
+ * contrast is a property of the file, measured per photograph over the
+ * rendered band (the home page's style block holds its table). A new
+ * photograph in this mode needs its own measurement.
+ *
+ * Hero only. `bfPageHeader` keeps `ScrimMode`: its bands carry breadcrumbs,
+ * chips and buttons over photographs nobody measured for dark ink.
+ */
+export type HeroScrimMode = ScrimMode | 'none'
 
 /** One breadcrumb node. `to` omitted marks the current (non-linked) page. */
 export interface Crumb {
@@ -781,6 +879,12 @@ export interface SearchResultRow {
   chip: string
   archived?: boolean
   date?: string
+  /**
+   * A line about the piece — an insight's or a project's excerpt, a
+   * person's job title — rendered under the title, clamped to one line.
+   * Optional; a row without one is the title and meta run alone.
+   */
+  excerpt?: string
   score: number
 }
 
@@ -878,6 +982,20 @@ export interface CardRowProps extends CardWrapperProps {
   item: CardRowItem
   /** Presentation hint, rendered as `data-variant`. Styles nothing by itself. */
   variant?: string
+  /**
+   * Render the row's type chip — an insight's format, a project's kind.
+   * Default `true`. A list whose every row would carry the same one turns it
+   * off: `/archive` under `?format=video`, a band of cohorts that are all
+   * `Cohort`. The item is still passed whole and unaltered.
+   */
+  kindChip?: boolean
+  /**
+   * Render the `Archive` chip for an archived item. Default `true`: on a
+   * mixed list (`/search`) it tells a past piece from a current one. A list
+   * that is the archive (`/archive`, a project's past cohorts) turns it off,
+   * rather than handing the row a copy that says `archived: false`.
+   */
+  archiveChip?: boolean
 }
 
 /**
@@ -1318,8 +1436,7 @@ export interface GridProjectsProps extends GridProps {
  * derived inside the component**. The shell renders a query control, a facet
  * row, a count line, a result list and an empty state; ranking, indexing,
  * normalisation and the `/search` route belong to issue 54 (BRIEF D8). Every
- * number it paints — including the relevance meter's width — is read from a
- * value the page handed it.
+ * number it paints is read from a value the page handed it.
  *
  * ## Why `resultCount` is a prop and not `results.length`
  *
@@ -1354,6 +1471,10 @@ export interface SearchShellProps extends Pick<CardWrapperProps, 'headingLevel'>
    * wireframe writes a programme row and a format row with the *same* markup
    * twice over; which facets exist, and whether they are one group or two, is
    * a page decision. This shell renders exactly the group it is given.
+   *
+   * A page that needs more than one flat group — `/search`'s Program and
+   * Format rows, each with its own caption — fills the shell's `facets` slot
+   * instead and passes an empty `filters` (and `selectedFilters`).
    */
   filters: Filter[]
   /** The selected facet keys. Forwarded to `bfFilterBar`'s `model-value`. */
@@ -1362,10 +1483,12 @@ export interface SearchShellProps extends Pick<CardWrapperProps, 'headingLevel'>
    * The rows to draw, already ranked and already sliced by the page.
    *
    * Each row's `score` is expected in **0–1**, normalised by the page against
-   * its own top score (the wireframe's `r.score / topScore`). The component
-   * clamps rather than trusts — a score outside the range is a page bug that
-   * must not become a meter wider than its track — but it never re-normalises,
-   * because it cannot see the rows that were sliced away.
+   * its own top score (the wireframe's `r.score / topScore`). It is written to
+   * the row as `data-score` — clamped to the range and fixed to two places —
+   * and draws nothing: the relevance meter it used to size was removed in the
+   * refined pass (Sep 2026), and the order is the ranking. The component
+   * never re-normalises, because it cannot see the rows that were sliced
+   * away.
    */
   results: SearchResultRow[]
   /**
@@ -1503,18 +1626,35 @@ export interface ResultCountProps {
  * One prop, and deliberately only one. The component is a parser with a
  * template attached: it takes a body field and renders block-level text, and
  * every other decision a reader might expect it to expose belongs somewhere
- * else in the stack.
+ * else in the stack. The parser is `utils/proseBlocks.ts`, whose header has
+ * the measurements and the rules.
+ *
+ * ## What the body may contain
+ *
+ * Markdown, as the bodies are written: paragraphs (a hard-wrapped line joins
+ * the one above it unless that one ends a sentence), emphasis and code,
+ * links, headings, bulleted and numbered lists, blockquotes, rules, figures
+ * with an optional caption, pipe tables and footnotes — plus the legacy HTML
+ * two bodies still are, including the one YouTube `<iframe>`. Nothing is
+ * inserted as markup (no `v-html`): the parse is data, and every `href` and
+ * `src` a body supplies passes an allow-list first (`safeHref`,
+ * `safeImageSrc`, `safeEmbedId`) — `http(s)`, `mailto:`, `tel:`,
+ * root-relative and `#` targets, images over `https`, an embed only when it is
+ * a YouTube video, kept as its id.
  *
  * ## Why there is no `headingLevel`
  *
  * Every typed card wrapper takes one (`CardWrapperProps.headingLevel`, gh#128)
  * because a card's heading rank depends on where the card is mounted. Prose is
- * different in kind: the ranks it emits are **inside a document outline the
- * body itself declares** — `##` means "a section of this body", `###` means "a
- * subsection of that" — so shifting them from the call site would flatten a
- * two-level outline into one level, or push a subsection to rank 4 with no
- * rank-3 parent. The body's own structure is the contract, and the page keeps
- * its single rank-1 heading by never letting this component emit one.
+ * different in kind: the ranks it emits describe **an outline the body itself
+ * declares** — `##` means "a section of this body", `###` means "a
+ * subsection of that" — so a call-site offset would flatten or deepen it
+ * blindly. The component keeps the body's *relative* outline and fixes its
+ * *absolute* ranks itself: headings are floored at `h2` (never `h1`; the page
+ * keeps its single rank-1 heading), the depths a body uses are compacted onto
+ * 2, 3, 4 …, and each is clamped to at most one rank below the heading before
+ * it. So a body whose first heading is `###` opens on `h2`, and no body skips
+ * a rank.
  *
  * ## Why there is no `measure`
  *
@@ -1523,7 +1663,7 @@ export interface ResultCountProps {
  */
 export interface ProseProps {
   /**
-   * The body, as a plain string, in either supported shape — markdown-lite or
+   * The body, as a plain string, in either supported shape — markdown or
    * legacy HTML. The component detects which from the content itself; there is
    * no format prop, because no call site knows the answer any more reliably
    * than `/<[a-z][^>]*>/i` does.
