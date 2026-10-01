@@ -92,23 +92,7 @@ const team = teamMembers()
 const aboutParagraphs = computed(() => paragraphs(about?.description))
 const stiftungParagraphs = computed(() => paragraphs(stiftung?.description))
 
-/**
- * The mission, as the body under the masthead (refined pass, Sep 2026; final
- * pass). All four paragraphs used to be the header's tagline, so the masthead
- * ran a full desktop viewport of paper before the first name on the page.
- * The refined pass kept the first paragraph there as a standfirst, which
- * still set seventy words at the lede step on the paper — nine lines at 375,
- * where every other index header carries one line at body size.
- *
- * So the header is the trail and the `<h1>`, and the whole mission is the
- * band under it: the first paragraph as its lede — who the Foundation is and
- * how it works, one step up — and the other three as the body. That is the
- * split the insight and project pages make, where the lede opens the body
- * and not the masthead.
- *
- * Nothing is reworded or dropped: the two slices are the one stored
- * description, in order.
- */
+/** Keep the opening paragraph in the hero and the remaining copy below it. */
 const missionLede = computed(() => aboutParagraphs.value[0])
 const missionBody = computed(() => aboutParagraphs.value.slice(1))
 
@@ -127,51 +111,32 @@ useHead({ title: () => about?.heading ?? 'About Us' })
     single stack child and lose the rhythm between them.
   -->
 
-  <!--
-    Zone 1 — the mission header (GGS about template: mission, institutional
-    context, connection to programs). Copy is the consolidated dataset's
-    `about` row, which is Irene's Jul 29 docx.
-
-    **The trail is two entries, not the frozen source's one** — residual
-    [#188](https://github.com/ccmdesign/bfna-website-migration-2/issues/188).
-    `bfBreadcrumb` treats the *last* crumb as the current page and never links
-    it, positionally, so a one-entry `[{ label: 'Home', to: '/' }]` trail would
-    render Home as an unlinked `<span aria-current="page">` — a breadcrumb
-    claiming the reader is on the homepage, with no link in it at all. Naming
-    this page as the final, unlinked crumb restores Home to a real `<a href="/">`
-    and puts `aria-current="page"` where it belongs. Same two-then-current
-    shape `/projects` and `/insights/<slug>` already build.
-
-    No tagline: the mission is the band below, lede and all (see
-    `missionLede`), so the masthead is the trail and the `<h1>`, like the
-    insight and project mastheads.
-  -->
-  <bfPageHeader
-    label="Mission"
-    :crumbs="[{ label: 'Home', to: '/' }, { label: 'About' }]"
-    :heading="about?.heading ?? 'About Us'"
-  />
-
-  <!--
-    Zone 1b — the mission, as the body under the masthead: its first
-    paragraph as the lede, the rest as body.
-
-    No heading: it is the text the `<h1>` titles, not a new subject, so it
-    neither takes a band heading nor needs a landmark name (`bfSection` names
-    a band from its heading, and this one has none to name). The reading
-    column and the paragraph rhythm are the page's own — `.bf-about-prose` in
-    the `<style>` block, shared with the Stiftung text below so the page's two
-    runs of prose read at one measure — and the lede is `.bf-about-lede`, the
-    insight lede's step.
-
-    `v-if` so a missing description renders no empty band.
-  -->
+  <!-- Match the program page's split hero and centered introduction. -->
   <bfSection
-    v-if="missionLede"
-    label="Mission statement"
+    class="bf-about-hero"
+    label="Mission"
+    aria-labelledby="about-heading"
+    data-scrim="full"
+    gap="m"
+    padded
   >
-    <div class="bf-about-prose | stack" data-gap="s">
-      <p class="bf-about-lede">{{ missionLede }}</p>
+    <template #bleed>
+      <bfHeroMedia :src="about?.image ?? '/images/hero/about.jpg'" alt="" />
+    </template>
+    <bfBreadcrumb :items="[{ label: 'Home', to: '/' }, { label: 'About' }]" />
+    <div class="switcher bf-about-hero__columns" data-threshold="s" data-gap="xl">
+      <div class="stack" data-gap="m">
+        <h1 id="about-heading" class="bf-about-hero__heading">{{ about?.heading ?? 'About Us' }}</h1>
+        <div>
+          <bfButton to="#team" variant="primary" size="l">Meet our team</bfButton>
+        </div>
+      </div>
+      <p v-if="missionLede" class="bf-about-hero__intro">{{ missionLede }}</p>
+    </div>
+  </bfSection>
+
+  <bfSection v-if="missionBody.length" label="Mission statement">
+    <div class="stack bf-about-mission__body" data-gap="s" data-measure="narrow">
       <p v-for="(para, i) in missionBody" :key="i">{{ para }}</p>
     </div>
   </bfSection>
@@ -345,59 +310,79 @@ useHead({ title: () => about?.heading ?? 'About Us' })
 </template>
 
 <style scoped>
-/*
-  The page's own skin: the reading column and its lede, the people grids
-  and the Stiftung photograph. Everything else on the route is `bf-*` and
-  styles itself. Where a rule reaches a component's element it goes through
-  that component's `--_bf-*` hook, from a page class, with `:deep()` —
-  never by restating a component's own declarations.
-
-  Wrapped in `@layer components`, like every page-level rule (gh#68 — an
-  unlayered page rule outranks every layer). Tokens only, no colour at all,
-  and no `:not()` (D-20.5).
-
-  Scoped selectors land on a band's root because a child component's root
-  element carries its parent's scope id: `bfSection` renders a `<section>`,
-  so `.bf-about-stiftung` matches there, and `:deep()` reaches what is inside
-  it.
-*/
 @layer components {
-  /*
-    The reading column: 60ch of the type that is actually set, the insight
-    page's measure (`article.css`, "The reading column") — ~70 characters
-    of IBM Plex Sans light at the 20px body step, where the band's 1100px
-    ran a line of prose past 120. `ch` and `em` scale together, so the
-    expression resolves to the same width on any element set in the body
-    face, whatever its size: the mission body and the Stiftung text share
-    it, and the mission's lede wraps to the same right edge at its larger
-    size.
+  .bf-about-hero {
+    --_bf-section-padding-block: var(--space-2xl);
 
-    Left-aligned in the band, not centred as the article's is: this page
-    also carries two grids at the full measure, and one left edge down the
-    page — breadcrumb, title, lede, band headings, prose — holds it
-    together better than a centred column between them.
-  */
-  .bf-about-prose {
-    --_bf-about-measure: calc(60ch * var(--size-0) / 1em);
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    align-content: center;
+    color: var(--color-text-inverse);
   }
 
-  .bf-about-prose {
-    max-inline-size: var(--_bf-about-measure);
+  .bf-about-hero__columns {
+    align-items: baseline;
+  }
+
+  .bf-about-hero__columns > * {
+    min-inline-size: 0;
+  }
+
+  .bf-about-hero__heading {
+    font-size: clamp(var(--size-2), 4.5vw, var(--size-5));
+    text-wrap: balance;
+  }
+
+  .bf-about-hero__intro {
+    margin: 0;
+    font-size: clamp(1rem, 1.75vw, var(--size-1));
+    line-height: 1.4;
     text-wrap: pretty;
   }
 
-  /*
-    The lede — the mission's first paragraph, opening the band one step
-    above the body. The insight lede (`.bf-article-lede`) and the project
-    lede, exactly: the body's own face and weight, `--size-1`, leading 1.4,
-    in the reading column. The size alone carries the role; a paragraph of
-    seventy words in the display italic the article keeps for its one-line
-    subheading would read as a pull quote. `text-wrap: pretty` comes from
-    `.bf-about-prose`, its parent.
-  */
-  .bf-about-lede {
-    font-size: var(--size-1);
-    line-height: 1.4;
+  .bf-about-hero :deep(.bf-breadcrumb) {
+    --_bf-breadcrumb-separator-color: var(--color-text-inverse);
+    --_bf-breadcrumb-focus-color: var(--color-text-inverse);
+  }
+
+  .bf-about-hero :deep(.bf-button[data-variant='primary']) {
+    border-color: var(--color-text-inverse);
+    background: var(--color-surface-page);
+    color: var(--color-accent);
+  }
+
+  .bf-about-hero :deep(:focus-visible),
+  .bf-about-hero :deep(.bf-button:focus-visible) {
+    outline-color: var(--color-text-inverse);
+  }
+
+  .bf-about-mission__body {
+    margin-inline: auto;
+  }
+
+  .bf-about-prose {
+    max-inline-size: calc(60ch * var(--size-0) / 1em);
+    text-wrap: pretty;
+  }
+
+  @media (width >= 48rem) {
+    .bf-about-hero {
+      --_bf-section-padding-block: var(--space-xl);
+
+      aspect-ratio: 16 / 8;
+    }
+  }
+
+  @media (width < 48rem) {
+    .bf-about-hero__columns {
+      flex-flow: column nowrap;
+      align-items: stretch;
+    }
+
+    .bf-about-hero__columns > * {
+      flex: none;
+    }
   }
 
   /* The shared quarter-width grid reflows to three and then two columns.
