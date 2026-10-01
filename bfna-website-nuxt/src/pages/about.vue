@@ -400,76 +400,10 @@ useHead({ title: () => about?.heading ?? 'About Us' })
     line-height: 1.4;
   }
 
-  /*
-    ## The people grids
-
-    One floor for both lists, proportional to the list's own width:
-
-      track floor = max(min(11rem, 45%), 22%)
-
-    - 22% gives four columns at every width from ~800px of list up, and never
-      five — four tracks of 22% plus three gaps fit, five cannot — so the
-      desktop measure keeps the four-up grid it had (252px cards at 1280).
-    - `min(11rem, 45%)` holds the phone at two: at 375 the list is 346px,
-      45% of it is under 11rem, and two 162px cards fit; at 320 two 135px
-      cards still do. Under that the primitive's own `min(…, 100%)` drops to
-      one column rather than overflowing.
-    - Between the two it is 11rem (176px): two columns to ~560px of list,
-      three to ~800px — 640 and 768 wide are three columns of 190–230px.
-
-    The phone floor was a flat 8rem until the final pass, and 8rem is also
-    what it held a tablet to: four 134–165px cards at 640–768 and three
-    135px ones at 480, whose ~100px text box cut the longer job titles
-    mid-word ("Director, BFNA Documentarie"). The rem floor now rises with
-    the width until 22% takes over.
-
-    The floor is the grid primitive's own `data-min-width="quarter"` step
-    (`composition/grid.css`), which is this value and is changed there, not
-    here: it was written to the primitive's private `--_grid-min-width` from
-    here until it had a name, and a directory-style grid (people, logos) can
-    ask for it by name.
-
-    The list is also its own query container, so the cards can tighten by
-    the width the list actually has (below) rather than by the viewport.
-  */
+  /* The shared quarter-width grid reflows to three and then two columns.
+     Extra row space separates portraits from the preceding row's roles. */
   .bf-about-people {
-    container: bf-about-people / inline-size;
-  }
-
-  /*
-    Two-up on a phone, the card's own padding (`--space-m`, 21px at 375) left
-    a 119px portrait inside a 162px card. The card's `--_bf-card-padding`
-    hook steps down to `--space-s`, so the portrait gets back 15px and the
-    name one more character a line; the card is still the family's card —
-    ground, radius and elevation untouched. Keyed on the list at 40rem, the
-    width under which its tracks are phone-sized. (0,3,0) once scoped,
-    against `bfCard`'s (0,1,0) in the same layer.
-  */
-  @container bf-about-people (max-width: 40rem) {
-    .bf-about-people :deep(.bf-card) {
-      --_bf-card-padding: var(--space-s);
-    }
-  }
-
-  /*
-    A role is data, not an excerpt, so it is never clamped. `bfCard` clamps
-    a media card's paragraph at four lines so a row of excerpts keeps one
-    rhythm; a person card's one paragraph is the job title, and at four
-    lines "Executive Board and Chief Operating Officer" lost its last word
-    at every phone and tablet width. Here it sets whole and wraps where it
-    must — hyphenated, and broken mid-word only when one word is wider than
-    the card. The grid still aligns: the cards stretch to the row's tallest.
-
-    Written through the same `:has()` the clamp is keyed on, so it outranks
-    `bfCard`'s (0,4,1) at (0,5,1) once scoped, in the same layer.
-  */
-  .bf-about-people :deep(.bf-card:has(> .bf-card__media) .bf-card__text > p) {
-    display: block;
-    overflow: visible;
-    -webkit-line-clamp: unset;
-    line-clamp: none;
-    overflow-wrap: break-word;
-    hyphens: auto;
+    row-gap: var(--space-xl);
   }
 
   /*
@@ -483,8 +417,7 @@ useHead({ title: () => about?.heading ?? 'About Us' })
     this is (0,3,0). The 48rem step is the system's one documented
     breakpoint.
 
-    The radius is the card media's (`--border-radius-m`), so the page's one
-    wide picture is cut like its fourteen portraits.
+    The wide photograph keeps the standard media radius.
   */
   .bf-about-stiftung :deep(.bf-media) {
     --_bf-media-ratio: 2 / 1;

@@ -1,80 +1,12 @@
 <script setup lang="ts">
 /**
- * `bfCardPerson` — the person card: name, job title, square portrait. A
- * **typed wrapper** over `bfCard`, and the first one in the family that is
- * deliberately **not a link**.
+ * A non-interactive person card with a circular portrait above centered copy.
+ * The entity and heading level are passed in; the component fetches no data.
+ * Board and Team share the same presentation.
  *
- * Ports `components/wireframe/wfCardPerson.vue` (issue 24 / gh#33). That file
- * is frozen (D2) and is not touched here.
- *
- * Same contract as the three wrappers before it (D-21.1): the wrapper owns no
- * DOM (`inheritAttrs: false`, root of `<bfCard v-bind="$attrs">`), the prop is
- * the **entity** rather than a hand-picked subset of its fields, it is
- * presentational-only (BRIEF D8 — no `queryCollection`, no store, no data
- * composable), it takes the shared `headingLevel` (#128), and it ships **no
- * `<style>` block at all**: every pixel is already styled by `bfCard`'s
- * `@layer components` rules and by `bfMedia`'s `--_bf-media-*` hooks. With no
- * stylesheet, BRIEF §5 rule 2 (no new colour) and D-20.5 (no `:not()` holding
- * a complex selector) are satisfied vacuously.
- *
- * ## The card is non-interactive — D-24.1, and it is settled
- *
- * `wfCardPerson.vue`'s own header comment says it: *"No link (people have no
- * detail pages in the wireframe). Portrait is decorative — the heading names
- * them."* The open question the inventory recorded (BF-174 — should bf-* add a
- * modal, a person detail route, or a bio expander?) is **resolved as "ship
- * unlinked"** and written into this issue's spec Decisions section. This file
- * builds none of the three, and it is not a stub for them: a later issue that
- * adds a person surface changes this component deliberately, against a
- * decision, rather than filling in something left half-done.
- *
- * Three properties follow from having no anchor, and probe 24 asserts each one
- * rather than trusting the reasoning:
- *
- * 1. **No stretched hit area.** `bfCard`'s overlay is
- *    `.bf-card :is(h2, h3, h4) a::after`. No `a`, no generated
- *    pseudo-element — the card is a box of text, not a card-sized link.
- * 2. **No hover or focus treatment.** `.bf-card:has(:is(h2, h3, h4) a):hover`
- *    and its `:focus-visible` sibling both require the same anchor, so a
- *    person card takes neither. That is correct, not a regression: an
- *    affordance on something that does not go anywhere is a lie.
- * 3. **The card is not focusable.** Nothing inside it is a tab stop, so it
- *    does not appear in the sequential focus order at all.
- *
- * And the #130 hazard — a stretched link with no accessible name — is
- * structurally **absent** here rather than guarded: there is no link that
- * could lack a name. What is guarded is the smaller sibling defect, an empty
- * heading element (see `hasName` below).
- *
- * ## `job_title` and the `—` fallback
- *
- * `bfPersonSchema` types `job_title` as `z.string().nullable()` and one of the
- * thirteen real rows (`ma-a-ocvirk`) carries `null`. The em dash is
- * `wfCardPerson.vue:12`'s, kept verbatim: it holds the line's vertical space
- * so a row of cards does not lose its baseline grid where one person has no
- * title, and it reads as "no title recorded" rather than inventing one
- * (BRIEF §5 rule 10 — never synthesise user-visible content the data does not
- * carry).
- *
- * ## The portrait is decorative
- *
- * `alt=""`, deliberately declared rather than omitted — `bfMedia` requires
- * `alt`, so omitting it is a typecheck error (gh#222). The heading immediately
- * above already names the person, so alt text here would be a second
- * announcement of the same name, not a description. `ratio="1/1"` is
- * `wfCardPerson.vue`'s square and lands as a `--_bf-media-ratio` declaration
- * a consumer stylesheet can
- * still re-proportion (never an inline `aspect-ratio`; that was the gh#26
- * defect).
- *
- * ## Thin by design
- *
- * One entity prop plus the inherited `headingLevel`, and nothing else. BRIEF
- * §5's rule of three: no `mediaRatio`, no `showBio`, no `linkTo` switch until
- * a need shows up twice. The one consumer is issue 53's `/about` Board and
- * Team grids, which differ only in *which rows they pass* — a filter on the
- * page, not a prop on the card. A caller wanting something else composes
- * `bfCard` directly, which is what the base is for.
+ * The heading stays first in the DOM for heading navigation. The decorative
+ * portrait is ordered above it by bfCard, with no placeholder when absent.
+ * Job titles remain complete, including the em dash for a missing title.
  */
 import type { CardWrapperProps, Person } from '~/types/bf-contracts'
 
@@ -164,7 +96,7 @@ if (import.meta.dev) {
     above it visually by the base's stylesheet. Never reorder the markup to
     change the picture.
   -->
-  <bfCard v-bind="$attrs">
+  <bfCard v-bind="$attrs" class="bf-card--person">
     <!--
       `h2` / `h3` / `h4` from `headingLevel` (#128) — the three levels
       `bfCard`'s stylesheet matches (D-20.4).
@@ -183,7 +115,7 @@ if (import.meta.dev) {
       Always rendered — the em dash is the fallback, so there is no empty-`<p>`
       branch to guard against the way the excerpt-bearing wrappers have.
     -->
-    <p>{{ jobTitle }}</p>
+    <p class="bf-card-person__role">{{ jobTitle }}</p>
 
     <template v-if="person.image" #media>
       <!--
@@ -207,3 +139,34 @@ if (import.meta.dev) {
     </template>
   </bfCard>
 </template>
+
+<style scoped>
+@layer components {
+  .bf-card.bf-card--person {
+    --_bf-card-padding: 0;
+    --_bf-card-bg: transparent;
+    --_bf-card-shadow: none;
+
+    text-align: center;
+  }
+
+  .bf-card--person :deep(.bf-card__media) {
+    inline-size: min(100%, 12rem);
+    margin-inline: auto;
+    border-radius: var(--radius-pill);
+  }
+
+  /* Roles are complete labels, so override the base card's excerpt clamp. */
+  .bf-card.bf-card--person :deep(.bf-card__text > p.bf-card-person__role) {
+    display: block;
+    overflow: visible;
+    max-inline-size: 26ch;
+    margin-block-start: var(--space-3xs);
+    margin-inline: auto;
+    -webkit-line-clamp: unset;
+    line-clamp: none;
+    overflow-wrap: break-word;
+    text-wrap: balance;
+  }
+}
+</style>
