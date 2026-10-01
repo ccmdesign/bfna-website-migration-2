@@ -302,25 +302,6 @@ const participationCtas: Cta[] = [
     .map(label => ({ label }))
 ]
 
-/**
- * The microsite's address as a reader would type it — `rangeforecasting.org`
- * — for the preview's caption, or `null`.
- *
- * `null` for the two `#…` placeholders (D-52.2): `new URL` throws on a bare
- * fragment, and a caption must not name an address the project does not have.
- * The `www.` is dropped because it is not how anyone says a site's name.
- */
-const micrositeHost: string | null = (() => {
-  if (!project?.external_url) return null
-  try {
-    const url = new URL(project.external_url)
-    return url.protocol.startsWith('http') ? url.hostname.replace(/^www\./, '') : null
-  }
-  catch {
-    return null
-  }
-})()
-
 /** Cohort/year pages nested under this project, newest first. */
 const cohorts = project ? projectChildren(project.slug) : []
 
@@ -439,8 +420,8 @@ const related = (project ? insightsForProject(project.slug) : []).slice(0, 6)
         the frame's edges are the column's. The window's content runs off its
         bottom edge in every file, so the frame draws a hairline and rounds
         its corners: the cut reads as a window, not as a picture that stopped.
-        The caption is the address the window shows. The full template crops
-        the window away entirely, because there the picture is a photograph.
+        The full template crops the window away entirely, because there the
+        picture is a photograph.
 
         Not a second link: the primary action is two lines up, and a linked
         image would be a duplicate stop for keyboard and screen-reader users
@@ -454,7 +435,6 @@ const related = (project ? insightsForProject(project.slug) : []).slice(0, 6)
         <div class="bf-project-preview__frame">
           <bfMedia :src="project.image" :alt="project.heading" ratio="auto" />
         </div>
-        <figcaption v-if="micrositeHost">{{ micrositeHost }}</figcaption>
       </figure>
     </bfCtaSection>
 
@@ -764,8 +744,7 @@ const related = (project ? insightsForProject(project.slug) : []).slice(0, 6)
     The microsite preview stands a step off the actions — it illustrates
     where they go, it is not one of them — and the `<figure>`'s user-agent
     inline margins (40px a side) are zeroed so it starts on the column's
-    vertical. The caption is the address in the muted ink the site uses for
-    secondary lines, a step under the frame's bottom edge.
+    vertical.
   */
   .bf-project-preview {
     margin-block: var(--space-l) 0;
@@ -818,13 +797,6 @@ const related = (project ? insightsForProject(project.slug) : []).slice(0, 6)
     block-size: auto;
     margin-block-start: var(--_bf-project-trim-offset);
     margin-inline-start: var(--_bf-project-trim-offset);
-  }
-
-  .bf-project-preview figcaption {
-    margin-block-start: var(--space-2xs);
-    color: var(--color-text-muted);
-    font-family: var(--font-family-ui);
-    font-size: var(--size--1);
   }
 
   /*

@@ -270,6 +270,11 @@ function closeOnEsc(e: KeyboardEvent) {
     z-index: var(--_bf-nav-panel-z, 10);
   }
 
+  /* Menu items inherit the bar's type size instead of the body list scale. */
+  .bf-nav__panel > li {
+    font-size: inherit;
+  }
+
   /*
     Wide bar (`Nav.vue`'s `width > 60rem` block): the summary fills the full
     height of the bar like the plain links beside it, and the panel drops its

@@ -22,27 +22,18 @@
  * The hub keeps its bands, their order, every string and the one CTA. What
  * changes is where the reading happens and what a short band looks like:
  *
- * - **The masthead is the program's name.** The trail, the `<h1>` and "Explore
- *   our work" over the photograph — and no prose. The intro used to run there
- *   as ~180 words of white type on a scrim, which was the whole first screen
- *   of a phone and the weakest reading surface on the page.
- * - **The intro is its own zone**, on the page ground in dark ink: the first
- *   paragraph as the lede, a step up, and the rest as body beside it — the
- *   site's one lede style, the insight and project pages' (final pass). Every program's intro is written that way round — the
- *   stakes first, then what the Foundation does about them — so the first
- *   paragraph is the one that should be read first. At a desktop width the
- *   two sit on the projects grid's two columns, so the page below the
- *   masthead has one column line from the intro to the last band.
+ * - **The masthead uses a 16:8 desktop frame.** The breadcrumb leads the
+ *   program name and action on the left, with opening copy on the right. Mobile
+ *   stacks those elements in reading order over the same photograph.
+ * - **The remaining intro** sits in a centered reading column below the hero.
  * - **Each band opens on the section rule** `/projects` draws — a hairline with
  *   the program's colour for its first `--space-xl`, `bfSection`'s
  *   `data-rule="program"` on both pages — so a hub and the index that links
  *   to it read as one system. The colour is `--color-program`, which
  *   resolves here because `useProgramTheme` scopes `<html>`.
- * - **A band is shaped by how much it holds** — see `bandShape` below. None
- *   and Projects is omitted, CTA and all, while Insights keeps its heading and
- *   its links for as long as the feeds they open hold anything; one and the
- *   item leads the row instead of sitting in a third of it; two and the pair
- *   fills the row.
+ * - **Cards retain their grid width**, including bands with only one or two
+ *   items. Empty Projects bands are omitted; Insights links remain whenever
+ *   their filtered feeds hold anything.
  * - **The insight links say where they go.** "All … insights" counts the
  *   feed it opens, not the hub's own cut of it, and "Include archived" opens
  *   that same feed with the archive switched on, which is what its label and
@@ -166,12 +157,11 @@ useProgramTheme(program?.slug)
  *
  * ## Why it lives here
  *
- * `bfPageHeader` is presentational-only (D8) and takes a path; the mapping
+ * `bfHeroMedia` is presentational-only (D8) and takes a path; the mapping
  * from a programme to its art direction is page-level composition, and this
  * page is its only consumer. `Record<string, string>` rather than a
- * `PROGRAM_SLUGS`-keyed type: a slug with no photograph yet must resolve to
- * `undefined` and render a header with no band, which is what the other four
- * `bfPageHeader` routes do today.
+ * `PROGRAM_SLUGS`-keyed type: a slug with no photograph yet resolves to
+ * `undefined`, leaving the media component's plain scrim behind the copy.
  */
 const HERO_IMAGE: Readonly<Record<string, string>> = {
   democracy: '/images/hero/democracy.jpg',
@@ -180,13 +170,8 @@ const HERO_IMAGE: Readonly<Record<string, string>> = {
 }
 
 /**
- * The program intro, one entry per paragraph — the reading zone under the
- * masthead (refined pass; the header docblock says why it left the photo).
- *
- * `paragraphs()` splits the stored `intro` on blank lines. The first entry is
- * set as the lede and the rest as body, in the template. A program saved with
- * no `intro` falls back to its one-line `tagline`, so the zone still says what
- * the program is; a program with neither renders no zone at all.
+ * The first intro paragraph belongs in the hero; the remaining paragraphs
+ * form the reading column below. A missing intro falls back to the tagline.
  */
 const intro: string[] = program
   ? (paragraphs(program.intro).length ? paragraphs(program.intro) : paragraphs(program.tagline))
@@ -207,28 +192,9 @@ const projects = program ? gridProjectsByProgram(program.name) : []
  */
 const programInsights: Insight[] = program ? activeByProgram(program.name) : []
 
-/** The Insights band's cap: three rows of the insights grid's three columns. */
-const RECENT_LIMIT = 9
-
-/**
- * The insights this hub actually shows — at most `RECENT_LIMIT`, newest first.
- *
- * The filter is the frozen source's, ported verbatim and scoped the same way:
- * **the Democracy hub only** shows 2026 releases (Irene, Aug 5 widget
- * feedback); the other two programs keep the whole active tier. It is a
- * page-level rule rather than a composable or normaliser one for the same
- * reason D10's Insights switch is — there is no field in `bfInsights` that
- * says "Democracy shows one year", and inventing one would write a client
- * decision into the data with no upstream authority. Recorded as D-48.3.
- *
- * It narrows the band's **cards** and nothing else. The link under them opens
- * the whole program feed, so its count is `programInsights.length`: the old
- * label counted this cut and read "All Democracy insights (1)" over a feed of
- * 13. Nor does it decide whether the band renders — `insightsHasFeed` does.
- */
-const recent: Insight[] = programInsights
-  .filter(i => program?.slug !== 'democracy' || (i.publish_date ?? '').startsWith('2026'))
-  .slice(0, RECENT_LIMIT)
+/** Two desktop rows, newest first across all publication years. */
+const RECENT_LIMIT = 6
+const recent: Insight[] = programInsights.slice(0, RECENT_LIMIT)
 
 /**
  * **D10** — the Insights band is conditional per hub, and the condition is a
@@ -243,70 +209,15 @@ const recent: Insight[] = programInsights
  * needs the same exclusion, that is when it becomes a normaliser-emitted flag.
  *
  * The band's own emptiness is a separate question, not folded into this flag:
- * `insightsHasFeed` below decides whether it renders, `bandShape` how its
- * cards lay out.
+ * `insightsHasFeed` below decides whether it renders.
  */
 const showInsights = program?.slug !== 'future-leadership'
 
 /** The archive link's counter — archived insights in this program. */
 const archivedCount = program ? archivedCountByProgram(program.name) : 0
 
-/**
- * Whether the Insights band's links have a feed to open — the band's own
- * condition beside `showInsights`, and deliberately not its card count.
- *
- * The band is the hub's only route to the program's insights: the whole feed
- * and that feed with the archive switched on. Both are wider than `recent`,
- * which on the Democracy hub is one year's cut and can hold nothing while the
- * feed holds a dozen — the year turns over, or the one current piece is
- * unpublished. So an empty cut drops the band's cards, not the band: its
- * heading, its anchor and its links stay while either feed has anything in
- * it. `recent` is drawn from `programInsights`, so the feed's count covers
- * the cut's.
- */
+/** Keep the section's feed links available even when only archived posts remain. */
 const insightsHasFeed = programInsights.length > 0 || archivedCount > 0
-
-/**
- * How a band lays out what it holds — the hub's one rule for a short band.
- *
- * The grids resolve their column count from the width (D9), so at a desktop
- * width a band's first row has two tracks (projects) or three (insights)
- * whatever it holds. A band with fewer items than that left the rest of the
- * row as empty tracks — the Democracy hub's one 2026 insight sat in a third of
- * the row with two blank thirds beside it, and read as a grid that had failed
- * to load. So:
- *
- * | holds | shape | what renders |
- * |---|---|---|
- * | 0 | `none` | no cards. **Projects**: no band — no heading over nothing, and no CTA pointing at it. **Insights**: the cards go but the links stay, under the band's heading, while `insightsHasFeed` holds — the cut the cards show is narrower than the feeds the links open |
- * | 1 | `lead` | the item takes the row (`span="full"`); in the Insights band it takes the first of two columns and the band's links the second |
- * | 2 | `pair` | two tracks, so the pair fills the row — the insights grid is given the projects grid's own `xl` floor |
- * | 3+ | `grid` | the grid's own default |
- *
- * A lead is not a feature. A lone project is set text-only (`:media="false"`):
- * the card family's wide picture layout is the homepage's lead device, and at
- * the full row a 3:2 picture would stand taller than the masthead. A lone
- * insight keeps its picture, because at half the row it lays out as an
- * ordinary media card.
- *
- * Nothing reorders: `grid_order` and `publish_date` still decide the sequence,
- * and the shape changes only the widths.
- */
-type BandShape = 'none' | 'lead' | 'pair' | 'grid'
-
-const bandShape = (count: number): BandShape =>
-  count === 0 ? 'none' : count === 1 ? 'lead' : count === 2 ? 'pair' : 'grid'
-
-const projectsShape = bandShape(projects.length)
-const insightsShape = bandShape(recent.length)
-
-/**
- * The item a `lead` band renders on its own. Named rather than indexed in the
- * template so the `v-if` that renders it can narrow it from `undefined`, which
- * `noUncheckedIndexedAccess` makes every indexed read.
- */
-const leadProject = projects[0]
-const leadInsight = recent[0]
 
 /**
  * `bfGridInsights.extraChips` — the related projects of one insight, by title,
@@ -332,64 +243,35 @@ const insightChips = (i: Insight): string[] | undefined =>
     the guard below costs nothing structurally.
   -->
   <template v-if="program">
-    <!--
-      Zone 1 — the masthead (GGS hub template): where you are, the program's
-      name, and the one action. No `tagline`: the program's prose is Zone 2,
-      on the page ground (refined pass, see the header docblock).
-
-      **The trail ends on the program**, not on "Programs". `bfBreadcrumb`
-      marks its last crumb `aria-current="page"` positionally, so the old
-      two-entry trail told a screen reader this page *was* "Programs" — the
-      #188 defect `/projects` fixed the same way. "Programs" stays, unlinked,
-      as the category it names: there is no programs index to link to.
-
-      The photograph is `HERO_IMAGE[program.slug]` (gh#253) — a local file, not
-      the programme document's own Directus `image`; see the record above for
-      why, and for why the Transatlantic hub is served by a file still named
-      after the old Politics & Society topic. `scrim` is left at its `full`
-      default: the flat 0.70 navy that makes white type clear 4.5:1 over any
-      photograph, and the only treatment under which programme colour is
-      allowed to appear here at all — as an opaque fill, never as text.
-
-      The CTA is slot content, wrapped in a `<div>`: `bfPageHeader` composes
-      `bfSection`, whose inner box is a `.stack`, and a bare anchor as a stack
-      child stretches to the full measure. The wrapper is the frozen source's
-      own, kept for the same reason. Copy is Irene's (Aug 5): "Explore our
-      work", pointing at the Projects band below — so it renders only when
-      that band does.
-    -->
-    <bfPageHeader
+    <!-- The hero follows the program sketch: identity left, opening copy right. -->
+    <bfSection
+      class="bf-hub-hero"
       label="Hub header"
-      :crumbs="[{ label: 'Home', to: '/' }, { label: 'Programs' }, { label: program.name }]"
-      :heading="program.name"
-      :image="HERO_IMAGE[program.slug]"
+      aria-labelledby="program-heading"
+      data-scrim="full"
+      gap="m"
+      padded
     >
-      <div v-if="projectsShape !== 'none'">
-        <bfButton to="#projects" variant="primary">Explore our work</bfButton>
-      </div>
-    </bfPageHeader>
+      <template #bleed>
+        <bfHeroMedia :src="HERO_IMAGE[program.slug]" alt="" />
+      </template>
 
-    <!--
-      Zone 2 — the program intro, the page's reading. No heading: the `<h1>`
-      above is this prose's title, and a second one would only restate it.
+      <bfBreadcrumb :items="[{ label: 'Home', to: '/' }, { label: 'Programs' }, { label: program.name }]" />
 
-      A `.switcher` of two: the lede, then the rest of the intro as body.
-      `data-gap="m"` is the projects grid's own gap, so above the primitive's
-      768px of band the two columns land exactly on that grid's two tracks;
-      below it they stack, lede first. The body's paragraphs are keyed by
-      index because two paragraphs of one intro may share their first words.
-
-      The lede carries `data-measure="narrow"` (60ch in its own face) for the
-      intro that is one paragraph long: alone in the switcher it would
-      otherwise run the band's full width. Beside the body it is narrower
-      than that already, and the cap is inert.
-    -->
-    <bfSection v-if="intro.length" class="bf-hub-intro" label="Program intro">
-      <div class="switcher bf-hub-intro__columns" data-gap="m">
-        <p class="bf-hub-intro__lede" data-measure="narrow">{{ intro[0] }}</p>
-        <div v-if="intro.length > 1" class="stack" data-gap="s">
-          <p v-for="(p, index) in intro.slice(1)" :key="index">{{ p }}</p>
+      <div class="switcher bf-hub-hero__columns" data-threshold="s" data-gap="xl">
+        <div class="stack bf-hub-hero__identity" data-gap="m">
+          <h1 id="program-heading" class="bf-hub-hero__heading">{{ program.name }}</h1>
+          <div v-if="projects.length">
+            <bfButton to="#projects" variant="primary" size="l">Explore our work</bfButton>
+          </div>
         </div>
+        <p v-if="intro.length" class="bf-hub-hero__intro">{{ intro[0] }}</p>
+      </div>
+    </bfSection>
+
+    <bfSection v-if="intro.length > 1" class="bf-hub-intro" label="Program intro">
+      <div class="stack bf-hub-intro__body" data-gap="s" data-measure="narrow">
+        <p v-for="(p, index) in intro.slice(1)" :key="index">{{ p }}</p>
       </div>
     </bfSection>
 
@@ -399,41 +281,18 @@ const insightChips = (i: Insight): string[] | undefined =>
       `data-rule="program"` is `bfSection`'s section rule, and the jump
       clears the sticky bar through `base/reset.css`'s `:target` margin.
 
-      Omitted when it would hold nothing (`bandShape`). A lone project leads
-      the row as a full-width text card, in a list of its own: `bfGridProjects`
-      decides one width for every card it renders, and this is the one case
-      where the page decides instead. The `<ul>` is the grid's own markup —
-      `role="list"` for the reason that file gives, and the same `xl` floor —
-      so a lone card sits in exactly the structure its siblings would have.
-
-      Otherwise `bfGridProjects` brings its own `.grid[data-min-width]` (D9) —
-      this page names no column count — and a pair already fills its two
-      tracks. `headingLevel="3"` keeps the card headings under the band's
-      `<h2>` (BRIEF §5 rule 9); it is also the wrapper's default, stated so the
-      next reader does not have to know that.
+      Omitted when empty. Every project uses the shared grid and its own
+      available main image. A short band keeps the same track widths as a full
+      one. Heading level 3 keeps project titles under the section heading.
     -->
     <bfSection
-      v-if="projectsShape !== 'none'"
+      v-if="projects.length"
       id="projects"
       data-rule="program"
       label="Projects in this area"
       heading="Projects"
     >
-      <ul
-        v-if="projectsShape === 'lead' && leadProject"
-        class="grid"
-        role="list"
-        data-min-width="xl"
-        data-gap="m"
-      >
-        <bfCardProject
-          :project="leadProject"
-          span="full"
-          :media="false"
-          :heading-level="3"
-        />
-      </ul>
-      <bfGridProjects v-else :projects="projects" :heading-level="3" />
+      <bfGridProjects :projects="projects" :heading-level="3" />
     </bfSection>
 
     <!--
@@ -442,20 +301,12 @@ const insightChips = (i: Insight): string[] | undefined =>
     -->
 
     <!--
-      Zone 4 — recent insights, active tier only, nine at most. Conditional
+      Zone 4 — recent insights, active tier only, six at most across all years. Conditional
       per hub (D10, `showInsights`) and on its links having a feed to open
       (`insightsHasFeed`) — not on its cards. `id="insights"` makes the band
       linkable, like its neighbour.
 
-      The wrapper swaps its composition primitive by shape, not its content.
-      A lead is a `.switcher` — the insight in the first column, the band's
-      two links in the second, stacking below the primitive's 768px of band.
-      Its `m` gap is the grid's, so the two columns fall on the same lines as
-      the projects grid above and the intro's two columns above that. Every
-      other shape is a `.stack`: the grid, then the links under it, exactly as
-      before. At `none` the grid is skipped and the stack holds the links
-      alone — the band is its heading, its rule and the two ways into the
-      feed, because an empty year's cut says nothing about the feed itself.
+      Cards share one grid without year headings; the feed links follow below.
 
       The two links are the frozen source's pair, retargeted at what they say.
       "All … insights" opens the program's filtered feed and counts it.
@@ -477,33 +328,15 @@ const insightChips = (i: Insight): string[] | undefined =>
       label="Recent insights"
       heading="Insights"
     >
-      <div
-        :class="insightsShape === 'lead' ? 'switcher bf-hub-insights--lead' : 'stack'"
-        data-gap="m"
-      >
-        <ul
-          v-if="insightsShape === 'lead' && leadInsight"
-          class="grid"
-          role="list"
-          data-min-width="l"
-          data-gap="m"
-        >
-          <bfCardInsight
-            :insight="leadInsight"
-            span="full"
-            :extra-chips="insightChips(leadInsight)"
-            :heading-level="3"
-          />
-        </ul>
+      <div class="stack" data-gap="m">
         <bfGridInsights
-          v-else-if="insightsShape !== 'none'"
+          v-if="recent.length"
           :insights="recent"
-          :min-width="insightsShape === 'pair' ? 'xl' : undefined"
           :extra-chips="insightChips"
           :heading-level="3"
         />
 
-        <div class="cluster bf-hub-insights__links" data-gap="m">
+        <div class="cluster" data-gap="m">
           <NuxtLink class="bf-more-link" :to="`/insights?area=${program.slug}`">
             All {{ program.name }} insights ({{ programInsights.length }})<span class="bf-more-link__arrow" aria-hidden="true" />
           </NuxtLink>
@@ -539,58 +372,74 @@ const insightChips = (i: Insight): string[] | undefined =>
 </template>
 
 <style scoped>
-/*
-  The hub's own skin — the intro's lede and the Insights band's lead column.
-  Everything else on the route is `bf-*` and styles itself, the section rule
-  on the two bands included (`bfSection`'s `data-rule`, which `/projects`
-  wears too); nothing below reaches into a component's internals.
-
-  Wrapped in `@layer components`, like every page-level rule (gh#68 — an
-  unlayered page rule outranks every layer). All colour is semantic or
-  programme tokens; no `:not()` (D-20.5).
-
-  Scoped selectors land on the band roots because a child component's root
-  element carries its parent's scope id; `bfSection`'s root is the
-  `<section>`, so `.bf-hub-intro` matches there.
-*/
 @layer components {
-  /*
-    The intro's two columns share a first baseline, so the body's first line
-    sits on the lede's rather than on its box's top edge — the two sizes put
-    their first lines at different heights otherwise. Inert once the
-    switcher stacks.
-  */
-  .bf-hub-intro__columns {
+  .bf-hub-hero {
+    --_bf-section-padding-block: var(--space-2xl);
+
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    align-content: center;
+    color: var(--color-text-inverse);
+  }
+
+  .bf-hub-hero__columns {
     align-items: baseline;
   }
 
-  /*
-    The lede — the intro's first paragraph, one step above the body. The
-    site's one lede, the insight's (`.bf-article-lede`), the project page's
-    and `/about`'s: the body's own face and weight (IBM Plex Sans light),
-    `--size-1`, leading 1.4, capped at 60ch by `data-measure="narrow"`. It
-    was set in Newsreader until the final pass, the one body-copy lede on
-    the site in the display face, beside a Plex column. In its column it
-    sets about forty characters a line at a desktop width, a lede's length
-    rather than a body's.
-  */
-  .bf-hub-intro__lede {
-    font-size: var(--size-1);
+  .bf-hub-hero__columns > * {
+    min-inline-size: 0;
+  }
+
+  .bf-hub-hero__heading {
+    font-size: clamp(var(--size-2), 4.5vw, var(--size-5));
+    text-wrap: balance;
+  }
+
+  .bf-hub-hero__intro {
+    margin: 0;
+    font-size: clamp(1rem, 1.75vw, var(--size-1));
     line-height: 1.4;
     text-wrap: pretty;
   }
 
-  /*
-    The links, as the second column of a lead insight (`bandShape` →
-    `lead`). The `.switcher` shares the row equally, so the card takes half
-    of it — an ordinary card's measure, and under the 48rem at which `bfCard`
-    would switch a full-span card to its picture-overlay layout. The cluster
-    starts on the card's top edge instead of stretching to its height; in
-    every other shape it is the row under the grid it always was (at `none`,
-    the band's only row), and this rule is inert.
-  */
-  .bf-hub-insights--lead > .bf-hub-insights__links {
-    align-self: flex-start;
+  .bf-hub-hero :deep(.bf-breadcrumb) {
+    --_bf-breadcrumb-separator-color: var(--color-text-inverse);
+    --_bf-breadcrumb-focus-color: var(--color-text-inverse);
+  }
+
+  .bf-hub-hero :deep(.bf-button[data-variant='primary']) {
+    border-color: var(--color-text-inverse);
+    background: var(--color-surface-page);
+    color: var(--color-accent);
+  }
+
+  .bf-hub-hero :deep(:focus-visible),
+  .bf-hub-hero :deep(.bf-button:focus-visible) {
+    outline-color: var(--color-text-inverse);
+  }
+
+  .bf-hub-intro__body {
+    margin-inline: auto;
+  }
+
+  @media (min-width: 48rem) {
+    .bf-hub-hero {
+      --_bf-section-padding-block: var(--space-xl);
+
+      aspect-ratio: 16 / 8;
+    }
+  }
+
+  @media (width < 48rem) {
+    .bf-hub-hero__columns {
+      flex-flow: column nowrap;
+      align-items: stretch;
+    }
+
+    .bf-hub-hero__columns > * {
+      flex: none;
+    }
   }
 }
 </style>

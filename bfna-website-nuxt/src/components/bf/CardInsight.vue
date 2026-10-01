@@ -98,9 +98,11 @@
  * The card shows the row's `image` when it has one — 117 of the 354 live
  * rows — and renders **no media box at all** when it does not, so a text-first
  * card never carries an empty slot or a placeholder. Decorative (`alt=""`):
- * the heading names the piece. `media` turns it off, and `bfGridInsights`
- * does exactly that for any group in which not every row has an image — a
- * picture card beside a text card leaves the text card hollow.
+ * the heading names the piece. `media` lets a caller suppress thumbnails;
+ * the Insights listing shows each available image independently. On desktop,
+ * the base card's `bf-card--insight-media` modifier turns it into a cover with
+ * title and date, revealing the excerpt on hover or keyboard focus. The chips
+ * and kicker remain part of the unchanged mobile thumbnail layout.
  *
  * Chips are toned (`bfChip`'s `tone`): the programme chip takes its own
  * programme's colour, everything else — format, extra chips, `Archive` — is
@@ -113,6 +115,7 @@ import type { CardWrapperProps, Insight } from '~/types/bf-contracts'
 import { formatLabel } from '~/utils/format'
 import { displayHeading, kickerHidesFormatChip, splitHeadingKicker } from '~/utils/headingKicker'
 import { programChipLabel, programSlugForName } from '~/utils/bf-card-program'
+import { cardExcerpt } from '~/utils/cardExcerpt'
 
 defineOptions({
   name: 'BfCardInsight',
@@ -139,9 +142,8 @@ interface Props extends CardWrapperProps {
   excerptLength?: number
   /**
    * Show the row's thumbnail when it has one. On by default; a row with no
-   * `image` renders no media box either way. `bfGridInsights` passes `false`
-   * to every card of a group that is not all pictures — the same switch, and
-   * the same default, as `bfCardProject.media`.
+   * `image` renders no media box either way. A grid may hide media to keep
+   * a group uniform, or show each available thumbnail.
    */
   media?: boolean
 }
@@ -156,7 +158,7 @@ const props = withDefaults(defineProps<Props>(), {
   headingLevel: 3,
   extraChips: undefined,
   excerpt: true,
-  excerptLength: 140,
+  excerptLength: 200,
   media: true
 })
 
@@ -215,24 +217,9 @@ if (import.meta.dev) {
   })
 }
 
-/**
- * The excerpt, truncated. Same arithmetic as `wfCardInsight.vue:21-24` minus
- * the `plain()` call (see rule 3).
- *
- * `?? ''` because `excerpt` is `string | null` in `bfInsightSchema` and 195 of
- * the 371 real rows carry no excerpt at all; the empty string then fails the
- * template's `v-if` and no empty `<p>` is rendered — which matters in a flex
- * column, where an empty child still contributes a `gap`.
- *
- * `trimEnd()` before the ellipsis so a cut landing on a space does not ship
- * `"… "`-with-a-hole; the `…` is the single character, not three periods.
- */
-const excerptText = computed(() => {
-  const text = props.insight.excerpt ?? ''
-  return text.length > props.excerptLength
-    ? text.slice(0, props.excerptLength).trimEnd() + '…'
-    : text
-})
+/** One character budget across card contexts, ending on a whole word. */
+const excerptText = computed(() => cardExcerpt(props.insight.excerpt, props.excerptLength))
+const compactExcerptText = computed(() => cardExcerpt(props.insight.excerpt, Math.min(props.excerptLength, 140)))
 
 /** The programme chip's label — the site's one chip label for it (`programChipLabel`). */
 const programLabel = computed(() => programChipLabel(props.insight.program))
@@ -249,7 +236,7 @@ const programSlug = computed(() => programSlugForName(props.insight.program))
     thumbnail and the kicker are the only things pulled above the heading
     visually. Never reorder the markup to change the picture.
   -->
-  <bfCard v-bind="$attrs">
+  <bfCard v-bind="$attrs" class="bf-card--insight" :class="{ 'bf-card--insight-media': media && insight.image }">
     <!--
       `h2` / `h3` / `h4` from `headingLevel` (#128) — the three levels
       `bfCard`'s stylesheet matches. `v-if="hasHeading"` is #130: no heading
@@ -262,7 +249,10 @@ const programSlug = computed(() => programSlugForName(props.insight.program))
 
     <bfTime :date="insight.publish_date" />
 
-    <p v-if="excerpt && excerptText">{{ excerptText }}</p>
+    <p v-if="excerpt && excerptText" class="bf-card__excerpt">
+      <span v-if="compactExcerptText !== excerptText" class="bf-card__excerpt-short">{{ compactExcerptText }}</span>
+      <span class="bf-card__excerpt-long">{{ excerptText }}</span>
+    </p>
 
     <template v-if="split.kicker" #kicker>{{ split.kicker }}</template>
 
@@ -283,14 +273,18 @@ const programSlug = computed(() => programSlugForName(props.insight.program))
     </template>
 
     <!--
-      Only when the row carries an image and the group shows pictures: no
+      Only when the row carries an image and media is enabled: no
       `image` or `:media="false"`, no slot, no media box. Decorative — the
       heading already names the piece, so alt text would announce the title
       twice. `alt=""` is the deliberate declaration `bfMedia` requires
       (gh#222).
     -->
     <template v-if="media && insight.image" #media>
-      <bfMedia :src="insight.image" alt="" ratio="16/9" />
+      <picture v-if="insight.card_cover" class="bf-card__picture">
+        <source media="(min-width: 48rem)" :srcset="insight.card_cover">
+        <bfMedia :src="insight.image" alt="" ratio="16/9" />
+      </picture>
+      <bfMedia v-else :src="insight.image" alt="" ratio="16/9" />
     </template>
   </bfCard>
 </template>

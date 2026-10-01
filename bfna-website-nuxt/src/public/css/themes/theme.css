@@ -14,7 +14,7 @@
       --hsl-primary: 214, 84%, 56%;
   
       Uncomment this to use a different card border radius:
-      --theme-card-border-radius: var(--border-radius-l);
+      --theme-card-border-radius: var(--border-radius-xl);
   
     DEPENDENCIES:
       - Requires @layer themes to be declared in styles.css
@@ -78,7 +78,7 @@
   
       /* --theme-stack-space: var(--space-s); */
   
-      /* Border radius for cards and panels (default: var(--border-radius-l)) */
+      /* Border radius for cards and panels (default: var(--border-radius-xl)) */
   
       /* --theme-card-border-radius: var(--border-radius-l); */
   

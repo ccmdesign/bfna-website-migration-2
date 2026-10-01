@@ -171,6 +171,10 @@ const latest = active.slice(0, 6)
   <!--
     Zone 2 — Programs. GGS order: identity first.
 
+    The full measure gives the three landscape covers the page width, with
+    the section's normal side gutters. The larger switcher threshold stacks
+    the cards before the longest program name and its tagline get cramped.
+
     `data-rule="program"` on this band and the three below is `bfSection`'s
     section rule, which every headed band on a landing page opens on (see
     `Section.vue`, "The section rule"). No band here is one programme's —
@@ -192,11 +196,12 @@ const latest = active.slice(0, 6)
     reason as `nav/Dropdown.vue:109` and `Breadcrumb.vue:238-240`
     (gh#220, D27).
   -->
-  <bfSection data-rule="program" label="Programs" heading="Our Programs">
+  <bfSection data-rule="program" label="Programs" heading="Our Programs" measure="full">
     <ul
       class="switcher"
       role="list"
       data-gap="m"
+      data-threshold="l"
     >
       <!--
         The whole `Program` entity, not the `{ slug, name, short, tagline }`

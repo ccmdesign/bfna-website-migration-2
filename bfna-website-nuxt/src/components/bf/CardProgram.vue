@@ -79,6 +79,9 @@
  * flagged three text-only programme cards against image-led project and
  * insight bands as the odd ones out. `media` is the opt-out for a band that
  * wants the text-only card back (Paper's home artboard draws it that way).
+ * Image cards now share the Project Card's landscape cover, bottom-aligned
+ * title and tagline reveal on hover or keyboard focus. Mobile keeps the
+ * photograph above the visible copy.
  *
  * `short` and `excerptLength` stay absent — BRIEF §5's rule of three: a prop
  * earns its place on the second call site that needs it.
@@ -172,7 +175,11 @@ if (import.meta.dev) {
     heading navigation lands at the start of the card. No `chips` slot; the
     photograph is the one thing pulled above the heading visually.
   -->
-  <bfCard v-bind="$attrs">
+  <bfCard
+    class="bf-card--program"
+    :class="{ 'bf-card--program-media': media && program.image }"
+    v-bind="$attrs"
+  >
     <component :is="`h${headingLevel}`" v-if="hasName">
       <!--
         One link per card, stretched over the whole card by `bfCard`'s
@@ -186,15 +193,17 @@ if (import.meta.dev) {
       <NuxtLink :to="`/${program.slug}`">{{ nameText }}</NuxtLink>
     </component>
 
-    <p v-if="taglineText">{{ taglineText }}</p>
+    <p v-if="taglineText" class="bf-card__excerpt">
+      <span class="bf-card__excerpt-long">{{ taglineText }}</span>
+    </p>
 
     <!--
       Decorative (`alt=""`, gh#222): the heading names the programme. The
-      source files are square; `3/2` crops them to the card's landscape slot
-      through `bfMedia`'s ratio hook, centred by `object-fit: cover`.
+      source files are square; the shared card styles crop them to a desktop
+      cover, while `16/9` matches the Project Card's mobile thumbnail.
     -->
     <template v-if="media && program.image" #media>
-      <bfMedia :src="program.image" alt="" ratio="3/2" />
+      <bfMedia :src="program.image" alt="" ratio="16/9" />
     </template>
   </bfCard>
 </template>

@@ -579,6 +579,12 @@ const showChips = (): boolean => chipList.value.length > 0 || hasRenderedContent
     border-color: var(--color-text-inverse);
   }
 
+  /* A solid inverse primary keeps the shared button shape legible on photos. */
+  .bf-page-header--media :deep(.bf-button[data-variant='primary']) {
+    background: var(--color-surface-page);
+    color: var(--color-accent);
+  }
+
   /*
     The paper ground — the default for a header with no photograph — has no
     rule here. It is `bfSection`'s `data-surface="paper"`: the containing

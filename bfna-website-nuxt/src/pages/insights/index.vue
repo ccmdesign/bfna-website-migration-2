@@ -85,6 +85,7 @@
  * these live at `composables/data/useBf*.ts`.
  */
 import type { Filter, Insight } from '~/types/bf-contracts'
+import { useMediaQuery } from '@vueuse/core'
 import { useBfInsights } from '~/composables/data/useBfInsights'
 import { useBfPages } from '~/composables/data/useBfPages'
 import { useBfPrograms } from '~/composables/data/useBfPrograms'
@@ -95,6 +96,12 @@ defineOptions({ name: 'InsightsIndexPage' })
 definePageMeta({ layout: 'bf-default' })
 
 const route = useRoute()
+
+// A view change preserves the current filters and number of loaded results.
+// Mobile always uses cards, while remembering the desktop selection on resize.
+const selectedView = ref<'grid' | 'list'>('grid')
+const isDesktop = useMediaQuery('(min-width: 48rem)')
+const showList = computed(() => isDesktop.value && selectedView.value === 'list')
 
 const { active, archived } = await useBfInsights()
 const { programs, programBySlug } = await useBfPrograms()
@@ -447,29 +454,61 @@ const byYear = computed<YearGroup[]>(() => {
     `@update:model-value`: the state is the URL.
   -->
   <bfSection class="bf-insights-toolbar" label="Filters" gap="m">
-    <div class="cluster bf-insights-facets" data-gap="l">
-      <div class="stack" data-gap="xs">
-        <span id="insights-facet-format" class="bf-facet-caption">Format</span>
-        <bfFilterBar
-          aria-labelledby="insights-facet-format"
-          label="Format"
-          tone="format"
-          :filters="FORMATS"
-          :model-value="asSelection(selectedFormat)"
-          @update:model-value="selection => onFacet('format', selection)"
-        />
+    <div class="bf-insights-toolbar__top">
+      <div class="cluster bf-insights-facets" data-gap="l">
+        <div class="stack" data-gap="xs">
+          <span id="insights-facet-format" class="bf-facet-caption">Format</span>
+          <bfFilterBar
+            aria-labelledby="insights-facet-format"
+            label="Format"
+            tone="format"
+            :filters="FORMATS"
+            :model-value="asSelection(selectedFormat)"
+            @update:model-value="selection => onFacet('format', selection)"
+          />
+        </div>
+
+        <div class="stack" data-gap="xs">
+          <span id="insights-facet-program" class="bf-facet-caption">Program</span>
+          <bfFilterBar
+            aria-labelledby="insights-facet-program"
+            label="Program"
+            tone="program"
+            :filters="programFilters"
+            :model-value="asSelection(selectedArea)"
+            @update:model-value="selection => onFacet('area', selection)"
+          />
+        </div>
       </div>
 
-      <div class="stack" data-gap="xs">
-        <span id="insights-facet-program" class="bf-facet-caption">Program</span>
-        <bfFilterBar
-          aria-labelledby="insights-facet-program"
-          label="Program"
-          tone="program"
-          :filters="programFilters"
-          :model-value="asSelection(selectedArea)"
-          @update:model-value="selection => onFacet('area', selection)"
-        />
+      <div class="bf-insights-views" role="group" aria-label="Results view">
+        <button
+          type="button"
+          class="bf-insights-views__button"
+          aria-label="Grid view"
+          title="Grid view"
+          :aria-pressed="selectedView === 'grid'"
+          @click="selectedView = 'grid'"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="3" y="3" width="7" height="7" rx="1" />
+            <rect x="14" y="3" width="7" height="7" rx="1" />
+            <rect x="3" y="14" width="7" height="7" rx="1" />
+            <rect x="14" y="14" width="7" height="7" rx="1" />
+          </svg>
+        </button>
+        <button
+          type="button"
+          class="bf-insights-views__button"
+          aria-label="List view"
+          title="List view"
+          :aria-pressed="selectedView === 'list'"
+          @click="selectedView = 'list'"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M9 5h12M9 12h12M9 19h12M3 5h1M3 12h1M3 19h1" />
+          </svg>
+        </button>
       </div>
     </div>
 
@@ -547,9 +586,11 @@ const byYear = computed<YearGroup[]>(() => {
 
     `bfGridInsights` at its own `l` floor, 300px: three tracks at the 1100px
     measure — Paper's "Grid 2 — thirds" (node `1A-0`, 347px cards) and the
-    home page's insight rows. It makes its media decision per call, so each
-    year is a picture grid only when every row in it has a picture.
-    `headingLevel` 3 puts the card headings under the year's `<h2>`.
+    home page's insight rows. Each card shows its own available image,
+    including years that also contain text-only cards.
+    Desktop can switch to the existing unskinned `bfCardRow` list, with
+    titles, dates, excerpts and separators. Both views share the filtered, paginated
+    year groups. `headingLevel` 3 puts their headings under the year's `<h2>`.
   -->
   <bfSection class="bf-insights-feed" label="Results" gap="l">
     <template v-if="filtered.length">
@@ -561,8 +602,21 @@ const byYear = computed<YearGroup[]>(() => {
           data-gap="m"
         >
           <h2 :id="group.id" class="bf-insights-year__heading">{{ group.label }}</h2>
+          <ul v-if="showList" class="bf-insights-list" role="list" :aria-labelledby="group.id">
+            <bfCardRow
+              v-for="insight in group.insights"
+              :key="insight.slug"
+              :item="insight"
+              :heading-level="3"
+              :kind-chip="false"
+              excerpt
+              kicker="inline"
+            />
+          </ul>
           <bfGridInsights
+            v-else
             :insights="group.insights"
+            media
             :heading-level="3"
             :aria-labelledby="group.id"
           />
@@ -663,8 +717,70 @@ const byYear = computed<YearGroup[]>(() => {
     Format on a narrow screen, and the status line sits on one baseline.
   */
   .bf-insights-facets {
+    flex: 1;
+    min-inline-size: 0;
     align-items: start;
     row-gap: var(--space-m);
+  }
+
+  .bf-insights-toolbar__top {
+    display: flex;
+    align-items: start;
+    gap: var(--space-m);
+  }
+
+  .bf-insights-views {
+    display: none;
+    flex: none;
+    gap: var(--space-3xs);
+  }
+
+  .bf-insights-views__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: 2.75rem;
+    block-size: 2.75rem;
+    padding: var(--space-2xs);
+    border: var(--border-width-thin) solid transparent;
+    border-radius: var(--radius-s);
+    background: transparent;
+    color: var(--color-accent);
+    cursor: pointer;
+  }
+
+  .bf-insights-views__button:hover {
+    border-color: var(--color-rule);
+  }
+
+  .bf-insights-views__button[aria-pressed="true"] {
+    background: var(--color-accent);
+    color: var(--color-text-inverse);
+  }
+
+  .bf-insights-views__button svg {
+    inline-size: 1.25rem;
+    block-size: 1.25rem;
+    fill: none;
+    stroke: currentcolor;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  @media (min-width: 48rem) {
+    .bf-insights-toolbar {
+      position: sticky;
+      inset-block-start: var(--bf-sticky-offset);
+      z-index: 5;
+      padding-block: var(--space-s);
+      border-block-end: var(--border-width-thin) solid var(--color-rule);
+      background: var(--color-surface-page);
+    }
+
+    .bf-insights-views {
+      display: flex;
+    }
   }
 
   .bf-insights-status {
@@ -753,16 +869,41 @@ const byYear = computed<YearGroup[]>(() => {
   /*
     ## Feed
 
-    The year opens its group on a hairline — the archive rows' own rule —
-    with the year set as the band heading it is, in lining figures so
-    "2019" does not dip below "2026". More space above a year (`2xl`, the
-    group gap) than between the year and its cards (`m`), so each year
-    reads as the head of what follows, not the tail of what came before.
+    The year sits between equal horizontal rules, using the UI face and
+    lining figures. Group spacing stays larger than the gap from year to cards.
   */
   .bf-insights-year__heading {
-    padding-block-start: var(--space-s);
-    border-block-start: var(--border-width-thin) solid var(--color-base-super-light);
+    display: flex;
+    align-items: center;
+    gap: var(--space-m);
+    color: var(--color-accent);
+    font-family: var(--font-family-ui);
+    font-size: var(--size-1);
+    font-weight: var(--font-weight-semibold);
     font-variant-numeric: lining-nums;
+  }
+
+  .bf-insights-year__heading::before,
+  .bf-insights-year__heading::after {
+    content: "";
+    flex: 1;
+    border-block-start: var(--border-width-thin) solid var(--color-rule);
+  }
+
+  .bf-insights-feed .bf-load-more {
+    text-align: center;
+  }
+
+  .bf-insights-list {
+    --_bf-card-row-padding-block: var(--space-s);
+    --_bf-card-row-title-size: 1.25rem;
+    --_bf-card-row-title-leading: 1.3;
+    --_bf-card-row-excerpt-size: 1rem;
+  }
+
+  .bf-insights-list .bf-card-row .bf-card__text > .bf-card-row__excerpt {
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
   }
 }
 </style>

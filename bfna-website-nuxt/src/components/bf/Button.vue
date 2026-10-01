@@ -67,12 +67,12 @@
  * Three sizes from the same comp. `m` is the base — omitting `size` and
  * `size="m"` are the same box. Padding is optical: block-end is 2px more
  * than block-start. Radius is the primitive `--border-radius-*` scale
- * (4 / 8 / 12); the semantic `--radius-*` scale is 6 / 12 / 20 and does not
+ * (4 / 8 / 16); the semantic `--radius-*` scale is 6 / 12 / 20 and does not
  * match this comp.
  *
  * | size | font | padding (block-start / inline / block-end) | radius |
  * |---|---|---|---|
- * | l | 22px | 12 / 24 / 14 | `--border-radius-l` |
+ * | l | 22px | 12 / 24 / 14 | `--border-radius-m` |
  * | m | 18px | 8 / 16 / 10 | `--border-radius-m` |
  * | s | 12px | 4 / 10 / 6 | `--border-radius-s` |
  *
@@ -230,7 +230,6 @@ const cssVars = computed<Record<string, string>>(() => {
     */
     background: var(--_bf-button-bg);
     color: var(--_bf-button-color);
-
     font-family: var(--font-family-ui);
     font-size: var(--_bf-button-font-size);
     font-weight: var(--font-weight-semibold);
@@ -241,7 +240,7 @@ const cssVars = computed<Record<string, string>>(() => {
   }
 
   .bf-button[data-size='l'] {
-    --_bf-button-radius: var(--border-radius-l);
+    --_bf-button-radius: var(--border-radius-m);
     --_bf-button-padding: 12px 24px 14px;
     --_bf-button-font-size: 22px;
   }
