@@ -2,7 +2,7 @@
   "slug": "the-demander-in-chief",
   "heading": "The Demander in Chief",
   "subheading": "Presidents’ Growing Fondness for Executive Orders",
-  "excerpt": null,
+  "excerpt": "An infographic comparing executive orders issued in the first month of seven U.S. presidential administrations.",
   "content": "When American presidents face insurmountable opposition in Congress or lethargy in the legislative process, they have turned to Executive Orders to advance policy priorities and  reverse the whims of their predecessors. With political polarization on the rise, occupants of the Oval Office have increasingly used this tactic to sidestep obstructionism, and to deliver on campaign promises. This B|Visual offers a snapshot of the Executive Orders issued in the first month of each of the last seven presidential administrations.",
   "image": "https://bfna.simplyas.com/assets/4c709b17-9e40-422a-a95f-4602ffcbc255",
   "video_url": null,
@@ -25,5 +25,6 @@
     "workstream": "Democracy",
     "product_type": null,
     "id": 256
-  }
+  },
+  "card_cover": "https://bfna.simplyas.com/assets/3c47c47a-5cac-4e3c-a56b-7f0f38a29434"
 }

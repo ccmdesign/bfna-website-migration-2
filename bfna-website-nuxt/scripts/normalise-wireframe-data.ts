@@ -5,6 +5,9 @@
  * JSON document per item under `content/bf/<collection>/<slug>.json`, plus the site
  * chrome (`MENUS`) as `src/assets/bf-data/menus.json` and its footer variant as
  * `src/assets/bf-data/footer-menus.json`.
+ * Authored excerpts in `src/assets/content-overrides/insight-excerpts.json` fill
+ * missing insight excerpts. Reviewed revisions apply only to an exact source match,
+ * so subsequent CMS edits still take priority.
  *
  * Every synthesis `src/composables/useWfContent.ts` performs for these collections is
  * materialised here as a plain stored field, so `bf-*` components stay presentational
@@ -209,6 +212,63 @@ const toLegacy = (raw: RawEntityLegacy | null | undefined): RawEntityLegacy | nu
 
 // ---- insights --------------------------------------------------------------
 
+type InsightExcerpt = string | { original: string, text: string }
+
+/** A string fills missing copy; a revision replaces only its known source text. */
+const readInsightExcerpts = (): Record<string, InsightExcerpt> => {
+  const value: unknown = JSON.parse(readFileSync(
+    join(appRoot, 'src', 'assets', 'content-overrides', 'insight-excerpts.json'), 'utf8'
+  ))
+  if (!value || typeof value !== 'object' || Array.isArray(value)) {
+    throw new Error('insight-excerpts.json must contain a slug-to-excerpt object')
+  }
+  const excerpts: Record<string, InsightExcerpt> = {}
+  for (const [slug, excerpt] of Object.entries(value)) {
+    const isPlainText = (text: unknown): text is string =>
+      typeof text === 'string' && Boolean(text.trim()) && text === plain(text)
+    if (isPlainText(excerpt)) {
+      excerpts[slug] = excerpt
+    } else if (excerpt && typeof excerpt === 'object'
+      && isPlainText(excerpt.original) && isPlainText(excerpt.text)) {
+      excerpts[slug] = { original: excerpt.original, text: excerpt.text }
+    } else {
+      throw new Error(`insight-excerpts.json: ${slug} must contain nonempty plain text`)
+    }
+  }
+  return excerpts
+}
+
+const insightExcerpts = readInsightExcerpts()
+
+interface InsightCardCover {
+  source_image: string
+  card_cover: string
+}
+
+/** Reviewed Directus cover links supplement the frozen migration snapshots. */
+const insightCardCoverData: unknown = JSON.parse(readFileSync(
+  join(appRoot, 'src', 'assets', 'content-overrides', 'insight-card-covers.json'), 'utf8'
+))
+if (!insightCardCoverData || typeof insightCardCoverData !== 'object' || Array.isArray(insightCardCoverData)) {
+  throw new Error('insight-card-covers.json must contain a slug-to-cover object')
+}
+const insightCardCovers: Record<string, InsightCardCover> = {}
+for (const [slug, cover] of Object.entries(insightCardCoverData)) {
+  if (!cover || typeof cover !== 'object' || Array.isArray(cover)
+    || typeof cover.source_image !== 'string' || !cover.source_image.trim()
+    || typeof cover.card_cover !== 'string' || !cover.card_cover.trim()) {
+    throw new Error(`insight-card-covers.json: invalid cover for ${slug}`)
+  }
+  insightCardCovers[slug] = { source_image: cover.source_image, card_cover: cover.card_cover }
+}
+
+const resolveInsightExcerpt = (slug: string, raw: string | null | undefined): string | null => {
+  const source = plainOrNull(raw)
+  const authored = insightExcerpts[slug]
+  if (typeof authored === 'string') return source ?? authored
+  return authored && source === authored.original ? authored.text : source
+}
+
 interface RawInsight {
   slug: string
   heading?: string | null
@@ -217,6 +277,7 @@ interface RawInsight {
   content?: string | null
   authors?: string[]
   image?: string | null
+  card_cover?: string | null
   video_url?: string | null
   download?: string | null
   external_url?: string | null
@@ -243,6 +304,7 @@ interface InsightDoc {
   excerpt: string | null
   content: string | null
   image: string | null
+  card_cover?: string | null
   video_url: string | null
   download: string | null
   external_url: string | null
@@ -263,10 +325,10 @@ interface InsightDoc {
 }
 
 /**
- * `excerpt` is `plain()`-cleaned and stays `null` when the source has none (195 of the
- * 354 items). No `content`-derived fallback: `wfCardInsight` renders `plain(excerpt)`
- * and shows nothing when empty, and BRIEF ground rule 10 requires `bf-*` to render the
- * same data as its `wf-*` counterpart.
+ * Source excerpts are `plain()`-cleaned. Missing excerpts use the reviewed, authored
+ * map. Short-copy revisions match the original exactly; there is no automatic
+ * body-text fallback, and a future source update takes precedence.
+ * The frozen `/wireframes/*` prototype continues to use its original snapshots.
  */
 const toInsightDoc = (
   raw: RawInsight,
@@ -281,7 +343,7 @@ const toInsightDoc = (
     slug: stem.stem,
     heading: plainOrNull(raw.heading),
     subheading: plainOrNull(raw.subheading),
-    excerpt: plainOrNull(raw.excerpt),
+    excerpt: resolveInsightExcerpt(stem.stem, raw.excerpt),
     content: strOrNull(raw.content),
     image: strOrNull(raw.image),
     video_url: strOrNull(raw.video_url),
@@ -301,6 +363,11 @@ const toInsightDoc = (
   // Appended rather than declared inline so the key is ABSENT — not `null` — on the 369
   // documents that have neither. `content.config.ts` declares both `.optional()`.
   if (stem.disambiguated) doc.duplicate_of = raw.slug
+  // An explicit upstream value (including a deliberate null) wins. A source
+  // image change invalidates the old derivative rather than reusing stale art.
+  const cover = insightCardCovers[stem.stem]
+  if ('card_cover' in raw) doc.card_cover = strOrNull(raw.card_cover)
+  else if (cover?.source_image === raw.image) doc.card_cover = cover.card_cover
   const note = strOrNull(raw.slug_note)
   if (note !== null) doc.slug_note = note
   return doc
@@ -308,20 +375,36 @@ const toInsightDoc = (
 
 const normaliseInsights = (): number => {
   const snap = readSnapshot<InsightsSnapshot>('insights.json')
-  resetCollection('insights')
   const stem = makeStemFactory()
 
   const itemSlugs = new Set(snap.items.map(i => i.slug))
   const featuredSlugs = new Set(snap.featured.map(i => i.slug))
   const retiredSlugs = new Set(snap.retired_news.map(i => i.slug))
 
-  let written = 0
-  for (const raw of snap.items) {
+  const items = snap.items.map(raw => {
     const s = stem(raw.slug)
-    writeDoc('insights', s.stem, toInsightDoc(raw, s, {
+    return toInsightDoc(raw, s, {
       featured: featuredSlugs.has(raw.slug),
       retired_news: retiredSlugs.has(raw.slug)
-    }))
+    })
+  })
+  const canonicalItemSlugs = new Set(items.map(item => item.slug))
+  for (const slug of Object.keys(insightExcerpts)) {
+    if (!canonicalItemSlugs.has(slug)) {
+      throw new Error(`insight-excerpts.json: unknown insight slug ${slug}`)
+    }
+  }
+  for (const slug of Object.keys(insightCardCovers)) {
+    if (!canonicalItemSlugs.has(slug)) {
+      throw new Error(`insight-card-covers.json: unknown insight slug ${slug}`)
+    }
+  }
+
+  // Validate before deleting any existing output. Highlight records cannot be targets.
+  resetCollection('insights')
+  let written = 0
+  for (const item of items) {
+    writeDoc('insights', item.slug, item)
     written++
   }
 
@@ -345,6 +428,24 @@ const normaliseInsights = (): number => {
 }
 
 // ---- projects --------------------------------------------------------------
+
+interface ProjectImageOverride {
+  source_image: string | null
+  image: string
+  provenance: string
+}
+
+/** Reviewed artwork for projects added after the frozen migration snapshot. */
+const projectImages: Record<string, ProjectImageOverride> = JSON.parse(readFileSync(
+  join(appRoot, 'src', 'assets', 'content-overrides', 'project-images.json'), 'utf8'
+))
+for (const [slug, override] of Object.entries(projectImages)) {
+  if (!override || (override.source_image !== null && typeof override.source_image !== 'string')
+    || typeof override.image !== 'string' || !override.image.trim()
+    || typeof override.provenance !== 'string' || !override.provenance.trim()) {
+    throw new Error(`project-images.json: invalid image for ${slug}`)
+  }
+}
 
 interface ProjectPodcast {
   title: string
@@ -462,6 +563,8 @@ const normaliseProjects = (): number => {
   const stem = makeStemFactory()
 
   for (const [index, raw] of snap.items.entries()) {
+    const sourceImage = strOrNull(raw.image)
+    const imageOverride = projectImages[raw.slug]
     const doc: ProjectDoc = {
       slug: raw.slug,
       heading: plainOrNull(raw.heading) ?? '',
@@ -470,7 +573,7 @@ const normaliseProjects = (): number => {
       kind: strOrNull(raw.kind),
       program: strOrNull(raw.program),
       external_url: strOrNull(raw.external_url),
-      image: strOrNull(raw.image),
+      image: imageOverride?.source_image === sourceImage ? imageOverride.image : sourceImage,
       parent_project: strOrNull(raw.parent_project),
       archived: boolFlag(raw.archived),
       exclude_from_grid: boolFlag(raw.exclude_from_grid),

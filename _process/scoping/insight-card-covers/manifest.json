@@ -1,0 +1,3446 @@
+{
+  "target_ratio": "4:5",
+  "generation_tool": "built-in image_gen (26 artworks) and user-approved Sharp source-pixel composition (79 artworks)",
+  "updated": "2026-10-01T23:27:00.271Z",
+  "cms": {
+    "base_url": "https://bfna.simplyas.com",
+    "field": "card_cover",
+    "fields": [
+      {
+        "collection": "products",
+        "field_id": 792,
+        "relation_id": 166
+      },
+      {
+        "collection": "infographics",
+        "field_id": 793,
+        "relation_id": 167
+      }
+    ]
+  },
+  "counts": {
+    "records": 117,
+    "active_records": 30,
+    "archived_records": 87,
+    "unique_artworks": 105,
+    "active_unique_artworks": 27,
+    "completed_artworks": 105,
+    "completed_records": 117,
+    "remaining_artworks": 0,
+    "completed_active_records": 30,
+    "completed_archived_records": 87
+  },
+  "artworks": [
+    {
+      "source_sha256": "b4d42015790df6da9a744c534b66edf8738e97d0bfdf74adbb65c04dd07e798f",
+      "source_width": 2080,
+      "source_height": 2080,
+      "records": [
+        {
+          "slug": "a-trillion-dollar-partnership-the-future-of-the-transatlantic-economy-5",
+          "heading": "A Trillion Dollar Partnership: The Future of the Transatlantic Economy - 5",
+          "archived": false,
+          "legacy": {
+            "source": "directus",
+            "type": "products",
+            "workstream": "Podcasts",
+            "product_type": "video",
+            "id": 2
+          },
+          "source_image": "https://bfna.simplyas.com/assets/f9d35a19-a823-470f-add2-c5ee83095655"
+        },
+        {
+          "slug": "are-democracies-a-dying-breed-2",
+          "heading": "Are democracies a dying breed? - 2",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "products",
+            "workstream": "Podcasts",
+            "product_type": "website",
+            "id": 3
+          },
+          "source_image": "https://bfna.simplyas.com/assets/bdb56bb3-3af3-4873-926b-3f3f6717d64c"
+        },
+        {
+          "slug": "intro-to-crowdsourced-forecasting-1",
+          "heading": "Intro to crowdsourced forecasting - 1",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "products",
+            "workstream": "Podcasts",
+            "product_type": "website",
+            "id": 49
+          },
+          "source_image": "https://bfna.simplyas.com/assets/26e54a49-6dd3-4a69-a2c3-4584c09f6eae"
+        },
+        {
+          "slug": "partner-competitor-or-rival-the-transatlantic-relationship-with-china-6",
+          "heading": "Partner, Competitor, or Rival: The Transatlantic Relationship with China - 6",
+          "archived": false,
+          "legacy": {
+            "source": "directus",
+            "type": "products",
+            "workstream": "Podcasts",
+            "product_type": "website",
+            "id": 53
+          },
+          "source_image": "https://bfna.simplyas.com/assets/953b3007-06cf-479b-a5ba-ec07be5b6c92"
+        },
+        {
+          "slug": "the-21st-century-space-race-geopolitical-competition-or-cooperation-4",
+          "heading": "The 21st Century Space Race: Geopolitical Competition or Cooperation? - 4",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "products",
+            "workstream": "Podcasts",
+            "product_type": "website",
+            "id": 95
+          },
+          "source_image": "https://bfna.simplyas.com/assets/3ef82b23-e0ce-4e3a-87bb-499cb7573853"
+        },
+        {
+          "slug": "the-great-tech-policy-debate-should-innovation-be-regulated-3",
+          "heading": "The Great Tech Policy Debate: Should Innovation be Regulated? - 3",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "products",
+            "workstream": "Podcasts",
+            "product_type": "video",
+            "id": 96
+          },
+          "source_image": "https://bfna.simplyas.com/assets/23cfe20c-418c-4c64-81df-afb4de8d9d79"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/9ea76c15-bd48-4cb6-a7f2-20d27275d6f6",
+        "file_id": "9ea76c15-bd48-4cb6-a7f2-20d27275d6f6",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/a-trillion-dollar-partnership-the-future-of-the-transatlantic-economy-5.png",
+        "sha256": "6579082b6aaed5eaf816edd8075e2f9b8ff4594941d269c045088c216a792324",
+        "width": 1122,
+        "height": 1402,
+        "method": "built-in image_gen"
+      },
+      "review": "Source subjects, wording, logo and palette visually compared; composition leaves bottom title space."
+    },
+    {
+      "source_sha256": "2d8806edef46813dd77d06ca582f88f03902800b4889f8c60600afa2918b254d",
+      "source_width": 3010,
+      "source_height": 1694,
+      "records": [
+        {
+          "slug": "athens-greece",
+          "heading": "Athens, Greece",
+          "archived": false,
+          "legacy": {
+            "source": "directus",
+            "type": "products",
+            "workstream": "Democracy",
+            "product_type": "video",
+            "id": 4
+          },
+          "source_image": "https://bfna.simplyas.com/assets/695fec70-2e85-4ea2-86a4-aa968b2d9054"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/22e8bf12-4f9e-4554-bcb6-64db3994d3a7",
+        "file_id": "22e8bf12-4f9e-4554-bcb6-64db3994d3a7",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/athens-greece.png",
+        "sha256": "91fb37d7199d83d5baa92f92a81aab5c9cb1caae38bda571cde506d331fe2a16",
+        "width": 1122,
+        "height": 1402,
+        "method": "built-in image_gen"
+      },
+      "review": "Source subjects, wording, logo and palette visually compared; composition leaves bottom title space."
+    },
+    {
+      "source_sha256": "9f34a9b79a369a8fb4e17ade5363515ba5d69b14ea1f89e317b4ec37ad7464df",
+      "source_width": 2500,
+      "source_height": 2500,
+      "records": [
+        {
+          "slug": "authors",
+          "heading": "Authors",
+          "archived": false,
+          "legacy": {
+            "source": "contentful",
+            "type": "product",
+            "workstream": "Politics & Society",
+            "product_type": "report",
+            "id": "2ar7jAHvuhHBOvDNSXEdCw"
+          },
+          "source_image": "https://images.ctfassets.net/9vgcz0fppkl3/GQA8TTOBpdxOrIQjfqKzB/c060e1be40fe2ca2a0c2c2f626274496/cross-cutting-currents-mockup.webp"
+        },
+        {
+          "slug": "cross-cutting-currents",
+          "heading": "Cross-Cutting Currents",
+          "archived": false,
+          "legacy": {
+            "source": "directus",
+            "type": "products",
+            "workstream": "Politics & Society",
+            "product_type": "report",
+            "id": 24
+          },
+          "source_image": "https://bfna.simplyas.com/assets/af610365-5251-430a-bb84-6eee54199a6b"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/d71fc464-deab-448d-a702-c325e04a6efc",
+        "file_id": "d71fc464-deab-448d-a702-c325e04a6efc",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/cross-cutting-currents.png",
+        "sha256": "caa37639b37a48c2e2b6829e8d1047d191b26b0e87883dc682857b393d27dad8",
+        "width": 1122,
+        "height": 1402,
+        "method": "built-in image_gen"
+      },
+      "review": "Source subjects, wording, logo and palette visually compared; composition leaves bottom title space."
+    },
+    {
+      "source_sha256": "02b938a2e2010cdee597ae3cde000e911b5b6b831af37d5eab57177a776ea4c6",
+      "source_width": 3334,
+      "source_height": 1875,
+      "records": [
+        {
+          "slug": "bff-spotlight-travis-moore",
+          "heading": "BFF Spotlight: Travis Moore",
+          "archived": false,
+          "legacy": {
+            "source": "directus",
+            "type": "products",
+            "workstream": "Future Leadership",
+            "product_type": "report",
+            "id": 5
+          },
+          "source_image": "https://bfna.simplyas.com/assets/0b8f295a-1814-4360-b4d1-84fdcbd98f39"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/5b201e72-239e-40cd-9e60-1555ec373aa3",
+        "file_id": "5b201e72-239e-40cd-9e60-1555ec373aa3",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/bff-spotlight-travis-moore.png",
+        "sha256": "e1ceab55566e7da4a51f7f7d92575808625381a7e0965b26368c5a0dfdba87c7",
+        "width": 1122,
+        "height": 1402,
+        "method": "built-in image_gen"
+      },
+      "review": "Source subjects, wording, logo and palette visually compared; composition leaves bottom title space."
+    },
+    {
+      "source_sha256": "1a44696eb34a34fb3cbed06a6711545e49b41316693bbe1d350c2666b96a8a40",
+      "source_width": 12000,
+      "source_height": 7415,
+      "records": [
+        {
+          "slug": "class-of-2025",
+          "heading": "Class of 2025",
+          "archived": false,
+          "legacy": {
+            "source": "directus",
+            "type": "products",
+            "workstream": "Future Leadership",
+            "product_type": "report",
+            "id": 23
+          },
+          "source_image": "https://bfna.simplyas.com/assets/4a6a88a9-8b9f-4b77-b94b-79f85dde5346"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/170e51fc-c911-4de4-9e56-ca74b4956db1",
+        "file_id": "170e51fc-c911-4de4-9e56-ca74b4956db1",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/class-of-2025.png",
+        "sha256": "7b7440fd8afa51b753c102570b8f58824a5df8110628650241c764f447e65d97",
+        "width": 1122,
+        "height": 1402,
+        "method": "built-in image_gen"
+      },
+      "review": "Source subjects, wording, logo and palette visually compared; composition leaves bottom title space."
+    },
+    {
+      "source_sha256": "0bf275f8e08f50ef0008ab07fa86fca8e93df1abb5a6dd6d8b5c894c563e4479",
+      "source_width": 4000,
+      "source_height": 2667,
+      "records": [
+        {
+          "slug": "class-of-2024",
+          "heading": "Class of 2024",
+          "archived": false,
+          "legacy": {
+            "source": "directus",
+            "type": "products",
+            "workstream": "Future Leadership",
+            "product_type": "report",
+            "id": 22
+          },
+          "source_image": "https://bfna.simplyas.com/assets/9a633306-a3ce-42db-ba07-ef25a87e7ede"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/bfa9ca39-5fa6-4c1a-9eaf-ec07cc793029",
+        "file_id": "bfa9ca39-5fa6-4c1a-9eaf-ec07cc793029",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/class-of-2024.png",
+        "sha256": "c1de6387bf6f234058e8b19c340909e7004aa2b2a0ecf9df40bb7b2a30bc14f6",
+        "width": 1122,
+        "height": 1402,
+        "method": "built-in image_gen"
+      },
+      "review": "Source subjects, wording, logo and palette visually compared; composition leaves bottom title space."
+    },
+    {
+      "source_sha256": "680f26bec67781bf493e2e41054e52369b31d0794c8ce9173c17497a88e63540",
+      "source_width": 3000,
+      "source_height": 2000,
+      "records": [
+        {
+          "slug": "episode-3-transatlantic-security",
+          "heading": "Episode 3 | Transatlantic Security",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "products",
+            "workstream": "Podcasts",
+            "product_type": "website",
+            "id": 30
+          },
+          "source_image": "https://bfna.simplyas.com/assets/3491f132-cad6-4cc8-bba3-824cdd9b2309"
+        },
+        {
+          "slug": "episode-2-online-platform-regulation-content-moderation-free-speech",
+          "heading": "Episode 2 | Online Platform Regulation, Content Moderation, & Free Speech",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "products",
+            "workstream": "Podcasts",
+            "product_type": "website",
+            "id": 29
+          },
+          "source_image": "https://bfna.simplyas.com/assets/09a3521a-f61b-4803-837e-b787f41d314c"
+        },
+        {
+          "slug": "episode-1-what-are-transatlantic-relations-today",
+          "heading": "Episode 1 | What Are Transatlantic Relations Today?",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "products",
+            "workstream": "Podcasts",
+            "product_type": "website",
+            "id": 28
+          },
+          "source_image": "https://bfna.simplyas.com/assets/73dbbb96-3003-4bff-b12b-c06f384508d8"
+        },
+        {
+          "slug": "episode-5-transatlantic-generational-divide",
+          "heading": "Episode 5 | Transatlantic Generational Divide",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "products",
+            "workstream": "Podcasts",
+            "product_type": "website",
+            "id": 32
+          },
+          "source_image": "https://bfna.simplyas.com/assets/c0452ee7-1174-425f-a217-aee37c31d77c"
+        },
+        {
+          "slug": "episode-4-change-beyond-climate",
+          "heading": "Episode 4 | Change Beyond Climate",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "products",
+            "workstream": "Podcasts",
+            "product_type": "website",
+            "id": 31
+          },
+          "source_image": "https://bfna.simplyas.com/assets/b5cd9755-322f-4a58-9cb2-be317edb1445"
+        },
+        {
+          "slug": "episode-6-the-near-future-of-transatlantic-relations",
+          "heading": "Episode 6 | The Near Future of Transatlantic Relations",
+          "archived": false,
+          "legacy": {
+            "source": "directus",
+            "type": "products",
+            "workstream": "Podcasts",
+            "product_type": "video",
+            "id": 33
+          },
+          "source_image": "https://bfna.simplyas.com/assets/ae353ddf-2749-4139-ba9b-00c64b963182"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/879abd2e-69cd-474b-8800-e3b9b8a73b9a",
+        "file_id": "879abd2e-69cd-474b-8800-e3b9b8a73b9a",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/episode-6-the-near-future-of-transatlantic-relations.png",
+        "sha256": "472cb898f18bf05acaa6cd9666f6d80cc74522b0f56893276f8e713e0a6bb91f",
+        "width": 1122,
+        "height": 1402,
+        "method": "built-in image_gen"
+      },
+      "review": "Source subjects, wording, logo and palette visually compared; composition leaves bottom title space."
+    },
+    {
+      "source_sha256": "20224072917feab663680f0c38d35b01414f72ce21c7cdb7d613f252750d8a72",
+      "source_width": 942,
+      "source_height": 710,
+      "records": [
+        {
+          "slug": "graphic-images-autocrats-and-the-use-of-power",
+          "heading": "Graphic Images: Autocrats and the Use of Power",
+          "archived": false,
+          "legacy": {
+            "source": "directus",
+            "type": "products",
+            "workstream": "Democracy",
+            "product_type": "report",
+            "id": 35
+          },
+          "source_image": "https://bfna.simplyas.com/assets/fe4660dd-aff8-42ad-a4af-c69b9c0db890"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/6a79fca0-4844-400e-88db-a9793dc7b2a5",
+        "file_id": "6a79fca0-4844-400e-88db-a9793dc7b2a5",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/graphic-images-autocrats-and-the-use-of-power.png",
+        "sha256": "712f62a523dd3fe492aeffed7eb58a1db86c96945166e6177709cfb88f07746d",
+        "width": 1122,
+        "height": 1402,
+        "method": "built-in image_gen"
+      },
+      "review": "Source subjects, wording, logo and palette visually compared; composition leaves bottom title space."
+    },
+    {
+      "source_sha256": "df69c5f0e349c8926fae4314999e9a23aca55ecb2154c84002d520d4d76d6b01",
+      "source_width": 2500,
+      "source_height": 2500,
+      "records": [
+        {
+          "slug": "federalism-in-crisis",
+          "heading": "Federalism in Crisis",
+          "archived": false,
+          "legacy": {
+            "source": "directus",
+            "type": "products",
+            "workstream": "Archives",
+            "product_type": "report",
+            "id": 34
+          },
+          "source_image": "https://bfna.simplyas.com/assets/bccf7271-cea7-493e-9d13-1c46d98fe555"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/4f47aa64-9693-4bc5-a9bb-f613f3cb2500",
+        "file_id": "4f47aa64-9693-4bc5-a9bb-f613f3cb2500",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/federalism-in-crisis.png",
+        "sha256": "c44be316330b15ed6ff851180a8f5e0b1ce95b95dd3b0696eab604780003adde",
+        "width": 1122,
+        "height": 1402,
+        "method": "built-in image_gen"
+      },
+      "review": "Source subjects, wording, logo and palette visually compared; composition leaves bottom title space."
+    },
+    {
+      "source_sha256": "f2563fb30414ce8a3bf17f404b65c9862fa74d985c96538232c67900f2148aae",
+      "source_width": 2500,
+      "source_height": 2500,
+      "records": [
+        {
+          "slug": "hidden-layers-bidens-ai-executive-order-eu-ai-act-and-the-uk-ai-safety-summit",
+          "heading": "Hidden Layers | Biden’s AI Executive Order, EU AI Act, and the UK AI Safety Summit",
+          "archived": false,
+          "legacy": {
+            "source": "directus",
+            "type": "products",
+            "workstream": "Digital World",
+            "product_type": "report",
+            "id": 38
+          },
+          "source_image": "https://bfna.simplyas.com/assets/e6727fdd-6cdb-4aa0-b4bd-d69cff098b3a"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/23e9f25d-9b1c-4615-9411-6991d5d40b1a",
+        "file_id": "23e9f25d-9b1c-4615-9411-6991d5d40b1a",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/hidden-layers-bidens-ai-executive-order-eu-ai-act-and-the-uk-ai-safety-summit.png",
+        "sha256": "5c3d5368d21a1ccd5bbbfa46fcc4639e52cd653644cd8bcd9ea956d93fc8cecd",
+        "width": 1122,
+        "height": 1402,
+        "method": "built-in image_gen"
+      },
+      "review": "Source subjects, wording, logo and palette visually compared; composition leaves bottom title space."
+    },
+    {
+      "source_sha256": "dfb34e0ed277ef9175b93f34eafd621bb1160da6f0dfab94395017aed644576f",
+      "source_width": 2500,
+      "source_height": 2500,
+      "records": [
+        {
+          "slug": "green-ideas",
+          "heading": "Green Ideas",
+          "archived": false,
+          "legacy": {
+            "source": "directus",
+            "type": "products",
+            "workstream": "Archives",
+            "product_type": "report",
+            "id": 37
+          },
+          "source_image": "https://bfna.simplyas.com/assets/95aa651e-4291-4bc6-914b-9ec6712b8e41"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/9d95e19b-ffd6-442d-a73c-e7f30a7688e0",
+        "file_id": "9d95e19b-ffd6-442d-a73c-e7f30a7688e0",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/green-ideas.png",
+        "sha256": "510e02306702b2124c68339c20a5c5e4effa4bd3f9839b89491d6138448708ae",
+        "width": 1122,
+        "height": 1402,
+        "method": "built-in image_gen"
+      },
+      "review": "Source subjects, wording, logo and palette visually compared; composition leaves bottom title space."
+    },
+    {
+      "source_sha256": "fd1acbfb9d471446bbca91bf3c78863a5f7bcfba8256ffc6ca14eb8713c4e87e",
+      "source_width": 2500,
+      "source_height": 2500,
+      "records": [
+        {
+          "slug": "hidden-layers-eus-ai-act-an-ai-task-force-from-congress-and-a-new-executive-order-to-protect-americans-personal-data",
+          "heading": "Hidden Layers | EU’s AI Act, an AI task force from Congress, and a new Executive Order to protect Americans’ personal data",
+          "archived": false,
+          "legacy": {
+            "source": "directus",
+            "type": "products",
+            "workstream": "Digital World",
+            "product_type": "report",
+            "id": 39
+          },
+          "source_image": "https://bfna.simplyas.com/assets/c9790d0b-beed-41f0-a451-a29aff99f8f7"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/af8c7b99-d84c-4739-b6bf-6ff028868555",
+        "file_id": "af8c7b99-d84c-4739-b6bf-6ff028868555",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/hidden-layers-eus-ai-act-an-ai-task-force-from-congress-and-a-new-executive-order-to-protect-americans-personal-data.png",
+        "sha256": "85511f72e7016f619f854b74ed73252e22d97c872cdbe1516d15629291343dde",
+        "width": 1122,
+        "height": 1402,
+        "method": "built-in image_gen"
+      },
+      "review": "Source subjects, wording, logo and palette visually compared; composition leaves bottom title space."
+    },
+    {
+      "source_sha256": "a2e538c263a04220d951e93eae36fb03583724f4ce3d20eef19de9757535730e",
+      "source_width": 2500,
+      "source_height": 2500,
+      "records": [
+        {
+          "slug": "hidden-layers-new-ai-regulations-a-transatlantic-privacy-decision",
+          "heading": "Hidden Layers | New AI Regulations & A Transatlantic Privacy Decision",
+          "archived": false,
+          "legacy": {
+            "source": "directus",
+            "type": "products",
+            "workstream": "Digital World",
+            "product_type": "report",
+            "id": 41
+          },
+          "source_image": "https://bfna.simplyas.com/assets/aa154f61-3d8f-492c-a69a-baa59b949123"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/bfc50c04-be14-4350-a12b-a1e437a36ea6",
+        "file_id": "bfc50c04-be14-4350-a12b-a1e437a36ea6",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/hidden-layers-new-ai-regulations-a-transatlantic-privacy-decision.png",
+        "sha256": "0793723819f49931e6fd9d836fd2f9247e4cc33cf611d7ea6d532f737af741a1",
+        "width": 1122,
+        "height": 1402,
+        "method": "built-in image_gen"
+      },
+      "review": "Source subjects, wording, logo and palette visually compared; composition leaves bottom title space."
+    },
+    {
+      "source_sha256": "eac54c297304dbb5258bdca4f904b30abfaf429c71382884fc8dd80c4a21ab51",
+      "source_width": 2500,
+      "source_height": 2500,
+      "records": [
+        {
+          "slug": "hotspots",
+          "heading": "Hotspots",
+          "archived": false,
+          "legacy": {
+            "source": "directus",
+            "type": "products",
+            "workstream": "Digital World",
+            "product_type": "report",
+            "id": 46
+          },
+          "source_image": "https://bfna.simplyas.com/assets/5cfcba95-5f3c-4e4a-98e7-7645714c6ec4"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/435b0cda-fb57-4f5c-8110-e716422ccb04",
+        "file_id": "435b0cda-fb57-4f5c-8110-e716422ccb04",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/hotspots.png",
+        "sha256": "c9dd26d45eb96f4f01cdeb1bea4cf82caa07d2eff74225e8b9d37f23dd19bb7f",
+        "width": 1122,
+        "height": 1402,
+        "method": "built-in image_gen"
+      },
+      "review": "Source subjects, wording, logo and palette visually compared; composition leaves bottom title space."
+    },
+    {
+      "source_sha256": "0c261a075eb1ca35f8b23305e2fefc6f75c109f2b997af00c342cb18e3446b5e",
+      "source_width": 1920,
+      "source_height": 1080,
+      "records": [
+        {
+          "slug": "infographic-ai-research-and-development-in-the-u-s-eu-and-china",
+          "heading": "Infographic: AI Research and Development in the U.S., EU and China",
+          "archived": false,
+          "legacy": {
+            "source": "directus",
+            "type": "infographics",
+            "workstream": "Digital World",
+            "product_type": null,
+            "id": 245
+          },
+          "source_image": "https://bfna.simplyas.com/assets/c63b3aa2-1147-42ed-89c9-cd7623c561b5"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/c1333125-4e95-4c3a-8fae-edb52d559dad",
+        "file_id": "c1333125-4e95-4c3a-8fae-edb52d559dad",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/infographic-ai-research-and-development-in-the-u-s-eu-and-china.png",
+        "sha256": "0350e20755f3af320cab8961f60eed09840434b4c8110344e8f2c4f3bc7c13fa",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space. Original flat background color extended and visually reviewed."
+    },
+    {
+      "source_sha256": "f01ca6dbf2625b22872dc565b30ec734b5e7318038f7cc649a63596cd9f37ca3",
+      "source_width": 3840,
+      "source_height": 2160,
+      "records": [
+        {
+          "slug": "infographic-cybersecurity",
+          "heading": "Infographic: Cybersecurity",
+          "archived": false,
+          "legacy": {
+            "source": "directus",
+            "type": "infographics",
+            "workstream": "Digital World",
+            "product_type": null,
+            "id": 246
+          },
+          "source_image": "https://bfna.simplyas.com/assets/2a1075d4-6031-4abd-9052-05e464925077"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/3c128a87-e0d3-4f22-9075-5125b1030085",
+        "file_id": "3c128a87-e0d3-4f22-9075-5125b1030085",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/infographic-cybersecurity.png",
+        "sha256": "bd9a18ccd50b945151ef6db1ff1848c3922ad8feb392151325a1c37bfa72b75e",
+        "width": 1122,
+        "height": 1402,
+        "method": "built-in image_gen"
+      },
+      "review": "Source subjects, wording, logo and palette visually compared; composition leaves bottom title space."
+    },
+    {
+      "source_sha256": "7c53107b5cf15ffe52db71cbf3a183952d2f4314a62bdf0f37a184fc1a493f1a",
+      "source_width": 1280,
+      "source_height": 1280,
+      "records": [
+        {
+          "slug": "lithium-rising-the-race-for-critical-minerals",
+          "heading": "Lithium Rising: The Race for Critical Minerals",
+          "archived": false,
+          "legacy": {
+            "source": "directus",
+            "type": "products",
+            "workstream": "Politics & Society",
+            "product_type": "report",
+            "id": 50
+          },
+          "source_image": "https://bfna.simplyas.com/assets/8ff451d8-3491-4a51-b20d-c3752357875e"
+        },
+        {
+          "slug": "lithium-rising",
+          "heading": "Lithium Rising",
+          "archived": false,
+          "legacy": {
+            "source": "directus",
+            "type": "products",
+            "workstream": "Politics & Society",
+            "product_type": "report",
+            "id": 51
+          },
+          "source_image": "https://bfna.simplyas.com/assets/32c4342d-4027-43dd-98dc-c4a024812208"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/aa5d778e-3502-4b72-87fc-ac2143f86a6e",
+        "file_id": "aa5d778e-3502-4b72-87fc-ac2143f86a6e",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/lithium-rising.png",
+        "sha256": "0bbc681410db3e0fc5e5eeb73e3b86f54c45b3dba73bace3d29613681bf00f16",
+        "width": 1122,
+        "height": 1402,
+        "method": "built-in image_gen"
+      },
+      "review": "Source subjects, wording, logo and palette visually compared; composition leaves bottom title space."
+    },
+    {
+      "source_sha256": "28ac3a21d36373858fe8610095cabdf3d6208ba8a56a051eb4f22ceb41b0f7ec",
+      "source_width": 3525,
+      "source_height": 1859,
+      "records": [
+        {
+          "slug": "oklahoma-city-united-states",
+          "heading": "Oklahoma City, United States",
+          "archived": false,
+          "legacy": {
+            "source": "directus",
+            "type": "products",
+            "workstream": "Democracy",
+            "product_type": "video",
+            "id": 52
+          },
+          "source_image": "https://bfna.simplyas.com/assets/3e55c722-0147-4751-bb4f-7e85cee545c0"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/6b6616a3-44bb-49f1-a6e1-063cafaf2218",
+        "file_id": "6b6616a3-44bb-49f1-a6e1-063cafaf2218",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/oklahoma-city-united-states.png",
+        "sha256": "25bf6855a057ecf1229ec11bc8d66e669c043a2627ac75d77ceded44ce726f00",
+        "width": 1122,
+        "height": 1402,
+        "method": "built-in image_gen"
+      },
+      "review": "Source subjects, wording, logo and palette visually compared; composition leaves bottom title space."
+    },
+    {
+      "source_sha256": "7491a988c7f3e36d0d1e348f6eb7dfbaeaaf20bd6ec4592cac2151bedd45ecbf",
+      "source_width": 1280,
+      "source_height": 720,
+      "records": [
+        {
+          "slug": "season-3-episode-3-tzipi-livni",
+          "heading": "Season 3, Episode 3 | Tzipi Livni",
+          "archived": false,
+          "legacy": {
+            "source": "directus",
+            "type": "products",
+            "workstream": "Future Leadership",
+            "product_type": "video",
+            "id": 64
+          },
+          "source_image": "https://bfna.simplyas.com/assets/71e3c3ba-c20c-4afb-b68e-a58a5468c60b"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/a88e1d7e-3820-446c-8934-a2c546ab8eef",
+        "file_id": "a88e1d7e-3820-446c-8934-a2c546ab8eef",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/season-3-episode-3-tzipi-livni.png",
+        "sha256": "9df502d06b7bbe3a53bf3011bcc48f813e58d84186b02a7bcd5bccff41c5c5bd",
+        "width": 1122,
+        "height": 1402,
+        "method": "built-in image_gen"
+      },
+      "review": "Source subjects, wording, logo and palette visually compared; composition leaves bottom title space."
+    },
+    {
+      "source_sha256": "0e716a7853906a2dff2e5ba839db8ed845b43dfd82d27305dcaadc802d844120",
+      "source_width": 1920,
+      "source_height": 1081,
+      "records": [
+        {
+          "slug": "season-3-episode-1-jan-eliasson",
+          "heading": "Season 3, Episode 1 | Jan Eliasson",
+          "archived": false,
+          "legacy": {
+            "source": "directus",
+            "type": "products",
+            "workstream": "Future Leadership",
+            "product_type": "video",
+            "id": 62
+          },
+          "source_image": "https://bfna.simplyas.com/assets/185ce001-fb82-4d06-a82b-5ceda4cc8436"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/cefc92b1-879c-47cb-ba0e-de1bd218666d",
+        "file_id": "cefc92b1-879c-47cb-ba0e-de1bd218666d",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/season-3-episode-1-jan-eliasson.png",
+        "sha256": "611422f6adb64fb1427214f4541820a9ba25005662933916bfd96f4339c3e1ff",
+        "width": 1122,
+        "height": 1402,
+        "method": "built-in image_gen"
+      },
+      "review": "Source subjects, wording, logo and palette visually compared; composition leaves bottom title space."
+    },
+    {
+      "source_sha256": "10c38e092102d505c50a14f45137e188052f55e246159ac4cfc838df1ab4a7cc",
+      "source_width": 1920,
+      "source_height": 1920,
+      "records": [
+        {
+          "slug": "strength-in-numbers",
+          "heading": "Strength in Numbers",
+          "archived": false,
+          "legacy": {
+            "source": "directus",
+            "type": "infographics",
+            "workstream": "Politics & Society",
+            "product_type": null,
+            "id": 255
+          },
+          "source_image": "https://bfna.simplyas.com/assets/cacbceb6-eff6-417c-b682-bc9217782dc5"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/3e1f9347-6960-454a-abb7-8d1a13444c73",
+        "file_id": "3e1f9347-6960-454a-abb7-8d1a13444c73",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/strength-in-numbers.png",
+        "sha256": "9b1cba3160c56664697da53e8c29f92adf4707f88060f090c6a5b14ccaf4aa1d",
+        "width": 1122,
+        "height": 1402,
+        "method": "built-in image_gen"
+      },
+      "review": "Source subjects, wording, logo and palette visually compared; composition leaves bottom title space."
+    },
+    {
+      "source_sha256": "9c8393b4109b6022f3229a0d82f08123a6e53ace7203e69d4856f905888dad7c",
+      "source_width": 565,
+      "source_height": 799,
+      "records": [
+        {
+          "slug": "system-updates",
+          "heading": "System Updates",
+          "archived": false,
+          "legacy": {
+            "source": "directus",
+            "type": "products",
+            "workstream": "Politics & Society",
+            "product_type": "report",
+            "id": 94
+          },
+          "source_image": "https://bfna.simplyas.com/assets/85f578b3-bd41-4b56-b4dd-ec5548e6874e"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/9fc812e9-9735-4c81-897f-b940893c9af1",
+        "file_id": "9fc812e9-9735-4c81-897f-b940893c9af1",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/system-updates.png",
+        "sha256": "a90bb60e9bfc1e43a2cbbeff2e9653891014c8a240d0d147b6e11447272a69ed",
+        "width": 1122,
+        "height": 1402,
+        "method": "built-in image_gen"
+      },
+      "review": "Source subjects, wording, logo and palette visually compared; composition leaves bottom title space."
+    },
+    {
+      "source_sha256": "a2fc6de315a0e69a3f1ca245e7ed05af3595cc39f81d8d3a6a0d3ccc61e9d7e4",
+      "source_width": 1921,
+      "source_height": 1081,
+      "records": [
+        {
+          "slug": "season-3-episode-2-bobi-wine",
+          "heading": "Season 3, Episode 2 | Bobi Wine",
+          "archived": false,
+          "legacy": {
+            "source": "directus",
+            "type": "products",
+            "workstream": "Future Leadership",
+            "product_type": "video",
+            "id": 63
+          },
+          "source_image": "https://bfna.simplyas.com/assets/88485bce-2f33-457f-a479-07c351da30cc"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/977c7b4e-bd5f-4561-927e-a0d6c0e38f5d",
+        "file_id": "977c7b4e-bd5f-4561-927e-a0d6c0e38f5d",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/season-3-episode-2-bobi-wine.png",
+        "sha256": "f18ef8b6ce3e528690a2d682154e7561d2d3225ed080beb4c9476b53bd625e91",
+        "width": 1122,
+        "height": 1402,
+        "method": "built-in image_gen"
+      },
+      "review": "Source subjects, wording, logo and palette visually compared; composition leaves bottom title space."
+    },
+    {
+      "source_sha256": "abe22291e0cc24b7bd517921b0dc69e1cb9ce60a13d6afca5654a5e6638d81cd",
+      "source_width": 1200,
+      "source_height": 1200,
+      "records": [
+        {
+          "slug": "transatlantic-trends-2020",
+          "heading": "Transatlantic Trends 2020",
+          "archived": false,
+          "legacy": {
+            "source": "directus",
+            "type": "products",
+            "workstream": "Archives",
+            "product_type": "report",
+            "id": 102
+          },
+          "source_image": "https://bfna.simplyas.com/assets/782d7a79-f429-4a80-b7cf-f465450d6ea0"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/f18a4238-6e2f-462e-8816-0f3f83dd1506",
+        "file_id": "f18a4238-6e2f-462e-8816-0f3f83dd1506",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/transatlantic-trends-2020.png",
+        "sha256": "929bb2a47d2644d3c7af25be8e9d2f980f4df630dd305b4569c601bf267a2e00",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space."
+    },
+    {
+      "source_sha256": "5584b1b466de0a3e4c4570202c5b4d084736aa0f5c206be091e3f2c982d3d455",
+      "source_width": 2500,
+      "source_height": 2500,
+      "records": [
+        {
+          "slug": "transponder-issue-5-democracy",
+          "heading": "Transponder Issue #5: Democracy",
+          "archived": false,
+          "legacy": {
+            "source": "directus",
+            "type": "products",
+            "workstream": "Politics & Society",
+            "product_type": "report",
+            "id": 109
+          },
+          "source_image": "https://bfna.simplyas.com/assets/5e8fad73-5a92-435b-957d-74fcde070b90"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/fe86cbd0-f9dd-4fd6-ac2b-76aa680dd489",
+        "file_id": "fe86cbd0-f9dd-4fd6-ac2b-76aa680dd489",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/transponder-issue-5-democracy.png",
+        "sha256": "eab7a52e4717b1e5cd19f10e1bd308de54d2569d6810bd85df75a788418cb4c5",
+        "width": 1122,
+        "height": 1402,
+        "method": "built-in image_gen"
+      },
+      "review": "Source subjects, wording, logo and palette visually compared; composition leaves bottom title space."
+    },
+    {
+      "source_sha256": "8c9cb39abfaffbe424f5c965f7622a1bf205e3fa44802b37fe3b8a992f35607c",
+      "source_width": 2500,
+      "source_height": 2500,
+      "records": [
+        {
+          "slug": "transponder-issue-6-elections",
+          "heading": "Transponder Issue #6: Elections",
+          "archived": false,
+          "legacy": {
+            "source": "directus",
+            "type": "products",
+            "workstream": "Politics & Society",
+            "product_type": "report",
+            "id": 110
+          },
+          "source_image": "https://bfna.simplyas.com/assets/d54c067d-3df1-459d-a315-ea875791d621"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/8190392d-5c4c-417a-88e8-58f583eb4b85",
+        "file_id": "8190392d-5c4c-417a-88e8-58f583eb4b85",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/transponder-issue-6-elections.png",
+        "sha256": "a8a22ee2db95a0397cd21f29605ce1b293478c9384438cb5bcd562f74f8f06bc",
+        "width": 1122,
+        "height": 1402,
+        "method": "built-in image_gen"
+      },
+      "review": "Source subjects, wording, logo and palette visually compared; composition leaves bottom title space."
+    },
+    {
+      "source_sha256": "572346e064ab6d88f69c976a6308541fcc4126231b4db0c620dd1f00f9b197c5",
+      "source_width": 2499,
+      "source_height": 3235,
+      "records": [
+        {
+          "slug": "transponder-issue-7-the-future",
+          "heading": "Transponder Issue #7: The Future",
+          "archived": false,
+          "legacy": {
+            "source": "directus",
+            "type": "products",
+            "workstream": "Politics & Society",
+            "product_type": "report",
+            "id": 111
+          },
+          "source_image": "https://bfna.simplyas.com/assets/b1c6e530-a87e-48f7-8205-3eb2586c1f78"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/7f77c38f-d6d5-494f-871c-bb5c2e90c36d",
+        "file_id": "7f77c38f-d6d5-494f-871c-bb5c2e90c36d",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/transponder-issue-7-the-future.png",
+        "sha256": "2ad280aa5b34467f413cf410d08ea32627222d6819c45e36b9dbd6b930c015a5",
+        "width": 1122,
+        "height": 1402,
+        "method": "built-in image_gen"
+      },
+      "review": "Source subjects, wording, logo and palette visually compared; composition leaves bottom title space."
+    },
+    {
+      "source_sha256": "05108ae2d8352285cba2254bbe0139147913d982b89bc573db45abbe8c70df05",
+      "source_width": 768,
+      "source_height": 908,
+      "records": [
+        {
+          "slug": "a-new-era-of-german-turkish-cooperation",
+          "heading": "A New Era of German-Turkish Cooperation?",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "infographics",
+            "workstream": "Politics & Society",
+            "product_type": null,
+            "id": 223
+          },
+          "source_image": "https://bfna.simplyas.com/assets/6e32e2ff-49ea-4541-935f-dbcc4274d8f0"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/d7887dfe-c30e-4653-9d9e-8b718e1e4950",
+        "file_id": "d7887dfe-c30e-4653-9d9e-8b718e1e4950",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/a-new-era-of-german-turkish-cooperation.png",
+        "sha256": "6f61159482dc0ad7e15a2bff6f390dd80aafeafb1d63171c3c6c94de4e9be93b",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space."
+    },
+    {
+      "source_sha256": "0b98483a87c4d8a7db9247073dfb5d65897032b444472546cb8615e61e0007f7",
+      "source_width": 1200,
+      "source_height": 1122,
+      "records": [
+        {
+          "slug": "2020-senate-races-overshadowed-by-trump",
+          "heading": "2020 Senate Races Overshadowed by Trump",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "infographics",
+            "workstream": "Politics & Society",
+            "product_type": null,
+            "id": 222
+          },
+          "source_image": "https://bfna.simplyas.com/assets/aee7b777-f93a-45f6-9482-1765355c5cc0"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/3f2ffe85-0fed-46a8-a5ae-c5b9f300ef61",
+        "file_id": "3f2ffe85-0fed-46a8-a5ae-c5b9f300ef61",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/2020-senate-races-overshadowed-by-trump.png",
+        "sha256": "3f777db99d109a810769f55bc78a8d122e74c3e8dca66c39b081cd3a3703addc",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space. Original flat background color extended and visually reviewed."
+    },
+    {
+      "source_sha256": "4ccdf9815b69155be2c7bec82d055889211253f6b0882c766a2e4434bffe1c4a",
+      "source_width": 1200,
+      "source_height": 638,
+      "records": [
+        {
+          "slug": "a-shred-of-doubt-brexits-future",
+          "heading": "A Shred of Doubt Brexit’s Future",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "infographics",
+            "workstream": "Politics & Society",
+            "product_type": null,
+            "id": 224
+          },
+          "source_image": "https://bfna.simplyas.com/assets/c1b2adf7-8586-4e1c-80e1-1258d00970bd"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/bf391747-cc80-4e8f-a766-7039cea29adf",
+        "file_id": "bf391747-cc80-4e8f-a766-7039cea29adf",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/a-shred-of-doubt-brexits-future.png",
+        "sha256": "7d04e03f67c25e6da77ad29b6b4d7b9d3db35ce9b3bafbd24ab79d5b651d929b",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space."
+    },
+    {
+      "source_sha256": "4b2d3ecc309ef7739e118503dc8030f6350a72c306688e4c994dc872828bf1b7",
+      "source_width": 768,
+      "source_height": 2304,
+      "records": [
+        {
+          "slug": "12-days-of-christmas-in-europe",
+          "heading": "12 Days of Christmas in Europe",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "infographics",
+            "workstream": "Politics & Society",
+            "product_type": null,
+            "id": 221
+          },
+          "source_image": "https://bfna.simplyas.com/assets/718192d4-1b12-4b02-b47b-ac01c6f21603"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/c6ae1681-5010-456e-bc1b-6617cd0517fd",
+        "file_id": "c6ae1681-5010-456e-bc1b-6617cd0517fd",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/12-days-of-christmas-in-europe.png",
+        "sha256": "0bc75966a730f9c118a5cbe4d491edbbc4a02474e7767c1ffa8dcbc5b144a7ad",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space. Consecutive strips inspected individually: cuts fall between complete content sections, reading order is down each column then left to right."
+    },
+    {
+      "source_sha256": "d9513fc9d7db6c3b4381fbae01c257e450df94626468b5a1d583271dd078053a",
+      "source_width": 768,
+      "source_height": 542,
+      "records": [
+        {
+          "slug": "austrian-elections-infographic",
+          "heading": "Austrian Elections",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "infographics",
+            "workstream": "Democracy",
+            "product_type": null,
+            "id": 226
+          },
+          "source_image": "https://bfna.simplyas.com/assets/8f8a567c-5ed0-47ce-8caa-55920f6b030e"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/772a4f79-b3f2-432a-a268-62a38c404403",
+        "file_id": "772a4f79-b3f2-432a-a268-62a38c404403",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/austrian-elections-infographic.png",
+        "sha256": "3e69b8cedbe68538efae3d86e6d3bada21d2da270d04abf77803458ba646dbe4",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space."
+    },
+    {
+      "source_sha256": "b01f563a9a27599d878d20f821f6c4ada35057ba7df6eaf602c19bd2f2ec4930",
+      "source_width": 768,
+      "source_height": 576,
+      "records": [
+        {
+          "slug": "breaking-barriers",
+          "heading": "Breaking Barriers",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "infographics",
+            "workstream": "Politics & Society",
+            "product_type": null,
+            "id": 227
+          },
+          "source_image": "https://bfna.simplyas.com/assets/bf747306-dfaf-4825-802e-d3fe8d4095d6"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/2bd84097-bde0-4418-b092-f168af91baa6",
+        "file_id": "2bd84097-bde0-4418-b092-f168af91baa6",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/breaking-barriers.png",
+        "sha256": "c90c04a79cd13bde56848d1a07c78b6182c2925539a28a836f3a0a883e217338",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space."
+    },
+    {
+      "source_sha256": "5246ed11be20a8d04282ffb28563438076df1b423ce6ea2ee1802002df02eeb9",
+      "source_width": 768,
+      "source_height": 644,
+      "records": [
+        {
+          "slug": "breaking-down-barriers",
+          "heading": "Breaking Down Barriers",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "infographics",
+            "workstream": "Politics & Society",
+            "product_type": null,
+            "id": 228
+          },
+          "source_image": "https://bfna.simplyas.com/assets/3fbf793d-bba2-4bff-a210-4791f2734dc4"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/f2aa393d-5258-4c5d-bcc8-2c30ea8a393e",
+        "file_id": "f2aa393d-5258-4c5d-bcc8-2c30ea8a393e",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/breaking-down-barriers.png",
+        "sha256": "05c3042ac43f224c425949d75d9ba26a1bcb9f67bacb4ebe795c4b93a8c0e975",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space."
+    },
+    {
+      "source_sha256": "b8db559a87be87eae80161a3b3369feaca455bdc78f9d314833ef4399233be35",
+      "source_width": 768,
+      "source_height": 632,
+      "records": [
+        {
+          "slug": "checkmate",
+          "heading": "Checkmate",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "infographics",
+            "workstream": "Politics & Society",
+            "product_type": null,
+            "id": 230
+          },
+          "source_image": "https://bfna.simplyas.com/assets/d6a27404-04b6-4ec3-aea6-0f5d4447d712"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/b655e203-2405-45ce-8bab-aa067fa7552a",
+        "file_id": "b655e203-2405-45ce-8bab-aa067fa7552a",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/checkmate.png",
+        "sha256": "cd9e86ea279928b78fb6a386d905a52433b2ccf7ec9a8725bd0fc2c84b4040e9",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space."
+    },
+    {
+      "source_sha256": "89c550caf1d0a95e81837c76905d6db081b465e435a147f8673e0b152481df1b",
+      "source_width": 3300,
+      "source_height": 2550,
+      "records": [
+        {
+          "slug": "american-democracy-on-unstable-ground",
+          "heading": "American Democracy on Unstable Ground",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "infographics",
+            "workstream": "Democracy",
+            "product_type": null,
+            "id": 225
+          },
+          "source_image": "https://bfna.simplyas.com/assets/001d7896-218f-49de-afa2-38c7ccf55c3d"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/41bb3f03-3a19-4c39-8ba1-d8f5804b5ffa",
+        "file_id": "41bb3f03-3a19-4c39-8ba1-d8f5804b5ffa",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/american-democracy-on-unstable-ground.png",
+        "sha256": "7486ba908ec8ff728ede81102bb10bb7830847156abec5d53631372055053411",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space."
+    },
+    {
+      "source_sha256": "fab1705b806faf4afa4e3973c228327020151e96a9910be68220eaf44288d1d7",
+      "source_width": 1200,
+      "source_height": 879,
+      "records": [
+        {
+          "slug": "chinas-belt-and-road-initiative",
+          "heading": "China’s Belt and Road Initiative",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "infographics",
+            "workstream": "Politics & Society",
+            "product_type": null,
+            "id": 231
+          },
+          "source_image": "https://bfna.simplyas.com/assets/3788db7e-0dc2-4955-a2c0-cf4343f547b3"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/1c2d6629-4d3a-4560-8400-1aec40d98bce",
+        "file_id": "1c2d6629-4d3a-4560-8400-1aec40d98bce",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/chinas-belt-and-road-initiative.png",
+        "sha256": "4e2b7f238febd2e4aadda7474d90afb62b40a0eb15601c8a8434686a8a2db79c",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space."
+    },
+    {
+      "source_sha256": "10b22454affd68d82d1def7ad3a3631ea61df2c65d867ebbdce440f1394b0cef",
+      "source_width": 1400,
+      "source_height": 897,
+      "records": [
+        {
+          "slug": "class-of-2023",
+          "heading": "Class of 2023",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "products",
+            "workstream": "Future Leadership",
+            "product_type": "report",
+            "id": 21
+          },
+          "source_image": "https://bfna.simplyas.com/assets/9cd0a253-9247-4b9b-af7f-1176c3825065"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/2d0f489a-6157-4675-9db3-1581798faeb6",
+        "file_id": "2d0f489a-6157-4675-9db3-1581798faeb6",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/class-of-2023.png",
+        "sha256": "7fb8c08cc841d8e8ea08550fa2ea8eacca5651a5bddfc80ee01b0208c4f2e473",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space."
+    },
+    {
+      "source_sha256": "306f13579b9b5be788c483a1ffa687b33fab2261c9650008cf60e774ffc15f03",
+      "source_width": 3300,
+      "source_height": 2550,
+      "records": [
+        {
+          "slug": "crisis-and-consequences",
+          "heading": "Crisis and Consequences",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "infographics",
+            "workstream": "Politics & Society",
+            "product_type": null,
+            "id": 232
+          },
+          "source_image": "https://bfna.simplyas.com/assets/3ff2d39e-e4f1-4f17-b9d1-5aa999b8dfb9"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/e93e5dcb-c76a-492a-80a4-1a3bc1884a52",
+        "file_id": "e93e5dcb-c76a-492a-80a4-1a3bc1884a52",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/crisis-and-consequences.png",
+        "sha256": "2e19c23dc686ba05b925f75531f273af26ed5c7a0424e394002be9c8ae78ea3a",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space."
+    },
+    {
+      "source_sha256": "e9a2500b2d89581482dce17fe3b959bc78a920aa42f8e9e910bd2aa1fce8f2ad",
+      "source_width": 1500,
+      "source_height": 9600,
+      "records": [
+        {
+          "slug": "democracys-canary-in-a-coal-mine-infographic",
+          "heading": "Democracy’s Canary in a Coal Mine",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "infographics",
+            "workstream": "Democracy",
+            "product_type": null,
+            "id": 233
+          },
+          "source_image": "https://bfna.simplyas.com/assets/9c4c403d-c1e6-44d1-aef0-6604189f3327"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/cb94c941-764f-49c0-ba82-623051168c0e",
+        "file_id": "cb94c941-764f-49c0-ba82-623051168c0e",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/democracys-canary-in-a-coal-mine-infographic.png",
+        "sha256": "f3a82b94fc36b62a543cef39dfa0df1b572fb5174ee4a615cf6f0b9945ae7fdf",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space. Consecutive strips inspected individually: cuts fall between complete content sections, reading order is down each column then left to right."
+    },
+    {
+      "source_sha256": "2c68433e177cf61f061583c47b88fa65195451ab59b89e0425bef2882d63dda7",
+      "source_width": 1000,
+      "source_height": 1000,
+      "records": [
+        {
+          "slug": "disrupting-democracy-vol-i",
+          "heading": "Disrupting Democracy Vol. I",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "products",
+            "workstream": "Democracy",
+            "product_type": "report",
+            "id": 25
+          },
+          "source_image": "https://bfna.simplyas.com/assets/de05448d-76be-4d59-8fe0-de3ea0ce3f5d"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/d3f0c2e8-a8a4-4a82-aa81-e82e2266b6ff",
+        "file_id": "d3f0c2e8-a8a4-4a82-aa81-e82e2266b6ff",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/disrupting-democracy-vol-i.png",
+        "sha256": "29807adeb7ddffedc9ad42a413151fa96fe39c066a1d02ff551603fa54605e8b",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space."
+    },
+    {
+      "source_sha256": "0c1bd541c831463fa9a595de4d05e2e31996633aa9bd79362722ee635320c41d",
+      "source_width": 1000,
+      "source_height": 1000,
+      "records": [
+        {
+          "slug": "disrupting-democracy-vol-ii",
+          "heading": "Disrupting Democracy Vol. II",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "products",
+            "workstream": "Democracy",
+            "product_type": "report",
+            "id": 26
+          },
+          "source_image": "https://bfna.simplyas.com/assets/2f98b570-d116-432c-81fe-3cf0004207cd"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/04db328d-ea2f-4db2-8ddd-726f05b8e9b7",
+        "file_id": "04db328d-ea2f-4db2-8ddd-726f05b8e9b7",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/disrupting-democracy-vol-ii.png",
+        "sha256": "54e595902da1b85daf232a4420748dc54ea45dee2347edea9ab66119e49f26a6",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space."
+    },
+    {
+      "source_sha256": "35810f4e3ca918a0d60d3ff4bb6df3ba1ad64a9d26bfe23138733e5f9114eb44",
+      "source_width": 6120,
+      "source_height": 5100,
+      "records": [
+        {
+          "slug": "building-resilient-democracy-in-the-21st-century",
+          "heading": "Building Resilient Democracy in the 21st Century",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "infographics",
+            "workstream": "Democracy",
+            "product_type": null,
+            "id": 229
+          },
+          "source_image": "https://bfna.simplyas.com/assets/1a23c6dd-b17b-4e5b-ac46-fbc66650995f"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/7f1e1109-7ce1-412c-b8da-35a2e1b31779",
+        "file_id": "7f1e1109-7ce1-412c-b8da-35a2e1b31779",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/building-resilient-democracy-in-the-21st-century.png",
+        "sha256": "aa390a01e9e2a5d1e741fa8c3999cc9863acf755ebdfacb99e6bef4388570923",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space. Original flat background color extended and visually reviewed."
+    },
+    {
+      "source_sha256": "b088b20c1072f5a791215c77cd7c0cddc6ddbfaed25ec8375106c5de2b04c1b9",
+      "source_width": 1200,
+      "source_height": 776,
+      "records": [
+        {
+          "slug": "e-commerce-vs-digital-trade",
+          "heading": "E-Commerce vs. Digital Trade",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "infographics",
+            "workstream": "Digital World",
+            "product_type": null,
+            "id": 234
+          },
+          "source_image": "https://bfna.simplyas.com/assets/8610e85b-8e75-4d8d-8a6f-d21c492fe7f1"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/033d2fdd-d70d-435d-aaed-e10f61965130",
+        "file_id": "033d2fdd-d70d-435d-aaed-e10f61965130",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/e-commerce-vs-digital-trade.png",
+        "sha256": "6c38ae7f0f8284a967c8bce1da2df0bfc9817c7c3aa5e3739d7956d8b5f2c40c",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space."
+    },
+    {
+      "source_sha256": "ea25e6699d60a6ae8885c5107a1c9353499a659b5b2e9897d12227b23a10de4b",
+      "source_width": 2500,
+      "source_height": 2500,
+      "records": [
+        {
+          "slug": "emerging-ties",
+          "heading": "Emerging Ties",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "products",
+            "workstream": "Politics & Society",
+            "product_type": "report",
+            "id": 27
+          },
+          "source_image": "https://bfna.simplyas.com/assets/0acd911b-cf09-4a1e-996d-2b0cf9853027"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/27eb7216-5d71-4881-9e91-a00f40833ba1",
+        "file_id": "27eb7216-5d71-4881-9e91-a00f40833ba1",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/emerging-ties.png",
+        "sha256": "89e158098471219c3b7b76f3ec5ef4e55d5386b6f40079b2734a383efe31b821",
+        "width": 1122,
+        "height": 1402,
+        "method": "built-in image_gen"
+      },
+      "review": "Source subjects, wording, logo and palette visually compared; composition leaves bottom title space."
+    },
+    {
+      "source_sha256": "c4cfda66dd83641364881f6b8cc247e7cea8d80772d14315be9581c1a739d058",
+      "source_width": 1200,
+      "source_height": 927,
+      "records": [
+        {
+          "slug": "eu-enlargement",
+          "heading": "EU Enlargement",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "infographics",
+            "workstream": "Politics & Society",
+            "product_type": null,
+            "id": 235
+          },
+          "source_image": "https://bfna.simplyas.com/assets/5cf3fdea-5e26-4720-99f5-e398ba3fdb83"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/53e102ad-f6a9-4eac-94bc-7c7b37ced25c",
+        "file_id": "53e102ad-f6a9-4eac-94bc-7c7b37ced25c",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/eu-enlargement.png",
+        "sha256": "f763d434b82d6dc239b27a27392ae1a4a983c88354d077bd7360e52fd385e1ac",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space. Original flat background color extended and visually reviewed."
+    },
+    {
+      "source_sha256": "77cf9edcd2116e605357eaf67b626321ccaf63a2de0bfecba835a81d2eeb68d8",
+      "source_width": 768,
+      "source_height": 994,
+      "records": [
+        {
+          "slug": "europes-migration-muddle",
+          "heading": "Europe's Migration Muddle",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "infographics",
+            "workstream": "Politics & Society",
+            "product_type": null,
+            "id": 236
+          },
+          "source_image": "https://bfna.simplyas.com/assets/44294ac5-57a4-4c85-8d76-b9905c6d5ec1"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/0797133d-5045-417a-8066-70e331a7be90",
+        "file_id": "0797133d-5045-417a-8066-70e331a7be90",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/europes-migration-muddle.png",
+        "sha256": "5a8ab8caddef03bd723ee6299703f39a020f50673b61bfdba73b0231a91da854",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space."
+    },
+    {
+      "source_sha256": "bcfae1a215a13ee3874665d36efedf9d503ac336e638bc451686f88d8ed20488",
+      "source_width": 1200,
+      "source_height": 1800,
+      "records": [
+        {
+          "slug": "fresco-or-fiasco",
+          "heading": "Fresco or Fiasco",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "infographics",
+            "workstream": "Democracy",
+            "product_type": null,
+            "id": 237
+          },
+          "source_image": "https://bfna.simplyas.com/assets/62e3e886-ad3e-4d8c-bc55-55d2c14c8ad8"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/70068c6f-701f-43ce-8556-57e32298057a",
+        "file_id": "70068c6f-701f-43ce-8556-57e32298057a",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/fresco-or-fiasco.png",
+        "sha256": "b2fd4611cd68bb7b347b166813f885c96d05d72608f000190c46d084b4f2a356",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space. Original flat background color extended and visually reviewed."
+    },
+    {
+      "source_sha256": "5d6c66c90a9587e7cf43df65a2ab36a88f8eb0ec7801ad49361e2845fe96f1ae",
+      "source_width": 768,
+      "source_height": 595,
+      "records": [
+        {
+          "slug": "germanys-newpolitik",
+          "heading": "Germany's Newpolitik",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "infographics",
+            "workstream": "Politics & Society",
+            "product_type": null,
+            "id": 238
+          },
+          "source_image": "https://bfna.simplyas.com/assets/ac1c25a5-e072-4e2a-8c55-7675a88c7bf8"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/fd47d4c5-b815-43ec-b973-f2b03bed6a75",
+        "file_id": "fd47d4c5-b815-43ec-b973-f2b03bed6a75",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/germanys-newpolitik.png",
+        "sha256": "ca0001d5420eaf0b9aca3373b74682496d4746750f928a9b7a30840c23adbae5",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space. Original flat background color extended and visually reviewed."
+    },
+    {
+      "source_sha256": "eee795dd349dc77808353e86a499056e38b1efaa1f94c5e481907c9600ad089d",
+      "source_width": 3300,
+      "source_height": 2550,
+      "records": [
+        {
+          "slug": "germanys-political-shake-up",
+          "heading": "Germany’s Political Shake-Up",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "infographics",
+            "workstream": "Politics & Society",
+            "product_type": null,
+            "id": 239
+          },
+          "source_image": "https://bfna.simplyas.com/assets/b0ea93f4-cdba-495e-88bc-3618f8d56eaa"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/690e08fb-d689-4af4-bc21-da36f803097f",
+        "file_id": "690e08fb-d689-4af4-bc21-da36f803097f",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/germanys-political-shake-up.png",
+        "sha256": "e51b258bec080811593f29fbdebf2e57c77048ec1c165f354006ed636e9a5492",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space."
+    },
+    {
+      "source_sha256": "c88a0596ef37dca34309b1f123bf3d6b7a3b99a523ed584df04868d7b4ea3e6f",
+      "source_width": 768,
+      "source_height": 576,
+      "records": [
+        {
+          "slug": "greece-under-a-microscope",
+          "heading": "Greece Under a Microscope",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "infographics",
+            "workstream": "Politics & Society",
+            "product_type": null,
+            "id": 240
+          },
+          "source_image": "https://bfna.simplyas.com/assets/a8bb1d4c-0cf5-40e7-b9e9-ec8974d6108e"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/64bc3d39-0805-4053-acdc-672889d8e470",
+        "file_id": "64bc3d39-0805-4053-acdc-672889d8e470",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/greece-under-a-microscope.png",
+        "sha256": "0e454214a4e61cbba19f9b11fcdc64e03b0e3ee36c0f570247dccbc28ce12339",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space."
+    },
+    {
+      "source_sha256": "0b7eb2a9f534cd8a36436654ae43694638499774498de754f3f137ab7e0b8083",
+      "source_width": 768,
+      "source_height": 593,
+      "records": [
+        {
+          "slug": "greek-debt-crisis-sisyphus-latest-challenge",
+          "heading": "Greek Debt Crisis: Sisyphus' Latest Challenge",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "infographics",
+            "workstream": "Politics & Society",
+            "product_type": null,
+            "id": 241
+          },
+          "source_image": "https://bfna.simplyas.com/assets/4366b907-b52f-40fa-a9e8-c5d78fce2df4"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/cbdf22cb-dab5-422b-a5d8-4a554e4d9cf0",
+        "file_id": "cbdf22cb-dab5-422b-a5d8-4a554e4d9cf0",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/greek-debt-crisis-sisyphus-latest-challenge.png",
+        "sha256": "b7c484778454ee5c73596c6104b6cf22c37bc3950570524fe717d2bf1fa69f08",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space."
+    },
+    {
+      "source_sha256": "febe40f98f07cdb347fe0537fbacc4ab20c7d91f27754c01fec8c7dfd7652029",
+      "source_width": 768,
+      "source_height": 593,
+      "records": [
+        {
+          "slug": "greek-debt-crisis-will-the-last-domino-stand",
+          "heading": "Greek Debt Crisis: Will the Last Domino Stand?",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "infographics",
+            "workstream": "Politics & Society",
+            "product_type": null,
+            "id": 242
+          },
+          "source_image": "https://bfna.simplyas.com/assets/1a1c134f-1fb3-4bbe-be88-a0898ae3bdab"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/e6c31489-4ac1-4b95-bce1-a8c4a05cc454",
+        "file_id": "e6c31489-4ac1-4b95-bce1-a8c4a05cc454",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/greek-debt-crisis-will-the-last-domino-stand.png",
+        "sha256": "f1501d5945321e0a0ce5457a49f2ced5f144003bc1c878c9049f8f64c135e161",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space."
+    },
+    {
+      "source_sha256": "c98202c0266a6fceb4fde10890d049bf8fc3c1d5553c10ab3c81ec6aaba3edfe",
+      "source_width": 768,
+      "source_height": 992,
+      "records": [
+        {
+          "slug": "health-care-on-life-support",
+          "heading": "Health Care on Life Support",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "infographics",
+            "workstream": "Politics & Society",
+            "product_type": null,
+            "id": 243
+          },
+          "source_image": "https://bfna.simplyas.com/assets/c1add8ac-69f7-45ad-8bf3-40a1358e3b03"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/6e3be4d8-b680-4a71-93ab-eb28c1a9097f",
+        "file_id": "6e3be4d8-b680-4a71-93ab-eb28c1a9097f",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/health-care-on-life-support.png",
+        "sha256": "6c9214a565dc3898e2a514586f1193c856beb17ba959c70ab31a6d3cccc57cb4",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space. Original flat background color extended and visually reviewed."
+    },
+    {
+      "source_sha256": "aca4e8a8c5bb3cefbcbb8ee4a514f5c8c17d583d9057990204fc6f449349e08b",
+      "source_width": 2500,
+      "source_height": 2500,
+      "records": [
+        {
+          "slug": "hidden-layers-facebook-whistleblower-hearings-pittsburgh-outcomes",
+          "heading": "Hidden Layers | Facebook Whistleblower Hearings & Pittsburgh Outcomes",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "products",
+            "workstream": "Digital World",
+            "product_type": "report",
+            "id": 40
+          },
+          "source_image": "https://bfna.simplyas.com/assets/89d79633-7f88-4e84-80f6-9e3ad64cd5f3"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/46e61d2b-3618-4b85-88ef-e86e795a7adc",
+        "file_id": "46e61d2b-3618-4b85-88ef-e86e795a7adc",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/hidden-layers-facebook-whistleblower-hearings-pittsburgh-outcomes.png",
+        "sha256": "43a280ef13406010f84207d9b079ddc2d6ea3c4cb990421c384b8aa6f1a32d27",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space."
+    },
+    {
+      "source_sha256": "52d7858595775ef21249826907ed304eb4f112dceec2ab211d0d995810bf9891",
+      "source_width": 2500,
+      "source_height": 2500,
+      "records": [
+        {
+          "slug": "hidden-layers-section-230-chat-gpt-the-tiktok-hearing",
+          "heading": "Hidden Layers | Section 230, Chat GPT & the TikTok Hearing",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "products",
+            "workstream": "Digital World",
+            "product_type": "report",
+            "id": 42
+          },
+          "source_image": "https://bfna.simplyas.com/assets/e9547b62-6089-4059-b12c-4e49221377d7"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/c957e8ad-26b3-4f4f-a0e5-7c5afb2f3cca",
+        "file_id": "c957e8ad-26b3-4f4f-a0e5-7c5afb2f3cca",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/hidden-layers-section-230-chat-gpt-the-tiktok-hearing.png",
+        "sha256": "d5bf3884194c14a2520df1354edd8e062d7b7d5780b1632414e7cabbb5a36b7d",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space."
+    },
+    {
+      "source_sha256": "ff806f77f54157c40057a92967c70cf8c0eaa23e18b161f5195061f856af1124",
+      "source_width": 2500,
+      "source_height": 2500,
+      "records": [
+        {
+          "slug": "hidden-layers-us-eu-meeting-in-paris-congress-new-digital-platform-commission",
+          "heading": "Hidden Layers | US-EU Meeting in Paris & Congress' New Digital Platform Commission",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "products",
+            "workstream": "Digital World",
+            "product_type": "report",
+            "id": 45
+          },
+          "source_image": "https://bfna.simplyas.com/assets/d65773d5-9510-4fd0-a842-1118541e536d"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/076844df-8eed-4e56-8d56-a5068e75fefa",
+        "file_id": "076844df-8eed-4e56-8d56-a5068e75fefa",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/hidden-layers-us-eu-meeting-in-paris-congress-new-digital-platform-commission.png",
+        "sha256": "ed65e7ee5ab02c421c0f9e64868ef64a5a5be4c47116a32e8e187b727b56fe40",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space."
+    },
+    {
+      "source_sha256": "c2020c525a4f9adfe7da4c151be3187fde833b92897dfa1048f6847d3780ec65",
+      "source_width": 2500,
+      "source_height": 2500,
+      "records": [
+        {
+          "slug": "hidden-layers-ttc-december-outcomes-the-white-houses-ai-bill-of-rights",
+          "heading": "Hidden Layers | TTC December Outcomes & the White House's AI Bill of Rights",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "products",
+            "workstream": "Digital World",
+            "product_type": "report",
+            "id": 43
+          },
+          "source_image": "https://bfna.simplyas.com/assets/ec40335d-192e-4b17-b7e7-85bb367dd01b"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/0ee54ffe-7d08-4587-acb4-a516678fe076",
+        "file_id": "0ee54ffe-7d08-4587-acb4-a516678fe076",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/hidden-layers-ttc-december-outcomes-the-white-houses-ai-bill-of-rights.png",
+        "sha256": "7281c51cdb621ea3c8a056e1f5faf3c9397cb840d50c0d745299478c17110959",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space."
+    },
+    {
+      "source_sha256": "a24f3767dc9dbce5f7f810870b5cc8cd4b527eb4bf493a21633aa649ede83259",
+      "source_width": 6667,
+      "source_height": 3750,
+      "records": [
+        {
+          "slug": "how-important-is-nato",
+          "heading": "How Important is NATO?",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "infographics",
+            "workstream": "Politics & Society",
+            "product_type": null,
+            "id": 244
+          },
+          "source_image": "https://bfna.simplyas.com/assets/db5c41f9-dd3e-4a5e-8845-4d3a304f5b89"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/75e69d2f-c437-4b77-ab44-756ee1dcdf09",
+        "file_id": "75e69d2f-c437-4b77-ab44-756ee1dcdf09",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/how-important-is-nato.png",
+        "sha256": "17ab69c7e084a4ee2d533266bb1eca87b8edc194f55a4445c0564e638fd58300",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space."
+    },
+    {
+      "source_sha256": "b8e42ba42c33baf4c429857194312931766895b0ac795fa2fa4d4dfb55c3d11d",
+      "source_width": 768,
+      "source_height": 1577,
+      "records": [
+        {
+          "slug": "major-european-migration-flows-from-the-1990s-to-present",
+          "heading": "Major European Migration Flows from the 1990s to Present",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "infographics",
+            "workstream": "Politics & Society",
+            "product_type": null,
+            "id": 247
+          },
+          "source_image": "https://bfna.simplyas.com/assets/19c66312-7151-4950-b603-c0d81a993cb2"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/2a2dc345-ced0-417c-8f81-3b13e529874f",
+        "file_id": "2a2dc345-ced0-417c-8f81-3b13e529874f",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/major-european-migration-flows-from-the-1990s-to-present.png",
+        "sha256": "dd93af3facd656f6b8c6e0cb3b85cfba48d7cb7c2a4e2de6e86ebdc24d431f7d",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space."
+    },
+    {
+      "source_sha256": "76dc7649e52e23b6a8e6fe9aa86aab351a9c0907385aa916f6ee391fa8ff7133",
+      "source_width": 1200,
+      "source_height": 927,
+      "records": [
+        {
+          "slug": "nato-at-70-military-spending",
+          "heading": "NATO at 70 Military Spending",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "infographics",
+            "workstream": "Politics & Society",
+            "product_type": null,
+            "id": 248
+          },
+          "source_image": "https://bfna.simplyas.com/assets/a440d070-d0d8-45d6-a6d1-b7dcfe1c0070"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/3ab5d490-bdbe-4c1d-818a-31c1680524f1",
+        "file_id": "3ab5d490-bdbe-4c1d-818a-31c1680524f1",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/nato-at-70-military-spending.png",
+        "sha256": "6a62ee486fa6261bd4ed702d320049275f97de15372b69a12ca88cde7312f599",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space. Original flat background color extended and visually reviewed."
+    },
+    {
+      "source_sha256": "cff4c0294d116ec635e4e3fca6ef8b7688f7fafa239957d8c91a4c82a8fcc13b",
+      "source_width": 2500,
+      "source_height": 2500,
+      "records": [
+        {
+          "slug": "hidden-layers-ttc-edition-june-2023",
+          "heading": "Hidden Layers | TTC Edition June 2023",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "products",
+            "workstream": "Digital World",
+            "product_type": "report",
+            "id": 44
+          },
+          "source_image": "https://bfna.simplyas.com/assets/5f7b3494-8e38-4cd7-8d29-0573e17af53d"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/31e2af2e-3530-4c4c-80bd-65d1f280e11b",
+        "file_id": "31e2af2e-3530-4c4c-80bd-65d1f280e11b",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/hidden-layers-ttc-edition-june-2023.png",
+        "sha256": "4ed6a17d0c0da3bcd96398f0fc93ba4658688f39db0513670ae94b006d6fbfe3",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space."
+    },
+    {
+      "source_sha256": "9971d88e1b47ff2c6c39977e91d94abb9c0661c457653e1c0944312cc162ecac",
+      "source_width": 3587,
+      "source_height": 3472,
+      "records": [
+        {
+          "slug": "pandemic-politics-in-germany",
+          "heading": "Pandemic Politics in Germany",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "infographics",
+            "workstream": "Politics & Society",
+            "product_type": null,
+            "id": 249
+          },
+          "source_image": "https://bfna.simplyas.com/assets/356d4143-371f-4a48-876d-3fba10bc4246"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/76d7f382-77ce-461c-8087-fcd76a4dc439",
+        "file_id": "76d7f382-77ce-461c-8087-fcd76a4dc439",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/pandemic-politics-in-germany.png",
+        "sha256": "3f0fbc30b0311e4969fa51b88aa43c5499f2135b04fca60092116222ab4ea7d2",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space."
+    },
+    {
+      "source_sha256": "f7030973fe5af122275ec875228be0539f4e7325175ef6419284c0aba001a7ce",
+      "source_width": 1200,
+      "source_height": 1200,
+      "records": [
+        {
+          "slug": "people-led-innovation",
+          "heading": "People-Led Innovation",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "products",
+            "workstream": "Archives",
+            "product_type": "report",
+            "id": 54
+          },
+          "source_image": "https://bfna.simplyas.com/assets/a6742a5e-fc88-4730-8f1b-1451b297fcd9"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/f99b2ab5-9ffb-4197-849c-00d76554ca1c",
+        "file_id": "f99b2ab5-9ffb-4197-849c-00d76554ca1c",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/people-led-innovation.png",
+        "sha256": "b58a9ca6a13e467538090afc31e507a737acf7a180dff1a951c0a2a796fe8a70",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space."
+    },
+    {
+      "source_sha256": "b23b5388d4dce1ec49db81bd8680dfc7882f468ffea2c6d2bf2b140c764eb795",
+      "source_width": 1200,
+      "source_height": 879,
+      "records": [
+        {
+          "slug": "profiting-in-the-age-of-covid-19",
+          "heading": "Profiting in the Age of COVID-19",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "infographics",
+            "workstream": "Digital World",
+            "product_type": null,
+            "id": 250
+          },
+          "source_image": "https://bfna.simplyas.com/assets/27d87dbb-66a0-457c-afb9-9ef2573c05e2"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/b41a1d94-17e7-45be-95b0-ef5a5b88d46c",
+        "file_id": "b41a1d94-17e7-45be-95b0-ef5a5b88d46c",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/profiting-in-the-age-of-covid-19.png",
+        "sha256": "726a8383ca25efa141b48c37858472aa0e45921bd2958f156c67c187b3579a76",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space."
+    },
+    {
+      "source_sha256": "83270541f3634b62f466b7a5944c786540cfa4dee45b510063c0a30b436f882e",
+      "source_width": 768,
+      "source_height": 1600,
+      "records": [
+        {
+          "slug": "referendum-retrospective",
+          "heading": "Referendum Retrospective",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "infographics",
+            "workstream": "Politics & Society",
+            "product_type": null,
+            "id": 251
+          },
+          "source_image": "https://bfna.simplyas.com/assets/175fcbb7-6de9-4954-81ba-38d3c8e99406"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/6c13db3c-0bd2-443e-aa0f-0420a897761c",
+        "file_id": "6c13db3c-0bd2-443e-aa0f-0420a897761c",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/referendum-retrospective.png",
+        "sha256": "67e4eac135efe9ff9aaf14a8a1728d2a3631b944272a3ea20b92650d85d2f04d",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space. Original flat background color extended and visually reviewed."
+    },
+    {
+      "source_sha256": "51b1f95f7488f75d9d603a3f7f0f76dd406826eca56be0431603e7bb01084708",
+      "source_width": 768,
+      "source_height": 461,
+      "records": [
+        {
+          "slug": "russias-economy",
+          "heading": "Russia's Economy",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "infographics",
+            "workstream": "Politics & Society",
+            "product_type": null,
+            "id": 252
+          },
+          "source_image": "https://bfna.simplyas.com/assets/3553bc9d-d5bf-4b9d-bcd5-c4046b5ae5ef"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/0af322ea-2abe-40b0-88e6-8e307e2be8f0",
+        "file_id": "0af322ea-2abe-40b0-88e6-8e307e2be8f0",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/russias-economy.png",
+        "sha256": "5b46828028c367669837edfe17fe08d9c4f4997fe8e3699dcd0873ebc9f60f1e",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space."
+    },
+    {
+      "source_sha256": "ab2b004307666ec8dba897c4f1fe142bf4a0c2c250535d8772badf149b04f6ea",
+      "source_width": 1400,
+      "source_height": 897,
+      "records": [
+        {
+          "slug": "season-1-episode-1-russian-cyber-attack-on-estonia",
+          "heading": "Season 1, Episode 1 | Russian Cyber-Attack on Estonia",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "products",
+            "workstream": "Future Leadership",
+            "product_type": "video",
+            "id": 56
+          },
+          "source_image": "https://bfna.simplyas.com/assets/10ae24f0-7380-40d1-8a56-e449d898ad8b"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/c1233343-2caf-4d1c-827c-43b64c476c34",
+        "file_id": "c1233343-2caf-4d1c-827c-43b64c476c34",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/season-1-episode-1-russian-cyber-attack-on-estonia.png",
+        "sha256": "118fd0b2783143cd4c39d0e26bdcd46d7e70f47556fb31725ee7aebfcd7a0c84",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space."
+    },
+    {
+      "source_sha256": "1fd421717a54b42f8a123d601cf4603265d5124f67ddc2c06b0d5a557622e587",
+      "source_width": 1400,
+      "source_height": 897,
+      "records": [
+        {
+          "slug": "season-1-episode-2-madeleine-albright-on-the-u-s-response-to-the-conflict-in-kosovo",
+          "heading": "Season 1, Episode 2 | Madeleine Albright on the U.S. Response to the Conflict in Kosovo",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "products",
+            "workstream": "Future Leadership",
+            "product_type": "video",
+            "id": 57
+          },
+          "source_image": "https://bfna.simplyas.com/assets/8047554a-cc86-4da3-b7cb-242d5a0e82f0"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/28f1bb49-3169-4d3b-b55a-22c6d64f21b9",
+        "file_id": "28f1bb49-3169-4d3b-b55a-22c6d64f21b9",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/season-1-episode-2-madeleine-albright-on-the-u-s-response-to-the-conflict-in-kosovo.png",
+        "sha256": "5494a078c65d1514932c5c0b46e8ed67e4b19f77e5d13f585c0d0111d6697e18",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space."
+    },
+    {
+      "source_sha256": "a04135485abd4e78b3f8698abcf7f7bd5cc28417cb0ed86f7ed9bc9c050f508d",
+      "source_width": 1400,
+      "source_height": 897,
+      "records": [
+        {
+          "slug": "season-1-episode-3-george-papandreou-on-the-euro-crisis-in-greece",
+          "heading": "Season 1, Episode 3 | George Papandreou on the Euro Crisis in Greece",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "products",
+            "workstream": "Future Leadership",
+            "product_type": "video",
+            "id": 58
+          },
+          "source_image": "https://bfna.simplyas.com/assets/0b4c1869-3fc3-456b-b750-90529527e4dd"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/78b62a90-c432-4058-9616-8b5309a641a3",
+        "file_id": "78b62a90-c432-4058-9616-8b5309a641a3",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/season-1-episode-3-george-papandreou-on-the-euro-crisis-in-greece.png",
+        "sha256": "f02ee20b2feff3162408862fa87bd64205ad1767988131cebcf85eab7496d7ec",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space."
+    },
+    {
+      "source_sha256": "22e30f931486e38d34d18e1a41641a43fc96bb59606c9007ff34801352cc0462",
+      "source_width": 1400,
+      "source_height": 897,
+      "records": [
+        {
+          "slug": "season-2-episode-1-susana-malcorra-on-the-uns-efforts-to-stop-the-spread-of-ebola",
+          "heading": "Season 2, Episode 1 | Susana Malcorra on the UN's efforts to stop the spread of Ebola",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "products",
+            "workstream": "Future Leadership",
+            "product_type": "video",
+            "id": 59
+          },
+          "source_image": "https://bfna.simplyas.com/assets/46df7dd9-4271-4ce9-a1c7-3ddcaf96f249"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/d8154843-f709-4513-9388-96669ef2aaf5",
+        "file_id": "d8154843-f709-4513-9388-96669ef2aaf5",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/season-2-episode-1-susana-malcorra-on-the-uns-efforts-to-stop-the-spread-of-ebola.png",
+        "sha256": "fbe43188e742cd2e5b6be35731acb1d2bb84887e70dee7c297e7a25b91693329",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space."
+    },
+    {
+      "source_sha256": "2ec70bc92fbc22868740ec8be3c41fd68c909477b6eef7cb6fc415749220af4c",
+      "source_width": 1400,
+      "source_height": 897,
+      "records": [
+        {
+          "slug": "season-2-episode-3-federica-mogherini-on-negotiating-the-iran-nuclear-deal",
+          "heading": "Season 2, Episode 3 | Federica Mogherini on negotiating the Iran Nuclear Deal",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "products",
+            "workstream": "Future Leadership",
+            "product_type": "video",
+            "id": 61
+          },
+          "source_image": "https://bfna.simplyas.com/assets/ef943ef9-2e45-4292-bde0-f2506a8f578f"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/bc580778-480f-4bd3-9a06-ec159a927949",
+        "file_id": "bc580778-480f-4bd3-9a06-ec159a927949",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/season-2-episode-3-federica-mogherini-on-negotiating-the-iran-nuclear-deal.png",
+        "sha256": "30b71c2f1e6f98a274b53eba0c930fe3571732a32bbeeb03f4d6b3ee8a41046e",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space."
+    },
+    {
+      "source_sha256": "4305b88a72f9be1c47adeb1197ee439993448b29c60018e301e53f7ef970c7c8",
+      "source_width": 1400,
+      "source_height": 897,
+      "records": [
+        {
+          "slug": "season-2-episode-2-malcolm-rifkind-on-the-transfer-of-power-in-hong-kong",
+          "heading": "Season 2, Episode 2 | Malcolm Rifkind on the transfer of power in Hong Kong",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "products",
+            "workstream": "Future Leadership",
+            "product_type": "video",
+            "id": 60
+          },
+          "source_image": "https://bfna.simplyas.com/assets/55545ea9-9de5-4eee-9a93-ce402cc59263"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/3c8fea5e-c516-4dfb-8a3f-cb84fb476c44",
+        "file_id": "3c8fea5e-c516-4dfb-8a3f-cb84fb476c44",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/season-2-episode-2-malcolm-rifkind-on-the-transfer-of-power-in-hong-kong.png",
+        "sha256": "ae79a8e0a7a8601d44472042f9fb3be3f27f05c7b9dc626c3b932b07b85423cc",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space."
+    },
+    {
+      "source_sha256": "25694a14fa5c43aab47e26ffad50c762b491f67d7238d75efe340c0c18f21b18",
+      "source_width": 768,
+      "source_height": 1182,
+      "records": [
+        {
+          "slug": "social-inequity",
+          "heading": "Social Inequity",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "infographics",
+            "workstream": "Politics & Society",
+            "product_type": null,
+            "id": 253
+          },
+          "source_image": "https://bfna.simplyas.com/assets/2bf7b688-fb67-4f78-a562-891a2613a6c7"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/9ec2c423-8f7f-40ec-bec8-2534390cc4db",
+        "file_id": "9ec2c423-8f7f-40ec-bec8-2534390cc4db",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/social-inequity.png",
+        "sha256": "0a66b5aad2a9fc01e76b8ad9dd8598a843eb2c6036635d7d21541b0f7925df89",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space."
+    },
+    {
+      "source_sha256": "6f7a3ac84c3eaee8d521c152fba85e74e59f8e8156f87f06c401a8d91d208967",
+      "source_width": 768,
+      "source_height": 1365,
+      "records": [
+        {
+          "slug": "something-to-snack-on",
+          "heading": "Something to Snack On",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "infographics",
+            "workstream": "Politics & Society",
+            "product_type": null,
+            "id": 254
+          },
+          "source_image": "https://bfna.simplyas.com/assets/19d08521-95f5-4764-ad41-473d9f6604a5"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/36f36f38-6f7b-4fb3-a24f-daa6769682ab",
+        "file_id": "36f36f38-6f7b-4fb3-a24f-daa6769682ab",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/something-to-snack-on.png",
+        "sha256": "2050d17d3915a617ccdd83b72b7c8e5dbfc355d0c80d63051b6aac7f42998b26",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space."
+    },
+    {
+      "source_sha256": "f9616848020464df966ef71056841f43469da939bee14efa763433c10b44112a",
+      "source_width": 768,
+      "source_height": 994,
+      "records": [
+        {
+          "slug": "the-downing-of-turkish-russian-relations",
+          "heading": "The Downing of Turkish-Russian Relations",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "infographics",
+            "workstream": "Politics & Society",
+            "product_type": null,
+            "id": 257
+          },
+          "source_image": "https://bfna.simplyas.com/assets/5aa47202-7377-4712-89e5-4319d68fccef"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/73b44c8e-4aa2-4cde-ad2f-8c4c7b3dae40",
+        "file_id": "73b44c8e-4aa2-4cde-ad2f-8c4c7b3dae40",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/the-downing-of-turkish-russian-relations.png",
+        "sha256": "0d352b56a9a95d524cf4f427cde46a6e559468282507384eba9a381966ba5aee",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space."
+    },
+    {
+      "source_sha256": "abe1913028c3376a496c32b926c204b3747034917bc149b5e21213b7fc090d25",
+      "source_width": 3300,
+      "source_height": 4200,
+      "records": [
+        {
+          "slug": "the-demander-in-chief",
+          "heading": "The Demander in Chief",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "infographics",
+            "workstream": "Democracy",
+            "product_type": null,
+            "id": 256
+          },
+          "source_image": "https://bfna.simplyas.com/assets/4c709b17-9e40-422a-a95f-4602ffcbc255"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/3c47c47a-5cac-4e3c-a56b-7f0f38a29434",
+        "file_id": "3c47c47a-5cac-4e3c-a56b-7f0f38a29434",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/the-demander-in-chief.png",
+        "sha256": "b782b82d41f362680813c0b37c8c486f498bb8d829c8db49f30cd0c491c7bd84",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space."
+    },
+    {
+      "source_sha256": "e56e232ace86165e6e0afac417082bb90ec015f391a5810196edd5695024531e",
+      "source_width": 768,
+      "source_height": 994,
+      "records": [
+        {
+          "slug": "the-economics-of-brexit",
+          "heading": "The Economics of Brexit",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "infographics",
+            "workstream": "Politics & Society",
+            "product_type": null,
+            "id": 258
+          },
+          "source_image": "https://bfna.simplyas.com/assets/e7cb07b8-902e-4370-a231-f27cc1cbf01d"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/59b4a23c-8dd5-4594-a8c9-d26ed5b99886",
+        "file_id": "59b4a23c-8dd5-4594-a8c9-d26ed5b99886",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/the-economics-of-brexit.png",
+        "sha256": "32ab392ef434b0ec0eebb83be6259ab7214d17790131496c95b23e876aa1e315",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space."
+    },
+    {
+      "source_sha256": "f43e06b9e72866714888cdaaa20ca4fa3747c03c77eb176c0cf6e4806ee5cb0d",
+      "source_width": 768,
+      "source_height": 768,
+      "records": [
+        {
+          "slug": "the-eus-arc-of-instability",
+          "heading": "The EU's Arc of Instability",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "infographics",
+            "workstream": "Politics & Society",
+            "product_type": null,
+            "id": 259
+          },
+          "source_image": "https://bfna.simplyas.com/assets/ece3c569-eb91-4cfc-830f-693bc486bee7"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/55a5bb57-3496-4105-a8fb-1bad2233e98d",
+        "file_id": "55a5bb57-3496-4105-a8fb-1bad2233e98d",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/the-eus-arc-of-instability.png",
+        "sha256": "ee289663f95bf3300496a14d32bcf2393bd65c885468fd55b99758582747558d",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space. Original flat background color extended and visually reviewed."
+    },
+    {
+      "source_sha256": "be752b31fb9c62d3969bb315f6a542ce93fe119ebbfd0d40e08e4d95054bdf48",
+      "source_width": 768,
+      "source_height": 1344,
+      "records": [
+        {
+          "slug": "the-long-road-to-rio",
+          "heading": "The Long Road to Rio",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "infographics",
+            "workstream": "Politics & Society",
+            "product_type": null,
+            "id": 261
+          },
+          "source_image": "https://bfna.simplyas.com/assets/b7e446de-28eb-42f7-90cd-ca5c3ac3dcb5"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/7fe48f64-087d-44fb-b83d-8e83c9f29773",
+        "file_id": "7fe48f64-087d-44fb-b83d-8e83c9f29773",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/the-long-road-to-rio.png",
+        "sha256": "6583376d5275a2c8c364615d8a2e33ab1ce84b6aac315d405b3e369b922e43ad",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space. Original flat background color extended and visually reviewed."
+    },
+    {
+      "source_sha256": "161680badaf63e6a894c3b70294aa4e976d548dc47b3af228534bcf9bef92056",
+      "source_width": 1200,
+      "source_height": 1006,
+      "records": [
+        {
+          "slug": "the-many-shades-of-democracy",
+          "heading": "The Many Shades of Democracy",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "infographics",
+            "workstream": "Democracy",
+            "product_type": null,
+            "id": 262
+          },
+          "source_image": "https://bfna.simplyas.com/assets/7e7fbf71-9e39-4449-9e62-493984245264"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/cd6e39c0-8875-44fd-b39b-ebd9382dc4b9",
+        "file_id": "cd6e39c0-8875-44fd-b39b-ebd9382dc4b9",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/the-many-shades-of-democracy.png",
+        "sha256": "b18917e85346d05b581e964195584e87ce6fbe2a0514263b67df28ef48cf911d",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space. Original flat background color extended and visually reviewed."
+    },
+    {
+      "source_sha256": "70387b8ae8ab89f7db7e6e707ad15375f532776d4ffcb08f6319ec388cbcdd35",
+      "source_width": 3300,
+      "source_height": 1800,
+      "records": [
+        {
+          "slug": "the-french-presidential-election-whos-in-the-running",
+          "heading": "The French Presidential Election: Who's in the Running?",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "infographics",
+            "workstream": "Politics & Society",
+            "product_type": null,
+            "id": 260
+          },
+          "source_image": "https://bfna.simplyas.com/assets/783ee857-10b8-4bd1-9913-b69a48a10b1d"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/8208545d-ccfa-4581-a5e5-c21203dfa21c",
+        "file_id": "8208545d-ccfa-4581-a5e5-c21203dfa21c",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/the-french-presidential-election-whos-in-the-running.png",
+        "sha256": "b8d66e7181432aa06ad3538fb9ffcef47c67c3572d5e12548d6502cf37faa70a",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space."
+    },
+    {
+      "source_sha256": "d5b7e7cd240ddf7e2614359d821b83cea921e0029d19518fba3a17a3c7b69851",
+      "source_width": 1000,
+      "source_height": 1000,
+      "records": [
+        {
+          "slug": "the-no-collar-economy-vol-i",
+          "heading": "The No Collar Economy - Vol. I",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "products",
+            "workstream": "Digital World",
+            "product_type": "report",
+            "id": 97
+          },
+          "source_image": "https://bfna.simplyas.com/assets/2a7213f2-044c-44f8-a66a-58bdba4ffed3"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/ace179e4-e394-4b97-80ca-3bdebc51f620",
+        "file_id": "ace179e4-e394-4b97-80ca-3bdebc51f620",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/the-no-collar-economy-vol-i.png",
+        "sha256": "1b38d6fe8bd55d5b067988857d8c6053b9fdf63bfdb4e01b3804e226f8c5c3c1",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space."
+    },
+    {
+      "source_sha256": "c7ae86a18678e8094557c7eb51351ac938f72edc38b47982d91d08821fd56eea",
+      "source_width": 1000,
+      "source_height": 1000,
+      "records": [
+        {
+          "slug": "the-no-collar-economy-vol-ii",
+          "heading": "The No Collar Economy - Vol. II",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "products",
+            "workstream": "Digital World",
+            "product_type": "report",
+            "id": 98
+          },
+          "source_image": "https://bfna.simplyas.com/assets/5be82944-713f-4304-a699-d784964c71b2"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/d27a4d2a-8d7a-4c90-a32e-156364a65571",
+        "file_id": "d27a4d2a-8d7a-4c90-a32e-156364a65571",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/the-no-collar-economy-vol-ii.png",
+        "sha256": "8045103ef6f61dfb25ce10c88cbef7afe31f64989d26d8dfec10208bf2003648",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space."
+    },
+    {
+      "source_sha256": "2b66cff3922aebb883a6a39b582cc4ed51542ac48294118419ac0877026383f3",
+      "source_width": 1400,
+      "source_height": 897,
+      "records": [
+        {
+          "slug": "the-transition-2020",
+          "heading": "The Transition 2020",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "products",
+            "workstream": "Archives",
+            "product_type": "report",
+            "id": 99
+          },
+          "source_image": "https://bfna.simplyas.com/assets/ab1b6c7e-cfcc-4fa0-b55f-1501dc933073"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/cbd3edcf-0768-40b4-8ad5-7cfd3919fe85",
+        "file_id": "cbd3edcf-0768-40b4-8ad5-7cfd3919fe85",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/the-transition-2020.png",
+        "sha256": "8f603c0c65a0d424791f85202e41667fae62d7c5650b231b1be8382043ef9da7",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space."
+    },
+    {
+      "source_sha256": "794c5036721ab1f303bc6e78e1e7995c915c2d34e6f7cc07af5a261c1e1dd708",
+      "source_width": 1920,
+      "source_height": 1080,
+      "records": [
+        {
+          "slug": "the-ukraine-crisis-which-countries-are-accepting-refugees-within-the-transatlantic-community",
+          "heading": "The Ukraine Crisis: Which countries are accepting refugees within the transatlantic community?",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "infographics",
+            "workstream": "Politics & Society",
+            "product_type": null,
+            "id": 264
+          },
+          "source_image": "https://bfna.simplyas.com/assets/a8109b87-913e-480a-9f12-9e644af3ae3a"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/97b1909f-eb7f-408d-a166-fb970a3bb3c6",
+        "file_id": "97b1909f-eb7f-408d-a166-fb970a3bb3c6",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/the-ukraine-crisis-which-countries-are-accepting-refugees-within-the-transatlantic-community.png",
+        "sha256": "3af612f612731cf34cc9f75c418aed9cb85364bd0e6701a70c4c14e1d14df383",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space."
+    },
+    {
+      "source_sha256": "a617d9d57db3a89c4b39dcfb3834ce58da09714d394b9107d0c558d7754e9df3",
+      "source_width": 3300,
+      "source_height": 2550,
+      "records": [
+        {
+          "slug": "the-post-pandemic-future-of-work",
+          "heading": "The Post-Pandemic Future of Work",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "infographics",
+            "workstream": "Digital World",
+            "product_type": null,
+            "id": 263
+          },
+          "source_image": "https://bfna.simplyas.com/assets/9bf10969-23ad-4d33-93ec-7589ceba092c"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/bd0d09a3-4b20-4f84-afca-84681058e15c",
+        "file_id": "bd0d09a3-4b20-4f84-afca-84681058e15c",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/the-post-pandemic-future-of-work.png",
+        "sha256": "60da689d46d268d9dfd4510bd9f9de09a87d20ee0c2e64348c317b30e719904d",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space."
+    },
+    {
+      "source_sha256": "2fe56968c27610853da0f5b29e6b3c756fac565d0fdac5633114ae7abf39f987",
+      "source_width": 768,
+      "source_height": 644,
+      "records": [
+        {
+          "slug": "trade-beyond-the-tweet",
+          "heading": "Trade Beyond the Tweet",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "infographics",
+            "workstream": "Politics & Society",
+            "product_type": null,
+            "id": 266
+          },
+          "source_image": "https://bfna.simplyas.com/assets/945a0c19-9ba6-4ad6-9b78-c7b96a4ce642"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/19f33183-4360-44b9-af62-458f4e31dfc5",
+        "file_id": "19f33183-4360-44b9-af62-458f4e31dfc5",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/trade-beyond-the-tweet.png",
+        "sha256": "020ad9f2f9da4b0eb8882e0fb78b36e677f27e277e022e186d692403c92aff99",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space."
+    },
+    {
+      "source_sha256": "e3d409b377d8c085a7927a8287c4e13bdebcfafb813afd475e32fdd01eada92b",
+      "source_width": 768,
+      "source_height": 576,
+      "records": [
+        {
+          "slug": "trade-facts-and-figures",
+          "heading": "Trade Facts and Figures",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "infographics",
+            "workstream": "Politics & Society",
+            "product_type": null,
+            "id": 267
+          },
+          "source_image": "https://bfna.simplyas.com/assets/866766aa-0029-4c00-940c-12f92daecc87"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/020845ea-53a8-4c14-8841-d6028e9d79f7",
+        "file_id": "020845ea-53a8-4c14-8841-d6028e9d79f7",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/trade-facts-and-figures.png",
+        "sha256": "f6b44bc08e2ac2890bdb203617c2d3589e2c249dcc071a95ac00eab2244f3906",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space."
+    },
+    {
+      "source_sha256": "2082f1a6fefd0b21dcf554c1604435d5072d12fcf352a983f8906911fd769367",
+      "source_width": 768,
+      "source_height": 1344,
+      "records": [
+        {
+          "slug": "trans-atlantic-tweeting",
+          "heading": "Trans-Atlantic Tweeting",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "infographics",
+            "workstream": "Politics & Society",
+            "product_type": null,
+            "id": 268
+          },
+          "source_image": "https://bfna.simplyas.com/assets/81b6b26a-a401-485c-b9a5-a747de98fbba"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/0d8dc1a6-757e-4f50-ba36-7588c3059545",
+        "file_id": "0d8dc1a6-757e-4f50-ba36-7588c3059545",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/trans-atlantic-tweeting.png",
+        "sha256": "846f6daec14d17a082dcad2f3b280b2b712ad36cc054f482876d9414a01ddd42",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space."
+    },
+    {
+      "source_sha256": "2fead5fb3659087f8a55d81b456a4d2706fc94742dfd64f42135b0caa74e4693",
+      "source_width": 5775,
+      "source_height": 5700,
+      "records": [
+        {
+          "slug": "tiktoks-mixed-signals",
+          "heading": "TikTok's Mixed Signals",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "infographics",
+            "workstream": "Politics & Society",
+            "product_type": null,
+            "id": 265
+          },
+          "source_image": "https://bfna.simplyas.com/assets/e1511bc2-fc12-46dd-9726-80e64dcb1010"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/7330abbd-6036-4e60-bdf3-f00a3a41c594",
+        "file_id": "7330abbd-6036-4e60-bdf3-f00a3a41c594",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/tiktoks-mixed-signals.png",
+        "sha256": "3ef366471711983f1f0a40ac3f53519f75bc5ae719c42934b2d3abddeaab6694",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space."
+    },
+    {
+      "source_sha256": "efe0b0ae1f21bac4ef73435e862c94f843f36bb8cb3736f0fa70657cf4da92c3",
+      "source_width": 2500,
+      "source_height": 2500,
+      "records": [
+        {
+          "slug": "transatlantic-trends-2021",
+          "heading": "Transatlantic Trends 2021",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "products",
+            "workstream": "Archives",
+            "product_type": "report",
+            "id": 103
+          },
+          "source_image": "https://bfna.simplyas.com/assets/dac8406b-cdf5-4f8b-aca1-6d82c9e8f92f"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/bcbe5927-a856-4337-8431-d12b4dc44b6b",
+        "file_id": "bcbe5927-a856-4337-8431-d12b4dc44b6b",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/transatlantic-trends-2021.png",
+        "sha256": "7a74b98e9e2ac54d7b529d4f1f1685f12cf96dc9013185cb1d72069052427525",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space."
+    },
+    {
+      "source_sha256": "498cbe8d964dda186816e5aac0447684a90e30117e748c2a049e9519c5a89547",
+      "source_width": 1500,
+      "source_height": 1500,
+      "records": [
+        {
+          "slug": "transponder-issue-1-the-transatlantic-relationship",
+          "heading": "Transponder Issue #1: The Transatlantic Relationship",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "products",
+            "workstream": "Politics & Society",
+            "product_type": "report",
+            "id": 105
+          },
+          "source_image": "https://bfna.simplyas.com/assets/23b257dd-6e15-4590-bb50-433a20cbcc22"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/232b8495-71a0-4a76-9ae2-615c4ac50348",
+        "file_id": "232b8495-71a0-4a76-9ae2-615c4ac50348",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/transponder-issue-1-the-transatlantic-relationship.png",
+        "sha256": "2a316a4afb18b2361c68d35180a9aa014a391ad0f8a68134857a73dc12684cd9",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space."
+    },
+    {
+      "source_sha256": "ed6577f43f81ed092aa7210ec4d0a093894e9a346161c2ac521cd083e8e6f6ae",
+      "source_width": 2500,
+      "source_height": 2500,
+      "records": [
+        {
+          "slug": "transatlantic-trends-2022",
+          "heading": "Transatlantic Trends 2022",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "products",
+            "workstream": "Archives",
+            "product_type": "report",
+            "id": 104
+          },
+          "source_image": "https://bfna.simplyas.com/assets/1452f97d-48e3-4411-bf54-d604b1febfa6"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/070ef87a-f245-4978-9f3c-bf6d0c0f14a0",
+        "file_id": "070ef87a-f245-4978-9f3c-bf6d0c0f14a0",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/transatlantic-trends-2022.png",
+        "sha256": "0a5a8f245380a19f249dbd63df5d924509497844e9748410255aebb7e1c46bb6",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space."
+    },
+    {
+      "source_sha256": "48a9edaac995c7edaa9657864f6ae0e570284ec4d7f2364cea033a5ee9a7bb16",
+      "source_width": 2500,
+      "source_height": 2500,
+      "records": [
+        {
+          "slug": "transponder-issue-3-resilience",
+          "heading": "Transponder Issue #3: Resilience",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "products",
+            "workstream": "Politics & Society",
+            "product_type": "report",
+            "id": 107
+          },
+          "source_image": "https://bfna.simplyas.com/assets/ce4ba092-f9c1-4206-b538-520d49fe7bb6"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/d36a2374-144a-474b-81ea-5a3111c6b443",
+        "file_id": "d36a2374-144a-474b-81ea-5a3111c6b443",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/transponder-issue-3-resilience.png",
+        "sha256": "d7341e8c30cfdc9f12fc78b02ea20095f5e3346a5b44008aecc91106a3e1ceef",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space."
+    },
+    {
+      "source_sha256": "362e5075dda4e2088c458302d7d99ce3e9467bc9b3a08c671cb5cf8bd7666cf0",
+      "source_width": 2500,
+      "source_height": 2500,
+      "records": [
+        {
+          "slug": "transponder-issue-2-cities",
+          "heading": "Transponder Issue #2: Cities",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "products",
+            "workstream": "Politics & Society",
+            "product_type": "report",
+            "id": 106
+          },
+          "source_image": "https://bfna.simplyas.com/assets/3ada8723-840e-4c04-9b7f-ee8cc170545d"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/9dd4dd15-56c1-4e2f-bf03-4036e94d2541",
+        "file_id": "9dd4dd15-56c1-4e2f-bf03-4036e94d2541",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/transponder-issue-2-cities.png",
+        "sha256": "7ed48fad1a47220020a3cd9fda51a65bbbbe6fd81b126ecb39cff41995a87ee2",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space."
+    },
+    {
+      "source_sha256": "227cfb946b0be5a89abe3d2cdfaea46563f18a006d5610f8d315db93ccafd4e1",
+      "source_width": 768,
+      "source_height": 823,
+      "records": [
+        {
+          "slug": "trumps-teetering-trade-policy",
+          "heading": "Trump's Teetering Trade Policy",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "infographics",
+            "workstream": "Politics & Society",
+            "product_type": null,
+            "id": 269
+          },
+          "source_image": "https://bfna.simplyas.com/assets/ccab73a3-7ebf-44d1-b656-66e91edbd069"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/4dc5a321-bbc3-4463-aec2-95a33cd75c5c",
+        "file_id": "4dc5a321-bbc3-4463-aec2-95a33cd75c5c",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/trumps-teetering-trade-policy.png",
+        "sha256": "756b01a4f47be73c066fb8374bd00fb4da0bb8aaeaeaf819b023ffbcf4499c92",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space. Original flat background color extended and visually reviewed."
+    },
+    {
+      "source_sha256": "278a383186be5b507a8cfb4bc9013f9049660ac887c81d221301fb86f5a6b192",
+      "source_width": 768,
+      "source_height": 577,
+      "records": [
+        {
+          "slug": "trumps-twitter-diplomacy",
+          "heading": "Trump's Twitter Diplomacy",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "infographics",
+            "workstream": "Politics & Society",
+            "product_type": null,
+            "id": 270
+          },
+          "source_image": "https://bfna.simplyas.com/assets/2e5e7063-1a08-490e-89e6-41b3970cb0a7"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/f3be8f96-cdb5-4db7-b8da-2069b36b6bcf",
+        "file_id": "f3be8f96-cdb5-4db7-b8da-2069b36b6bcf",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/trumps-twitter-diplomacy.png",
+        "sha256": "c3ad6b9cd1f91e2356b7f118f2149e692aa333c5a15fc8a48e10062073bf27a3",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space."
+    },
+    {
+      "source_sha256": "080603b41fe426650166c7b4d625e0f6e191199bce6fd7a0b1d0c282c9ab7aed",
+      "source_width": 768,
+      "source_height": 644,
+      "records": [
+        {
+          "slug": "was-2018-really-the-year-of-the-woman",
+          "heading": "Was 2018 Really the \"Year of the Woman\"?",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "infographics",
+            "workstream": "Politics & Society",
+            "product_type": null,
+            "id": 271
+          },
+          "source_image": "https://bfna.simplyas.com/assets/adaddb51-40f2-4a08-a1c6-959747b1876d"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/e174f7b7-ab7e-4305-95d6-bd5fbbdfc746",
+        "file_id": "e174f7b7-ab7e-4305-95d6-bd5fbbdfc746",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/was-2018-really-the-year-of-the-woman.png",
+        "sha256": "98569bde1500a77cf06ca0cab68d3604836b50fb4a7759c0778dc35ae56f25c4",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space. Original flat background color extended and visually reviewed."
+    },
+    {
+      "source_sha256": "b6d6a6706c57a59180249984dacdce03448c61c4fd230fd4d7e3065ea523636f",
+      "source_width": 1200,
+      "source_height": 1358,
+      "records": [
+        {
+          "slug": "what-do-europes-right-wing-parties-want",
+          "heading": "What Do Europe’s Right-Wing Parties Want?",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "infographics",
+            "workstream": "Politics & Society",
+            "product_type": null,
+            "id": 272
+          },
+          "source_image": "https://bfna.simplyas.com/assets/5f8fc5f9-e347-4894-b8ec-11738ce4ea77"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/d3b528e2-2897-4200-9038-df0a99d1a793",
+        "file_id": "d3b528e2-2897-4200-9038-df0a99d1a793",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/what-do-europes-right-wing-parties-want.png",
+        "sha256": "916e93d1cc017d25ab58bf584f652a34851a45c43b521c3eff449fc109de9eaa",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space."
+    },
+    {
+      "source_sha256": "8e88fc75b923c66612718549f6c48437eaae80ed22e081515e50870a2982cd7b",
+      "source_width": 768,
+      "source_height": 672,
+      "records": [
+        {
+          "slug": "when-piigs-fly-or-fall",
+          "heading": "When PIIGS Fly... or Fall",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "infographics",
+            "workstream": "Politics & Society",
+            "product_type": null,
+            "id": 273
+          },
+          "source_image": "https://bfna.simplyas.com/assets/a4707efb-0a98-41bd-b2f3-f426b32139e5"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/d90fd2f2-b189-4992-b866-f3d3e1f76e64",
+        "file_id": "d90fd2f2-b189-4992-b866-f3d3e1f76e64",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/when-piigs-fly-or-fall.png",
+        "sha256": "a786448da7102dbc4388dae50cf1d2f6b3ffa8f741e94c3521c66bb6d7af659f",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space."
+    },
+    {
+      "source_sha256": "17f53fee5f739eea921a5dbcf98ec3d5422481794bf4883d5e67cc2eb0b96bd1",
+      "source_width": 1920,
+      "source_height": 1080,
+      "records": [
+        {
+          "slug": "uncivil-war",
+          "heading": "Uncivil War",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "products",
+            "workstream": "Democracy",
+            "product_type": "video",
+            "id": 112
+          },
+          "source_image": "https://bfna.simplyas.com/assets/dbb7a756-2127-4b17-b8f6-898bd60c4df7"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/19ae3f86-0dda-40a0-b0b6-d6c31e28b736",
+        "file_id": "19ae3f86-0dda-40a0-b0b6-d6c31e28b736",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/uncivil-war.png",
+        "sha256": "737ded0c3b80df2e19bbafc121f31a2cfada7c3dacae2d297006906267bea0d8",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space."
+    },
+    {
+      "source_sha256": "fa6ac17fbf152dcf2da24018e71f3f21647ba55a9d5c9f2d8d6e1703b6b7d8fd",
+      "source_width": 3840,
+      "source_height": 2160,
+      "records": [
+        {
+          "slug": "which-countries-are-regulating-ai",
+          "heading": "Which Countries are Regulating AI?",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "infographics",
+            "workstream": "Digital World",
+            "product_type": null,
+            "id": 274
+          },
+          "source_image": "https://bfna.simplyas.com/assets/d066f331-a802-4c48-b7a9-5038a805ee14"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/db6c535c-9d2e-441b-a8cb-19dfaef75439",
+        "file_id": "db6c535c-9d2e-441b-a8cb-19dfaef75439",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/which-countries-are-regulating-ai.png",
+        "sha256": "5b4342826020faa8ea70ef2acf95c6c2827559d1497ba49c40138cc8426d95e3",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space."
+    },
+    {
+      "source_sha256": "c3e4cbf1ed00b8002ba759a67ce7d25e8fc9bec49ce331113cbf2bb99176aef6",
+      "source_width": 2500,
+      "source_height": 2500,
+      "records": [
+        {
+          "slug": "transponder-issue-4-identity",
+          "heading": "Transponder Issue #4: Identity",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "products",
+            "workstream": "Politics & Society",
+            "product_type": "report",
+            "id": 108
+          },
+          "source_image": "https://bfna.simplyas.com/assets/9c9855fe-5244-4b8e-b562-1a419adce3ac"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/99b44000-4b2a-4ed6-a88b-0d6ef50052c1",
+        "file_id": "99b44000-4b2a-4ed6-a88b-0d6ef50052c1",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/transponder-issue-4-identity.png",
+        "sha256": "213ba49e847defeb0c5a1f9cf31a0a9f53bc3607475be3780b18dd56255dc5de",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space."
+    },
+    {
+      "source_sha256": "fca2d8033c0e5302a52f900afbfeb3e3925ebb0ca0b73cef4aa58343b8698ab5",
+      "source_width": 2510,
+      "source_height": 1894,
+      "records": [
+        {
+          "slug": "whos-helping-the-western-balkans-with-covid-19",
+          "heading": "Who’s Helping the Western Balkans with COVID-19?",
+          "archived": true,
+          "legacy": {
+            "source": "directus",
+            "type": "infographics",
+            "workstream": "Politics & Society",
+            "product_type": null,
+            "id": 275
+          },
+          "source_image": "https://bfna.simplyas.com/assets/83b44c90-4b45-4c48-b5d4-f4d18229fe8d"
+        }
+      ],
+      "status": "reviewed-and-linked",
+      "cover": {
+        "url": "https://bfna.simplyas.com/assets/d5f7619d-8eb5-480c-b582-d96bf8aa6011",
+        "file_id": "d5f7619d-8eb5-480c-b582-d96bf8aa6011",
+        "local_file": "bfna-website-nuxt/public/images/insight-card-covers/whos-helping-the-western-balkans-with-covid-19.png",
+        "sha256": "0aea292e9398283bbf15efa3a7d180df24054b4061277befb42c699be9db7bf2",
+        "width": 1200,
+        "height": 1500,
+        "method": "Sharp deterministic source-pixel composition"
+      },
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space."
+    }
+  ]
+}

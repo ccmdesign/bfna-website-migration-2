@@ -1,0 +1,2984 @@
+{
+  "method": "Sharp deterministic resize and canvas composition; user approved preserving original pixels on 2026-10-01",
+  "plans": [
+    {
+      "slug": "infographic-ai-research-and-development-in-the-u-s-eu-and-china",
+      "source_sha256": "0c261a075eb1ca35f8b23305e2fefc6f75c109f2b997af00c342cb18e3446b5e",
+      "source_file": "infographic-ai-research-and-development-in-the-u-s-eu-and-china",
+      "source_image": "https://bfna.simplyas.com/assets/c63b3aa2-1147-42ed-89c9-cd7623c561b5",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 0,
+          "g": 0,
+          "b": 0,
+          "alpha": 1
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 1920,
+            "height": 1080
+          },
+          "destination": {
+            "left": 48,
+            "top": 60,
+            "width": 1104,
+            "height": 621
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": false,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space. Original flat background color extended and visually reviewed.",
+      "cover_sha256": "0350e20755f3af320cab8961f60eed09840434b4c8110344e8f2c4f3bc7c13fa",
+      "background_review": "Canvas extends the original flat corner color; no artwork changed."
+    },
+    {
+      "slug": "transatlantic-trends-2020",
+      "source_sha256": "abe22291e0cc24b7bd517921b0dc69e1cb9ce60a13d6afca5654a5e6638d81cd",
+      "source_file": "transatlantic-trends-2020",
+      "source_image": "https://bfna.simplyas.com/assets/782d7a79-f429-4a80-b7cf-f465450d6ea0",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 0,
+          "g": 0,
+          "b": 0,
+          "alpha": 0
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 1200,
+            "height": 1200
+          },
+          "destination": {
+            "left": 100,
+            "top": 60,
+            "width": 1000,
+            "height": 1000
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": true,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space.",
+      "cover_sha256": "929bb2a47d2644d3c7af25be8e9d2f980f4df630dd305b4569c601bf267a2e00"
+    },
+    {
+      "slug": "a-new-era-of-german-turkish-cooperation",
+      "source_sha256": "05108ae2d8352285cba2254bbe0139147913d982b89bc573db45abbe8c70df05",
+      "source_file": "a-new-era-of-german-turkish-cooperation",
+      "source_image": "https://bfna.simplyas.com/assets/6e32e2ff-49ea-4541-935f-dbcc4274d8f0",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 255,
+          "g": 255,
+          "b": 255,
+          "alpha": 1
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 768,
+            "height": 908
+          },
+          "destination": {
+            "left": 177,
+            "top": 60,
+            "width": 846,
+            "height": 1000
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": false,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space.",
+      "cover_sha256": "6f61159482dc0ad7e15a2bff6f390dd80aafeafb1d63171c3c6c94de4e9be93b"
+    },
+    {
+      "slug": "2020-senate-races-overshadowed-by-trump",
+      "source_sha256": "0b98483a87c4d8a7db9247073dfb5d65897032b444472546cb8615e61e0007f7",
+      "source_file": "2020-senate-races-overshadowed-by-trump",
+      "source_image": "https://bfna.simplyas.com/assets/aee7b777-f93a-45f6-9482-1765355c5cc0",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 0,
+          "g": 0,
+          "b": 0,
+          "alpha": 1
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 1200,
+            "height": 1122
+          },
+          "destination": {
+            "left": 65,
+            "top": 60,
+            "width": 1070,
+            "height": 1000
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": false,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space. Original flat background color extended and visually reviewed.",
+      "cover_sha256": "3f777db99d109a810769f55bc78a8d122e74c3e8dca66c39b081cd3a3703addc",
+      "background_review": "Canvas extends the original flat corner color; no artwork changed."
+    },
+    {
+      "slug": "a-shred-of-doubt-brexits-future",
+      "source_sha256": "4ccdf9815b69155be2c7bec82d055889211253f6b0882c766a2e4434bffe1c4a",
+      "source_file": "a-shred-of-doubt-brexits-future",
+      "source_image": "https://bfna.simplyas.com/assets/c1b2adf7-8586-4e1c-80e1-1258d00970bd",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 0,
+          "g": 0,
+          "b": 0,
+          "alpha": 0
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 1200,
+            "height": 638
+          },
+          "destination": {
+            "left": 48,
+            "top": 60,
+            "width": 1104,
+            "height": 587
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": true,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space.",
+      "cover_sha256": "7d04e03f67c25e6da77ad29b6b4d7b9d3db35ce9b3bafbd24ab79d5b651d929b"
+    },
+    {
+      "slug": "12-days-of-christmas-in-europe",
+      "source_sha256": "4b2d3ecc309ef7739e118503dc8030f6350a72c306688e4c994dc872828bf1b7",
+      "source_file": "12-days-of-christmas-in-europe",
+      "source_image": "https://bfna.simplyas.com/assets/718192d4-1b12-4b02-b47b-ac01c6f21603",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 255,
+          "g": 255,
+          "b": 255,
+          "alpha": 1
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 768,
+            "height": 1136
+          },
+          "destination": {
+            "left": 48,
+            "top": 60,
+            "width": 540,
+            "height": 799
+          }
+        },
+        {
+          "source": {
+            "left": 0,
+            "top": 1136,
+            "width": 768,
+            "height": 1168
+          },
+          "destination": {
+            "left": 612,
+            "top": 60,
+            "width": 540,
+            "height": 821
+          }
+        }
+      ],
+      "method": "Sequential source strips arranged left-to-right without discarding pixels",
+      "preserves_alpha": false,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space. Consecutive strips inspected individually: cuts fall between complete content sections, reading order is down each column then left to right.",
+      "cover_sha256": "0bc75966a730f9c118a5cbe4d491edbbc4a02474e7767c1ffa8dcbc5b144a7ad"
+    },
+    {
+      "slug": "austrian-elections-infographic",
+      "source_sha256": "d9513fc9d7db6c3b4381fbae01c257e450df94626468b5a1d583271dd078053a",
+      "source_file": "austrian-elections-infographic",
+      "source_image": "https://bfna.simplyas.com/assets/8f8a567c-5ed0-47ce-8caa-55920f6b030e",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 255,
+          "g": 255,
+          "b": 255,
+          "alpha": 1
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 768,
+            "height": 542
+          },
+          "destination": {
+            "left": 48,
+            "top": 60,
+            "width": 1104,
+            "height": 779
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": false,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space.",
+      "cover_sha256": "3e69b8cedbe68538efae3d86e6d3bada21d2da270d04abf77803458ba646dbe4"
+    },
+    {
+      "slug": "breaking-barriers",
+      "source_sha256": "b01f563a9a27599d878d20f821f6c4ada35057ba7df6eaf602c19bd2f2ec4930",
+      "source_file": "breaking-barriers",
+      "source_image": "https://bfna.simplyas.com/assets/bf747306-dfaf-4825-802e-d3fe8d4095d6",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 255,
+          "g": 255,
+          "b": 255,
+          "alpha": 1
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 768,
+            "height": 576
+          },
+          "destination": {
+            "left": 48,
+            "top": 60,
+            "width": 1104,
+            "height": 828
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": false,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space.",
+      "cover_sha256": "c90c04a79cd13bde56848d1a07c78b6182c2925539a28a836f3a0a883e217338"
+    },
+    {
+      "slug": "breaking-down-barriers",
+      "source_sha256": "5246ed11be20a8d04282ffb28563438076df1b423ce6ea2ee1802002df02eeb9",
+      "source_file": "breaking-down-barriers",
+      "source_image": "https://bfna.simplyas.com/assets/3fbf793d-bba2-4bff-a210-4791f2734dc4",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 255,
+          "g": 255,
+          "b": 255,
+          "alpha": 1
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 768,
+            "height": 644
+          },
+          "destination": {
+            "left": 48,
+            "top": 60,
+            "width": 1104,
+            "height": 926
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": false,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space.",
+      "cover_sha256": "05c3042ac43f224c425949d75d9ba26a1bcb9f67bacb4ebe795c4b93a8c0e975"
+    },
+    {
+      "slug": "checkmate",
+      "source_sha256": "b8db559a87be87eae80161a3b3369feaca455bdc78f9d314833ef4399233be35",
+      "source_file": "checkmate",
+      "source_image": "https://bfna.simplyas.com/assets/d6a27404-04b6-4ec3-aea6-0f5d4447d712",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 255,
+          "g": 255,
+          "b": 255,
+          "alpha": 1
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 768,
+            "height": 632
+          },
+          "destination": {
+            "left": 48,
+            "top": 60,
+            "width": 1104,
+            "height": 909
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": false,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space.",
+      "cover_sha256": "cd9e86ea279928b78fb6a386d905a52433b2ccf7ec9a8725bd0fc2c84b4040e9"
+    },
+    {
+      "slug": "american-democracy-on-unstable-ground",
+      "source_sha256": "89c550caf1d0a95e81837c76905d6db081b465e435a147f8673e0b152481df1b",
+      "source_file": "american-democracy-on-unstable-ground",
+      "source_image": "https://bfna.simplyas.com/assets/001d7896-218f-49de-afa2-38c7ccf55c3d",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 255,
+          "g": 255,
+          "b": 255,
+          "alpha": 1
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 3300,
+            "height": 2550
+          },
+          "destination": {
+            "left": 48,
+            "top": 60,
+            "width": 1104,
+            "height": 853
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": false,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space.",
+      "cover_sha256": "7486ba908ec8ff728ede81102bb10bb7830847156abec5d53631372055053411"
+    },
+    {
+      "slug": "chinas-belt-and-road-initiative",
+      "source_sha256": "fab1705b806faf4afa4e3973c228327020151e96a9910be68220eaf44288d1d7",
+      "source_file": "chinas-belt-and-road-initiative",
+      "source_image": "https://bfna.simplyas.com/assets/3788db7e-0dc2-4955-a2c0-cf4343f547b3",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 255,
+          "g": 255,
+          "b": 255,
+          "alpha": 1
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 1200,
+            "height": 879
+          },
+          "destination": {
+            "left": 48,
+            "top": 60,
+            "width": 1104,
+            "height": 809
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": false,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space.",
+      "cover_sha256": "4e2b7f238febd2e4aadda7474d90afb62b40a0eb15601c8a8434686a8a2db79c"
+    },
+    {
+      "slug": "class-of-2023",
+      "source_sha256": "10b22454affd68d82d1def7ad3a3631ea61df2c65d867ebbdce440f1394b0cef",
+      "source_file": "class-of-2023",
+      "source_image": "https://bfna.simplyas.com/assets/9cd0a253-9247-4b9b-af7f-1176c3825065",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 0,
+          "g": 0,
+          "b": 0,
+          "alpha": 0
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 1400,
+            "height": 897
+          },
+          "destination": {
+            "left": 48,
+            "top": 60,
+            "width": 1104,
+            "height": 707
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": true,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space.",
+      "cover_sha256": "7fb8c08cc841d8e8ea08550fa2ea8eacca5651a5bddfc80ee01b0208c4f2e473"
+    },
+    {
+      "slug": "crisis-and-consequences",
+      "source_sha256": "306f13579b9b5be788c483a1ffa687b33fab2261c9650008cf60e774ffc15f03",
+      "source_file": "crisis-and-consequences",
+      "source_image": "https://bfna.simplyas.com/assets/3ff2d39e-e4f1-4f17-b9d1-5aa999b8dfb9",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 255,
+          "g": 255,
+          "b": 255,
+          "alpha": 1
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 3300,
+            "height": 2550
+          },
+          "destination": {
+            "left": 48,
+            "top": 60,
+            "width": 1104,
+            "height": 853
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": false,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space.",
+      "cover_sha256": "2e19c23dc686ba05b925f75531f273af26ed5c7a0424e394002be9c8ae78ea3a"
+    },
+    {
+      "slug": "democracys-canary-in-a-coal-mine-infographic",
+      "source_sha256": "e9a2500b2d89581482dce17fe3b959bc78a920aa42f8e9e910bd2aa1fce8f2ad",
+      "source_file": "democracys-canary-in-a-coal-mine-infographic",
+      "source_image": "https://bfna.simplyas.com/assets/9c4c403d-c1e6-44d1-aef0-6604189f3327",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 255,
+          "g": 255,
+          "b": 255,
+          "alpha": 1
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 1500,
+            "height": 3480
+          },
+          "destination": {
+            "left": 48,
+            "top": 60,
+            "width": 352,
+            "height": 817
+          }
+        },
+        {
+          "source": {
+            "left": 0,
+            "top": 3480,
+            "width": 1500,
+            "height": 2960
+          },
+          "destination": {
+            "left": 424,
+            "top": 60,
+            "width": 352,
+            "height": 695
+          }
+        },
+        {
+          "source": {
+            "left": 0,
+            "top": 6440,
+            "width": 1500,
+            "height": 3160
+          },
+          "destination": {
+            "left": 800,
+            "top": 60,
+            "width": 352,
+            "height": 742
+          }
+        }
+      ],
+      "method": "Sequential source strips arranged left-to-right without discarding pixels",
+      "preserves_alpha": false,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space. Consecutive strips inspected individually: cuts fall between complete content sections, reading order is down each column then left to right.",
+      "cover_sha256": "f3a82b94fc36b62a543cef39dfa0df1b572fb5174ee4a615cf6f0b9945ae7fdf"
+    },
+    {
+      "slug": "disrupting-democracy-vol-i",
+      "source_sha256": "2c68433e177cf61f061583c47b88fa65195451ab59b89e0425bef2882d63dda7",
+      "source_file": "disrupting-democracy-vol-i",
+      "source_image": "https://bfna.simplyas.com/assets/de05448d-76be-4d59-8fe0-de3ea0ce3f5d",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 0,
+          "g": 0,
+          "b": 0,
+          "alpha": 0
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 1000,
+            "height": 1000
+          },
+          "destination": {
+            "left": 100,
+            "top": 60,
+            "width": 1000,
+            "height": 1000
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": true,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space.",
+      "cover_sha256": "29807adeb7ddffedc9ad42a413151fa96fe39c066a1d02ff551603fa54605e8b"
+    },
+    {
+      "slug": "disrupting-democracy-vol-ii",
+      "source_sha256": "0c1bd541c831463fa9a595de4d05e2e31996633aa9bd79362722ee635320c41d",
+      "source_file": "disrupting-democracy-vol-ii",
+      "source_image": "https://bfna.simplyas.com/assets/2f98b570-d116-432c-81fe-3cf0004207cd",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 0,
+          "g": 0,
+          "b": 0,
+          "alpha": 0
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 1000,
+            "height": 1000
+          },
+          "destination": {
+            "left": 100,
+            "top": 60,
+            "width": 1000,
+            "height": 1000
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": true,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space.",
+      "cover_sha256": "54e595902da1b85daf232a4420748dc54ea45dee2347edea9ab66119e49f26a6"
+    },
+    {
+      "slug": "building-resilient-democracy-in-the-21st-century",
+      "source_sha256": "35810f4e3ca918a0d60d3ff4bb6df3ba1ad64a9d26bfe23138733e5f9114eb44",
+      "source_file": "building-resilient-democracy-in-the-21st-century",
+      "source_image": "https://bfna.simplyas.com/assets/1a23c6dd-b17b-4e5b-ac46-fbc66650995f",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 153,
+          "g": 155,
+          "b": 159,
+          "alpha": 1
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 6120,
+            "height": 5100
+          },
+          "destination": {
+            "left": 48,
+            "top": 60,
+            "width": 1104,
+            "height": 920
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": false,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space. Original flat background color extended and visually reviewed.",
+      "cover_sha256": "aa390a01e9e2a5d1e741fa8c3999cc9863acf755ebdfacb99e6bef4388570923",
+      "background_review": "Canvas extends the original flat corner color; no artwork changed."
+    },
+    {
+      "slug": "e-commerce-vs-digital-trade",
+      "source_sha256": "b088b20c1072f5a791215c77cd7c0cddc6ddbfaed25ec8375106c5de2b04c1b9",
+      "source_file": "e-commerce-vs-digital-trade",
+      "source_image": "https://bfna.simplyas.com/assets/8610e85b-8e75-4d8d-8a6f-d21c492fe7f1",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 255,
+          "g": 255,
+          "b": 255,
+          "alpha": 1
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 1200,
+            "height": 776
+          },
+          "destination": {
+            "left": 48,
+            "top": 60,
+            "width": 1104,
+            "height": 714
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": false,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space.",
+      "cover_sha256": "6c38ae7f0f8284a967c8bce1da2df0bfc9817c7c3aa5e3739d7956d8b5f2c40c"
+    },
+    {
+      "slug": "eu-enlargement",
+      "source_sha256": "c4cfda66dd83641364881f6b8cc247e7cea8d80772d14315be9581c1a739d058",
+      "source_file": "eu-enlargement",
+      "source_image": "https://bfna.simplyas.com/assets/5cf3fdea-5e26-4720-99f5-e398ba3fdb83",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 226,
+          "g": 227,
+          "b": 229,
+          "alpha": 1
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 1200,
+            "height": 927
+          },
+          "destination": {
+            "left": 48,
+            "top": 60,
+            "width": 1104,
+            "height": 853
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": false,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space. Original flat background color extended and visually reviewed.",
+      "cover_sha256": "f763d434b82d6dc239b27a27392ae1a4a983c88354d077bd7360e52fd385e1ac",
+      "background_review": "Canvas extends the original flat corner color; no artwork changed."
+    },
+    {
+      "slug": "europes-migration-muddle",
+      "source_sha256": "77cf9edcd2116e605357eaf67b626321ccaf63a2de0bfecba835a81d2eeb68d8",
+      "source_file": "europes-migration-muddle",
+      "source_image": "https://bfna.simplyas.com/assets/44294ac5-57a4-4c85-8d76-b9905c6d5ec1",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 255,
+          "g": 255,
+          "b": 255,
+          "alpha": 1
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 768,
+            "height": 994
+          },
+          "destination": {
+            "left": 213,
+            "top": 60,
+            "width": 773,
+            "height": 1000
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": false,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space.",
+      "cover_sha256": "5a8ab8caddef03bd723ee6299703f39a020f50673b61bfdba73b0231a91da854"
+    },
+    {
+      "slug": "fresco-or-fiasco",
+      "source_sha256": "bcfae1a215a13ee3874665d36efedf9d503ac336e638bc451686f88d8ed20488",
+      "source_file": "fresco-or-fiasco",
+      "source_image": "https://bfna.simplyas.com/assets/62e3e886-ad3e-4d8c-bc55-55d2c14c8ad8",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 1,
+          "g": 146,
+          "b": 71,
+          "alpha": 1
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 1200,
+            "height": 1800
+          },
+          "destination": {
+            "left": 266,
+            "top": 60,
+            "width": 667,
+            "height": 1000
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": false,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space. Original flat background color extended and visually reviewed.",
+      "cover_sha256": "b2fd4611cd68bb7b347b166813f885c96d05d72608f000190c46d084b4f2a356",
+      "background_review": "Canvas extends the original flat corner color; no artwork changed."
+    },
+    {
+      "slug": "germanys-newpolitik",
+      "source_sha256": "5d6c66c90a9587e7cf43df65a2ab36a88f8eb0ec7801ad49361e2845fe96f1ae",
+      "source_file": "germanys-newpolitik",
+      "source_image": "https://bfna.simplyas.com/assets/ac1c25a5-e072-4e2a-8c55-7675a88c7bf8",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 5,
+          "g": 55,
+          "b": 116,
+          "alpha": 1
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 768,
+            "height": 595
+          },
+          "destination": {
+            "left": 48,
+            "top": 60,
+            "width": 1104,
+            "height": 855
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": false,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space. Original flat background color extended and visually reviewed.",
+      "cover_sha256": "ca0001d5420eaf0b9aca3373b74682496d4746750f928a9b7a30840c23adbae5",
+      "background_review": "Canvas extends the original flat corner color; no artwork changed."
+    },
+    {
+      "slug": "germanys-political-shake-up",
+      "source_sha256": "eee795dd349dc77808353e86a499056e38b1efaa1f94c5e481907c9600ad089d",
+      "source_file": "germanys-political-shake-up",
+      "source_image": "https://bfna.simplyas.com/assets/b0ea93f4-cdba-495e-88bc-3618f8d56eaa",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 255,
+          "g": 255,
+          "b": 255,
+          "alpha": 1
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 3300,
+            "height": 2550
+          },
+          "destination": {
+            "left": 48,
+            "top": 60,
+            "width": 1104,
+            "height": 853
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": false,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space.",
+      "cover_sha256": "e51b258bec080811593f29fbdebf2e57c77048ec1c165f354006ed636e9a5492"
+    },
+    {
+      "slug": "greece-under-a-microscope",
+      "source_sha256": "c88a0596ef37dca34309b1f123bf3d6b7a3b99a523ed584df04868d7b4ea3e6f",
+      "source_file": "greece-under-a-microscope",
+      "source_image": "https://bfna.simplyas.com/assets/a8bb1d4c-0cf5-40e7-b9e9-ec8974d6108e",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 255,
+          "g": 255,
+          "b": 255,
+          "alpha": 1
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 768,
+            "height": 576
+          },
+          "destination": {
+            "left": 48,
+            "top": 60,
+            "width": 1104,
+            "height": 828
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": false,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space.",
+      "cover_sha256": "0e454214a4e61cbba19f9b11fcdc64e03b0e3ee36c0f570247dccbc28ce12339"
+    },
+    {
+      "slug": "greek-debt-crisis-sisyphus-latest-challenge",
+      "source_sha256": "0b7eb2a9f534cd8a36436654ae43694638499774498de754f3f137ab7e0b8083",
+      "source_file": "greek-debt-crisis-sisyphus-latest-challenge",
+      "source_image": "https://bfna.simplyas.com/assets/4366b907-b52f-40fa-a9e8-c5d78fce2df4",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 255,
+          "g": 255,
+          "b": 255,
+          "alpha": 1
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 768,
+            "height": 593
+          },
+          "destination": {
+            "left": 48,
+            "top": 60,
+            "width": 1104,
+            "height": 852
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": false,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space.",
+      "cover_sha256": "b7c484778454ee5c73596c6104b6cf22c37bc3950570524fe717d2bf1fa69f08"
+    },
+    {
+      "slug": "greek-debt-crisis-will-the-last-domino-stand",
+      "source_sha256": "febe40f98f07cdb347fe0537fbacc4ab20c7d91f27754c01fec8c7dfd7652029",
+      "source_file": "greek-debt-crisis-will-the-last-domino-stand",
+      "source_image": "https://bfna.simplyas.com/assets/1a1c134f-1fb3-4bbe-be88-a0898ae3bdab",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 255,
+          "g": 255,
+          "b": 255,
+          "alpha": 1
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 768,
+            "height": 593
+          },
+          "destination": {
+            "left": 48,
+            "top": 60,
+            "width": 1104,
+            "height": 852
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": false,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space.",
+      "cover_sha256": "f1501d5945321e0a0ce5457a49f2ced5f144003bc1c878c9049f8f64c135e161"
+    },
+    {
+      "slug": "health-care-on-life-support",
+      "source_sha256": "c98202c0266a6fceb4fde10890d049bf8fc3c1d5553c10ab3c81ec6aaba3edfe",
+      "source_file": "health-care-on-life-support",
+      "source_image": "https://bfna.simplyas.com/assets/c1add8ac-69f7-45ad-8bf3-40a1358e3b03",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 86,
+          "g": 85,
+          "b": 90,
+          "alpha": 1
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 768,
+            "height": 992
+          },
+          "destination": {
+            "left": 213,
+            "top": 60,
+            "width": 774,
+            "height": 1000
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": false,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space. Original flat background color extended and visually reviewed.",
+      "cover_sha256": "6c9214a565dc3898e2a514586f1193c856beb17ba959c70ab31a6d3cccc57cb4",
+      "background_review": "Canvas extends the original flat corner color; no artwork changed."
+    },
+    {
+      "slug": "hidden-layers-facebook-whistleblower-hearings-pittsburgh-outcomes",
+      "source_sha256": "aca4e8a8c5bb3cefbcbb8ee4a514f5c8c17d583d9057990204fc6f449349e08b",
+      "source_file": "hidden-layers-facebook-whistleblower-hearings-pittsburgh-outcomes",
+      "source_image": "https://bfna.simplyas.com/assets/89d79633-7f88-4e84-80f6-9e3ad64cd5f3",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 0,
+          "g": 0,
+          "b": 0,
+          "alpha": 0
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 2500,
+            "height": 2500
+          },
+          "destination": {
+            "left": 100,
+            "top": 60,
+            "width": 1000,
+            "height": 1000
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": true,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space.",
+      "cover_sha256": "43a280ef13406010f84207d9b079ddc2d6ea3c4cb990421c384b8aa6f1a32d27"
+    },
+    {
+      "slug": "hidden-layers-section-230-chat-gpt-the-tiktok-hearing",
+      "source_sha256": "52d7858595775ef21249826907ed304eb4f112dceec2ab211d0d995810bf9891",
+      "source_file": "hidden-layers-section-230-chat-gpt-the-tiktok-hearing",
+      "source_image": "https://bfna.simplyas.com/assets/e9547b62-6089-4059-b12c-4e49221377d7",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 0,
+          "g": 0,
+          "b": 0,
+          "alpha": 0
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 2500,
+            "height": 2500
+          },
+          "destination": {
+            "left": 100,
+            "top": 60,
+            "width": 1000,
+            "height": 1000
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": true,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space.",
+      "cover_sha256": "d5bf3884194c14a2520df1354edd8e062d7b7d5780b1632414e7cabbb5a36b7d"
+    },
+    {
+      "slug": "hidden-layers-us-eu-meeting-in-paris-congress-new-digital-platform-commission",
+      "source_sha256": "ff806f77f54157c40057a92967c70cf8c0eaa23e18b161f5195061f856af1124",
+      "source_file": "hidden-layers-us-eu-meeting-in-paris-congress-new-digital-platform-commission",
+      "source_image": "https://bfna.simplyas.com/assets/d65773d5-9510-4fd0-a842-1118541e536d",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 0,
+          "g": 0,
+          "b": 0,
+          "alpha": 0
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 2500,
+            "height": 2500
+          },
+          "destination": {
+            "left": 100,
+            "top": 60,
+            "width": 1000,
+            "height": 1000
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": true,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space.",
+      "cover_sha256": "ed65e7ee5ab02c421c0f9e64868ef64a5a5be4c47116a32e8e187b727b56fe40"
+    },
+    {
+      "slug": "hidden-layers-ttc-december-outcomes-the-white-houses-ai-bill-of-rights",
+      "source_sha256": "c2020c525a4f9adfe7da4c151be3187fde833b92897dfa1048f6847d3780ec65",
+      "source_file": "hidden-layers-ttc-december-outcomes-the-white-houses-ai-bill-of-rights",
+      "source_image": "https://bfna.simplyas.com/assets/ec40335d-192e-4b17-b7e7-85bb367dd01b",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 0,
+          "g": 0,
+          "b": 0,
+          "alpha": 0
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 2500,
+            "height": 2500
+          },
+          "destination": {
+            "left": 100,
+            "top": 60,
+            "width": 1000,
+            "height": 1000
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": true,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space.",
+      "cover_sha256": "7281c51cdb621ea3c8a056e1f5faf3c9397cb840d50c0d745299478c17110959"
+    },
+    {
+      "slug": "how-important-is-nato",
+      "source_sha256": "a24f3767dc9dbce5f7f810870b5cc8cd4b527eb4bf493a21633aa649ede83259",
+      "source_file": "how-important-is-nato",
+      "source_image": "https://bfna.simplyas.com/assets/db5c41f9-dd3e-4a5e-8845-4d3a304f5b89",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 255,
+          "g": 255,
+          "b": 255,
+          "alpha": 1
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 6667,
+            "height": 3750
+          },
+          "destination": {
+            "left": 48,
+            "top": 60,
+            "width": 1104,
+            "height": 621
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": false,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space.",
+      "cover_sha256": "17ab69c7e084a4ee2d533266bb1eca87b8edc194f55a4445c0564e638fd58300"
+    },
+    {
+      "slug": "major-european-migration-flows-from-the-1990s-to-present",
+      "source_sha256": "b8e42ba42c33baf4c429857194312931766895b0ac795fa2fa4d4dfb55c3d11d",
+      "source_file": "major-european-migration-flows-from-the-1990s-to-present",
+      "source_image": "https://bfna.simplyas.com/assets/19c66312-7151-4950-b603-c0d81a993cb2",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 255,
+          "g": 255,
+          "b": 255,
+          "alpha": 1
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 768,
+            "height": 1577
+          },
+          "destination": {
+            "left": 356,
+            "top": 60,
+            "width": 487,
+            "height": 1000
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": false,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space.",
+      "cover_sha256": "dd93af3facd656f6b8c6e0cb3b85cfba48d7cb7c2a4e2de6e86ebdc24d431f7d"
+    },
+    {
+      "slug": "nato-at-70-military-spending",
+      "source_sha256": "76dc7649e52e23b6a8e6fe9aa86aab351a9c0907385aa916f6ee391fa8ff7133",
+      "source_file": "nato-at-70-military-spending",
+      "source_image": "https://bfna.simplyas.com/assets/a440d070-d0d8-45d6-a6d1-b7dcfe1c0070",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 220,
+          "g": 235,
+          "b": 242,
+          "alpha": 1
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 1200,
+            "height": 927
+          },
+          "destination": {
+            "left": 48,
+            "top": 60,
+            "width": 1104,
+            "height": 853
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": false,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space. Original flat background color extended and visually reviewed.",
+      "cover_sha256": "6a62ee486fa6261bd4ed702d320049275f97de15372b69a12ca88cde7312f599",
+      "background_review": "Canvas extends the original flat corner color; no artwork changed."
+    },
+    {
+      "slug": "hidden-layers-ttc-edition-june-2023",
+      "source_sha256": "cff4c0294d116ec635e4e3fca6ef8b7688f7fafa239957d8c91a4c82a8fcc13b",
+      "source_file": "hidden-layers-ttc-edition-june-2023",
+      "source_image": "https://bfna.simplyas.com/assets/5f7b3494-8e38-4cd7-8d29-0573e17af53d",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 0,
+          "g": 0,
+          "b": 0,
+          "alpha": 0
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 2500,
+            "height": 2500
+          },
+          "destination": {
+            "left": 100,
+            "top": 60,
+            "width": 1000,
+            "height": 1000
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": true,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space.",
+      "cover_sha256": "4ed6a17d0c0da3bcd96398f0fc93ba4658688f39db0513670ae94b006d6fbfe3"
+    },
+    {
+      "slug": "pandemic-politics-in-germany",
+      "source_sha256": "9971d88e1b47ff2c6c39977e91d94abb9c0661c457653e1c0944312cc162ecac",
+      "source_file": "pandemic-politics-in-germany",
+      "source_image": "https://bfna.simplyas.com/assets/356d4143-371f-4a48-876d-3fba10bc4246",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 255,
+          "g": 255,
+          "b": 255,
+          "alpha": 1
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 3587,
+            "height": 3472
+          },
+          "destination": {
+            "left": 83,
+            "top": 60,
+            "width": 1033,
+            "height": 1000
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": false,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space.",
+      "cover_sha256": "3f0fbc30b0311e4969fa51b88aa43c5499f2135b04fca60092116222ab4ea7d2"
+    },
+    {
+      "slug": "people-led-innovation",
+      "source_sha256": "f7030973fe5af122275ec875228be0539f4e7325175ef6419284c0aba001a7ce",
+      "source_file": "people-led-innovation",
+      "source_image": "https://bfna.simplyas.com/assets/a6742a5e-fc88-4730-8f1b-1451b297fcd9",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 0,
+          "g": 0,
+          "b": 0,
+          "alpha": 0
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 1200,
+            "height": 1200
+          },
+          "destination": {
+            "left": 100,
+            "top": 60,
+            "width": 1000,
+            "height": 1000
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": true,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space.",
+      "cover_sha256": "b58a9ca6a13e467538090afc31e507a737acf7a180dff1a951c0a2a796fe8a70"
+    },
+    {
+      "slug": "profiting-in-the-age-of-covid-19",
+      "source_sha256": "b23b5388d4dce1ec49db81bd8680dfc7882f468ffea2c6d2bf2b140c764eb795",
+      "source_file": "profiting-in-the-age-of-covid-19",
+      "source_image": "https://bfna.simplyas.com/assets/27d87dbb-66a0-457c-afb9-9ef2573c05e2",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 255,
+          "g": 255,
+          "b": 255,
+          "alpha": 1
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 1200,
+            "height": 879
+          },
+          "destination": {
+            "left": 48,
+            "top": 60,
+            "width": 1104,
+            "height": 809
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": false,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space.",
+      "cover_sha256": "726a8383ca25efa141b48c37858472aa0e45921bd2958f156c67c187b3579a76"
+    },
+    {
+      "slug": "referendum-retrospective",
+      "source_sha256": "83270541f3634b62f466b7a5944c786540cfa4dee45b510063c0a30b436f882e",
+      "source_file": "referendum-retrospective",
+      "source_image": "https://bfna.simplyas.com/assets/175fcbb7-6de9-4954-81ba-38d3c8e99406",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 114,
+          "g": 115,
+          "b": 117,
+          "alpha": 1
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 768,
+            "height": 1600
+          },
+          "destination": {
+            "left": 360,
+            "top": 60,
+            "width": 480,
+            "height": 1000
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": false,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space. Original flat background color extended and visually reviewed.",
+      "cover_sha256": "67e4eac135efe9ff9aaf14a8a1728d2a3631b944272a3ea20b92650d85d2f04d",
+      "background_review": "Canvas extends the original flat corner color; no artwork changed."
+    },
+    {
+      "slug": "russias-economy",
+      "source_sha256": "51b1f95f7488f75d9d603a3f7f0f76dd406826eca56be0431603e7bb01084708",
+      "source_file": "russias-economy",
+      "source_image": "https://bfna.simplyas.com/assets/3553bc9d-d5bf-4b9d-bcd5-c4046b5ae5ef",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 255,
+          "g": 255,
+          "b": 255,
+          "alpha": 1
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 768,
+            "height": 461
+          },
+          "destination": {
+            "left": 48,
+            "top": 60,
+            "width": 1104,
+            "height": 663
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": false,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space.",
+      "cover_sha256": "5b46828028c367669837edfe17fe08d9c4f4997fe8e3699dcd0873ebc9f60f1e"
+    },
+    {
+      "slug": "season-1-episode-1-russian-cyber-attack-on-estonia",
+      "source_sha256": "ab2b004307666ec8dba897c4f1fe142bf4a0c2c250535d8772badf149b04f6ea",
+      "source_file": "season-1-episode-1-russian-cyber-attack-on-estonia",
+      "source_image": "https://bfna.simplyas.com/assets/10ae24f0-7380-40d1-8a56-e449d898ad8b",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 0,
+          "g": 0,
+          "b": 0,
+          "alpha": 0
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 1400,
+            "height": 897
+          },
+          "destination": {
+            "left": 48,
+            "top": 60,
+            "width": 1104,
+            "height": 707
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": true,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space.",
+      "cover_sha256": "118fd0b2783143cd4c39d0e26bdcd46d7e70f47556fb31725ee7aebfcd7a0c84"
+    },
+    {
+      "slug": "season-1-episode-2-madeleine-albright-on-the-u-s-response-to-the-conflict-in-kosovo",
+      "source_sha256": "1fd421717a54b42f8a123d601cf4603265d5124f67ddc2c06b0d5a557622e587",
+      "source_file": "season-1-episode-2-madeleine-albright-on-the-u-s-response-to-the-conflict-in-kosovo",
+      "source_image": "https://bfna.simplyas.com/assets/8047554a-cc86-4da3-b7cb-242d5a0e82f0",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 0,
+          "g": 0,
+          "b": 0,
+          "alpha": 0
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 1400,
+            "height": 897
+          },
+          "destination": {
+            "left": 48,
+            "top": 60,
+            "width": 1104,
+            "height": 707
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": true,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space.",
+      "cover_sha256": "5494a078c65d1514932c5c0b46e8ed67e4b19f77e5d13f585c0d0111d6697e18"
+    },
+    {
+      "slug": "season-1-episode-3-george-papandreou-on-the-euro-crisis-in-greece",
+      "source_sha256": "a04135485abd4e78b3f8698abcf7f7bd5cc28417cb0ed86f7ed9bc9c050f508d",
+      "source_file": "season-1-episode-3-george-papandreou-on-the-euro-crisis-in-greece",
+      "source_image": "https://bfna.simplyas.com/assets/0b4c1869-3fc3-456b-b750-90529527e4dd",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 0,
+          "g": 0,
+          "b": 0,
+          "alpha": 0
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 1400,
+            "height": 897
+          },
+          "destination": {
+            "left": 48,
+            "top": 60,
+            "width": 1104,
+            "height": 707
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": true,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space.",
+      "cover_sha256": "f02ee20b2feff3162408862fa87bd64205ad1767988131cebcf85eab7496d7ec"
+    },
+    {
+      "slug": "season-2-episode-1-susana-malcorra-on-the-uns-efforts-to-stop-the-spread-of-ebola",
+      "source_sha256": "22e30f931486e38d34d18e1a41641a43fc96bb59606c9007ff34801352cc0462",
+      "source_file": "season-2-episode-1-susana-malcorra-on-the-uns-efforts-to-stop-the-spread-of-ebola",
+      "source_image": "https://bfna.simplyas.com/assets/46df7dd9-4271-4ce9-a1c7-3ddcaf96f249",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 0,
+          "g": 0,
+          "b": 0,
+          "alpha": 0
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 1400,
+            "height": 897
+          },
+          "destination": {
+            "left": 48,
+            "top": 60,
+            "width": 1104,
+            "height": 707
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": true,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space.",
+      "cover_sha256": "fbe43188e742cd2e5b6be35731acb1d2bb84887e70dee7c297e7a25b91693329"
+    },
+    {
+      "slug": "season-2-episode-3-federica-mogherini-on-negotiating-the-iran-nuclear-deal",
+      "source_sha256": "2ec70bc92fbc22868740ec8be3c41fd68c909477b6eef7cb6fc415749220af4c",
+      "source_file": "season-2-episode-3-federica-mogherini-on-negotiating-the-iran-nuclear-deal",
+      "source_image": "https://bfna.simplyas.com/assets/ef943ef9-2e45-4292-bde0-f2506a8f578f",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 0,
+          "g": 0,
+          "b": 0,
+          "alpha": 0
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 1400,
+            "height": 897
+          },
+          "destination": {
+            "left": 48,
+            "top": 60,
+            "width": 1104,
+            "height": 707
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": true,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space.",
+      "cover_sha256": "30b71c2f1e6f98a274b53eba0c930fe3571732a32bbeeb03f4d6b3ee8a41046e"
+    },
+    {
+      "slug": "season-2-episode-2-malcolm-rifkind-on-the-transfer-of-power-in-hong-kong",
+      "source_sha256": "4305b88a72f9be1c47adeb1197ee439993448b29c60018e301e53f7ef970c7c8",
+      "source_file": "season-2-episode-2-malcolm-rifkind-on-the-transfer-of-power-in-hong-kong",
+      "source_image": "https://bfna.simplyas.com/assets/55545ea9-9de5-4eee-9a93-ce402cc59263",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 0,
+          "g": 0,
+          "b": 0,
+          "alpha": 0
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 1400,
+            "height": 897
+          },
+          "destination": {
+            "left": 48,
+            "top": 60,
+            "width": 1104,
+            "height": 707
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": true,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space.",
+      "cover_sha256": "ae79a8e0a7a8601d44472042f9fb3be3f27f05c7b9dc626c3b932b07b85423cc"
+    },
+    {
+      "slug": "social-inequity",
+      "source_sha256": "25694a14fa5c43aab47e26ffad50c762b491f67d7238d75efe340c0c18f21b18",
+      "source_file": "social-inequity",
+      "source_image": "https://bfna.simplyas.com/assets/2bf7b688-fb67-4f78-a562-891a2613a6c7",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 255,
+          "g": 255,
+          "b": 255,
+          "alpha": 1
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 768,
+            "height": 1182
+          },
+          "destination": {
+            "left": 275,
+            "top": 60,
+            "width": 650,
+            "height": 1000
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": false,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space.",
+      "cover_sha256": "0a66b5aad2a9fc01e76b8ad9dd8598a843eb2c6036635d7d21541b0f7925df89"
+    },
+    {
+      "slug": "something-to-snack-on",
+      "source_sha256": "6f7a3ac84c3eaee8d521c152fba85e74e59f8e8156f87f06c401a8d91d208967",
+      "source_file": "something-to-snack-on",
+      "source_image": "https://bfna.simplyas.com/assets/19d08521-95f5-4764-ad41-473d9f6604a5",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 255,
+          "g": 255,
+          "b": 255,
+          "alpha": 1
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 768,
+            "height": 1365
+          },
+          "destination": {
+            "left": 318,
+            "top": 60,
+            "width": 563,
+            "height": 1000
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": false,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space.",
+      "cover_sha256": "2050d17d3915a617ccdd83b72b7c8e5dbfc355d0c80d63051b6aac7f42998b26"
+    },
+    {
+      "slug": "the-downing-of-turkish-russian-relations",
+      "source_sha256": "f9616848020464df966ef71056841f43469da939bee14efa763433c10b44112a",
+      "source_file": "the-downing-of-turkish-russian-relations",
+      "source_image": "https://bfna.simplyas.com/assets/5aa47202-7377-4712-89e5-4319d68fccef",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 255,
+          "g": 255,
+          "b": 255,
+          "alpha": 1
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 768,
+            "height": 994
+          },
+          "destination": {
+            "left": 213,
+            "top": 60,
+            "width": 773,
+            "height": 1000
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": false,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space.",
+      "cover_sha256": "0d352b56a9a95d524cf4f427cde46a6e559468282507384eba9a381966ba5aee"
+    },
+    {
+      "slug": "the-demander-in-chief",
+      "source_sha256": "abe1913028c3376a496c32b926c204b3747034917bc149b5e21213b7fc090d25",
+      "source_file": "the-demander-in-chief",
+      "source_image": "https://bfna.simplyas.com/assets/4c709b17-9e40-422a-a95f-4602ffcbc255",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 255,
+          "g": 255,
+          "b": 255,
+          "alpha": 1
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 3300,
+            "height": 4200
+          },
+          "destination": {
+            "left": 207,
+            "top": 60,
+            "width": 786,
+            "height": 1000
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": false,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space.",
+      "cover_sha256": "b782b82d41f362680813c0b37c8c486f498bb8d829c8db49f30cd0c491c7bd84"
+    },
+    {
+      "slug": "the-economics-of-brexit",
+      "source_sha256": "e56e232ace86165e6e0afac417082bb90ec015f391a5810196edd5695024531e",
+      "source_file": "the-economics-of-brexit",
+      "source_image": "https://bfna.simplyas.com/assets/e7cb07b8-902e-4370-a231-f27cc1cbf01d",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 255,
+          "g": 255,
+          "b": 255,
+          "alpha": 1
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 768,
+            "height": 994
+          },
+          "destination": {
+            "left": 213,
+            "top": 60,
+            "width": 773,
+            "height": 1000
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": false,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space.",
+      "cover_sha256": "32ab392ef434b0ec0eebb83be6259ab7214d17790131496c95b23e876aa1e315"
+    },
+    {
+      "slug": "the-eus-arc-of-instability",
+      "source_sha256": "f43e06b9e72866714888cdaaa20ca4fa3747c03c77eb176c0cf6e4806ee5cb0d",
+      "source_file": "the-eus-arc-of-instability",
+      "source_image": "https://bfna.simplyas.com/assets/ece3c569-eb91-4cfc-830f-693bc486bee7",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 20,
+          "g": 5,
+          "b": 0,
+          "alpha": 1
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 768,
+            "height": 768
+          },
+          "destination": {
+            "left": 100,
+            "top": 60,
+            "width": 1000,
+            "height": 1000
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": false,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space. Original flat background color extended and visually reviewed.",
+      "cover_sha256": "ee289663f95bf3300496a14d32bcf2393bd65c885468fd55b99758582747558d",
+      "background_review": "Canvas extends the original flat corner color; no artwork changed."
+    },
+    {
+      "slug": "the-long-road-to-rio",
+      "source_sha256": "be752b31fb9c62d3969bb315f6a542ce93fe119ebbfd0d40e08e4d95054bdf48",
+      "source_file": "the-long-road-to-rio",
+      "source_image": "https://bfna.simplyas.com/assets/b7e446de-28eb-42f7-90cd-ca5c3ac3dcb5",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 82,
+          "g": 163,
+          "b": 46,
+          "alpha": 1
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 768,
+            "height": 1344
+          },
+          "destination": {
+            "left": 314,
+            "top": 60,
+            "width": 571,
+            "height": 1000
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": false,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space. Original flat background color extended and visually reviewed.",
+      "cover_sha256": "6583376d5275a2c8c364615d8a2e33ab1ce84b6aac315d405b3e369b922e43ad",
+      "background_review": "Canvas extends the original flat corner color; no artwork changed."
+    },
+    {
+      "slug": "the-many-shades-of-democracy",
+      "source_sha256": "161680badaf63e6a894c3b70294aa4e976d548dc47b3af228534bcf9bef92056",
+      "source_file": "the-many-shades-of-democracy",
+      "source_image": "https://bfna.simplyas.com/assets/7e7fbf71-9e39-4449-9e62-493984245264",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 161,
+          "g": 40,
+          "b": 133,
+          "alpha": 1
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 1200,
+            "height": 1006
+          },
+          "destination": {
+            "left": 48,
+            "top": 60,
+            "width": 1104,
+            "height": 926
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": false,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space. Original flat background color extended and visually reviewed.",
+      "cover_sha256": "b18917e85346d05b581e964195584e87ce6fbe2a0514263b67df28ef48cf911d",
+      "background_review": "Canvas extends the original flat corner color; no artwork changed."
+    },
+    {
+      "slug": "the-french-presidential-election-whos-in-the-running",
+      "source_sha256": "70387b8ae8ab89f7db7e6e707ad15375f532776d4ffcb08f6319ec388cbcdd35",
+      "source_file": "the-french-presidential-election-whos-in-the-running",
+      "source_image": "https://bfna.simplyas.com/assets/783ee857-10b8-4bd1-9913-b69a48a10b1d",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 255,
+          "g": 255,
+          "b": 255,
+          "alpha": 1
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 3300,
+            "height": 1800
+          },
+          "destination": {
+            "left": 48,
+            "top": 60,
+            "width": 1104,
+            "height": 602
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": false,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space.",
+      "cover_sha256": "b8d66e7181432aa06ad3538fb9ffcef47c67c3572d5e12548d6502cf37faa70a"
+    },
+    {
+      "slug": "the-no-collar-economy-vol-i",
+      "source_sha256": "d5b7e7cd240ddf7e2614359d821b83cea921e0029d19518fba3a17a3c7b69851",
+      "source_file": "the-no-collar-economy-vol-i",
+      "source_image": "https://bfna.simplyas.com/assets/2a7213f2-044c-44f8-a66a-58bdba4ffed3",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 0,
+          "g": 0,
+          "b": 0,
+          "alpha": 0
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 1000,
+            "height": 1000
+          },
+          "destination": {
+            "left": 100,
+            "top": 60,
+            "width": 1000,
+            "height": 1000
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": true,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space.",
+      "cover_sha256": "1b38d6fe8bd55d5b067988857d8c6053b9fdf63bfdb4e01b3804e226f8c5c3c1"
+    },
+    {
+      "slug": "the-no-collar-economy-vol-ii",
+      "source_sha256": "c7ae86a18678e8094557c7eb51351ac938f72edc38b47982d91d08821fd56eea",
+      "source_file": "the-no-collar-economy-vol-ii",
+      "source_image": "https://bfna.simplyas.com/assets/5be82944-713f-4304-a699-d784964c71b2",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 0,
+          "g": 0,
+          "b": 0,
+          "alpha": 0
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 1000,
+            "height": 1000
+          },
+          "destination": {
+            "left": 100,
+            "top": 60,
+            "width": 1000,
+            "height": 1000
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": true,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space.",
+      "cover_sha256": "8045103ef6f61dfb25ce10c88cbef7afe31f64989d26d8dfec10208bf2003648"
+    },
+    {
+      "slug": "the-transition-2020",
+      "source_sha256": "2b66cff3922aebb883a6a39b582cc4ed51542ac48294118419ac0877026383f3",
+      "source_file": "the-transition-2020",
+      "source_image": "https://bfna.simplyas.com/assets/ab1b6c7e-cfcc-4fa0-b55f-1501dc933073",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 0,
+          "g": 0,
+          "b": 0,
+          "alpha": 0
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 1400,
+            "height": 897
+          },
+          "destination": {
+            "left": 48,
+            "top": 60,
+            "width": 1104,
+            "height": 707
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": true,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space.",
+      "cover_sha256": "8f603c0c65a0d424791f85202e41667fae62d7c5650b231b1be8382043ef9da7"
+    },
+    {
+      "slug": "the-ukraine-crisis-which-countries-are-accepting-refugees-within-the-transatlantic-community",
+      "source_sha256": "794c5036721ab1f303bc6e78e1e7995c915c2d34e6f7cc07af5a261c1e1dd708",
+      "source_file": "the-ukraine-crisis-which-countries-are-accepting-refugees-within-the-transatlantic-community",
+      "source_image": "https://bfna.simplyas.com/assets/a8109b87-913e-480a-9f12-9e644af3ae3a",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 255,
+          "g": 255,
+          "b": 255,
+          "alpha": 1
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 1920,
+            "height": 1080
+          },
+          "destination": {
+            "left": 48,
+            "top": 60,
+            "width": 1104,
+            "height": 621
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": false,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space.",
+      "cover_sha256": "3af612f612731cf34cc9f75c418aed9cb85364bd0e6701a70c4c14e1d14df383"
+    },
+    {
+      "slug": "the-post-pandemic-future-of-work",
+      "source_sha256": "a617d9d57db3a89c4b39dcfb3834ce58da09714d394b9107d0c558d7754e9df3",
+      "source_file": "the-post-pandemic-future-of-work",
+      "source_image": "https://bfna.simplyas.com/assets/9bf10969-23ad-4d33-93ec-7589ceba092c",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 255,
+          "g": 255,
+          "b": 255,
+          "alpha": 1
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 3300,
+            "height": 2550
+          },
+          "destination": {
+            "left": 48,
+            "top": 60,
+            "width": 1104,
+            "height": 853
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": false,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space.",
+      "cover_sha256": "60da689d46d268d9dfd4510bd9f9de09a87d20ee0c2e64348c317b30e719904d"
+    },
+    {
+      "slug": "trade-beyond-the-tweet",
+      "source_sha256": "2fe56968c27610853da0f5b29e6b3c756fac565d0fdac5633114ae7abf39f987",
+      "source_file": "trade-beyond-the-tweet",
+      "source_image": "https://bfna.simplyas.com/assets/945a0c19-9ba6-4ad6-9b78-c7b96a4ce642",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 255,
+          "g": 255,
+          "b": 255,
+          "alpha": 1
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 768,
+            "height": 644
+          },
+          "destination": {
+            "left": 48,
+            "top": 60,
+            "width": 1104,
+            "height": 926
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": false,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space.",
+      "cover_sha256": "020ad9f2f9da4b0eb8882e0fb78b36e677f27e277e022e186d692403c92aff99"
+    },
+    {
+      "slug": "trade-facts-and-figures",
+      "source_sha256": "e3d409b377d8c085a7927a8287c4e13bdebcfafb813afd475e32fdd01eada92b",
+      "source_file": "trade-facts-and-figures",
+      "source_image": "https://bfna.simplyas.com/assets/866766aa-0029-4c00-940c-12f92daecc87",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 255,
+          "g": 255,
+          "b": 255,
+          "alpha": 1
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 768,
+            "height": 576
+          },
+          "destination": {
+            "left": 48,
+            "top": 60,
+            "width": 1104,
+            "height": 828
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": false,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space.",
+      "cover_sha256": "f6b44bc08e2ac2890bdb203617c2d3589e2c249dcc071a95ac00eab2244f3906"
+    },
+    {
+      "slug": "trans-atlantic-tweeting",
+      "source_sha256": "2082f1a6fefd0b21dcf554c1604435d5072d12fcf352a983f8906911fd769367",
+      "source_file": "trans-atlantic-tweeting",
+      "source_image": "https://bfna.simplyas.com/assets/81b6b26a-a401-485c-b9a5-a747de98fbba",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 255,
+          "g": 255,
+          "b": 255,
+          "alpha": 1
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 768,
+            "height": 1344
+          },
+          "destination": {
+            "left": 314,
+            "top": 60,
+            "width": 571,
+            "height": 1000
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": false,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space.",
+      "cover_sha256": "846f6daec14d17a082dcad2f3b280b2b712ad36cc054f482876d9414a01ddd42"
+    },
+    {
+      "slug": "tiktoks-mixed-signals",
+      "source_sha256": "2fead5fb3659087f8a55d81b456a4d2706fc94742dfd64f42135b0caa74e4693",
+      "source_file": "tiktoks-mixed-signals",
+      "source_image": "https://bfna.simplyas.com/assets/e1511bc2-fc12-46dd-9726-80e64dcb1010",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 255,
+          "g": 255,
+          "b": 255,
+          "alpha": 1
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 5775,
+            "height": 5700
+          },
+          "destination": {
+            "left": 93,
+            "top": 60,
+            "width": 1013,
+            "height": 1000
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": false,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space.",
+      "cover_sha256": "3ef366471711983f1f0a40ac3f53519f75bc5ae719c42934b2d3abddeaab6694"
+    },
+    {
+      "slug": "transatlantic-trends-2021",
+      "source_sha256": "efe0b0ae1f21bac4ef73435e862c94f843f36bb8cb3736f0fa70657cf4da92c3",
+      "source_file": "transatlantic-trends-2021",
+      "source_image": "https://bfna.simplyas.com/assets/dac8406b-cdf5-4f8b-aca1-6d82c9e8f92f",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 0,
+          "g": 0,
+          "b": 0,
+          "alpha": 0
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 2500,
+            "height": 2500
+          },
+          "destination": {
+            "left": 100,
+            "top": 60,
+            "width": 1000,
+            "height": 1000
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": true,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space.",
+      "cover_sha256": "7a74b98e9e2ac54d7b529d4f1f1685f12cf96dc9013185cb1d72069052427525"
+    },
+    {
+      "slug": "transponder-issue-1-the-transatlantic-relationship",
+      "source_sha256": "498cbe8d964dda186816e5aac0447684a90e30117e748c2a049e9519c5a89547",
+      "source_file": "transponder-issue-1-the-transatlantic-relationship",
+      "source_image": "https://bfna.simplyas.com/assets/23b257dd-6e15-4590-bb50-433a20cbcc22",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 0,
+          "g": 0,
+          "b": 0,
+          "alpha": 0
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 1500,
+            "height": 1500
+          },
+          "destination": {
+            "left": 100,
+            "top": 60,
+            "width": 1000,
+            "height": 1000
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": true,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space.",
+      "cover_sha256": "2a316a4afb18b2361c68d35180a9aa014a391ad0f8a68134857a73dc12684cd9"
+    },
+    {
+      "slug": "transatlantic-trends-2022",
+      "source_sha256": "ed6577f43f81ed092aa7210ec4d0a093894e9a346161c2ac521cd083e8e6f6ae",
+      "source_file": "transatlantic-trends-2022",
+      "source_image": "https://bfna.simplyas.com/assets/1452f97d-48e3-4411-bf54-d604b1febfa6",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 0,
+          "g": 0,
+          "b": 0,
+          "alpha": 0
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 2500,
+            "height": 2500
+          },
+          "destination": {
+            "left": 100,
+            "top": 60,
+            "width": 1000,
+            "height": 1000
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": true,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space.",
+      "cover_sha256": "0a5a8f245380a19f249dbd63df5d924509497844e9748410255aebb7e1c46bb6"
+    },
+    {
+      "slug": "transponder-issue-3-resilience",
+      "source_sha256": "48a9edaac995c7edaa9657864f6ae0e570284ec4d7f2364cea033a5ee9a7bb16",
+      "source_file": "transponder-issue-3-resilience",
+      "source_image": "https://bfna.simplyas.com/assets/ce4ba092-f9c1-4206-b538-520d49fe7bb6",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 0,
+          "g": 0,
+          "b": 0,
+          "alpha": 0
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 2500,
+            "height": 2500
+          },
+          "destination": {
+            "left": 100,
+            "top": 60,
+            "width": 1000,
+            "height": 1000
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": true,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space.",
+      "cover_sha256": "d7341e8c30cfdc9f12fc78b02ea20095f5e3346a5b44008aecc91106a3e1ceef"
+    },
+    {
+      "slug": "transponder-issue-2-cities",
+      "source_sha256": "362e5075dda4e2088c458302d7d99ce3e9467bc9b3a08c671cb5cf8bd7666cf0",
+      "source_file": "transponder-issue-2-cities",
+      "source_image": "https://bfna.simplyas.com/assets/3ada8723-840e-4c04-9b7f-ee8cc170545d",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 0,
+          "g": 0,
+          "b": 0,
+          "alpha": 0
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 2500,
+            "height": 2500
+          },
+          "destination": {
+            "left": 100,
+            "top": 60,
+            "width": 1000,
+            "height": 1000
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": true,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space.",
+      "cover_sha256": "7ed48fad1a47220020a3cd9fda51a65bbbbe6fd81b126ecb39cff41995a87ee2"
+    },
+    {
+      "slug": "trumps-teetering-trade-policy",
+      "source_sha256": "227cfb946b0be5a89abe3d2cdfaea46563f18a006d5610f8d315db93ccafd4e1",
+      "source_file": "trumps-teetering-trade-policy",
+      "source_image": "https://bfna.simplyas.com/assets/ccab73a3-7ebf-44d1-b656-66e91edbd069",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 204,
+          "g": 240,
+          "b": 252,
+          "alpha": 1
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 768,
+            "height": 823
+          },
+          "destination": {
+            "left": 133,
+            "top": 60,
+            "width": 933,
+            "height": 1000
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": false,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space. Original flat background color extended and visually reviewed.",
+      "cover_sha256": "756b01a4f47be73c066fb8374bd00fb4da0bb8aaeaeaf819b023ffbcf4499c92",
+      "background_review": "Canvas extends the original flat corner color; no artwork changed."
+    },
+    {
+      "slug": "trumps-twitter-diplomacy",
+      "source_sha256": "278a383186be5b507a8cfb4bc9013f9049660ac887c81d221301fb86f5a6b192",
+      "source_file": "trumps-twitter-diplomacy",
+      "source_image": "https://bfna.simplyas.com/assets/2e5e7063-1a08-490e-89e6-41b3970cb0a7",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 255,
+          "g": 255,
+          "b": 255,
+          "alpha": 1
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 768,
+            "height": 577
+          },
+          "destination": {
+            "left": 48,
+            "top": 60,
+            "width": 1104,
+            "height": 829
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": false,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space.",
+      "cover_sha256": "c3ad6b9cd1f91e2356b7f118f2149e692aa333c5a15fc8a48e10062073bf27a3"
+    },
+    {
+      "slug": "was-2018-really-the-year-of-the-woman",
+      "source_sha256": "080603b41fe426650166c7b4d625e0f6e191199bce6fd7a0b1d0c282c9ab7aed",
+      "source_file": "was-2018-really-the-year-of-the-woman",
+      "source_image": "https://bfna.simplyas.com/assets/adaddb51-40f2-4a08-a1c6-959747b1876d",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 60,
+          "g": 62,
+          "b": 65,
+          "alpha": 1
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 768,
+            "height": 644
+          },
+          "destination": {
+            "left": 48,
+            "top": 60,
+            "width": 1104,
+            "height": 926
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": false,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space. Original flat background color extended and visually reviewed.",
+      "cover_sha256": "98569bde1500a77cf06ca0cab68d3604836b50fb4a7759c0778dc35ae56f25c4",
+      "background_review": "Canvas extends the original flat corner color; no artwork changed."
+    },
+    {
+      "slug": "what-do-europes-right-wing-parties-want",
+      "source_sha256": "b6d6a6706c57a59180249984dacdce03448c61c4fd230fd4d7e3065ea523636f",
+      "source_file": "what-do-europes-right-wing-parties-want",
+      "source_image": "https://bfna.simplyas.com/assets/5f8fc5f9-e347-4894-b8ec-11738ce4ea77",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 255,
+          "g": 255,
+          "b": 255,
+          "alpha": 1
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 1200,
+            "height": 1358
+          },
+          "destination": {
+            "left": 158,
+            "top": 60,
+            "width": 884,
+            "height": 1000
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": false,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space.",
+      "cover_sha256": "916e93d1cc017d25ab58bf584f652a34851a45c43b521c3eff449fc109de9eaa"
+    },
+    {
+      "slug": "when-piigs-fly-or-fall",
+      "source_sha256": "8e88fc75b923c66612718549f6c48437eaae80ed22e081515e50870a2982cd7b",
+      "source_file": "when-piigs-fly-or-fall",
+      "source_image": "https://bfna.simplyas.com/assets/a4707efb-0a98-41bd-b2f3-f426b32139e5",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 255,
+          "g": 255,
+          "b": 255,
+          "alpha": 1
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 768,
+            "height": 672
+          },
+          "destination": {
+            "left": 48,
+            "top": 60,
+            "width": 1104,
+            "height": 966
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": false,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space.",
+      "cover_sha256": "a786448da7102dbc4388dae50cf1d2f6b3ffa8f741e94c3521c66bb6d7af659f"
+    },
+    {
+      "slug": "uncivil-war",
+      "source_sha256": "17f53fee5f739eea921a5dbcf98ec3d5422481794bf4883d5e67cc2eb0b96bd1",
+      "source_file": "uncivil-war",
+      "source_image": "https://bfna.simplyas.com/assets/dbb7a756-2127-4b17-b8f6-898bd60c4df7",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 12,
+          "g": 38,
+          "b": 61,
+          "alpha": 1
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 1920,
+            "height": 1080
+          },
+          "destination": {
+            "left": 48,
+            "top": 60,
+            "width": 1104,
+            "height": 621
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": false,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space.",
+      "cover_sha256": "737ded0c3b80df2e19bbafc121f31a2cfada7c3dacae2d297006906267bea0d8"
+    },
+    {
+      "slug": "which-countries-are-regulating-ai",
+      "source_sha256": "fa6ac17fbf152dcf2da24018e71f3f21647ba55a9d5c9f2d8d6e1703b6b7d8fd",
+      "source_file": "which-countries-are-regulating-ai",
+      "source_image": "https://bfna.simplyas.com/assets/d066f331-a802-4c48-b7a9-5038a805ee14",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 255,
+          "g": 255,
+          "b": 255,
+          "alpha": 1
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 3840,
+            "height": 2160
+          },
+          "destination": {
+            "left": 48,
+            "top": 60,
+            "width": 1104,
+            "height": 621
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": false,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space.",
+      "cover_sha256": "5b4342826020faa8ea70ef2acf95c6c2827559d1497ba49c40138cc8426d95e3"
+    },
+    {
+      "slug": "transponder-issue-4-identity",
+      "source_sha256": "c3e4cbf1ed00b8002ba759a67ce7d25e8fc9bec49ce331113cbf2bb99176aef6",
+      "source_file": "transponder-issue-4-identity",
+      "source_image": "https://bfna.simplyas.com/assets/9c9855fe-5244-4b8e-b562-1a419adce3ac",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 0,
+          "g": 0,
+          "b": 0,
+          "alpha": 0
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 2500,
+            "height": 2500
+          },
+          "destination": {
+            "left": 100,
+            "top": 60,
+            "width": 1000,
+            "height": 1000
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": true,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space.",
+      "cover_sha256": "213ba49e847defeb0c5a1f9cf31a0a9f53bc3607475be3780b18dd56255dc5de"
+    },
+    {
+      "slug": "whos-helping-the-western-balkans-with-covid-19",
+      "source_sha256": "fca2d8033c0e5302a52f900afbfeb3e3925ebb0ca0b73cef4aa58343b8698ab5",
+      "source_file": "whos-helping-the-western-balkans-with-covid-19",
+      "source_image": "https://bfna.simplyas.com/assets/83b44c90-4b45-4c48-b5d4-f4d18229fe8d",
+      "canvas": {
+        "width": 1200,
+        "height": 1500,
+        "background": {
+          "r": 255,
+          "g": 255,
+          "b": 255,
+          "alpha": 1
+        }
+      },
+      "pieces": [
+        {
+          "source": {
+            "left": 0,
+            "top": 0,
+            "width": 2510,
+            "height": 1894
+          },
+          "destination": {
+            "left": 48,
+            "top": 60,
+            "width": 1104,
+            "height": 833
+          }
+        }
+      ],
+      "method": "Whole source fitted above title-safe area without cropping",
+      "preserves_alpha": false,
+      "review_status": "approved",
+      "review": "Original and composed cover compared side-by-side; full source retained, no text redraw, 4:5 canvas, bottom title-safe space.",
+      "cover_sha256": "0aea292e9398283bbf15efa3a7d180df24054b4061277befb42c699be9db7bf2"
+    }
+  ]
+}

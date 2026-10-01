@@ -1,0 +1,32 @@
+{
+  "graphic-images": {
+    "source_image": null,
+    "image": "https://bfna.simplyas.com/assets/fe4660dd-aff8-42ad-a4af-c69b9c0db890",
+    "provenance": "Existing BFNA artwork: Graphic Images: Autocrats and the Use of Power (insights/graphic-images-autocrats-and-the-use-of-power); selected 2026-10-01."
+  },
+  "election-analysis": {
+    "source_image": null,
+    "image": "https://bfna.simplyas.com/assets/d54c067d-3df1-459d-a315-ea875791d621",
+    "provenance": "Existing BFNA artwork: Transponder Issue #6: Elections (insights/transponder-issue-6-elections); selected 2026-10-01."
+  },
+  "astropolitics": {
+    "source_image": null,
+    "image": "https://images.ctfassets.net/9vgcz0fppkl3/7LuLy3Xi4N1tasm60f1Fln/bff048befcff7288b5c866b0a9773038/Space_Satelite_Image.jpg",
+    "provenance": "Existing BFNA artwork: Astropolitics | Bertelsmann Site Dedicated to Geopolitics (insights/astropolitics-bertelsmann-site-dedicated-to-geopolitics); selected 2026-10-01."
+  },
+  "indo-pacific-nexus": {
+    "source_image": null,
+    "image": "https://bfna.simplyas.com/assets/b9199fea-11e6-413a-8f3a-4f4a8894ea13",
+    "provenance": "Existing BFNA artwork: New Site | Indo-Pacific Nexus (insights/new-site-indo-pacific-nexus); selected 2026-10-01."
+  },
+  "critical-minerals": {
+    "source_image": null,
+    "image": "https://images.ctfassets.net/9vgcz0fppkl3/2Flo0BwnH6AiwcVwGdZ3gj/cf16a3b65a183cc9a76aa0cae38b83bd/BFNA_Lithium_Rising_POSTER_LANDSCAPEw__laurel.jpg",
+    "provenance": "Existing BFNA artwork: Documentary Film | Lithium Rising: The Race for Critical Minerals (insights/documentary-film-lithium-rising-the-race-for-critical-minerals); selected 2026-10-01."
+  },
+  "how-to-fix-democracy": {
+    "source_image": "https://bfna.simplyas.com/assets/57132cc8-5ebd-4e2c-a8c2-73ec6c1c014e",
+    "image": "/images/projects/how-to-fix-democracy-2026.jpg",
+    "provenance": "Browser screenshot of https://www.howtofixdemocracy.org/ on 2026-10-01, 1280 × 720; requested replacement for the old microsite screenshot."
+  }
+}

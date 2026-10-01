@@ -2,7 +2,7 @@
   "slug": "profiting-in-the-age-of-covid-19",
   "heading": "Profiting in the Age of COVID-19",
   "subheading": null,
-  "excerpt": null,
+  "excerpt": "While COVID-19 sent financial markets tumbling, some companies gained. This infographic examines the businesses benefiting from the crisis.",
   "content": "In addition to the significant human cost of the pandemic, the coronavirus (COVID-19) has rattled international markets, sending stocks surging one day and crashing the next. The Trump Administration has repeatedly attempted to play down concerns about the virus, claiming that fears are overblown and due to politicking in an election year. But markets disagree. Year-to-date, Hong Kong’s Hang Seng Index is down over 20 percent, while Germany’s DAX is down over 29 percent. U.S. indexes such as the Dow Jones and S&P 500 have lost roughly 30 percent. While markets have suffered overall, a select group of companies have made economic gains in connection with the virus. What do they produce, and how much have they gained?",
   "image": "https://bfna.simplyas.com/assets/27d87dbb-66a0-457c-afb9-9ef2573c05e2",
   "video_url": null,
@@ -23,5 +23,6 @@
     "workstream": "Digital World",
     "product_type": null,
     "id": 250
-  }
+  },
+  "card_cover": "https://bfna.simplyas.com/assets/b41a1d94-17e7-45be-95b0-ef5a5b88d46c"
 }

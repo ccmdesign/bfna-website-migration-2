@@ -20,6 +20,7 @@ const objectContructor = async (dir, fs) => {
       i.publishDate = item.publish_date;
       i.date = item.publish_date;
       i.externalAuthors = item.external_authors;
+      i.card_cover = item.card_cover ? common.getImage(item.card_cover.id) : null;
       i.image = {
         url: item.image ? common.getImage(item.image.id) : null,
       };

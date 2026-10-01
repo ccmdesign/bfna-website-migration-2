@@ -2,7 +2,7 @@
   "slug": "germanys-political-shake-up",
   "heading": "Germany’s Political Shake-Up",
   "subheading": null,
-  "excerpt": null,
+  "excerpt": "State election results illustrate Germany’s political fragmentation as the CDU and SPD lose voters to the Greens and AfD.",
   "content": "The CDU and SPD–members of the ruling grand coalition Berlin–have lost voters to the left (the Greens) and right (AfD) on issues ranging from the environment to migration.\n\nThis B|Visual displays Germany’s political fragmentation through vote-share differences following recent state-level elections.",
   "image": "https://bfna.simplyas.com/assets/b0ea93f4-cdba-495e-88bc-3618f8d56eaa",
   "video_url": null,
@@ -25,5 +25,6 @@
     "workstream": "Politics & Society",
     "product_type": null,
     "id": 239
-  }
+  },
+  "card_cover": "https://bfna.simplyas.com/assets/690e08fb-d689-4af4-bc21-da36f803097f"
 }
