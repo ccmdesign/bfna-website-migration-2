@@ -52,6 +52,7 @@
 import { useBfPages } from '~/composables/data/useBfPages'
 import { useBfPeople } from '~/composables/data/useBfPeople'
 import { paragraphs } from '~/utils/format'
+import contact from '~/assets/bf-data/contact.json'
 
 defineOptions({ name: 'AboutPage' })
 
@@ -289,24 +290,13 @@ useHead({ title: () => about?.heading ?? 'About Us' })
     </div>
   </bfSection>
 
-  <!--
-    Zone 5 — contact. Every string is the component's own default, as in the
-    frozen source, which passes it nothing either. `id="contact"` falls through
-    `bfContactSection` to its `bfSection` root and out through that
-    allow-list.
-
-    The street address is still the component's placeholder — the Directus
-    contact singleton has not landed, and an address is not something a page
-    may invent (BRIEF §5 rule 10). It stays visible until it arrives as the
-    `address` prop.
-
-    The band names itself: `bfContactSection` points its region's
-    `aria-labelledby` at its form column's `<h2>`, so the name is the visible
-    heading and cannot drift from it. (This call site used to add an
-    `aria-label` for it.) `data-rule` falls through to the same root, and the
-    component draws the rule over each of its two column headings.
-  -->
-  <bfContactSection id="contact" data-rule="program" />
+  <!-- Verified contact data is shared separately from the presentational band. -->
+  <bfContactSection
+    id="contact"
+    data-rule="program"
+    :email="contact.email"
+    :address="contact.address"
+  />
 </template>
 
 <style scoped>
