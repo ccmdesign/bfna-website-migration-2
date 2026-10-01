@@ -156,6 +156,11 @@ if (import.meta.dev) {
     border-radius: var(--radius-pill);
   }
 
+  /* Keep the source portrait's headroom when cropping it to a circle. */
+  .bf-card--person :deep(.bf-media) {
+    object-position: center top;
+  }
+
   /* Roles are complete labels, so override the base card's excerpt clamp. */
   .bf-card.bf-card--person :deep(.bf-card__text > p.bf-card-person__role) {
     display: block;
