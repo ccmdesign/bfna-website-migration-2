@@ -322,6 +322,8 @@ const latest = active.slice(0, 6)
   .bf-home-hero.bf-hero {
     /* Keep a generous photographic frame, with room for stacked copy on phones. */
     --_bf-hero-min-height: max(36rem, 60svh, min(56.25vw, 100svh));
+    --_bf-home-scrim-clear: 20%;
+    --_bf-home-scrim-dark: 48%;
 
     align-content: end;
     padding-block: var(--space-2xl);
@@ -330,11 +332,19 @@ const latest = active.slice(0, 6)
   .bf-home-hero :deep(.bf-hero-media__scrim) {
     background: linear-gradient(
       to bottom,
-      transparent 0%,
-      color-mix(in srgb, var(--color-surface-inverse) 60%, transparent) 32%,
-      color-mix(in srgb, var(--color-surface-inverse) 72%, transparent) 65%,
+      transparent var(--_bf-home-scrim-clear),
+      color-mix(in srgb, var(--color-surface-inverse) 60%, transparent) var(--_bf-home-scrim-dark),
+      color-mix(in srgb, var(--color-surface-inverse) 72%, transparent) 72%,
       color-mix(in srgb, var(--color-surface-inverse) 82%, transparent) 100%
     );
+  }
+
+  @media (width < 40rem) {
+    .bf-home-hero.bf-hero {
+      /* Stacked headings reach higher into the photograph on narrow screens. */
+      --_bf-home-scrim-clear: 10%;
+      --_bf-home-scrim-dark: 36%;
+    }
   }
 
   /* A white action stays distinct against the dark base of the photograph. */

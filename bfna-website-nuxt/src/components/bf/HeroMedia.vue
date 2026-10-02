@@ -193,14 +193,23 @@ async function startSequence() {
       filter: `blur(${(18 * Math.sin(Math.PI * progress) ** 2).toFixed(3)}px)`
     }
   })
-  // Constant overscan softens the edges without a zoom pulse on each change.
-  const sharp = { filter: 'blur(0px)', transform: 'scale(1.08)' }
+  const sharp = { filter: 'blur(0px)' }
   animations = loaded.map((image, index) => {
+    // Drift steadily across the full visible interval, including both fades.
+    // Alternate direction and keep scale fixed so the movement feels like a pan.
+    const direction = index % 2 === 0 ? 1 : -1
+    const pan = (time: number) => {
+      const progress = time / (step + transition) - 0.5
+      const x = progress * 3 * direction
+      const y = progress * 1.2 * (index % 3 === 0 ? -1 : 1)
+      // Overscan leaves room to pan without exposing the photograph's edges.
+      return `translate3d(${x}%, ${y}%, 0) scale(1.08)`
+    }
     const incoming = dissolve.map(frame => ({
       offset: frame.time / duration,
       opacity: frame.opacity,
       filter: frame.filter,
-      transform: sharp.transform,
+      transform: pan(frame.time),
       zIndex: 2
     }))
     // Keep the outgoing photograph opaque underneath the incoming layer so
@@ -209,15 +218,15 @@ async function startSequence() {
       offset: (step + frame.time) / duration,
       opacity: 1,
       filter: frame.filter,
-      transform: sharp.transform,
+      transform: pan(step + frame.time),
       zIndex: 1
     }))
     const animation = image.animate([
       ...incoming,
-      { offset: (transition + 1) / duration, opacity: 1, zIndex: 1, ...sharp },
+      { offset: (transition + 1) / duration, opacity: 1, zIndex: 1, transform: pan(transition + 1), ...sharp },
       ...outgoing,
-      { offset: (step + transition + 1) / duration, opacity: 0, zIndex: 0, ...sharp },
-      { offset: 1, opacity: 0, zIndex: 0, ...sharp }
+      { offset: (step + transition + 1) / duration, opacity: 0, zIndex: 0, transform: pan(step + transition), ...sharp },
+      { offset: 1, opacity: 0, zIndex: 0, transform: pan(step + transition), ...sharp }
     ], { duration, delay: index * step - transition, iterations: Infinity, fill: 'both' })
     animation.startTime = startTime
     return animation
