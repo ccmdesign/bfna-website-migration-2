@@ -2,7 +2,7 @@
   "slug": "the-french-presidential-election-whos-in-the-running",
   "heading": "The French Presidential Election: Who's in the Running?",
   "subheading": null,
-  "excerpt": null,
+  "excerpt": "An infographic introducing the main candidates, parties and platforms in France’s 2022 presidential election.",
   "content": "France is a key player on the global stage and a critical ally of the United States. The first round of the French presidential election takes place on Sunday, April 10, 2022. This B|Visual takes a closer look at the main candidates running, the political parties they represent, and their respective platforms for the next five years.",
   "image": "https://bfna.simplyas.com/assets/783ee857-10b8-4bd1-9913-b69a48a10b1d",
   "video_url": null,
@@ -25,5 +25,6 @@
     "workstream": "Politics & Society",
     "product_type": null,
     "id": 260
-  }
+  },
+  "card_cover": "https://bfna.simplyas.com/assets/8208545d-ccfa-4581-a5e5-c21203dfa21c"
 }

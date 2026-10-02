@@ -16,6 +16,7 @@
     :root {
       --border-radius-s: 4px;
       --border-radius-m: 8px;
-      --border-radius-l: 20px;
+      --border-radius-l: 16px;
+      --border-radius-xl: 20px;
     }
 }

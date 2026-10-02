@@ -92,6 +92,7 @@
 import type { CardRowProps, Insight, CardRowItem } from '~/types/bf-contracts'
 import { formatLabel, kindLabel } from '~/utils/format'
 import { displayHeading, kickerHidesFormatChip, splitHeadingKicker } from '~/utils/headingKicker'
+import { cardExcerpt } from '~/utils/cardExcerpt'
 
 defineOptions({
   name: 'BfCardRow',
@@ -108,6 +109,8 @@ defineOptions({
 const props = withDefaults(defineProps<CardRowProps>(), {
   /* The no-change level; see `CardWrapperProps` in `bf-contracts.ts`. */
   headingLevel: 3,
+  excerpt: false,
+  excerptLength: 200,
   variant: undefined,
   kindChip: true,
   archiveChip: true,
@@ -143,6 +146,7 @@ const headingText = computed(() => isInsight(props.item)
   : (props.item.heading ?? '').trim())
 
 const hasHeading = computed(() => headingText.value !== '')
+const excerptText = computed(() => cardExcerpt(props.item.excerpt, props.excerptLength))
 
 /**
  * Kicker and visible title — insights only. A project heading is never split:
@@ -260,6 +264,8 @@ if (import.meta.dev) {
       would need a cast.
     -->
     <bfTime v-if="insight" :date="insight.publish_date" />
+
+    <p v-if="excerpt && excerptText" class="bf-card-row__excerpt">{{ excerptText }}</p>
 
     <template v-if="split.kicker && !inlineKicker" #kicker>{{ split.kicker }}</template>
 

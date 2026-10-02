@@ -2,7 +2,7 @@
   "slug": "strength-in-numbers",
   "heading": "Strength in Numbers",
   "subheading": "Multilateral Institutions in the Indo-Pacific",
-  "excerpt": null,
+  "excerpt": "An overview of influential multilateral organizations in the Indo-Pacific and the countries that belong to them.",
   "content": "Multilateral organizations play a huge role in the Indo-Pacific. But what are those organizations, and what members do they include? For an overview of some of the most influential Indo-Pacific multilaterals, check out our new infographic.",
   "image": "https://bfna.simplyas.com/assets/cacbceb6-eff6-417c-b682-bc9217782dc5",
   "video_url": null,
@@ -25,5 +25,6 @@
     "workstream": "Politics & Society",
     "product_type": null,
     "id": 255
-  }
+  },
+  "card_cover": "https://bfna.simplyas.com/assets/3e1f9347-6960-454a-abb7-8d1a13444c73"
 }

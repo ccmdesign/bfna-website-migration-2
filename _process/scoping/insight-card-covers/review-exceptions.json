@@ -1,0 +1,69 @@
+{
+  "infographic-ai-research-and-development-in-the-u-s-eu-and-china": {
+    "status": "resolved-with-pixel-preserving-composition",
+    "reason": "Built-in image generation rejected output; no derivative was returned or linked.",
+    "request_id": "9dbe03ae-faef-4f74-a107-0332da19433a",
+    "previous_status": "generation-blocked",
+    "resolution": "User approved deterministic Sharp composition. Complete source pixels retained without generative redrawing; visually reviewed before upload."
+  },
+  "transatlantic-trends-2020": {
+    "status": "resolved-with-pixel-preserving-composition",
+    "reason": "Two generated drafts retain stray white fragments outside the book. Neither was linked.",
+    "previous_status": "needs-pixel-preserving-composition",
+    "resolution": "User approved deterministic Sharp composition. Complete source pixels retained without generative redrawing; visually reviewed before upload."
+  },
+  "a-new-era-of-german-turkish-cooperation": {
+    "status": "resolved-with-pixel-preserving-composition",
+    "reason": "Generated draft cannot guarantee verbatim tiny citation URLs and uses insufficient bottom safe area. Not linked.",
+    "previous_status": "needs-pixel-preserving-composition",
+    "resolution": "User approved deterministic Sharp composition. Complete source pixels retained without generative redrawing; visually reviewed before upload."
+  },
+  "2020-senate-races-overshadowed-by-trump": {
+    "status": "resolved-with-pixel-preserving-composition",
+    "reason": "Generated draft redraws tiny factual labels; exact source text fidelity is not assured. Not linked.",
+    "previous_status": "needs-pixel-preserving-composition",
+    "resolution": "User approved deterministic Sharp composition. Complete source pixels retained without generative redrawing; visually reviewed before upload."
+  },
+  "a-shred-of-doubt-brexits-future": {
+    "status": "resolved-with-pixel-preserving-composition",
+    "reason": "Generated draft redraws tiny factual labels/citations; exact source text fidelity is not assured. Not linked.",
+    "previous_status": "needs-pixel-preserving-composition",
+    "resolution": "User approved deterministic Sharp composition. Complete source pixels retained without generative redrawing; visually reviewed before upload."
+  },
+  "12-days-of-christmas-in-europe": {
+    "status": "resolved-with-pixel-preserving-composition",
+    "reason": "Generated draft places content through the bottom overlay area and redraws tiny source URLs. Not linked.",
+    "previous_status": "needs-pixel-preserving-composition",
+    "resolution": "User approved deterministic Sharp composition. Complete source pixels retained without generative redrawing; visually reviewed before upload."
+  },
+  "austrian-elections-infographic": {
+    "status": "resolved-with-pixel-preserving-composition",
+    "reason": "Generated draft redraws small source citations; exact source text fidelity is not assured. Not linked.",
+    "previous_status": "needs-pixel-preserving-composition",
+    "resolution": "User approved deterministic Sharp composition. Complete source pixels retained without generative redrawing; visually reviewed before upload."
+  },
+  "breaking-barriers": {
+    "status": "resolved-with-pixel-preserving-composition",
+    "reason": "Generated draft redraws tiny explanatory text; exact source text fidelity is not assured. Not linked.",
+    "previous_status": "needs-pixel-preserving-composition",
+    "resolution": "User approved deterministic Sharp composition. Complete source pixels retained without generative redrawing; visually reviewed before upload."
+  },
+  "disrupting-democracy-vol-i": {
+    "status": "resolved-with-pixel-preserving-composition",
+    "reason": "Generated transparent draft has white fragments along the upper book edge. Not linked.",
+    "previous_status": "needs-pixel-preserving-composition",
+    "resolution": "User approved deterministic Sharp composition. Complete source pixels retained without generative redrawing; visually reviewed before upload."
+  },
+  "disrupting-democracy-vol-ii": {
+    "status": "resolved-with-pixel-preserving-composition",
+    "reason": "Generated transparent draft has white fragments along the upper book edge. Not linked.",
+    "previous_status": "needs-pixel-preserving-composition",
+    "resolution": "User approved deterministic Sharp composition. Complete source pixels retained without generative redrawing; visually reviewed before upload."
+  },
+  "people-led-innovation": {
+    "status": "resolved-with-pixel-preserving-composition",
+    "reason": "Generated draft has incorrect aspect ratio and does not preserve clean source transparency. Not linked.",
+    "previous_status": "needs-pixel-preserving-composition",
+    "resolution": "User approved deterministic Sharp composition. Complete source pixels retained without generative redrawing; visually reviewed before upload."
+  }
+}

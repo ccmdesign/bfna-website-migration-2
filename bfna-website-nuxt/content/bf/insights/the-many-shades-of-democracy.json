@@ -2,7 +2,7 @@
   "slug": "the-many-shades-of-democracy",
   "heading": "The Many Shades of Democracy",
   "subheading": null,
-  "excerpt": null,
+  "excerpt": "An infographic using the 2018 Bertelsmann Transformation Index to show the decline of democracy across the countries it assesses.",
   "content": "This infographic, drawn from the Bertelsmann Transformation Index (BTI), provides a disturbing snapshot of the downward trajectory of democracy in 2018. For more information on the latest BTI report, [click here](https://www.bti-project.org/en/home.html?&cb=00000).",
   "image": "https://bfna.simplyas.com/assets/7e7fbf71-9e39-4449-9e62-493984245264",
   "video_url": null,
@@ -25,5 +25,6 @@
     "workstream": "Democracy",
     "product_type": null,
     "id": 262
-  }
+  },
+  "card_cover": "https://bfna.simplyas.com/assets/cd6e39c0-8875-44fd-b39b-ebd9382dc4b9"
 }

@@ -581,6 +581,33 @@ onMounted(() => {
     they cannot. The floor is the width a four-digit year needs at the index's
     size plus its breathing room — four across at 375px.
   */
+  /*
+    The index stays in reach while the reader scrolls the years. Sticky
+    within the band (its `.center` column is the scroll-bounded parent), so
+    it docks under the top bar and leaves with the list. The offset is the
+    bar's band — `bfNav`'s `--_bf-nav-height` plus the block padding it
+    carries at every width — restated here because that hook is scoped to
+    the nav. Below the bar in the stack (`bfNav` sits at 10), on the page
+    ground so rows scroll under it rather than through it.
+  */
+  .bf-archive-years {
+    --_bf-archive-years-top: calc(var(--space-xl) + 2 * var(--space-2xs));
+
+    position: sticky;
+    inset-block-start: var(--_bf-archive-years-top);
+    z-index: 5;
+    padding-block: var(--space-2xs);
+    background-color: var(--color-surface-page);
+  }
+
+  /*
+    A year the index jumps to lands below the docked bar and index, not
+    under them. `6rem` is the index's own band at its tallest single row.
+  */
+  .bf-archive-year {
+    scroll-margin-block-start: calc(var(--space-xl) + 2 * var(--space-2xs) + 6rem);
+  }
+
   .bf-archive-years__list {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(4.5rem, 1fr));
@@ -588,6 +615,20 @@ onMounted(() => {
     margin: 0;
     padding: 0;
     list-style: none;
+  }
+
+  /*
+    Narrow: one row that scrolls sideways. Wrapped into three rows the docked
+    index took a quarter of a phone's screen.
+  */
+  @media (width < 40rem) {
+    .bf-archive-years__list {
+      grid-template-columns: none;
+      grid-auto-columns: 4.5rem;
+      grid-auto-flow: column;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
   }
 
   /*

@@ -59,27 +59,18 @@
  * ## Two props are forwarded, not re-decided
  *
  * `excerptLength` and `headingLevel` are passed through **unset when unset**,
- * so each card's own default applies (`140` and `3`). Restating either number
+ * so each card's own default applies (`200` and `3`). Restating either number
  * here would create a second copy of it that drifts the first time the card's
  * changes. `headingLevel` is on the grid at all because the grid is the only
  * thing between a template's section heading and the cards (#128).
  *
- * ## Media is the grid's decision (Sep 2026)
+ * ## Media visibility
  *
- * A card shows its thumbnail when its row has an `image`; this grid decides
- * whether its cards may. Pictures only when **every** row it renders has
- * one, otherwise none for the whole group. A row of equal-height cards that
- * mixed the two stretched each text card to its picture neighbour's height
- * and left a hollow of white between excerpt and chips, which /insights
- * did. A uniform group keeps the equal heights and the pinned chips
- * meaningful. `bfGridProjects` makes the same decision per programme band.
- *
- * In practice the default /insights listing (3 pictures in its first 24) is
- * text-only, and a filter to Infographics — all 55 carry a picture — is a
- * picture grid. The decision is re-made on every render, so a `Load more`
- * that appends a row without a picture turns a picture grid text-only
- * rather than leaving one hollow card at the end. It needs no prop: the
- * rows already say it, and a caller-set switch could only contradict them.
+ * With `media` unset, the grid keeps the uniform treatment used by program
+ * and related-content bands: pictures only when every row has one.
+ * `media=true` lets each card show its available image. Loading a text-only
+ * row cannot hide other images.
+ * A card with no image never renders an empty media box.
  *
  * ## `$attrs` reaches the `<ul>`
  *
@@ -110,14 +101,14 @@ const props = withDefaults(defineProps<GridInsightsProps>(), {
    * (`m` → 4 columns at 1200px, `xl` → 2) are wrong for this grid.
    */
   minWidth: 'l',
-  /* Unset, so `bfCardInsight`'s own `140` applies. See the note above. */
+  /* Unset, so `bfCardInsight`'s own `200` applies. See the note above. */
   excerptLength: undefined,
   extraChips: undefined,
-  headingLevel: undefined
+  headingLevel: undefined,
+  media: undefined
 })
 
-/** Pictures for the whole group, or for none of it. See the note above. */
-const media = computed(() => props.insights.every(i => Boolean(i.image)))
+const showMedia = computed(() => props.media ?? props.insights.every(i => Boolean(i.image)))
 </script>
 
 <template>
@@ -152,7 +143,7 @@ const media = computed(() => props.insights.every(i => Boolean(i.image)))
       :excerpt-length="props.excerptLength"
       :heading-level="props.headingLevel"
       :extra-chips="props.extraChips?.(i)"
-      :media="media"
+      :media="showMedia"
     />
   </ul>
 </template>

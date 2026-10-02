@@ -2,7 +2,7 @@
   "slug": "e-commerce-vs-digital-trade",
   "heading": "E-Commerce vs. Digital Trade",
   "subheading": null,
-  "excerpt": null,
+  "excerpt": "An infographic on the cross-border data flows behind digital trade and how national barriers can disrupt the international digital economy.",
   "content": "Whether streaming Spotify, using Google Maps, or purchasing a good on Amazon, cross-border data flows are the key component underpinning the international digital economy. The decision by individual countries or certain regions to raise barriers to digital trade could significantly hinder the flow of data that so many people and industries have come to take for granted. International rules and regulations help ensure certainty in this digital marketplace, fostering innovation and cohesion in an increasingly complex global economy.",
   "image": "https://bfna.simplyas.com/assets/8610e85b-8e75-4d8d-8a6f-d21c492fe7f1",
   "video_url": null,
@@ -23,5 +23,6 @@
     "workstream": "Digital World",
     "product_type": null,
     "id": 234
-  }
+  },
+  "card_cover": "https://bfna.simplyas.com/assets/033d2fdd-d70d-435d-aaed-e10f61965130"
 }

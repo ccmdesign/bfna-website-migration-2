@@ -100,6 +100,8 @@ export const bfInsightSchema = z.object({
   excerpt: z.string().nullable(),
   content: z.string().nullable(),
   image: z.string().nullable(),
+  /** Dedicated portrait artwork for desktop cards; original image stays on mobile/detail. */
+  card_cover: z.string().nullable().optional(),
   video_url: z.string().nullable(),
   download: z.string().nullable(),
   external_url: z.string().nullable(),

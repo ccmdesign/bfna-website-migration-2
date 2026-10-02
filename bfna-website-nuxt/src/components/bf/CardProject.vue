@@ -64,10 +64,10 @@
  * On by default now, under the family's one media rule: the card shows the
  * row's `image` when it has one (32 of the 38 live rows) and renders **no media
  * box** when it does not, so no card carries an empty slot. `media` is the
- * opt-out, and `bfGridProjects` uses it: a group in which not every project
- * has a picture goes text-only as a whole, because a text card stretched
- * beside a picture card is a hollow box of its own. All chips are the neutral
- * tone.
+ * opt-out. The shared grid leaves it enabled so missing images on other
+ * projects do not hide this one's picture. Image cards share the Insight
+ * Card's desktop cover and excerpt reveal, with a thumbnail above the copy
+ * on mobile. All chips are the neutral tone.
  */
 import type { CardWrapperProps, Project } from '~/types/bf-contracts'
 import { kindLabel } from '~/utils/format'
@@ -88,9 +88,7 @@ interface Props extends CardWrapperProps {
   project: Project
   /**
    * Show the row's thumbnail when it has one. **On by default** (Sep 2026) —
-   * see "Thumbnail" above; `bfGridProjects` passes `:media="false"` to every
-   * card of a group that is not all pictures. A row with no `image` renders
-   * no media box either way.
+   * see "Thumbnail" above. A row with no `image` renders no media box.
    */
   media?: boolean
   /** CSS `aspect-ratio` for the media box, handed straight to `bfMedia`. */
@@ -110,7 +108,7 @@ const props = withDefaults(defineProps<Props>(), {
    * that passed `media`, renders exactly as before, and no longer passes it.
    */
   media: true,
-  mediaRatio: '3/2',
+  mediaRatio: '16/9',
   chips: true,
   excerptLength: 140
 })
@@ -191,7 +189,11 @@ if (import.meta.dev) {
     bottom edge, and only the media pulled above the heading visually. Never
     reorder the markup to change the picture.
   -->
-  <bfCard v-bind="$attrs">
+  <bfCard
+    class="bf-card--project"
+    :class="{ 'bf-card--project-media': media && project.image }"
+    v-bind="$attrs"
+  >
     <component :is="`h${headingLevel}`" v-if="hasHeading">
       <!--
         One link per card, stretched over the whole card by `bfCard`'s
@@ -208,7 +210,9 @@ if (import.meta.dev) {
       <NuxtLink :to="`/projects/${project.slug}`">{{ headingText }}<span v-if="project.external_url" aria-hidden="true"> ↗</span></NuxtLink>
     </component>
 
-    <p v-if="excerptText">{{ excerptText }}</p>
+    <p v-if="excerptText" class="bf-card__excerpt">
+      <span class="bf-card__excerpt-long">{{ excerptText }}</span>
+    </p>
 
     <template v-if="hasChips" #chips>
       <bfChip v-if="kind" tone="neutral">{{ kind }}</bfChip>

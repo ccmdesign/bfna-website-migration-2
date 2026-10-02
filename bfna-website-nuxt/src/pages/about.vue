@@ -280,13 +280,16 @@ useHead({ title: () => about?.heading ?? 'About Us' })
     label="Bertelsmann Stiftung"
     :heading="stiftung?.heading ?? undefined"
   >
-    <bfMedia
-      src="/images/hero/stiftung.jpg"
-      alt="Bertelsmann Stiftung headquarters"
-    />
+    <!-- Two columns from 48rem, photo then text; one column below. -->
+    <div class="bf-about-stiftung__body">
+      <bfMedia
+        src="/images/hero/stiftung.jpg"
+        alt="Bertelsmann Stiftung headquarters"
+      />
 
-    <div class="bf-about-prose | stack" data-gap="s">
-      <p v-for="(para, i) in stiftungParagraphs" :key="i">{{ para }}</p>
+      <div class="bf-about-prose | stack" data-gap="s">
+        <p v-for="(para, i) in stiftungParagraphs" :key="i">{{ para }}</p>
+      </div>
     </div>
   </bfSection>
 
@@ -385,9 +388,8 @@ useHead({ title: () => about?.heading ?? 'About Us' })
     ## The Stiftung photograph
 
     Close to the file's own 2.07:1 on a phone (`2 / 1`), so the headquarters
-    and the lake both survive at 346px; a touch wider at the desktop measure
-    (`5 / 2`, 1100 × 440), which trims sky and water rather than the
-    building, and keeps the picture a band rather than a poster. Through
+    and the lake both survive at 346px; `4 / 3` in the two-column layout
+    (see "Two columns" below). Through
     `bfMedia`'s `--_bf-media-ratio` hook — its scoped default is (0,2,0), and
     this is (0,3,0). The 48rem step is the system's one documented
     breakpoint.
@@ -400,9 +402,28 @@ useHead({ title: () => about?.heading ?? 'About Us' })
     border-radius: var(--border-radius-m);
   }
 
+  /*
+    ## Two columns
+
+    From the 48rem step the band reads photo | text, side by side, rather
+    than a wide picture over a column of text (design review, 2026-09-29).
+    The photo takes the start of the text's column, and at half the measure
+    `4 / 3` keeps the building and the lake without the band turning into a
+    poster. Below 48rem it stacks, photo first, as before.
+  */
+  .bf-about-stiftung__body {
+    display: grid;
+    gap: var(--space-m) var(--space-l);
+  }
+
   @media (width >= 48rem) {
+    .bf-about-stiftung__body {
+      grid-template-columns: 1fr 1fr;
+      align-items: start;
+    }
+
     .bf-about-stiftung :deep(.bf-media) {
-      --_bf-media-ratio: 5 / 2;
+      --_bf-media-ratio: 4 / 3;
     }
   }
 }

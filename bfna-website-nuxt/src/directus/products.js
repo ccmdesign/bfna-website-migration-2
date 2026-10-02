@@ -22,6 +22,7 @@ const objectContructor = async (dir, fs) => {
       i.publishDate = item.publish_date;
       i.date = item.publish_date;
       i.coverImage = item.cover_image ? common.getImage(item.cover_image.id) : null;
+      i.card_cover = item.card_cover ? common.getImage(item.card_cover.id) : null;
       i.image = {
         url: item.cover_image ? common.getImage(item.cover_image.id) : null,
       };

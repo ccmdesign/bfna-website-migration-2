@@ -980,6 +980,10 @@ export type CardRowItem = Insight | Project
 export interface CardRowProps extends CardWrapperProps {
   /** One `bfInsights` **or** one `bfProjects` row. Passed whole. */
   item: CardRowItem
+  /** Show the entity's excerpt below its title. Off by default for dense indexes. */
+  excerpt?: boolean
+  /** Character budget for the optional excerpt. Defaults to 200, as on insight cards. */
+  excerptLength?: number
   /** Presentation hint, rendered as `data-variant`. Styles nothing by itself. */
   variant?: string
   /**
@@ -1380,7 +1384,7 @@ export interface GridProps {
   /**
    * Character budget handed to every card's own `excerptLength`.
    *
-   * Left unset it stays `undefined` and each card's default (`140`) applies,
+   * Left unset it stays `undefined` and each card's default (`200`) applies,
    * rather than the grid restating a number that would then drift.
    */
   excerptLength?: number
@@ -1406,6 +1410,11 @@ export interface GridProps {
 export interface GridInsightsProps extends GridProps {
   /** The rows to render, in order. One `<li>` each, keyed on `slug`. */
   insights: Insight[]
+  /**
+   * Show available thumbnails when true; hide them when false. Unset keeps
+   * the grid uniform, showing thumbnails only if every row has an image.
+   */
+  media?: boolean
   /**
    * Extra chips for one row, applied **per row by the grid**.
    *

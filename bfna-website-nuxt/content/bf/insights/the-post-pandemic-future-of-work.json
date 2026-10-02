@@ -2,7 +2,7 @@
   "slug": "the-post-pandemic-future-of-work",
   "heading": "The Post-Pandemic Future of Work",
   "subheading": null,
-  "excerpt": null,
+  "excerpt": "An infographic charting four ways the COVID-19 pandemic reshaped jobs and the future of work.",
   "content": "With COVID-19 inoculations in full swing, workers are starting to return to the office, and the unemployed are redoubling their efforts to land jobs. After more than a year of labor market turbulence, one thing is certain: workers face a radically different world of work than in pre-pandemic times. Our March infographic charts four ways in which the pandemic has reshaped the future of work, perhaps permanently.",
   "image": "https://bfna.simplyas.com/assets/9bf10969-23ad-4d33-93ec-7589ceba092c",
   "video_url": null,
@@ -23,5 +23,6 @@
     "workstream": "Digital World",
     "product_type": null,
     "id": 263
-  }
+  },
+  "card_cover": "https://bfna.simplyas.com/assets/bd0d09a3-4b20-4f84-afca-84681058e15c"
 }

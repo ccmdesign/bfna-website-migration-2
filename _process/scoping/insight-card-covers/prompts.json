@@ -1,0 +1,227 @@
+[
+  {
+    "slug": "athens-greece",
+    "prompt": "Use case: compositing. Adapt this exact existing editorial photograph to a portrait 4:5 website card cover, target 1200x1500. Keep the statue, original carved building pediment and Greek flag fully recognizable with the same photographic character, muted blue sky and natural stone colors. Preserve the specific statue face, pose, drapery, hand, flag design and all architectural sculpture. Recompose these existing elements closer within the portrait, scale rather than crop away important features, and extend only plain blue sky/quiet existing background as necessary. Arrange the important statue face, Greek flag, and pediment in the upper 75% of the frame; reserve calm lower background for website title overlay. Do not add people, flags, sculptures, inscriptions or text. Output only the finished 4:5 portrait photograph."
+  },
+  {
+    "slug": "oklahoma-city-united-states",
+    "prompt": "Use case: compositing. Adapt this exact existing Oklahoma City memorial editorial photo into a portrait 4:5 website card cover, target1200x1500. Preserve the complete original view of memorial chairs, trees, walls, buildings and two existing flags. These are actual memorial objects: do not add, remove, duplicate or redesign any chair or rearrange their real relationship. Keep the central photographed content together, proportionally scaled to fit portrait width in the upper area, extending only the quiet pale overcast sky above and simple empty snowy foreground below if necessary to complete 4:5. Preserve the same winter atmosphere, palette and photography. The bottom25% should contain only uninterrupted snowy foreground suitable for a web title overlay. All meaningful objects remain visible. No new people, text or objects. Output only the portrait photo."
+  },
+  {
+    "slug": "class-of-2024",
+    "prompt": "Use case: compositing. Recompose the provided exact silhouette photograph of a hand placing a paper ballot into a black ballot box into a portrait 4:5 website card cover, target1200x1500. Preserve the original specific hand, wristwatch, paper ballot, motion/pose, box opening and the stark black and white backlighting. Scale/reposition the existing elements to fill the portrait with hand and ballot in the upper half and the black box below. Preserve the whole ballot and the meaningful part of the hand; no destructive crop. The lower25% should be quiet black box surface for a website heading overlay. Do not invent logos, voting text, symbols, extra hands or ballots. Output just the finished 4:5 portrait photograph."
+  },
+  {
+    "slug": "season-3-episode-3-tzipi-livni",
+    "prompt": "Use case: identity-preserve / compositing. Adapt this exact existing Leadership in Action thumbnail to a portrait4:5 website card cover, target1200x1500. Preserve Tzipi Livni's exact photographed face, expression, hair, navy blazer, white blouse, gesture and both hands, the foreground back-of-head person, and the same background. Reflow the typography for portrait above/alongside her without covering her face. All original text must remain verbatim: 'LEADERSHIP IN ACTION', 'SEASON III', 'TZIPI LIVNI', 'ON NEGOTIATING PEACE'; preserve both the AMF logo including 'ASPEN MINISTERS FORUM' and 'a program of the Aspen Institute', and Bertelsmann FOUNDATION logo exactly. Arrange face, text and logos entirely in upper75% with a calm dark lower25% suitable for webpage heading/date overlay. Preserve existing texture and palette. No new text, no new or duplicated people, no new objects, no alteration of facial identity. Output only the portrait artwork."
+  },
+  {
+    "slug": "a-trillion-dollar-partnership-the-future-of-the-transatlantic-economy-5",
+    "prompt": "Use case: compositing. Adapt the provided existing 'WISDOM of the CROWD' collage to a 4:5 portrait website card cover, target1200x1500. Preserve the single blue lightbulb, yellow circle, green paper texture, original multicolored paper-cut crowd silhouettes and newspaper textures, and all three original brand marks. Reposition/scale the original collage so all meaningful content including crowd and logos fits into the upper72% of the canvas, extending only the same muted green paper texture downward as a clean bottom28% reserved for website title overlay. All text exactly: 'WISDOM of the CROWD', 'Bertelsmann FOUNDATION', '| BertelsmannStiftung', 'are we europe' in their original wordmark styles. Preserve original colors and handmade texture. No new subjects, no different title, no duplicate or additional silhouettes, no new words. Output only 4:5 portrait artwork."
+  },
+  {
+    "slug": "episode-6-the-near-future-of-transatlantic-relations",
+    "prompt": "Use case: compositing. Adapt this exact 'Bridging The Atlantic' graphic to a portrait4:5 website card cover target1200x1500. Preserve the original textured orange/pink paper, purple oval, mustard-colored map with original geography, and the exact title words 'Bridging The Atlantic' in the original thick white lettering with dark offset shadow. Reflow the title into three fitting lines 'Bridging' / 'The' / 'Atlantic' and scale/reposition the existing map graphic alongside/below it in upper70% of the frame. Reserve the lower30% as quiet continuation of the existing purple or paper background for a web heading overlay. Retain all existing elements and colors without inventing geography, labels, logos, subtitles or objects. Output only the 4:5 portrait artwork."
+  },
+  {
+    "slug": "cross-cutting-currents",
+    "prompt": "Use case: compositing. Adapt the exact provided BFNA report mockup to a portrait4:5 card cover, target1200x1500. Preserve the entire single report cover as one intact object: cover photography collage (surveillance cameras, robotic hand, shipping containers, snow, city), original angle, shadow, pages and Bertelsmann FOUNDATION logo. Preserve text exactly: 'CROSS-CUTTING CURRENTS', 'TRANSATLANTIC PRIMER 2022'. Scale and move the existing report to fit completely inside the upper74% of the portrait, with the same pure black background extended across the bottom26% for website title/date overlay. Do not redesign, crop, repaint or invent report content. No extra book, text or objects. Output just the 4:5 portrait artwork."
+  },
+  {
+    "slug": "bff-spotlight-travis-moore",
+    "prompt": "Use case: identity-preserve / compositing. Recompose the exact existing Travis Moore spotlight graphic into portrait4:5 target1200x1500. Preserve his exact photographed face/smile/hair, dark suit, red tie and warm orange photo background. Keep all source wording verbatim, reflowed with a readable condensed font similar to source, in the upper74% of the frame; photo may be a smaller upper-right panel with copy beside and below. Exact title: 'TRAVIS MOORE'. Exact subheads: 'Bertelsmann Foundation Fellow Class of 2012' and 'Founder and Executive Director of TechCongress'. Exact body: 'Travis Moore is the Founder and Executive Director of TechCongress, which places computer scientists, engineers, and other technologists to work for Members of Congress and Congressional Committees on key policymaking challenges like AI ethics, election security, encryption, and data privacy through the one-year Congressional Innovation Fellowship. TechCongress has sent 109 technologists into Congress since 2016.' Preserve white text-panel background, navy copy and gray title. Reserve bottom26% as empty white background for a web card heading overlay. Do not change wording, people, identity, logos or dates; do not crop his face or remove paragraph text. Output only the finished portrait graphic."
+  },
+  {
+    "slug": "federalism-in-crisis",
+    "text": "'Federalism', upside-down 'in Crisis', 'U.S and German Responses to the COVID-19 Pandemic' and the Bertelsmann FOUNDATION logo; preserve the original mirrored Reichstag/Capitol imagery and all color blocks",
+    "prompt": "Use case: compositing. Adapt the provided existing report-book mockup into a portrait4:5 website card asset (target1200x1500). The original has a TRANSPARENT BACKGROUND: preserve true transparent alpha around the book and natural shadow, including the empty bottom area. Keep the entire single original book intact as one object with the same cover design, angle, pages, text and colors. Scale and reposition it so the complete book fits within the upper72% of the portrait, leaving the bottom28% completely transparent for web title overlay. Preserve verbatim 'Federalism', upside-down 'in Crisis', 'U.S and German Responses to the COVID-19 Pandemic' and the Bertelsmann FOUNDATION logo; preserve the original mirrored Reichstag/Capitol imagery and all color blocks. Do not redesign or crop any cover content, add words or logos, or duplicate the book. Output only the4:5 transparent PNG artwork."
+  },
+  {
+    "slug": "green-ideas",
+    "text": "'GREEN IDEAS', 'Incentivizing Innovation: Sustainable Solutions' and Bertelsmann FOUNDATION logo; preserve green Earth/leaves held by the original outlined hands and all original green tones",
+    "prompt": "Use case: compositing. Adapt the provided existing report-book mockup into a portrait4:5 website card asset (target1200x1500). The original has a TRANSPARENT BACKGROUND: preserve true transparent alpha around the book and natural shadow, including the empty bottom area. Keep the entire single original book intact as one object with the same cover design, angle, pages, text and colors. Scale and reposition it so the complete book fits within the upper72% of the portrait, leaving the bottom28% completely transparent for web title overlay. Preserve verbatim 'GREEN IDEAS', 'Incentivizing Innovation: Sustainable Solutions' and Bertelsmann FOUNDATION logo; preserve green Earth/leaves held by the original outlined hands and all original green tones. Do not redesign or crop any cover content, add words or logos, or duplicate the book. Output only the4:5 transparent PNG artwork."
+  },
+  {
+    "slug": "hotspots",
+    "text": "'HOTSPOTS', 'The Internet and Collective Action in Authoritarian Settings', Bertelsmann FOUNDATION logo; preserve the original dark gray/purple network texture",
+    "prompt": "Use case: compositing. Adapt the provided existing report-book mockup into a portrait4:5 website card asset (target1200x1500). The original has a TRANSPARENT BACKGROUND: preserve true transparent alpha around the book and natural shadow, including the empty bottom area. Keep the entire single original book intact as one object with the same cover design, angle, pages, text and colors. Scale and reposition it so the complete book fits within the upper72% of the portrait, leaving the bottom28% completely transparent for web title overlay. Preserve verbatim 'HOTSPOTS', 'The Internet and Collective Action in Authoritarian Settings', Bertelsmann FOUNDATION logo; preserve the original dark gray/purple network texture. Do not redesign or crop any cover content, add words or logos, or duplicate the book. Output only the4:5 transparent PNG artwork."
+  },
+  {
+    "slug": "graphic-images-autocrats-and-the-use-of-power",
+    "text": "'Graphic Images', 'AUTOCRATS AND THE USE OF POWER', Bertelsmann FOUNDATION logo; preserve the exact original illustrated three leaders, their faces, clothing, flags of China/Iran/Russia and the book's original landscape format",
+    "prompt": "Use case: compositing. Adapt the provided existing report-book mockup into a portrait4:5 website card asset (target1200x1500). The original has a TRANSPARENT BACKGROUND: preserve true transparent alpha around the book and natural shadow, including the empty bottom area. Keep the entire single original book intact as one object with the same cover design, angle, pages, text and colors. Scale and reposition it so the complete book fits within the upper72% of the portrait, leaving the bottom28% completely transparent for web title overlay. Preserve verbatim 'Graphic Images', 'AUTOCRATS AND THE USE OF POWER', Bertelsmann FOUNDATION logo; preserve the exact original illustrated three leaders, their faces, clothing, flags of China/Iran/Russia and the book's original landscape format. Do not redesign or crop any cover content, add words or logos, or duplicate the book. Output only the4:5 transparent PNG artwork."
+  },
+  {
+    "slug": "lithium-rising",
+    "text": "'LITHIUM RISING', 'THE RACE FOR CRITICAL MINERALS' and the Bertelsmann FOUNDATION logo, same salt flat photograph and book angle",
+    "prompt": "Use case: compositing. Recompose this existing report-book mockup for a4:5 portrait website card, target1200x1500. Preserve the original TRANSPARENT BACKGROUND as true PNG alpha around the complete book. Keep the entire single book intact, same angle, cover content, pages and natural shadow; no crop or redesign. Scale and position so the complete book fits comfortably inside the upper70% of the canvas, with bottom30% transparent negative space for website heading. Preserve verbatim 'LITHIUM RISING', 'THE RACE FOR CRITICAL MINERALS' and the Bertelsmann FOUNDATION logo, same salt flat photograph and book angle. Do not alter dates, text, photographs, logos, colors or illustrations. No duplicates, no additional editorial content. Output only transparent4:5 PNG."
+  },
+  {
+    "slug": "cross-cutting-currents",
+    "text": "'CROSS-CUTTING CURRENTS', 'TRANSATLANTIC PRIMER 2022' and Bertelsmann FOUNDATION logo, identical collage panels with cameras/robotic hand/shipping containers/ice/mountains/city",
+    "prompt": "Use case: compositing. Recompose this existing report-book mockup for a4:5 portrait website card, target1200x1500. Preserve the original TRANSPARENT BACKGROUND as true PNG alpha around the complete book. Keep the entire single book intact, same angle, cover content, pages and natural shadow; no crop or redesign. Scale and position so the complete book fits comfortably inside the upper70% of the canvas, with bottom30% transparent negative space for website heading. Preserve verbatim 'CROSS-CUTTING CURRENTS', 'TRANSATLANTIC PRIMER 2022' and Bertelsmann FOUNDATION logo, identical collage panels with cameras/robotic hand/shipping containers/ice/mountains/city. Do not alter dates, text, photographs, logos, colors or illustrations. No duplicates, no additional editorial content. Output only transparent4:5 PNG."
+  },
+  {
+    "slug": "hidden-layers-bidens-ai-executive-order-eu-ai-act-and-the-uk-ai-safety-summit",
+    "text": "'HIDDEN LAYERS', 'YOUR QUARTERLY TRANSATLANTIC TECHNOLOGY NEWS', 'November 2023' and Bertelsmann FOUNDATION logo; retain all original blue network letter textures and black book",
+    "prompt": "Use case: compositing. Recompose this existing report-book mockup for a4:5 portrait website card, target1200x1500. Preserve the original TRANSPARENT BACKGROUND as true PNG alpha around the complete book. Keep the entire single book intact, same angle, cover content, pages and natural shadow; no crop or redesign. Scale and position so the complete book fits comfortably inside the upper70% of the canvas, with bottom30% transparent negative space for website heading. Preserve verbatim 'HIDDEN LAYERS', 'YOUR QUARTERLY TRANSATLANTIC TECHNOLOGY NEWS', 'November 2023' and Bertelsmann FOUNDATION logo; retain all original blue network letter textures and black book. Do not alter dates, text, photographs, logos, colors or illustrations. No duplicates, no additional editorial content. Output only transparent4:5 PNG."
+  },
+  {
+    "slug": "hidden-layers-eus-ai-act-an-ai-task-force-from-congress-and-a-new-executive-order-to-protect-americans-personal-data",
+    "text": "'HIDDEN LAYERS', 'YOUR QUARTERLY TRANSATLANTIC TECHNOLOGY NEWS', 'March 2024' and Bertelsmann FOUNDATION logo; retain all original blue network letter textures and black book",
+    "prompt": "Use case: compositing. Recompose this existing report-book mockup for a4:5 portrait website card, target1200x1500. Preserve the original TRANSPARENT BACKGROUND as true PNG alpha around the complete book. Keep the entire single book intact, same angle, cover content, pages and natural shadow; no crop or redesign. Scale and position so the complete book fits comfortably inside the upper70% of the canvas, with bottom30% transparent negative space for website heading. Preserve verbatim 'HIDDEN LAYERS', 'YOUR QUARTERLY TRANSATLANTIC TECHNOLOGY NEWS', 'March 2024' and Bertelsmann FOUNDATION logo; retain all original blue network letter textures and black book. Do not alter dates, text, photographs, logos, colors or illustrations. No duplicates, no additional editorial content. Output only transparent4:5 PNG."
+  },
+  {
+    "slug": "hidden-layers-new-ai-regulations-a-transatlantic-privacy-decision",
+    "text": "'HIDDEN LAYERS', 'YOUR QUARTERLY TRANSATLANTIC TECHNOLOGY NEWS', 'August 2023' and Bertelsmann FOUNDATION logo; retain all original blue network letter textures and black book",
+    "prompt": "Use case: compositing. Recompose this existing report-book mockup for a4:5 portrait website card, target1200x1500. Preserve the original TRANSPARENT BACKGROUND as true PNG alpha around the complete book. Keep the entire single book intact, same angle, cover content, pages and natural shadow; no crop or redesign. Scale and position so the complete book fits comfortably inside the upper70% of the canvas, with bottom30% transparent negative space for website heading. Preserve verbatim 'HIDDEN LAYERS', 'YOUR QUARTERLY TRANSATLANTIC TECHNOLOGY NEWS', 'August 2023' and Bertelsmann FOUNDATION logo; retain all original blue network letter textures and black book. Do not alter dates, text, photographs, logos, colors or illustrations. No duplicates, no additional editorial content. Output only transparent4:5 PNG."
+  },
+  {
+    "slug": "athens-greece",
+    "alpha": false,
+    "prompt": "Use case: image-edit. Adapt this exact Athens photograph into a4:5 portrait card. Preserve statue face/pose/drapery, Greek flag, flagpole and complete visible building pediment. Keep the muted original photographic lighting/colors. Arrange the existing statue at left and flag above the pediment at right within upper70% with enough scale to recognize. Extend photographic sky above, and stone masonry or statue drapery down toward the bottom25% as quiet background for website heading. Building must remain grounded and physically continuous; do not float architecture on a sky rectangle. No new people, symbols, landmarks, or lettering. Preserve all original recognizable details.",
+    "batch": 5
+  },
+  {
+    "slug": "season-3-episode-1-jan-eliasson",
+    "alpha": false,
+    "prompt": "Use case: compositing. Recompose this exact Leadership in Action episode artwork into a4:5 portrait card. Retain the original illustrated portrait of Jan Eliasson, same face/expression/suit/tie, cup/hand and room colors. Move existing components into upper72% with 'LEADERSHIP IN ACTION' at top, 'SEASON III', portrait below and name 'JAN ELIASSON', subtitle 'ON CONFLICT RESOLUTION', AMF ASPEN MINISTERS FORUM a program of the Aspen Institute logo and Bertelsmann FOUNDATION logo all intact above bottom28%. Preserve ALL lettering verbatim and logos faithfully. Bottom28% should continue the dark brown room texture with no important details for web heading. No new text/content; single portrait only.",
+    "batch": 5
+  },
+  {
+    "slug": "season-3-episode-2-bobi-wine",
+    "alpha": true,
+    "prompt": "Use case: compositing. Recompose this existing Leadership in Action episode artwork into a4:5 portrait card. Preserve any existing alpha. Retain exact illustrated Bobi Wine portrait, red beret/shirt, microphone/hand/expression and halftone texture; don't change identity. Stack existing components in upper72%: 'LEADERSHIP IN ACTION', 'SEASON III', 'BOBI WINE', 'A DREAM OF DEMOCRACY', AMF ASPEN MINISTERS FORUM a program of the Aspen Institute logo and Bertelsmann FOUNDATION logo all faithful/verbatim. Keep source small imprint if present. Bottom28% should be quiet continued dark halftone texture for site heading. No new text, no duplicates, no clipping logos.",
+    "batch": 5
+  },
+  {
+    "slug": "infographic-ai-research-and-development-in-the-u-s-eu-and-china",
+    "alpha": false,
+    "prompt": "Use case: compositing. Adapt this exact factual infographic to a4:5 portrait card without changing ANY data or labels. Treat complete original graphic as one preserved image panel: retain every chart line, axis, numeric value, year, legend flag, heading, source credit, image and logo exactly. Do not re-illustrate or summarize charts. Place the whole wide graphic within upper72% of the4:5 canvas, with generous black negative space extending to bottom28% for web card heading. A neat top-aligned complete source artwork panel on its existing solid black background, no crop, no duplicate or invented data. Original title 'AI RESEARCH AND DEVELOPMENT IN THE U.S., EU AND CHINA' verbatim. 4:5 portrait PNG.",
+    "batch": 5
+  },
+  {
+    "slug": "infographic-cybersecurity",
+    "alpha": false,
+    "prompt": "Use case: compositing. Adapt this exact factual cyber-security infographic to a4:5 portrait card preserving all information. Recompose existing intact panels vertically: the title 'TRANSATLANTIC CYBERSECURITY' and 'STATE-SPONSORED CYBER ATTACKS 2012-2023' at top, original globe with its EXACT arrows, labels and numbers as one untouched unit below, original bar chart with40%,37%,15%,7% and credits/logo retained. Fit everything within upper76%, bottom24% solid black quiet background for website heading. Preserve original warning icons, colors, map geography, every arrow endpoint and numeric value, all wording/credits. Do not invent statistics, omit data, or alter chart relationships. If exact panel rearrangement isn't possible, retain the entire original graphic as one fully visible panel instead. 4:5 portrait PNG.",
+    "batch": 5
+  },
+  {
+    "slug": "transatlantic-trends-2020",
+    "text": "'TT 20 20', 'Transatlantic Trends 2020', 'Transatlantic opinion on global challenges before and after COVID-19', the spine text and all THREE original partner logos Bertelsmann FOUNDATION, GMF The German Marshall Fund of the United States STRENGTHENING TRANSATLANTIC COOPERATION, INSTITUT MONTAIGNE. Preserve coral/navy geometric artwork",
+    "alpha": true,
+    "path": "/tmp/bfna-card-covers/sources/transatlantic-trends-2020",
+    "prompt": "Use case: compositing. Recompose this existing magazine/report book mockup into4:5 portrait1200x1500 card. Preserve true transparent PNG alpha around original book. Keep the COMPLETE original book intact as a single object, identical cover design and angle; scale/place in upper70% of canvas, bottom30% transparent negative space for web heading. Preserve verbatim 'TT 20 20', 'Transatlantic Trends 2020', 'Transatlantic opinion on global challenges before and after COVID-19', the spine text and all THREE original partner logos Bertelsmann FOUNDATION, GMF The German Marshall Fund of the United States STRENGTHENING TRANSATLANTIC COOPERATION, INSTITUT MONTAIGNE. Preserve coral/navy geometric artwork. No crop, redesign, added text, altered imagery or duplicate object. 4:5 portrait transparent PNG.",
+    "batch": 6
+  },
+  {
+    "slug": "transponder-issue-5-democracy",
+    "text": "'Transponder', '12/2023', 'No.5 Democracy' and Bertelsmann FOUNDATION logo; preserve autumn-colored trees, both cyclists, passerby, tunnel painter, crane/building and exact illustration",
+    "alpha": true,
+    "path": "/tmp/bfna-card-covers/sources/transponder-issue-5-democracy",
+    "prompt": "Use case: compositing. Recompose this existing magazine/report book mockup into4:5 portrait1200x1500 card. Preserve true transparent PNG alpha around original book. Keep the COMPLETE original book intact as a single object, identical cover design and angle; scale/place in upper70% of canvas, bottom30% transparent negative space for web heading. Preserve verbatim 'Transponder', '12/2023', 'No.5 Democracy' and Bertelsmann FOUNDATION logo; preserve autumn-colored trees, both cyclists, passerby, tunnel painter, crane/building and exact illustration. No crop, redesign, added text, altered imagery or duplicate object. 4:5 portrait transparent PNG.",
+    "batch": 6
+  },
+  {
+    "slug": "transponder-issue-6-elections",
+    "text": "'Transponder', '06/2024', 'No.6 Elections' and Bertelsmann FOUNDATION logo; preserve entire exact street pole illustration, signs, political stickers, all tiny text and flags, pedestrian/backpack, traffic lights, buildings; no new or altered political symbols",
+    "alpha": true,
+    "path": "/tmp/bfna-card-covers/sources/transponder-issue-6-elections",
+    "prompt": "Use case: compositing. Recompose this existing magazine/report book mockup into4:5 portrait1200x1500 card. Preserve true transparent PNG alpha around original book. Keep the COMPLETE original book intact as a single object, identical cover design and angle; scale/place in upper70% of canvas, bottom30% transparent negative space for web heading. Preserve verbatim 'Transponder', '06/2024', 'No.6 Elections' and Bertelsmann FOUNDATION logo; preserve entire exact street pole illustration, signs, political stickers, all tiny text and flags, pedestrian/backpack, traffic lights, buildings; no new or altered political symbols. No crop, redesign, added text, altered imagery or duplicate object. 4:5 portrait transparent PNG.",
+    "batch": 6
+  },
+  {
+    "slug": "system-updates",
+    "alpha": false,
+    "path": "/tmp/bfna-card-covers/sources/system-updates",
+    "prompt": "Use case: compositing. Recompose this blue report cover to4:5 portrait1200x1500. Preserve solid original cyan blue, black condensed font, original gear artwork inside WORK. Keep exact text 'SYSTEM UPDATES: RESETTING THE FUTURE OF WORK', 'A COLLECTION OF POLICY RECOMMENDATIONS', 'Bertelsmann Foundation Fellowship \u00b7 Class of 2023', and Bertelsmann FOUNDATION logo. Arrange logo top-right, title/subtitle centrally within upper60%, credit at68%, leaving bottom25% clear cyan for web heading. No new text, no cropping or imagery changes.",
+    "batch": 6
+  },
+  {
+    "slug": "season-3-episode-1-jan-eliasson",
+    "alpha": false,
+    "path": "/Users/claudioccm/.codex/generated_images/01a0f8d0-9490-7543-889d-7b61b9f69a85/exec-0950d561-ddd3-48bc-a6e0-fd2190f7d918.png",
+    "prompt": "This approved composition needs its canvas corrected to EXACT4:5 portrait width:height, e.g.1200x1500 (not5:7). Preserve every pixel/content of original illustration/portrait/text/logo; gently widen its background, and scale the full composition so all lettering, portrait and both bottom logos fit within top72%. Keep bottom28% plain dark-brown room texture. Preserve Jan Eliasson's face, suit, cup/hand; preserve all lettering verbatim. No content additions or crop. Deliver4:5 portraitPNG.",
+    "batch": 6
+  },
+  {
+    "slug": "infographic-cybersecurity",
+    "alpha": false,
+    "path": "/Users/claudioccm/.codex/generated_images/01a0f8d0-9490-7543-889d-7b61b9f69a85/exec-208b5539-6700-4b41-a1d2-c705aba96efa.png",
+    "prompt": "Adjust this portrait infographic composition ONLY by uniformly scaling its complete existing artwork down slightly and moving it up. The entire infographic including source-credit line and Bertelsmann FOUNDATION logo must finish above74% of the canvas height; bottom26% must be completely blank black for website heading. Preserve every arrow, map label, number, bar, percentage, icon, typography and source wording EXACTLY as in this image. Do not redraw data or remove details. Canvas stays EXACT4:5 portrait1200x1500. Scale complete artwork as one group, extend matching black background.",
+    "batch": 6
+  },
+  {
+    "slug": "a-new-era-of-german-turkish-cooperation",
+    "alpha": false,
+    "path": "/tmp/bfna-card-covers/sources/a-new-era-of-german-turkish-cooperation",
+    "prompt": "Use case: compositing, extremely high source fidelity. Create4:5 portrait1200x1500 desktop card derivative of the provided existing factual infographic. Preserve the COMPLETE original infographic as one intact image panel, all original wording, statistics, small source notes, logos, illustrations, people, maps, plots, proportions and colors. Title must remain exactly 'A NEW ERA OF GERMAN-TURKISH COOPERATION?'. Do NOT redraw, interpret, rewrite, invent or omit any factual content. Fit the entire original panel with no crop within the upper72% of the4:5 canvas. Extend matching blue/yellow background unobtrusively around it and through the bottom28% for site-heading space. For tall sources, preserve the full tall panel centrally with matching blank margins; do not stretch or squeeze content. Only canvas/composition changes, all source content preserved. Output only4:5 PNG.",
+    "batch": 7
+  },
+  {
+    "slug": "2020-senate-races-overshadowed-by-trump",
+    "alpha": false,
+    "path": "/tmp/bfna-card-covers/sources/2020-senate-races-overshadowed-by-trump",
+    "prompt": "Use case: compositing, extremely high source fidelity. Create4:5 portrait1200x1500 desktop card derivative of the provided existing factual infographic. Preserve the COMPLETE original infographic as one intact image panel, all original wording, statistics, small source notes, logos, illustrations, people, maps, plots, proportions and colors. Title must remain exactly '2020 SENATE RACES OVERSHADOWED BY TRUMP'. Do NOT redraw, interpret, rewrite, invent or omit any factual content. Fit the entire original panel with no crop within the upper72% of the4:5 canvas. Extend matching black background unobtrusively around it and through the bottom28% for site-heading space. For tall sources, preserve the full tall panel centrally with matching blank margins; do not stretch or squeeze content. Only canvas/composition changes, all source content preserved. Output only4:5 PNG.",
+    "batch": 7
+  },
+  {
+    "slug": "a-shred-of-doubt-brexits-future",
+    "alpha": false,
+    "path": "/tmp/bfna-card-covers/sources/a-shred-of-doubt-brexits-future",
+    "prompt": "Use case: compositing, extremely high source fidelity. Create4:5 portrait1200x1500 desktop card derivative of the provided existing factual infographic. Preserve the COMPLETE original infographic as one intact image panel, all original wording, statistics, small source notes, logos, illustrations, people, maps, plots, proportions and colors. Title must remain exactly 'A Shred of Doubt: Brexit\u2019s Future'. Do NOT redraw, interpret, rewrite, invent or omit any factual content. Fit the entire original panel with no crop within the upper72% of the4:5 canvas. Extend matching dark red background unobtrusively around it and through the bottom28% for site-heading space. For tall sources, preserve the full tall panel centrally with matching blank margins; do not stretch or squeeze content. Only canvas/composition changes, all source content preserved. Output only4:5 PNG.",
+    "batch": 7
+  },
+  {
+    "slug": "12-days-of-christmas-in-europe",
+    "alpha": false,
+    "path": "/tmp/bfna-card-covers/sources/12-days-of-christmas-in-europe",
+    "prompt": "Use case: compositing, extremely high source fidelity. Create4:5 portrait1200x1500 desktop card derivative of the provided existing factual infographic. Preserve the COMPLETE original infographic as one intact image panel, all original wording, statistics, small source notes, logos, illustrations, people, maps, plots, proportions and colors. Title must remain exactly '12 DAYS of CHRISTMAS in EUROPE'. Do NOT redraw, interpret, rewrite, invent or omit any factual content. Fit the entire original panel with no crop within the upper72% of the4:5 canvas. Extend matching white background unobtrusively around it and through the bottom28% for site-heading space. For tall sources, preserve the full tall panel centrally with matching blank margins; do not stretch or squeeze content. Only canvas/composition changes, all source content preserved. Output only4:5 PNG.",
+    "batch": 7
+  },
+  {
+    "slug": "austrian-elections-infographic",
+    "alpha": false,
+    "path": "/tmp/bfna-card-covers/sources/austrian-elections-infographic",
+    "prompt": "Use case: compositing, extremely high source fidelity. Create4:5 portrait1200x1500 desktop card derivative of the provided existing factual infographic. Preserve the COMPLETE original infographic as one intact image panel, all original wording, statistics, small source notes, logos, illustrations, people, maps, plots, proportions and colors. Title must remain exactly 'AUSTRIAN ELECTIONS: HAZARDOUS CONDITIONS AHEAD?'. Do NOT redraw, interpret, rewrite, invent or omit any factual content. Fit the entire original panel with no crop within the upper72% of the4:5 canvas. Extend matching red background unobtrusively around it and through the bottom28% for site-heading space. For tall sources, preserve the full tall panel centrally with matching blank margins; do not stretch or squeeze content. Only canvas/composition changes, all source content preserved. Output only4:5 PNG.",
+    "batch": 7
+  },
+  {
+    "slug": "breaking-barriers",
+    "alpha": false,
+    "path": "/tmp/bfna-card-covers/sources/breaking-barriers",
+    "prompt": "Use case: compositing, extremely high source fidelity. Create4:5 portrait1200x1500 desktop card derivative of the provided existing factual infographic. Preserve the COMPLETE original infographic as one intact image panel, all original wording, statistics, small source notes, logos, illustrations, people, maps, plots, proportions and colors. Title must remain exactly 'BREAKING BARRIERS: LIGHTING CHINA\u2019S PATH TO GLOBAL MARKETS'. Do NOT redraw, interpret, rewrite, invent or omit any factual content. Fit the entire original panel with no crop within the upper72% of the4:5 canvas. Extend matching navy blue background unobtrusively around it and through the bottom28% for site-heading space. For tall sources, preserve the full tall panel centrally with matching blank margins; do not stretch or squeeze content. Only canvas/composition changes, all source content preserved. Output only4:5 PNG.",
+    "batch": 7
+  },
+  {
+    "slug": "transatlantic-trends-2020",
+    "alpha": true,
+    "path": "/Users/claudioccm/.codex/generated_images/01a0f8d0-9490-7543-889d-7b61b9f69a85/exec-050fd747-58fb-4b2b-b49d-beee0f3b2ae2.png",
+    "prompt": "Correct this4:5 transparent report-book card asset. Remove only the stray white specks/fragments outside the actual book, especially above its top edge. The whole space around the book must be true transparent alpha with clean antialiased book edges. Preserve the complete book, original three logos, all text, colors, page edges and position exactly. Do not alter editorial content. Keep4:5 portrait dimensions and bottom negative space transparent.",
+    "batch": 7
+  },
+  {
+    "slug": "disrupting-democracy-vol-i",
+    "alpha": true,
+    "text": "'DISRUPTING DEMOCRACY', 'POINT. CLICK. TRANSFORM.' and Bertelsmann FOUNDATION logo, five hands with phones displaying India, Cuba, USA, Israel and Germany flags",
+    "prompt": "Use case: compositing. Reframe this existing book mockup to4:5 portrait1200x1500. Keep original book COMPLETE and intact, same cover layout/angle/pages, inside upper70% of frame, with bottom30% empty transparent alpha. Preserve verbatim 'DISRUPTING DEMOCRACY', 'POINT. CLICK. TRANSFORM.' and Bertelsmann FOUNDATION logo, five hands with phones displaying India, Cuba, USA, Israel and Germany flags. The original is transparent: keep alpha throughout surrounding empty canvas and natural shadow, clean edges without stray white pieces. Do not crop, redraw editorial content, add text or create duplicate books. Output only4:5 transparentPNG."
+  },
+  {
+    "slug": "disrupting-democracy-vol-ii",
+    "alpha": true,
+    "text": "'DISRUPTING DEMOCRACY', 'POINT. CLICK. TRANSFORM.', 'Volume II: Election Series' and Bertelsmann FOUNDATION logo, all four phone/hand illustrations with Mexico, Austria, Nigeria and USA flags and ballot box",
+    "prompt": "Use case: compositing. Reframe this existing book mockup to4:5 portrait1200x1500. Keep original book COMPLETE and intact, same cover layout/angle/pages, inside upper70% of frame, with bottom30% empty transparent alpha. Preserve verbatim 'DISRUPTING DEMOCRACY', 'POINT. CLICK. TRANSFORM.', 'Volume II: Election Series' and Bertelsmann FOUNDATION logo, all four phone/hand illustrations with Mexico, Austria, Nigeria and USA flags and ballot box. The original is transparent: keep alpha throughout surrounding empty canvas and natural shadow, clean edges without stray white pieces. Do not crop, redraw editorial content, add text or create duplicate books. Output only4:5 transparentPNG."
+  },
+  {
+    "slug": "emerging-ties",
+    "alpha": true,
+    "text": "'EMERGING TIES', 'ESSAYS ON TRANSATLANTIC ENGAGEMENT IN THE DEVELOPING WORLD', 'Bertelsmann Foundation Fellowship \u00b7 Class of 2022' and Bertelsmann FOUNDATION logo; original green/white lettering on dark blue and outlined hand holding small globe",
+    "prompt": "Use case: compositing. Reframe this existing book mockup to4:5 portrait1200x1500. Keep original book COMPLETE and intact, same cover layout/angle/pages, inside upper70% of frame, with bottom30% empty transparent alpha. Preserve verbatim 'EMERGING TIES', 'ESSAYS ON TRANSATLANTIC ENGAGEMENT IN THE DEVELOPING WORLD', 'Bertelsmann Foundation Fellowship \u00b7 Class of 2022' and Bertelsmann FOUNDATION logo; original green/white lettering on dark blue and outlined hand holding small globe. The original is transparent: keep alpha throughout surrounding empty canvas and natural shadow, clean edges without stray white pieces. Do not crop, redraw editorial content, add text or create duplicate books. Output only4:5 transparentPNG."
+  },
+  {
+    "slug": "people-led-innovation",
+    "alpha": true,
+    "text": "'PEOPLE-LED INNOVATION', 'Toward a Methodology for Solving Urban Problems in the 21st Century', 'Andrew Young, Jeffrey Brown, Hannah Pierce and Stefaan Verhulst', GOVLAB logo and Bertelsmann FOUNDATION logo, identical urban architecture photograph and person",
+    "prompt": "Use case: compositing. Reframe this existing book mockup to4:5 portrait1200x1500. Keep original book COMPLETE and intact, same cover layout/angle/pages, inside upper70% of frame, with bottom30% empty transparent alpha. Preserve verbatim 'PEOPLE-LED INNOVATION', 'Toward a Methodology for Solving Urban Problems in the 21st Century', 'Andrew Young, Jeffrey Brown, Hannah Pierce and Stefaan Verhulst', GOVLAB logo and Bertelsmann FOUNDATION logo, identical urban architecture photograph and person. The original is transparent: keep alpha throughout surrounding empty canvas and natural shadow, clean edges without stray white pieces. Do not crop, redraw editorial content, add text or create duplicate books. Output only4:5 transparentPNG."
+  }
+]

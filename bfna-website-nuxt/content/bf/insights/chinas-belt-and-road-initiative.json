@@ -2,7 +2,7 @@
   "slug": "chinas-belt-and-road-initiative",
   "heading": "China’s Belt and Road Initiative",
   "subheading": null,
-  "excerpt": null,
+  "excerpt": "An infographic outlining how China’s Belt and Road Initiative connects infrastructure, supply chains, technology and military strategy.",
   "content": "China’s Belt and Road Initiative (BRI) is the most ambitious infrastructure plan in world history. Connecting Guangzhou to Venice by sea and Beijing to Brussels by land, this massive undertaking already involves 68 countries (including 24 in Europe) that comprise two-thirds of the global population. The BRI is a multi-pronged plan that reimagines global supply chains, technological connectivity, and military strategy.",
   "image": "https://bfna.simplyas.com/assets/3788db7e-0dc2-4955-a2c0-cf4343f547b3",
   "video_url": null,
@@ -23,5 +23,6 @@
     "workstream": "Politics & Society",
     "product_type": null,
     "id": 231
-  }
+  },
+  "card_cover": "https://bfna.simplyas.com/assets/1c2d6629-4d3a-4560-8400-1aec40d98bce"
 }

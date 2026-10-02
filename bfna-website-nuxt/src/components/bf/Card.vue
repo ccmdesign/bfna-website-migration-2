@@ -419,6 +419,11 @@ if (import.meta.dev) {
     background-color: var(--color-base-super-light);
   }
 
+  /* Art-directed sources keep the same image box at every breakpoint. */
+  .bf-card__picture {
+    display: contents;
+  }
+
   .bf-card__media .bf-media {
     flex: 1 1 auto;
     min-block-size: 0;
@@ -683,6 +688,228 @@ if (import.meta.dev) {
     margin-block-start: 0;
   }
 
+  /* The compact excerpt keeps the mobile layout unchanged. */
+  .bf-card__excerpt-short + .bf-card__excerpt-long {
+    display: none;
+  }
+
+  /* Insight, Project and Program cards share the image-cover treatment.
+     Each family keeps a fixed desktop ratio, so copy cannot resize a card.
+     Keep the copy static so the heading's stretched link still covers the card. */
+  @media (min-width: 48rem) {
+    .bf-card:is(.bf-card--insight, .bf-card--project, .bf-card--program) {
+      aspect-ratio: 4 / 5;
+      container-type: inline-size;
+      min-block-size: 0;
+      align-self: start;
+    }
+
+    /* Landscape cover proportions for each card family. */
+    .bf-card.bf-card--project {
+      aspect-ratio: 16 / 9;
+    }
+
+    .bf-card.bf-card--program {
+      aspect-ratio: 3 / 2;
+    }
+
+    /* The three-column Program row has less room for the tagline reveal. */
+    .bf-card--program .bf-card__excerpt {
+      --_bf-card-excerpt-lines: 3;
+    }
+
+    /* Full-width program leads keep their existing wide presentation. */
+    .bf-card:is(.bf-card--insight, .bf-card--project, .bf-card--program)[data-span="full"] {
+      aspect-ratio: auto;
+    }
+
+    .bf-card:is(.bf-card--insight-media, .bf-card--project-media, .bf-card--program-media)[data-span="full"] {
+      min-block-size: 22rem;
+    }
+
+    .bf-card:is(.bf-card--insight, .bf-card--project, .bf-card--program) .bf-card__excerpt {
+      display: -webkit-box;
+      min-block-size: 0;
+      overflow: hidden;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: var(--_bf-card-excerpt-lines, 5);
+      line-clamp: var(--_bf-card-excerpt-lines, 5);
+    }
+
+    @container (max-width: 17rem) {
+      :is(.bf-card--insight, .bf-card--project, .bf-card--program) .bf-card__excerpt {
+        --_bf-card-excerpt-lines: 4;
+      }
+    }
+
+    :is(.bf-card--insight, .bf-card--project, .bf-card--program) .bf-card__excerpt-short {
+      display: none;
+    }
+
+    :is(.bf-card--insight, .bf-card--project, .bf-card--program) .bf-card__excerpt-long {
+      display: inline;
+    }
+
+    .bf-card:is(.bf-card--insight-media, .bf-card--project-media, .bf-card--program-media) {
+      --_bf-card-title-color: var(--color-text-inverse);
+      --_bf-card-lift: 0;
+      --_bf-card-motion-duration: 420ms;
+      --_bf-card-motion: var(--_bf-card-motion-duration) cubic-bezier(0.4, 0, 0.2, 1);
+      --_bf-card-scrim: color-mix(in srgb, var(--color-surface-inverse) 70%, transparent);
+
+      isolation: isolate;
+      display: flex;
+      padding: var(--_bf-card-padding);
+      overflow: hidden;
+      background-color: var(--color-surface-inverse);
+      /* Keep the raised stacking order until the exit fade has finished. */
+      transition:
+        transform var(--_bf-card-motion),
+        box-shadow var(--_bf-card-motion),
+        z-index 0s var(--_bf-card-motion-duration);
+      transition-behavior: allow-discrete;
+    }
+
+    .bf-card:is(.bf-card--insight-media, .bf-card--project-media, .bf-card--program-media):is(:hover, :focus-within) {
+      z-index: 1;
+      /* Raise immediately on entry; only leaving the card is delayed. */
+      transition-delay: 0s;
+    }
+
+    .bf-card:is(.bf-card--insight-media, .bf-card--project-media, .bf-card--program-media) > .bf-card__media,
+    .bf-card[data-span="full"]:has(> .bf-card__media) ~ .bf-card:is(.bf-card--insight-media, .bf-card--project-media, .bf-card--program-media) > .bf-card__media {
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      display: flex;
+      margin: 0;
+      border-radius: inherit;
+    }
+
+    .bf-card:is(.bf-card--insight-media, .bf-card--project-media, .bf-card--program-media) > .bf-card__media .bf-media {
+      inline-size: 100%;
+      block-size: 100%;
+      aspect-ratio: auto;
+      transition:
+        filter var(--_bf-card-motion),
+        transform var(--_bf-card-motion);
+    }
+
+    /* Keep the resting scrim near the title. Crossfade to a softer reading
+       scrim on interaction; blur only the image, never the copy above it. */
+    .bf-card:is(.bf-card--insight-media, .bf-card--project-media, .bf-card--program-media) > .bf-card__media::before,
+    .bf-card:is(.bf-card--insight-media, .bf-card--project-media, .bf-card--program-media) > .bf-card__media::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      transition: opacity var(--_bf-card-motion);
+      pointer-events: none;
+    }
+
+    .bf-card:is(.bf-card--insight-media, .bf-card--project-media, .bf-card--program-media) > .bf-card__media::before {
+      /* A text-sized fade also protects wrapped titles in shallow covers. */
+      inset-block-start: auto;
+      block-size: min(100%, 14rem);
+      background: linear-gradient(
+        to top,
+        var(--_bf-card-scrim) 0%,
+        var(--_bf-card-scrim) 35%,
+        transparent 100%
+      );
+    }
+
+    .bf-card:is(.bf-card--insight-media, .bf-card--project-media, .bf-card--program-media) > .bf-card__media::after {
+      background: linear-gradient(
+        to bottom,
+        color-mix(in srgb, var(--_bf-card-scrim) 78%, transparent),
+        var(--_bf-card-scrim) 55%
+      );
+      opacity: 0;
+    }
+
+    .bf-card:is(.bf-card--insight-media, .bf-card--project-media, .bf-card--program-media) > .bf-card__copy {
+      flex: 1 1 auto;
+      justify-content: end;
+      inline-size: auto;
+      padding: 0;
+    }
+
+    .bf-card:is(.bf-card--insight-media, .bf-card--project-media, .bf-card--program-media)[data-span="full"] > .bf-card__copy {
+      flex: 1 1 auto;
+      place-self: auto;
+      inline-size: auto;
+      padding: 0;
+    }
+
+    :is(.bf-card--insight-media, .bf-card--project-media, .bf-card--program-media) .bf-card__text {
+      flex: none;
+    }
+
+    :is(.bf-card--insight-media, .bf-card--project-media, .bf-card--program-media) .bf-card__text > time,
+    .bf-card:is(.bf-card--insight-media, .bf-card--project-media, .bf-card--program-media) .bf-card__text > p.bf-card__excerpt {
+      color: var(--color-text-inverse);
+    }
+
+    :is(.bf-card--insight-media, .bf-card--project-media, .bf-card--program-media) .bf-card__chips,
+    :is(.bf-card--insight-media, .bf-card--project-media, .bf-card--program-media) p.bf-card__kicker {
+      display: none;
+    }
+
+    .bf-card:is(.bf-card--insight-media, .bf-card--project-media, .bf-card--program-media) .bf-card__text > p.bf-card__excerpt {
+      display: grid;
+      grid-template-rows: 0fr;
+      overflow: hidden;
+      margin: 0;
+      opacity: 0;
+      transition:
+        grid-template-rows var(--_bf-card-motion),
+        margin-block-start var(--_bf-card-motion),
+        opacity var(--_bf-card-motion);
+    }
+
+    /* The grid row expands to the copy's actual height, without
+       the dead time and jump caused by animating an oversized max-height. */
+    :is(.bf-card--insight-media, .bf-card--project-media, .bf-card--program-media) .bf-card__excerpt-long {
+      display: -webkit-box;
+      min-block-size: 0;
+      overflow: hidden;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: var(--_bf-card-excerpt-lines, 5);
+      line-clamp: var(--_bf-card-excerpt-lines, 5);
+    }
+
+    .bf-card:is(.bf-card--insight-media, .bf-card--project-media, .bf-card--program-media):is(:hover, :focus-within) > .bf-card__media .bf-media {
+      filter: blur(5.2px);
+      /* Overscan keeps blurred image edges inside the clipped cover. */
+      transform: scale(1.06);
+    }
+
+    .bf-card:is(.bf-card--insight-media, .bf-card--project-media, .bf-card--program-media):is(:hover, :focus-within) > .bf-card__media::before {
+      opacity: 0;
+    }
+
+    .bf-card:is(.bf-card--insight-media, .bf-card--project-media, .bf-card--program-media):is(:hover, :focus-within) > .bf-card__media::after {
+      opacity: 1;
+    }
+
+    .bf-card:is(.bf-card--insight-media, .bf-card--project-media, .bf-card--program-media):is(:hover, :focus-within) .bf-card__text > p.bf-card__excerpt {
+      grid-template-rows: 1fr;
+      margin-block-start: calc(var(--space-xs) - var(--space-3xs));
+      opacity: 1;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .bf-card:is(.bf-card--insight-media, .bf-card--project-media, .bf-card--program-media),
+      .bf-card:is(.bf-card--insight-media, .bf-card--project-media, .bf-card--program-media) > .bf-card__media .bf-media,
+      .bf-card:is(.bf-card--insight-media, .bf-card--project-media, .bf-card--program-media) > .bf-card__media::before,
+      .bf-card:is(.bf-card--insight-media, .bf-card--project-media, .bf-card--program-media) > .bf-card__media::after,
+      .bf-card:is(.bf-card--insight-media, .bf-card--project-media, .bf-card--program-media) .bf-card__text > p.bf-card__excerpt {
+        transition: none;
+      }
+    }
+  }
+
   /*
     ## Mixed groups
 
@@ -763,11 +990,11 @@ if (import.meta.dev) {
     */
     flex-flow: row wrap;
     align-items: baseline;
-    gap: var(--space-2xs) var(--_bf-card-row-gap);
+    gap: var(--_bf-card-row-line-gap, var(--space-2xs)) var(--_bf-card-row-gap);
     /*
       `--_bf-card-row-padding-block` is the room above and below each row
-      (one value, or start and end). The default is the tight list the
-      search results want; a long list of titles alone (`/archive`) opens it.
+      (one value, or start and end). Lists can open the default compact
+      spacing without changing other uses of the row.
     */
     padding-block: var(--_bf-card-row-padding-block, 0 var(--space-xs));
     padding-inline: 0;
@@ -831,6 +1058,7 @@ if (import.meta.dev) {
   */
   .bf-card.bf-card-row :is(h2, h3, h4) {
     flex: 1 1 0;
+    font-size: var(--_bf-card-row-title-size, var(--size-1));
 
     /*
       `--leading-display` is set for a card's two-line title; a row title
@@ -905,7 +1133,7 @@ if (import.meta.dev) {
     overflow: hidden;
     margin-block-start: 0;
     color: var(--color-base-light);
-    font-size: min(var(--size-0), 1rem);
+    font-size: var(--_bf-card-row-excerpt-size, min(var(--size-0), 1rem));
     line-height: var(--leading-body);
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 1;

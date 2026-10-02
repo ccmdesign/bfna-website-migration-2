@@ -2,7 +2,7 @@
   "slug": "american-democracy-on-unstable-ground",
   "heading": "American Democracy on Unstable Ground",
   "subheading": null,
-  "excerpt": null,
+  "excerpt": "An infographic examining election legislation in seven U.S. states and the competing efforts to expand or restrict access to voting.",
   "content": "With the last two U.S. presidential elections decided by razor-thin margins in a handful of swing states, politicians are scrambling to change voting and election laws to maximize partisan advantage for the races ahead.  Some measures aim to expand voter participation, while others create obstacles to suppress access to the polls.  Our latest B|Visual looks at the deluge of legislation introduced in seven states that will shape the future of American democracy. ",
   "image": "https://bfna.simplyas.com/assets/001d7896-218f-49de-afa2-38c7ccf55c3d",
   "video_url": null,
@@ -25,5 +25,6 @@
     "workstream": "Democracy",
     "product_type": null,
     "id": 225
-  }
+  },
+  "card_cover": "https://bfna.simplyas.com/assets/41bb3f03-3a19-4c39-8ba1-d8f5804b5ffa"
 }
