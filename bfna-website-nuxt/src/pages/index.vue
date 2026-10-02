@@ -65,6 +65,7 @@
  * page: a route that sets no title renders `Bertelsmann Foundation North
  * America` alone, rather than the site name twice.
  */
+import heroImages from '~/assets/bf-data/hero-images.json'
 import { useBfInsights } from '~/composables/data/useBfInsights'
 import { useBfPages } from '~/composables/data/useBfPages'
 import { useBfPrograms } from '~/composables/data/useBfPrograms'
@@ -126,35 +127,10 @@ const latest = active.slice(0, 6)
 
     `/democracy`, not `/wireframes/democracy`: the hub route of BRIEF §7.
 
-    The photographs are the Capitol / Reichstag pair from
-    `_process/scoping/hero-capitol-reichstag-notes.md` (rounds 5–8): one sky,
-    the same clouds in the same places, each building on the bottom edge of a
-    square frame, crossfaded by `bfHeroMedia`. They are that exploration's,
-    and this page only points at them. **Local, not the Directus URL the
-    content layer stores**: `bfMedia` routes a root-relative path through
-    `NuxtImg`, and `bfHeroMedia` passes a screen-by-screen `sizes` with it so
-    the module emits width descriptors against `nuxt.config.ts`'s `screens`
-    ladder. An absolute `https://` URL goes to the browser untouched and gets
-    none of that. No `imageAlt`: the picture is decorative and the `<h1>`
-    beside it carries the meaning.
-
-    `image-sizes` says how wide the square is really drawn. Below ~576px the
-    band is taller than it is wide (its 36rem floor, below), so `cover`
-    scales the square to the band's height — 576px wide on a 320px phone —
-    and the default `100vw` candidate was stretched 1.8x. So the two phone
-    screens name the drawn width in `px` (a `rem` entry would be dropped by
-    `@nuxt/image` without a word), and from `md` up, where the band is
-    landscape, it is the viewport's.
-
-    `scrim="none"` is `bfHero`'s ink mode: no scrim, and the band keeps the
-    page's dark ink, focus ring and button paint — see the stylesheet for
-    why this sky wants it and the contrast it measured.
-
-    Everything else about the band — its height, its crop, the ink the copy
-    is set in and where the copy sits — is `.bf-home-hero` in the stylesheet
-    below, and the reasoning is there. It was an inline `style` until the
-    refined pass, which no ordinary rule can outrank (the `bfMedia` lesson,
-    gh#26).
+    The original skyline pair opens the loop, followed by four architectural
+    pairs from hero-images.json. Each pair remains adjacent in the sequence.
+    Per-image positions preserve columns and pediments in cover crops. The
+    light backdrop below keeps the existing navy copy readable on every frame.
   -->
   <bfHero
     class="bf-home-hero"
@@ -162,6 +138,7 @@ const latest = active.slice(0, 6)
     :description="home?.description"
     image="/images/hero/homepage-capitol-square.jpg"
     image-secondary="/images/hero/homepage-reichstag-square.jpg"
+    :image-sequence="heroImages"
     image-sizes="xs:576px sm:640px md:100vw lg:100vw xl:100vw xxl:100vw"
     scrim="none"
   >
@@ -343,67 +320,7 @@ const latest = active.slice(0, 6)
   is semantic tokens; no `:not()` (D-20.5).
 */
 @layer components {
-  /*
-    ## The hero: the copy in the sky, in ink
-
-    The photograph is a square: open sky over the top seventy percent, the
-    building across the bottom quarter, cropped by `object-fit: cover` from
-    the bottom edge (`center bottom`) so a taller band only ever gains sky.
-    The height hook keeps the band 16:9 on a desktop and never taller than
-    the viewport (round 5 of the scoping notes) — at 16:9 the visible window
-    is the bottom 56% of the square, and the building fills the lower half
-    of it.
-
-    Two things were wrong on that ground, and both were measured:
-
-    1. **The copy sat on the building.** `bfHero` centres its column in the
-       band (`align-content: center`), which is right for a photograph with
-       no subject and wrong for this one: at 1280px the standfirst ran across
-       the Capitol's dome. Here the column starts from the top instead, a
-       `2xl` step under the notice, so it lives in the sky and the building
-       keeps the bottom of the frame to itself.
-    2. **White type on this sky fails.** The scrim is off on this band — the
-       0.70 navy the system uses over photographs flattens the blue sky the
-       pair was made for (scoping notes, round 4) — and bare white on the
-       sky measured 3.0:1 at best, and 1.0:1 wherever a cloud passed behind
-       a line (the table below). Restoring the scrim would buy legibility by
-       painting out the sky; `panel` would put a navy column over the dome.
-
-    So the copy is set in the page's **ink** rather than inverted, in two
-    steps of the navy family: the heading in `--color-accent-super-dark`,
-    the standfirst in `--color-accent-dark`, the darker of the two because it
-    is the small, light-weight text. Every value this sky has is light —
-    azure, cloud, stone — and dark ink reads over all three, where white
-    reads over none of them.
-
-    Measured over the rendered band with the copy hidden, at the **darkest
-    pixel** under any line box, both photographs, thirteen widths from 320
-    to 1920px (refined pass, Sep 2026):
-
-    | line       | ink                 | worst | needs | white was |
-    |------------|---------------------|-------|-------|-----------|
-    | heading    | accent-super-dark   | 3.91  | 3.0   | 1.00–3.00 |
-    | standfirst | accent-dark         | 5.78  | 4.5   | 1.01–2.46 |
-
-    The heading's floor is on a phone, where the band shows the deepest
-    blue at the top of the sky; from 900px up it is ~5:1. The brand
-    navy itself (`--color-accent`) measured 3.05 there — a pass by a hair —
-    which is why the heading takes the next step down.
-
-    The rule gh#253 wrote down — "over media, type is white" — was measured
-    for a blown-out white photograph under a scrim; this band has no scrim
-    and its photograph is not blown out, which is the case that rule did not
-    cover. **A new photograph voids the table**: re-measure before swapping
-    either file.
-
-    The CTA is untouched: `primary` is an opaque navy fill with white type,
-    which does not composite with the photograph.
-
-    Specificity, stated because it is load-bearing: every rule here that
-    undoes one of `bfHero`'s carries exactly one compound more than the rule
-    it undoes — `.bf-home-hero` on top of `bfHero`'s own class — so the page
-    wins by specificity in the same layer, never by stylesheet order.
-  */
+  /* The skyline and detail photographs share the same hero composition. */
   .bf-home-hero.bf-hero {
     /*
       16:9 on a desktop, never taller than the viewport, 60svh at least (the
@@ -427,17 +344,19 @@ const latest = active.slice(0, 6)
   }
 
   /*
-    The ink. `color` on the band, so the standfirst and anything else in the
-    column inherit it; the heading takes the lighter of the two navies, so
-    it still reads as the brand's colour at display size. Contrast, worst
-    pixel under any line, both photographs: the table above.
-
-    The rest of the light-ground treatment is `bfHero`'s ink mode
-    (`scrim="none"` in the template): no scrim fill, and none of the band's
-    inversions — the focus ring stays `base/focus.css`'s dark one, which is
-    what a light ground wants, and the buttons keep their own paint. This
-    page used to override five of `bfHero`'s rules to get there.
+    The architectural close-ups vary from bright stone to deep shadow. A light
+    veil protects the navy copy; its opaque upper region extends past the CTA,
+    then clears toward the bottom so the photography remains visible.
   */
+  .bf-home-hero :deep(.bf-hero-media__scrim) {
+    background: linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--color-surface-page) 96%, transparent) 0%,
+      color-mix(in srgb, var(--color-surface-page) 92%, transparent) 55%,
+      transparent 90%
+    );
+  }
+
   .bf-home-hero.bf-hero--ink {
     color: var(--color-accent-dark);
   }

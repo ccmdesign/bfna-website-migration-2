@@ -90,9 +90,11 @@
  * `.frame`'s universal child rule forces `100%/100%` onto a text panel, and
  * `.imposter` supplies no containing block.
  *
- * Presentational-only (BRIEF D8): four props in, one slot (painted on the
- * scrim, above it), nothing out.
+ * Presentational-only (BRIEF D8): photos and playback props in, one slot
+ * painted on the scrim, nothing out.
  */
+import type { HeroImage } from '~/types/bf-contracts'
+
 defineOptions({ name: 'BfHeroMedia' })
 
 interface Props {
@@ -115,6 +117,9 @@ interface Props {
    * and announcing an image that comes and goes would be noise.
    */
   srcSecondary?: string | null
+  /** Further photographs in the loop, with optional focal positions. */
+  sequence?: HeroImage[]
+  paused?: boolean
   /**
    * The photograph's alternative text.
    *
@@ -137,9 +142,76 @@ interface Props {
   sizes?: string
 }
 
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
   alt: '',
   sizes: 'xs:100vw sm:100vw md:100vw lg:100vw xl:100vw xxl:100vw'
+})
+
+const media = ref<HTMLElement | null>(null)
+const photographs = computed<HeroImage[]>(() => props.src
+  ? [{ src: props.src }, ...(props.srcSecondary ? [{ src: props.srcSecondary }] : []), ...(props.sequence ?? [])]
+  : [])
+const hasSequence = computed(() => Boolean(props.sequence?.length))
+let animations: Animation[] = []
+let motionPreference: MediaQueryList | undefined
+let generation = 0
+let mounted = false
+
+function syncPlayback() {
+  for (const animation of animations) {
+    if (props.paused) animation.pause()
+    else animation.play()
+  }
+}
+
+async function startSequence() {
+  const currentGeneration = ++generation
+  animations.forEach(animation => animation.cancel())
+  animations = []
+  if (!mounted || !hasSequence.value || motionPreference?.matches) return
+
+  await nextTick()
+  const images = [...(media.value?.querySelectorAll<HTMLImageElement>('img.bf-hero-media__image') ?? [])]
+  // Decode before starting so slow connections keep the first photograph visible.
+  const ready = await Promise.all(images.map(image => image.decode().then(() => true, () => false)))
+  if (currentGeneration !== generation) return
+  const loaded = images.filter((_, index) => ready[index])
+  if (loaded.length < 2) return
+
+  const step = 10000
+  const fade = 3000
+  const duration = loaded.length * step
+  const startTime = document.timeline.currentTime
+  animations = loaded.map((image, index) => {
+    // Incoming frames fade over an opaque outgoing frame. The outgoing frame
+    // disappears only after the next is opaque, including the final-to-first seam.
+    const animation = image.animate([
+      { offset: 0, opacity: 0, zIndex: 2, easing: 'ease-in-out' },
+      { offset: fade / duration, opacity: 1, zIndex: 2 },
+      { offset: (fade + 1) / duration, opacity: 1, zIndex: 1 },
+      { offset: (step + fade) / duration, opacity: 1, zIndex: 1 },
+      { offset: (step + fade + 1) / duration, opacity: 0, zIndex: 0 },
+      { offset: 1, opacity: 0, zIndex: 0 }
+    ], { duration, delay: index * step - fade, iterations: Infinity, fill: 'both' })
+    animation.startTime = startTime
+    return animation
+  })
+  syncPlayback()
+}
+
+watch(photographs, startSequence, { flush: 'post' })
+watch(() => props.paused, syncPlayback)
+onMounted(() => {
+  mounted = true
+  motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)')
+  motionPreference.addEventListener('change', startSequence)
+  startSequence()
+})
+onBeforeUnmount(() => {
+  mounted = false
+  generation++
+  animations.forEach(animation => animation.cancel())
+  motionPreference?.removeEventListener('change', startSequence)
 })
 </script>
 
@@ -160,7 +232,7 @@ withDefaults(defineProps<Props>(), {
     the scrim is an empty unlabelled `<div>` that is ignored anyway. Nothing
     in here is focusable, so nothing is trapped either way.
   -->
-  <div class="bf-hero-media">
+  <div ref="media" class="bf-hero-media">
     <!--
       `ratio="auto"` rather than a stylesheet override of `--_bf-media-ratio`.
       `bfMedia` declares its `16 / 9` default *in a rule* so a consumer can
@@ -208,35 +280,21 @@ withDefaults(defineProps<Props>(), {
       to produce files no display needs.
     -->
     <bfMedia
-      v-if="src"
+      v-for="(photograph, index) in photographs"
+      :key="photograph.src"
       class="bf-hero-media__image"
-      :src="src"
-      :alt="alt"
+      :class="{ 'bf-hero-media__image--secondary': !hasSequence && index === 1 }"
+      :style="{
+        '--_bf-hero-media-image-position': photograph.position,
+        ...(hasSequence ? { opacity: index === 0 ? 1 : 0 } : {})
+      }"
+      :src="photograph.src"
+      :alt="index === 0 ? alt : ''"
       ratio="auto"
       :sizes="sizes"
       densities="1x"
       loading="eager"
-      fetchpriority="high"
-    />
-
-    <!--
-      The crossfade partner. Same box, same crop, same srcset ladder as the
-      first image, painted over it and faded by `bf-hero-media-crossfade`.
-
-      `loading="eager"` because it is above the fold and wanted within a few
-      seconds, but **no** `fetchpriority="high"`: it starts at opacity 0, so
-      it is never the largest contentful paint and must not compete with the
-      image that is.
-    -->
-    <bfMedia
-      v-if="src && srcSecondary"
-      class="bf-hero-media__image bf-hero-media__image--secondary"
-      :src="srcSecondary"
-      alt=""
-      ratio="auto"
-      :sizes="sizes"
-      densities="1x"
-      loading="eager"
+      :fetchpriority="index === 0 ? 'high' : 'low'"
     />
 
     <!--
@@ -370,6 +428,7 @@ withDefaults(defineProps<Props>(), {
 
   .bf-hero-media__scrim {
     position: absolute;
+    z-index: 3;
     inset: 0;
     background-color: var(--color-scrim);
   }

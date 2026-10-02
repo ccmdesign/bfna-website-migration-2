@@ -701,6 +701,12 @@ export type NotFoundProps = Pick<EmptyStateProps, 'heading' | 'message' | 'backL
   insights?: Insight[]
 }
 
+export interface HeroImage {
+  src: string
+  /** Focal position for a cover crop; defaults to the host's image-position hook. */
+  position?: string
+}
+
 /**
  * Props of `bfHero` — the homepage hero band.
  *
@@ -770,6 +776,8 @@ export interface HeroProps {
    * Still under `prefers-reduced-motion`, where only `image` shows.
    */
   imageSecondary?: string | null
+  /** Additional decorative photographs, played after the original pair. */
+  imageSequence?: HeroImage[]
   /**
    * The photographs' `sizes`, in `@nuxt/image`'s screen-keyed form, handed to
    * `bfHeroMedia`. Omitted, every screen is `100vw` — right for a band that is

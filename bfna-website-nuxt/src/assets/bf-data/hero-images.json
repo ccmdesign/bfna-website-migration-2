@@ -1,0 +1,58 @@
+[
+  {
+    "src": "/images/hero/architecture/01-reichstag-valeriya-kobzar.jpg",
+    "position": "center 58%",
+    "credit": "Valeriya Kobzar / Pexels",
+    "source": "https://www.pexels.com/photo/reichstag-building-in-berlin-7505190/",
+    "rights": "Pexels page labels this Free under the Pexels License."
+  },
+  {
+    "src": "/images/hero/architecture/01-capitol-senate-columns.jpg",
+    "position": "center 30%",
+    "credit": "Architect of the Capitol",
+    "source": "https://www.publicdomainfiles.com/show_file.php?id=13967305816726",
+    "rights": "Source reproduces AOC terms: educational, scholarly, news or personal purposes, not advertising or other commercial use; credit Architect of the Capitol. Treat as a reference until production use is resolved."
+  },
+  {
+    "src": "/images/hero/architecture/02-reichstag-ivan-lopatin.jpg",
+    "position": "center 50%",
+    "credit": "Ivan Lopatin / Unsplash",
+    "source": "https://unsplash.com/photos/a-view-of-a-building-through-a-glass-window-PD5C1459Xk8",
+    "rights": "Source labels this free under the Unsplash License."
+  },
+  {
+    "src": "/images/hero/architecture/02-capitol-angela-pan.jpg",
+    "position": "center 25%",
+    "credit": "Angela B. Pan",
+    "source": "https://www.abpan.com/columns-of-the-us-capitol/",
+    "rights": "Photographer offers image licensing. Reference preview only; obtain a license and a higher-resolution file for production."
+  },
+  {
+    "src": "/images/hero/architecture/03-reichstag-memet-oz.jpg",
+    "position": "center 35%",
+    "credit": "Memet Öz / Pexels",
+    "source": "https://www.pexels.com/photo/close-up-of-reichstag-building-facade-in-berlin-31809103/",
+    "rights": "Pexels page labels this Free under the Pexels License."
+  },
+  {
+    "src": "/images/hero/architecture/03-capitol-carol-highsmith.jpg",
+    "position": "center 35%",
+    "credit": "Carol M. Highsmith / Library of Congress, via PICRYL",
+    "source": "https://picryl.com/media/columns-on-the-us-capitol-washington-dc",
+    "rights": "PICRYL reports no known restrictions on publication and credits the Library of Congress/Highsmith. Primary LOC record was not resolved; confirm before production."
+  },
+  {
+    "src": "/images/hero/architecture/04-reichstag-christian-krknjak.jpg",
+    "position": "center 45%",
+    "credit": "Christian Krknjak / Pexels",
+    "source": "https://www.pexels.com/photo/ornamented-wall-of-reichstag-16188794/",
+    "rights": "Pexels page labels this Free under the Pexels License."
+  },
+  {
+    "src": "/images/hero/architecture/04-capitol-icr-pediment.jpg",
+    "position": "center 55%",
+    "credit": "ICR–ICC, U.S. Capitol marble conservation project gallery (photographer not stated)",
+    "source": "https://www.icr-icc.com/us-capitol-marble",
+    "rights": "No reuse license found on the project page. Reference only; request permission for production."
+  }
+]

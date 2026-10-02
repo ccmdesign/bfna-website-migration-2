@@ -108,8 +108,8 @@
  *
  * ## The crossfade's pause control (WCAG 2.2.2)
  *
- * With `imageSecondary` the photographs crossfade on a 20s loop beside the
- * `<h1>`, and anything that moves for more than five seconds next to other
+ * `imageSecondary` creates a 20s two-photo loop; `imageSequence` extends it
+ * with one photograph every 10s. Anything moving beside the heading and other
  * content needs a way to stop it. The control is this band's, not
  * `bfHeroMedia`'s: that layer paints at `z-index: -1` under the band's
  * content, where a button would sit beneath the content's own boxes. It is a
@@ -119,9 +119,9 @@
  *
  * It says what it will do ("Pause" / "Play", named "… the photographs")
  * rather than carrying `aria-pressed` under a fixed label, and it sets
- * `data-motion="paused"` on the band, which `bfHeroMedia` reads to freeze the
- * fade where it is. It renders only after mount, so the prerendered page has
- * no button that does nothing before hydration, and it is hidden under
+ * `data-motion="paused"` on the band and passes `paused` to `bfHeroMedia`,
+ * freezing either loop where it is. It renders only after mount, so the
+ * prerendered page has no button that does nothing before hydration. It hides under
  * `prefers-reduced-motion`, where nothing moves.
  * Every value below still comes from a token; no colour literal appears in
  * this file, which is what `docs/ds-epic/issues/37-bf-hero.md`'s narrowed
@@ -154,7 +154,7 @@ const hydrated = ref(false)
 onMounted(() => { hydrated.value = true })
 
 const showMotionControl = computed<boolean>(() =>
-  hydrated.value && Boolean(props.image) && Boolean(props.imageSecondary)
+  hydrated.value && Boolean(props.image) && (Boolean(props.imageSecondary) || Boolean(props.imageSequence?.length))
 )
 
 /**
@@ -255,6 +255,8 @@ const showActions = (): boolean => hasRenderedContent(slots.default?.())
       v-if="image"
       :src="image"
       :src-secondary="imageSecondary"
+      :sequence="imageSequence"
+      :paused="paused"
       :alt="imageAlt"
       :sizes="imageSizes"
     >
