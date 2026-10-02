@@ -127,20 +127,19 @@ const latest = active.slice(0, 6)
 
     `/democracy`, not `/wireframes/democracy`: the hub route of BRIEF §7.
 
-    The original skyline pair opens the loop, followed by four architectural
-    pairs from hero-images.json. Each pair remains adjacent in the sequence.
-    Per-image positions preserve columns and pediments in cover crops. The
-    light backdrop below keeps the existing navy copy readable on every frame.
+    Four photographic architectural pairs from hero-images.json, kept adjacent
+    in the loop. The program-page navy overlay protects white copy at the bottom.
+    Per-image positions preserve columns and pediments in cover crops.
   -->
   <bfHero
     class="bf-home-hero"
     :heading="home?.heading"
     :description="home?.description"
-    image="/images/hero/homepage-capitol-square.jpg"
-    image-secondary="/images/hero/homepage-reichstag-square.jpg"
-    :image-sequence="heroImages"
-    image-sizes="xs:576px sm:640px md:100vw lg:100vw xl:100vw xxl:100vw"
-    scrim="none"
+    :image="heroImages[0]?.src"
+    :image-sequence="heroImages.slice(1)"
+    :style="{ '--_bf-hero-media-image-position': heroImages[0]?.position }"
+    image-sizes="xs:864px sm:960px md:100vw lg:100vw xl:100vw xxl:100vw"
+    scrim="full"
   >
     <bfButton to="/democracy" variant="primary" size="l">Explore our work</bfButton>
   </bfHero>
@@ -320,49 +319,19 @@ const latest = active.slice(0, 6)
   is semantic tokens; no `:not()` (D-20.5).
 */
 @layer components {
-  /* The skyline and detail photographs share the same hero composition. */
   .bf-home-hero.bf-hero {
-    /*
-      16:9 on a desktop, never taller than the viewport, 60svh at least (the
-      wireframe's floor) — and on a phone, tall enough that the copy clears
-      the building. A portrait band shows the whole square scaled to its
-      height, so the building's top — the Statue of Freedom, 72% of the way
-      down the frame — sits at 0.72 of the band. At 320–430px the copy ends
-      ~24rem down the band (its top padding included), so the band needs
-      ~36rem before that line falls below the button: measured, the statue
-      clears the CTA by 25–40px across that range. A `rem` floor rather than
-      a `vw` one because the copy's height grows as the phone narrows, and
-      `vw` would shrink the band as it did. From ~1024px up `56.25vw` is
-      larger, so the floor is inert on a desktop.
-    */
+    /* Keep a generous photographic frame, with room for stacked copy on phones. */
     --_bf-hero-min-height: max(36rem, 60svh, min(56.25vw, 100svh));
-    --_bf-hero-media-image-position: center bottom;
 
-    /* The copy from the top of the sky, not the middle of the band. */
-    align-content: start;
-    padding-block: var(--space-2xl) var(--space-xl);
+    align-content: end;
+    padding-block: var(--space-2xl);
   }
 
-  /*
-    The architectural close-ups vary from bright stone to deep shadow. A light
-    veil protects the navy copy; its opaque upper region extends past the CTA,
-    then clears toward the bottom so the photography remains visible.
-  */
-  .bf-home-hero :deep(.bf-hero-media__scrim) {
-    background: linear-gradient(
-      to bottom,
-      color-mix(in srgb, var(--color-surface-page) 96%, transparent) 0%,
-      color-mix(in srgb, var(--color-surface-page) 92%, transparent) 55%,
-      transparent 90%
-    );
-  }
-
-  .bf-home-hero.bf-hero--ink {
-    color: var(--color-accent-dark);
-  }
-
-  .bf-home-hero :deep(.bf-hero__heading) {
-    color: var(--color-accent-super-dark);
+  /* Match the program heroes' white action against the shared navy overlay. */
+  .bf-home-hero :deep(.bf-button[data-variant='primary']) {
+    border-color: var(--color-text-inverse);
+    background: var(--color-surface-page);
+    color: var(--color-accent);
   }
 
   /*
