@@ -127,7 +127,7 @@ const latest = active.slice(0, 6)
 
     `/democracy`, not `/wireframes/democracy`: the hub route of BRIEF §7.
 
-    Four photographic architectural pairs from hero-images.json, kept adjacent
+    Photographic architectural pairs from hero-images.json, kept adjacent
     in the loop. The program-page navy overlay protects white copy at the bottom.
     Per-image positions preserve columns and pediments in cover crops.
   -->

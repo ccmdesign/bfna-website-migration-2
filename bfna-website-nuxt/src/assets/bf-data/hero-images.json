@@ -54,5 +54,131 @@
     "credit": "ICR–ICC, U.S. Capitol marble conservation project gallery (photographer not stated)",
     "source": "https://www.icr-icc.com/us-capitol-marble",
     "rights": "No reuse license found on the project page. Reference only; request permission for production."
+  },
+  {
+    "src": "/images/hero/architecture/buildings/01-r-dome-exterior.jpg",
+    "position": "center 45%",
+    "credit": "János Csatlós / Pexels",
+    "source": "https://www.pexels.com/photo/dome-of-reichstag-in-berlin-20658620/",
+    "rights": "Source marked free to use under the Pexels License. Retain source and photographer credit.",
+    "pair": "Exterior domes",
+    "framingNotes": "The Reichstag is broad and low; the Capitol is tall and tiered. This is a thematic pair, not a contour match. The Capitol photograph is portrait and more steeply angled."
+  },
+  {
+    "src": "/images/hero/architecture/buildings/01-c-dome-exterior.jpg",
+    "position": "center 35%",
+    "credit": "Ramaz Bluashvili / Pexels",
+    "source": "https://www.pexels.com/photo/the-famous-united-states-capitol-in-washington-7016975/",
+    "rights": "Source marked free to use under the Pexels License. Retain source and photographer credit.",
+    "pair": "Exterior domes",
+    "framingNotes": "The Reichstag is broad and low; the Capitol is tall and tiered. This is a thematic pair, not a contour match. The Capitol photograph is portrait and more steeply angled."
+  },
+  {
+    "src": "/images/hero/architecture/buildings/02-r-unsplash-up.jpg",
+    "position": "center 50%",
+    "credit": "Christian Paul Stobbe / Unsplash",
+    "source": "https://unsplash.com/es/fotos/un-gran-edificio-circular-con-una-claraboya-en-su-interior-jV0Wm--pX3I",
+    "rights": "Source marked free to use under the Unsplash License. Retain source and photographer credit.",
+    "pair": "Looking up into the domes",
+    "framingNotes": "The Reichstag's mirrored cone occupies the centre, while the Capitol has a painted canopy. Their centres will not match directly. The Reichstag view appears to look up through the chamber ceiling toward the dome."
+  },
+  {
+    "src": "/images/hero/architecture/buildings/02-c-rotunda-up.webp",
+    "position": "center 50%",
+    "credit": "Architect of the Capitol",
+    "source": "https://www.aoc.gov/explore-capitol-campus/buildings-grounds/capitol-building/rotunda",
+    "rights": "Credit: Architect of the Capitol. AOC terms say images are available for scholarly/educational use, not promotional or advertising purposes; check permission before a public campaign. Watermarks retained.",
+    "pair": "Looking up into the domes",
+    "framingNotes": "The Reichstag's mirrored cone occupies the centre, while the Capitol has a painted canopy. Their centres will not match directly. The Reichstag view appears to look up through the chamber ceiling toward the dome."
+  },
+  {
+    "src": "/images/hero/architecture/buildings/03-r-lue-curves.jpg",
+    "position": "center 45%",
+    "credit": "Christian Lue / Unsplash",
+    "source": "https://unsplash.com/photos/white-concrete-building-interior-photograph-4UKfrFsWVEI",
+    "rights": "Source marked free to use under the Unsplash License. Retain source and photographer credit.",
+    "pair": "Curved ramps and galleries",
+    "framingNotes": "The curves turn in different orientations and the photographs have different aspect ratios. A later crop and framing study is needed; the originals here are unchanged."
+  },
+  {
+    "src": "/images/hero/architecture/buildings/03-c-rotunda-interior.webp",
+    "position": "center 45%",
+    "credit": "Architect of the Capitol",
+    "source": "https://www.aoc.gov/explore-capitol-campus/buildings-grounds/capitol-building/rotunda",
+    "rights": "Credit: Architect of the Capitol. AOC terms say images are available for scholarly/educational use, not promotional or advertising purposes; check permission before a public campaign. Watermarks retained.",
+    "pair": "Curved ramps and galleries",
+    "framingNotes": "The curves turn in different orientations and the photographs have different aspect ratios. A later crop and framing study is needed; the originals here are unchanged."
+  },
+  {
+    "src": "/images/hero/architecture/buildings/04-r-erco-interior2.jpg",
+    "position": "center 50%",
+    "credit": "ERCO · page credits Rudi Meisel / Anett Stuth",
+    "source": "https://www.erco.com/en/inspiration/projects/reichstag-building/",
+    "rights": "Reference photograph from ERCO. Page credits Rudi Meisel and Anett Stuth; individual image attribution is not specified. Publication/reuse permission has not been established.",
+    "pair": "Vaults and receding corridors",
+    "framingNotes": "The Reichstag corridor is short and nearly frontal; the Brumidi corridor is much longer and viewed off-centre. Their vanishing points need reframing. The Capitol source is a wide website banner."
+  },
+  {
+    "src": "/images/hero/architecture/buildings/04-c-corridor.webp",
+    "position": "center 50%",
+    "credit": "Architect of the Capitol",
+    "source": "https://www.aoc.gov/explore-capitol-campus/buildings-grounds/capitol-building/senate-wing/brumidi-corridors",
+    "rights": "Credit: Architect of the Capitol. AOC terms say images are available for scholarly/educational use, not promotional or advertising purposes; check permission before a public campaign. Watermarks retained.",
+    "pair": "Vaults and receding corridors",
+    "framingNotes": "The Reichstag corridor is short and nearly frontal; the Brumidi corridor is much longer and viewed off-centre. Their vanishing points need reframing. The Capitol source is a wide website banner."
+  },
+  {
+    "src": "/images/hero/architecture/buildings/05-r-erco-stairs.jpg",
+    "position": "center 50%",
+    "credit": "ERCO · page credits Rudi Meisel / Anett Stuth",
+    "source": "https://www.erco.com/en/inspiration/projects/reichstag-building/",
+    "rights": "Reference photograph from ERCO. Page credits Rudi Meisel and Anett Stuth; individual image attribution is not specified. Publication/reuse permission has not been established.",
+    "pair": "Stair flights and landings",
+    "framingNotes": "The stairs turn in opposite directions and the decorative density differs sharply. This needs deliberate framing; it is a concept reference rather than a ready match cut. Capitol file is 651 pixels wide."
+  },
+  {
+    "src": "/images/hero/architecture/buildings/05-c-stairs.webp",
+    "position": "center 45%",
+    "credit": "Architect of the Capitol",
+    "source": "https://www.aoc.gov/media/4490",
+    "rights": "Credit: Architect of the Capitol. AOC terms say images are available for scholarly/educational use, not promotional or advertising purposes; check permission before a public campaign. Watermarks retained.",
+    "pair": "Stair flights and landings",
+    "framingNotes": "The stairs turn in opposite directions and the decorative density differs sharply. This needs deliberate framing; it is a concept reference rather than a ready match cut. Capitol file is 651 pixels wide."
+  },
+  {
+    "src": "/images/hero/architecture/buildings/06-r-erco-overhead.jpg",
+    "position": "center 50%",
+    "credit": "ERCO · page credits Rudi Meisel / Anett Stuth",
+    "source": "https://www.erco.com/en/inspiration/projects/reichstag-building/",
+    "rights": "Reference photograph from ERCO. Page credits Rudi Meisel and Anett Stuth; individual image attribution is not specified. Publication/reuse permission has not been established.",
+    "pair": "Bands of sunlight and shadow",
+    "framingNotes": "The Reichstag photograph looks down across a lobby floor; the Capitol view looks toward a curved Rotunda wall. People are visible in the Reichstag image. Treat this as lighting research, not a viewpoint match."
+  },
+  {
+    "src": "/images/hero/architecture/buildings/06-c-rotunda-shadows.webp",
+    "position": "center 50%",
+    "credit": "Architect of the Capitol",
+    "source": "https://www.aoc.gov/explore-capitol-campus/buildings-grounds/capitol-building/rotunda",
+    "rights": "Credit: Architect of the Capitol. AOC terms say images are available for scholarly/educational use, not promotional or advertising purposes; check permission before a public campaign. Watermarks retained.",
+    "pair": "Bands of sunlight and shadow",
+    "framingNotes": "The Reichstag photograph looks down across a lobby floor; the Capitol view looks toward a curved Rotunda wall. People are visible in the Reichstag image. Treat this as lighting research, not a viewpoint match."
+  },
+  {
+    "src": "/images/hero/architecture/buildings/07-r-front.jpg",
+    "position": "center 45%",
+    "credit": "Marina Endzhirgli / Pexels",
+    "source": "https://www.pexels.com/photo/reichstag-building-in-berlin-under-clear-blue-sky-29375534/",
+    "rights": "Source marked free to use under the Pexels License. Retain source and photographer credit.",
+    "pair": "Central façades and window rhythms",
+    "framingNotes": "The Capitol view includes more of the building and its dome is much taller; the Reichstag photograph crops the entrance base. Useful for an opening or closing pair, less convincing as a direct full-frame dissolve."
+  },
+  {
+    "src": "/images/hero/architecture/buildings/07-c-facade.jpg",
+    "position": "center 45%",
+    "credit": "Ramaz Bluashvili / Pexels",
+    "source": "https://www.pexels.com/photo/united-states-capitol-facade-7016960/",
+    "rights": "Source marked free to use under the Pexels License. Retain source and photographer credit.",
+    "pair": "Central façades and window rhythms",
+    "framingNotes": "The Capitol view includes more of the building and its dome is much taller; the Reichstag photograph crops the entrance base. Useful for an opening or closing pair, less convincing as a direct full-frame dissolve."
   }
 ]
