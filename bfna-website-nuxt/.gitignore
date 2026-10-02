@@ -31,3 +31,6 @@ logs
 
 
 _archive/
+
+# Local Netlify folder
+.netlify
