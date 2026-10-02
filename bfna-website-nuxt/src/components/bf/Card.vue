@@ -990,11 +990,11 @@ if (import.meta.dev) {
     */
     flex-flow: row wrap;
     align-items: baseline;
-    gap: var(--space-2xs) var(--_bf-card-row-gap);
+    gap: var(--_bf-card-row-line-gap, var(--space-2xs)) var(--_bf-card-row-gap);
     /*
       `--_bf-card-row-padding-block` is the room above and below each row
-      (one value, or start and end). The default is the tight list the
-      search results want; a long list of titles alone (`/archive`) opens it.
+      (one value, or start and end). Lists can open the default compact
+      spacing without changing other uses of the row.
     */
     padding-block: var(--_bf-card-row-padding-block, 0 var(--space-xs));
     padding-inline: 0;

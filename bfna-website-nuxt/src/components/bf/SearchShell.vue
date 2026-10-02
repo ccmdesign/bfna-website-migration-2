@@ -470,9 +470,8 @@ const headingOf = (row: SearchResultRow): string => (row.heading ?? '').trim()
     -->
     <ol
       v-if="results.length"
-      class="bf-search-shell__results | stack"
+      class="bf-search-shell__results"
       role="list"
-      data-gap="s"
       data-bf-search-shell="results"
     >
       <!--
@@ -610,6 +609,9 @@ const headingOf = (row: SearchResultRow): string => (row.heading ?? '').trim()
 */
 @layer components {
   .bf-search-shell__results {
+    --_bf-card-row-padding-block: var(--space-s);
+    --_bf-card-row-line-gap: 0;
+
     /* Same heading and excerpt typography as the Insights list view. */
     --_bf-card-row-title-size: 1.25rem;
     --_bf-card-row-title-leading: 1.3;
