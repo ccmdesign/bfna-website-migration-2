@@ -179,20 +179,28 @@ async function startSequence() {
   if (loaded.length < 2) return
 
   const step = 10000
-  const fade = 3000
+  const fade = 2000
+  const blurRamp = 1000
+  const reveal = fade + blurRamp
   const duration = loaded.length * step
   const startTime = document.timeline.currentTime
+  const sharp = { filter: 'blur(0px)', transform: 'scale(1)' }
+  // The small overscan keeps the blur from revealing the image's edges.
+  const blurred = { filter: 'blur(8px)', transform: 'scale(1.08)' }
   animations = loaded.map((image, index) => {
-    // Incoming frames fade over an opaque outgoing frame. The outgoing frame
-    // disappears only after the next is opaque, including the final-to-first seam.
+    // Blur the outgoing frame, crossfade while both are soft, then sharpen
+    // the incoming frame. Copy and controls live outside this image layer.
     const animation = image.animate([
-      { offset: 0, opacity: 0, zIndex: 2, easing: 'ease-in-out' },
-      { offset: fade / duration, opacity: 1, zIndex: 2 },
-      { offset: (fade + 1) / duration, opacity: 1, zIndex: 1 },
-      { offset: (step + fade) / duration, opacity: 1, zIndex: 1 },
-      { offset: (step + fade + 1) / duration, opacity: 0, zIndex: 0 },
-      { offset: 1, opacity: 0, zIndex: 0 }
-    ], { duration, delay: index * step - fade, iterations: Infinity, fill: 'both' })
+      { offset: 0, opacity: 0, zIndex: 2, ...blurred, easing: 'ease-in-out' },
+      { offset: fade / duration, opacity: 1, zIndex: 2, ...blurred },
+      { offset: (fade + 1) / duration, opacity: 1, zIndex: 1, ...blurred, easing: 'ease-in-out' },
+      { offset: reveal / duration, opacity: 1, zIndex: 1, ...sharp },
+      { offset: (step - blurRamp) / duration, opacity: 1, zIndex: 1, ...sharp, easing: 'ease-in-out' },
+      { offset: step / duration, opacity: 1, zIndex: 1, ...blurred },
+      { offset: (step + fade) / duration, opacity: 1, zIndex: 1, ...blurred },
+      { offset: (step + fade + 1) / duration, opacity: 0, zIndex: 0, ...blurred },
+      { offset: 1, opacity: 0, zIndex: 0, ...blurred }
+    ], { duration, delay: index * step - reveal, iterations: Infinity, fill: 'both' })
     animation.startTime = startTime
     return animation
   })

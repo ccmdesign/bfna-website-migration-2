@@ -128,7 +128,7 @@ const latest = active.slice(0, 6)
     `/democracy`, not `/wireframes/democracy`: the hub route of BRIEF §7.
 
     Photographic architectural pairs from hero-images.json, kept adjacent
-    in the loop. The program-page navy overlay protects white copy at the bottom.
+    in the loop. A neutral bottom gradient protects the white copy while leaving the top clear.
     Per-image positions preserve columns and pediments in cover crops.
   -->
   <bfHero
@@ -327,7 +327,17 @@ const latest = active.slice(0, 6)
     padding-block: var(--space-2xl);
   }
 
-  /* Match the program heroes' white action against the shared navy overlay. */
+  .bf-home-hero :deep(.bf-hero-media__scrim) {
+    background: linear-gradient(
+      to bottom,
+      transparent 0%,
+      color-mix(in srgb, var(--color-surface-inverse) 60%, transparent) 32%,
+      color-mix(in srgb, var(--color-surface-inverse) 72%, transparent) 65%,
+      color-mix(in srgb, var(--color-surface-inverse) 82%, transparent) 100%
+    );
+  }
+
+  /* A white action stays distinct against the dark base of the photograph. */
   .bf-home-hero :deep(.bf-button[data-variant='primary']) {
     border-color: var(--color-text-inverse);
     background: var(--color-surface-page);
