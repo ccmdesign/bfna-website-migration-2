@@ -65,12 +65,10 @@
  *
  * ## Search
  *
- * A plain `<NuxtLink to="/search">`, matching `wfNav`'s
- * `<NuxtLink to="/wireframes/search">Search</NuxtLink>` retargeted to the real
- * route (BRIEF §7). Not a `bfChip` and not a `bfButton`: the spec offers the
- * choice and the wireframe's own answer is a link, because this is navigation
- * to a page, not an action, and a control that *looks* like a button but
- * navigates is the more common of the two mistakes. Recorded in Decisions.
+ * An icon opens a search field over the desktop menu. The field reveals from
+ * right to left as the entries fade upward; closing restores them in reverse.
+ * Hidden controls are inert, Escape returns focus, and submission uses /search?q=.
+ * On small screens the same field opens in a row below the bar.
  *
  * No Subscribe button — removed with the newsletter band (D2, and the frozen
  * source's own comment says so).
@@ -138,6 +136,11 @@ defineProps<{
 
 /** Whether the small-screen sheet is open. Meaningless, and never set, on desktop. */
 const open = ref(false)
+const searchOpen = ref(false)
+const searchQuery = ref('')
+const searchInput = ref<HTMLInputElement | null>(null)
+const searchButton = ref<HTMLButtonElement | null>(null)
+const searchId = useId()
 
 const root = ref<HTMLElement | null>(null)
 const toggleButton = ref<HTMLButtonElement | null>(null)
@@ -148,46 +151,87 @@ const menuId = useId()
 const route = useRoute()
 watch(() => route.fullPath, () => {
   open.value = false
+  searchOpen.value = false
 })
 
 function toggle() {
+  searchOpen.value = false
   open.value = !open.value
 }
 
+function closeSearch(returnFocus = false) {
+  searchOpen.value = false
+  if (returnFocus) searchButton.value?.focus()
+}
+
+async function toggleSearch() {
+  if (searchOpen.value) {
+    closeSearch(true)
+    return
+  }
+
+  open.value = false
+  for (const details of root.value?.querySelectorAll<HTMLDetailsElement>('details[open]') ?? []) {
+    details.open = false
+  }
+  searchOpen.value = true
+  await nextTick()
+  if (searchOpen.value) searchInput.value?.focus({ preventScroll: true })
+}
+
+function submitSearch() {
+  const query = searchQuery.value.trim()
+  if (!query) {
+    searchInput.value?.focus()
+    return
+  }
+  closeSearch(true)
+  return navigateTo({ path: '/search', query: { q: query } })
+}
+
 /**
- * Esc from anywhere inside the nav closes the sheet and puts focus back on the
+ * Esc from anywhere inside the nav closes the active disclosure and focuses its
  * button — closing the element the user is focused inside would otherwise drop
  * focus to `<body>`. `defaultPrevented` is how an open dropdown says it has
  * already spent this Esc on itself.
  */
 function onKeydown(e: KeyboardEvent) {
-  if (e.key !== 'Escape' || !open.value || e.defaultPrevented) return
-  open.value = false
-  toggleButton.value?.focus()
+  if (e.key !== 'Escape' || e.defaultPrevented) return
+  if (searchOpen.value) {
+    e.preventDefault()
+    closeSearch(true)
+  } else if (open.value) {
+    e.preventDefault()
+    open.value = false
+    toggleButton.value?.focus()
+  }
 }
 
 /**
- * Focus moving to something outside the nav closes the sheet. A `null`
+ * Focus moving to something outside the nav closes its disclosures. A `null`
  * `relatedTarget` is the window losing focus (switching apps), not the user
  * leaving the menu, so it is left open.
  */
 function onFocusout(e: FocusEvent) {
   const next = e.relatedTarget as Node | null
-  if (!open.value || next === null || root.value?.contains(next)) return
+  if (next === null || root.value?.contains(next)) return
   open.value = false
+  closeSearch()
 }
 
-/** A press anywhere outside the nav while the sheet is open closes it. */
+/** A press outside the nav closes its active disclosure. */
 function onDocumentPointerdown(e: PointerEvent) {
-  if (!root.value?.contains(e.target as Node)) open.value = false
+  if (!root.value?.contains(e.target as Node)) {
+    open.value = false
+    closeSearch()
+  }
 }
 
 /*
- * The document listener exists only while the sheet is open — a closed menu
- * has no reason to see every click on the page.
+ * Listen outside only while a menu or search disclosure is open.
  */
-watch(open, (isOpen) => {
-  if (isOpen) document.addEventListener('pointerdown', onDocumentPointerdown)
+watch([open, searchOpen], ([menuOpen, isSearchOpen]) => {
+  if (menuOpen || isSearchOpen) document.addEventListener('pointerdown', onDocumentPointerdown)
   else document.removeEventListener('pointerdown', onDocumentPointerdown)
 })
 
@@ -206,6 +250,7 @@ onBeforeUnmount(() => {
     ref="root"
     class="bf-nav"
     :data-open="open || undefined"
+    :data-search-open="searchOpen || undefined"
     @keydown="onKeydown"
     @focusout="onFocusout"
   >
@@ -233,7 +278,7 @@ onBeforeUnmount(() => {
         disappearing — an absent attribute means "not a disclosure at all".
 
         The icon is drawn, not a glyph: three strokes that fold into a cross
-        when open (the only motion here, and none under reduced motion).
+        when open, with no movement under reduced motion.
       -->
       <button
         ref="toggleButton"
@@ -256,52 +301,90 @@ onBeforeUnmount(() => {
         </svg>
       </button>
 
-      <!--
-        Every entry, in one element the button can control. On desktop it is a
-        `.cluster` row with the same gap the bar used to give the entries
-        directly, so the row renders as it did; on small screens the container
-        query below turns it into the sheet.
-      -->
       <div
-        :id="menuId"
-        class="bf-nav__menu | cluster"
-        data-gap="s"
+        class="bf-nav__navigation"
+        :style="{ '--_bf-nav-count': menus.length }"
       >
-        <template
-          v-for="m in menus"
-          :key="m.label"
+        <!-- Keep dropdowns as direct siblings so their native grouping survives. -->
+        <div
+          :id="menuId"
+          class="bf-nav__menu cluster"
+          data-gap="s"
+          :inert="searchOpen"
+          :aria-hidden="searchOpen || undefined"
         >
-          <!--
-            Precedence matches `wfNav`: an entry that names a destination is a
-            link, whether or not it also carries `items`; only an entry with no
-            destination becomes a disclosure. `data-external` is gated on
-            `m.external` — at the top level an `href` is not by itself evidence of
-            an off-site target, unlike inside a panel (see `MenuLink`).
+          <template v-for="(m, index) in menus" :key="m.label">
+            <a
+              v-if="m.href"
+              :href="m.href"
+              class="bf-nav__link bf-nav__entry"
+              :style="{ '--_bf-nav-order': index }"
+              :data-external="m.external || undefined"
+              v-bind="newTabAttrs(m.href)"
+            >{{ m.label }}</a>
+            <MenuLink
+              v-else-if="m.to"
+              class="bf-nav__link bf-nav__entry"
+              :style="{ '--_bf-nav-order': index }"
+              :item="m"
+            />
+            <Dropdown
+              v-else
+              class="bf-nav__entry"
+              :style="{ '--_bf-nav-order': index }"
+              :label="m.label"
+              :items="m.items ?? []"
+            />
+          </template>
+        </div>
 
-            `|| undefined` rather than `|| false`: an attribute bound to `false` is
-            removed, but one bound to the *string* `"false"` is not, and
-            `[data-external]` matches on presence.
-          -->
-          <a
-            v-if="m.href"
-            :href="m.href"
-            class="bf-nav__link"
-            :data-external="m.external || undefined"
-            v-bind="newTabAttrs(m.href)"
-          >{{ m.label }}</a>
-          <MenuLink
-            v-else-if="m.to"
-            class="bf-nav__link"
-            :item="m"
-          />
-          <Dropdown
-            v-else
-            :label="m.label"
-            :items="m.items ?? []"
-          />
-        </template>
+        <form
+          :id="`${searchId}-form`"
+          class="bf-nav__search-form"
+          role="search"
+          aria-label="Site search"
+          action="/search"
+          method="get"
+          :inert="!searchOpen"
+          :aria-hidden="!searchOpen || undefined"
+          @submit.prevent="submitSearch"
+        >
+          <label :for="searchId" class="visually-hidden">Search insights, projects and people</label>
+          <input
+            :id="searchId"
+            ref="searchInput"
+            v-model="searchQuery"
+            class="bf-nav__search-input"
+            type="search"
+            name="q"
+            placeholder="Search insights, projects and people"
+            enterkeyhint="search"
+          >
+          <button class="bf-nav__search-submit" type="submit" aria-label="Submit search">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <circle cx="10.5" cy="10.5" r="6.5" />
+              <path d="m15.5 15.5 5 5" />
+            </svg>
+          </button>
+        </form>
 
-        <NuxtLink to="/search" class="bf-nav__search">Search</NuxtLink>
+        <button
+          ref="searchButton"
+          class="bf-nav__search-toggle"
+          type="button"
+          :aria-label="searchOpen ? 'Close search' : 'Search'"
+          :aria-expanded="searchOpen"
+          :aria-controls="`${searchId}-form`"
+          @click="toggleSearch"
+        >
+          <svg v-if="searchOpen" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="m6 6 12 12M18 6 6 18" />
+          </svg>
+          <svg v-else viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <circle cx="10.5" cy="10.5" r="6.5" />
+            <path d="m15.5 15.5 5 5" />
+          </svg>
+        </button>
       </div>
     </nav>
   </header>
@@ -318,11 +401,8 @@ onBeforeUnmount(() => {
   is off in `nuxt.config.ts`, and the probe reads the live CSSOM so a
   regression fails the run rather than shipping quietly.
 
-  No focus rule anywhere in this file, either. `base/focus.css` (#146) declares
-  `:focus-visible` in `@layer defaults` for every element — links and
-  `<summary>` included — and a nav has no reason to want a different ring from
-  the rest of the page. That file exists precisely so the six atoms that each
-  shipped a private copy of those three declarations stop doing it.
+  The search input restores a real outline above the base form styles.
+  Links and buttons retain the shared focus treatment.
 */
 @layer components {
   .bf-nav {
@@ -432,8 +512,7 @@ onBeforeUnmount(() => {
       gap: 0;
     }
 
-    .bf-nav__link,
-    .bf-nav__search {
+    .bf-nav__link {
       display: flex;
       align-items: center;
     }
@@ -474,22 +553,142 @@ onBeforeUnmount(() => {
   }
 
   /*
-    Top-level plain links and the search link. Same padding as a dropdown
+    Top-level plain links. Same padding as a dropdown
     summary so the row reads as one set of targets — the wireframe's
     `.wf-nav__link` comment makes exactly this point about the pruned-nav
     buttons, and the `↗` affordance still comes from `a[data-external]`
     (`components/external-link.css`, gh#28).
   */
-  .bf-nav__link,
-  .bf-nav__search {
+  .bf-nav__link {
     padding: var(--_bf-nav-item-padding);
     color: var(--_bf-nav-link-color);
     text-decoration: none;
   }
 
-  .bf-nav__link:hover,
-  .bf-nav__search:hover {
+  .bf-nav__link:hover {
     text-decoration: underline;
+  }
+
+  .bf-nav__navigation {
+    --_bf-nav-search-target: 2.75rem;
+    --_bf-nav-search-stagger: 45ms;
+    --_bf-nav-search-duration: calc(240ms + (var(--_bf-nav-count) - 1) * var(--_bf-nav-search-stagger));
+
+    display: contents;
+  }
+
+  .bf-nav__search-toggle,
+  .bf-nav__search-submit {
+    display: inline-flex;
+    flex: 0 0 var(--_bf-nav-search-target);
+    align-items: center;
+    justify-content: center;
+    inline-size: var(--_bf-nav-search-target);
+    min-block-size: var(--_bf-nav-search-target);
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius-s);
+    background: transparent;
+    color: var(--color-accent);
+    cursor: pointer;
+  }
+
+  .bf-nav__search-toggle {
+    align-self: center;
+  }
+
+  .bf-nav__search-toggle:hover,
+  .bf-nav__search-submit:hover {
+    background: var(--_bf-nav-open-bg);
+  }
+
+  .bf-nav__search-toggle svg,
+  .bf-nav__search-submit svg {
+    inline-size: 1.4rem;
+    block-size: 1.4rem;
+    fill: none;
+    stroke: currentcolor;
+    stroke-width: 1.75;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .bf-nav__search-form {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2xs);
+    min-inline-size: 0;
+    margin: 0;
+    background: var(--_bf-nav-bg);
+    visibility: hidden;
+    pointer-events: none;
+    clip-path: inset(-6px 0 -6px 100%);
+  }
+
+  .bf-nav[data-search-open] .bf-nav__search-form {
+    visibility: visible;
+    pointer-events: auto;
+    clip-path: inset(-6px);
+  }
+
+  .bf-nav .bf-nav__search-input {
+    min-inline-size: 0;
+    min-block-size: var(--_bf-nav-search-target);
+    padding: var(--space-2xs) var(--space-xs);
+    border: 0;
+    border-block-end: var(--border-width-thin) solid var(--color-accent);
+    border-radius: 0;
+    background: var(--_bf-nav-bg);
+    color: var(--color-accent);
+    caret-color: var(--color-accent);
+    font: inherit;
+    font-size: max(1rem, var(--size--1));
+    box-shadow: none;
+  }
+
+  .bf-nav .bf-nav__search-input::placeholder {
+    color: var(--color-text-muted);
+    opacity: 1;
+  }
+
+  .bf-nav .bf-nav__search-input:focus-visible {
+    outline: var(--border-width-medium) solid var(--color-accent);
+    outline-offset: var(--border-width-medium);
+  }
+
+  @container bf-nav (width > 60rem) {
+    .bf-nav__navigation {
+      position: relative;
+      display: flex;
+      align-self: stretch;
+      align-items: stretch;
+      min-inline-size: 0;
+    }
+
+    .bf-nav__search-form {
+      inset-block: 0;
+      inset-inline: 0 calc(var(--_bf-nav-search-target) + var(--space-xs));
+    }
+
+    .bf-nav__entry {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .bf-nav[data-search-open] .bf-nav__entry {
+      opacity: 0;
+      transform: translateY(calc(-1 * var(--space-xs)));
+    }
+  }
+
+  @container bf-nav (width <= 60rem) {
+    .bf-nav__search-form {
+      inset-block-start: 100%;
+      inset-inline: 0;
+      padding: var(--space-s);
+      box-shadow: var(--shadow-elevation-medium-deep);
+    }
   }
 
   /*
@@ -620,20 +819,41 @@ onBeforeUnmount(() => {
       border-block-start: var(--border-width-thin) solid var(--_bf-nav-border-color);
     }
 
-    .bf-nav__menu .bf-nav__link,
-    .bf-nav__menu .bf-nav__search {
+    .bf-nav__menu .bf-nav__link {
       display: block;
     }
   }
 
   /*
-    One authored moment: the sheet settles in from just above its resting place
-    and the icon folds. Exponential ease-out, short, and only for visitors who
-    have not asked for less motion — under `reduce` the sheet simply appears.
+    The search reveal and menu stagger share a duration. The mobile sheet
+    settles in from above and its icon folds. Reduced motion skips the movement.
   */
   @media (prefers-reduced-motion: no-preference) {
     .bf-nav {
       --_bf-nav-motion: 180ms;
+    }
+
+    .bf-nav__search-form {
+      transition:
+        clip-path var(--_bf-nav-search-duration) cubic-bezier(0.65, 0, 0.35, 1),
+        visibility 0s var(--_bf-nav-search-duration);
+    }
+
+    .bf-nav[data-search-open] .bf-nav__search-form {
+      transition-delay: 60ms, 0s;
+    }
+
+    @container bf-nav (width > 60rem) {
+      .bf-nav__entry {
+        transition:
+          opacity 180ms ease-out,
+          transform 180ms cubic-bezier(0.16, 1, 0.3, 1);
+        transition-delay: calc(90ms + var(--_bf-nav-order) * var(--_bf-nav-search-stagger));
+      }
+
+      .bf-nav[data-search-open] .bf-nav__entry {
+        transition-delay: calc((var(--_bf-nav-count) - 1 - var(--_bf-nav-order)) * var(--_bf-nav-search-stagger));
+      }
     }
 
     .bf-nav__toggle-line {
@@ -644,6 +864,16 @@ onBeforeUnmount(() => {
 
     .bf-nav[data-open] .bf-nav__menu {
       animation: bf-nav-sheet-in var(--_bf-nav-motion) cubic-bezier(0.16, 1, 0.3, 1);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bf-nav__entry {
+      transition: opacity 90ms;
+    }
+
+    .bf-nav[data-search-open] .bf-nav__entry {
+      transform: none;
     }
   }
 
