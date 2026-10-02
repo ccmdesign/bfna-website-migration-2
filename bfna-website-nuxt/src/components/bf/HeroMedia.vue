@@ -178,29 +178,47 @@ async function startSequence() {
   const loaded = images.filter((_, index) => ready[index])
   if (loaded.length < 2) return
 
-  const step = 10000
-  const fade = 2000
-  const blurRamp = 1000
-  const reveal = fade + blurRamp
+  const step = 8000
+  const transition = 1400
   const duration = loaded.length * step
   const startTime = document.timeline.currentTime
-  const sharp = { filter: 'blur(0px)', transform: 'scale(1)' }
-  // The small overscan keeps the blur from revealing the image's edges.
-  const blurred = { filter: 'blur(8px)', transform: 'scale(1.08)' }
+  // A shared bell-shaped blur peaks during the fastest part of the dissolve.
+  // Sampling both curves together keeps their timing identical on both layers.
+  const dissolve = Array.from({ length: 25 }, (_, index) => {
+    const progress = index / 24
+    const exchange = Math.max(0, Math.min(1, (progress - 0.15) / 0.7))
+    return {
+      time: progress * transition,
+      opacity: exchange * exchange * (3 - 2 * exchange),
+      filter: `blur(${(18 * Math.sin(Math.PI * progress) ** 2).toFixed(3)}px)`
+    }
+  })
+  // Constant overscan softens the edges without a zoom pulse on each change.
+  const sharp = { filter: 'blur(0px)', transform: 'scale(1.08)' }
   animations = loaded.map((image, index) => {
-    // Blur the outgoing frame, crossfade while both are soft, then sharpen
-    // the incoming frame. Copy and controls live outside this image layer.
+    const incoming = dissolve.map(frame => ({
+      offset: frame.time / duration,
+      opacity: frame.opacity,
+      filter: frame.filter,
+      transform: sharp.transform,
+      zIndex: 2
+    }))
+    // Keep the outgoing photograph opaque underneath the incoming layer so
+    // the crossfade never exposes the background, including at the loop seam.
+    const outgoing = dissolve.map(frame => ({
+      offset: (step + frame.time) / duration,
+      opacity: 1,
+      filter: frame.filter,
+      transform: sharp.transform,
+      zIndex: 1
+    }))
     const animation = image.animate([
-      { offset: 0, opacity: 0, zIndex: 2, ...blurred, easing: 'ease-in-out' },
-      { offset: fade / duration, opacity: 1, zIndex: 2, ...blurred },
-      { offset: (fade + 1) / duration, opacity: 1, zIndex: 1, ...blurred, easing: 'ease-in-out' },
-      { offset: reveal / duration, opacity: 1, zIndex: 1, ...sharp },
-      { offset: (step - blurRamp) / duration, opacity: 1, zIndex: 1, ...sharp, easing: 'ease-in-out' },
-      { offset: step / duration, opacity: 1, zIndex: 1, ...blurred },
-      { offset: (step + fade) / duration, opacity: 1, zIndex: 1, ...blurred },
-      { offset: (step + fade + 1) / duration, opacity: 0, zIndex: 0, ...blurred },
-      { offset: 1, opacity: 0, zIndex: 0, ...blurred }
-    ], { duration, delay: index * step - reveal, iterations: Infinity, fill: 'both' })
+      ...incoming,
+      { offset: (transition + 1) / duration, opacity: 1, zIndex: 1, ...sharp },
+      ...outgoing,
+      { offset: (step + transition + 1) / duration, opacity: 0, zIndex: 0, ...sharp },
+      { offset: 1, opacity: 0, zIndex: 0, ...sharp }
+    ], { duration, delay: index * step - transition, iterations: Infinity, fill: 'both' })
     animation.startTime = startTime
     return animation
   })
