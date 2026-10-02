@@ -139,6 +139,7 @@ const open = ref(false)
 const searchOpen = ref(false)
 const searchQuery = ref('')
 const searchInput = ref<HTMLInputElement | null>(null)
+const searchForm = ref<HTMLFormElement | null>(null)
 const searchButton = ref<HTMLButtonElement | null>(null)
 const searchId = useId()
 
@@ -159,17 +160,15 @@ function toggle() {
   open.value = !open.value
 }
 
-function closeSearch(returnFocus = false) {
+async function closeSearch(returnFocus = false) {
   searchOpen.value = false
-  if (returnFocus) searchButton.value?.focus()
+  if (returnFocus) {
+    await nextTick()
+    if (!searchOpen.value) searchButton.value?.focus()
+  }
 }
 
-async function toggleSearch() {
-  if (searchOpen.value) {
-    closeSearch(true)
-    return
-  }
-
+async function openSearch() {
   open.value = false
   for (const details of root.value?.querySelectorAll<HTMLDetailsElement>('details[open]') ?? []) {
     details.open = false
@@ -214,17 +213,16 @@ function onKeydown(e: KeyboardEvent) {
  */
 function onFocusout(e: FocusEvent) {
   const next = e.relatedTarget as Node | null
-  if (next === null || root.value?.contains(next)) return
-  open.value = false
-  closeSearch()
+  if (next === null) return
+  if (!root.value?.contains(next)) open.value = false
+  if (!searchForm.value?.contains(next) && !searchButton.value?.contains(next)) closeSearch()
 }
 
-/** A press outside the nav closes its active disclosure. */
+/** Dismiss search outside its form, and the mobile menu outside the nav. */
 function onDocumentPointerdown(e: PointerEvent) {
-  if (!root.value?.contains(e.target as Node)) {
-    open.value = false
-    closeSearch()
-  }
+  const target = e.target as Node
+  if (!root.value?.contains(target)) open.value = false
+  if (!searchForm.value?.contains(target) && !searchButton.value?.contains(target)) closeSearch()
 }
 
 /*
@@ -340,6 +338,7 @@ onBeforeUnmount(() => {
 
         <form
           :id="`${searchId}-form`"
+          ref="searchForm"
           class="bf-nav__search-form"
           role="search"
           aria-label="Site search"
@@ -349,6 +348,10 @@ onBeforeUnmount(() => {
           :aria-hidden="!searchOpen || undefined"
           @submit.prevent="submitSearch"
         >
+          <svg class="bf-nav__search-symbol" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <circle cx="10.5" cy="10.5" r="6.5" />
+            <path d="m15.5 15.5 5 5" />
+          </svg>
           <label :for="searchId" class="visually-hidden">Search insights, projects and people</label>
           <input
             :id="searchId"
@@ -357,30 +360,24 @@ onBeforeUnmount(() => {
             class="bf-nav__search-input"
             type="search"
             name="q"
-            placeholder="Search insights, projects and people"
+            placeholder="Search…"
             enterkeyhint="search"
           >
-          <button class="bf-nav__search-submit" type="submit" aria-label="Submit search">
-            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-              <circle cx="10.5" cy="10.5" r="6.5" />
-              <path d="m15.5 15.5 5 5" />
-            </svg>
-          </button>
+          <button class="bf-nav__search-submit" type="submit">Search</button>
         </form>
 
         <button
           ref="searchButton"
           class="bf-nav__search-toggle"
           type="button"
-          :aria-label="searchOpen ? 'Close search' : 'Search'"
+          aria-label="Search"
+          :inert="searchOpen"
+          :aria-hidden="searchOpen || undefined"
           :aria-expanded="searchOpen"
           :aria-controls="`${searchId}-form`"
-          @click="toggleSearch"
+          @click="openSearch"
         >
-          <svg v-if="searchOpen" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-            <path d="m6 6 12 12M18 6 6 18" />
-          </svg>
-          <svg v-else viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
             <circle cx="10.5" cy="10.5" r="6.5" />
             <path d="m15.5 15.5 5 5" />
           </svg>
@@ -401,8 +398,8 @@ onBeforeUnmount(() => {
   is off in `nuxt.config.ts`, and the probe reads the live CSSOM so a
   regression fails the run rather than shipping quietly.
 
-  The search input restores a real outline above the base form styles.
-  Links and buttons retain the shared focus treatment.
+  Search uses a borderless field and attached button. Focus changes its surface;
+  links and buttons retain the shared keyboard focus treatment.
 */
 @layer components {
   .bf-nav {
@@ -597,13 +594,31 @@ onBeforeUnmount(() => {
     align-self: center;
   }
 
-  .bf-nav__search-toggle:hover,
-  .bf-nav__search-submit:hover {
+  .bf-nav[data-search-open] .bf-nav__search-toggle {
+    visibility: hidden;
+  }
+
+  .bf-nav__search-toggle:hover {
     background: var(--_bf-nav-open-bg);
   }
 
+  .bf-nav__search-submit {
+    flex: 0 0 auto;
+    inline-size: auto;
+    padding-inline: var(--space-s);
+    border-radius: 0 var(--radius-s) var(--radius-s) 0;
+    background: color-mix(in srgb, var(--color-accent) 12%, var(--_bf-nav-bg));
+    font: inherit;
+    font-size: max(1rem, var(--size--1));
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .bf-nav__search-submit:hover {
+    background: color-mix(in srgb, var(--color-accent) 20%, var(--_bf-nav-bg));
+  }
+
   .bf-nav__search-toggle svg,
-  .bf-nav__search-submit svg {
+  .bf-nav__search-symbol {
     inline-size: 1.4rem;
     block-size: 1.4rem;
     fill: none;
@@ -617,9 +632,9 @@ onBeforeUnmount(() => {
     position: absolute;
     display: flex;
     align-items: center;
-    gap: var(--space-2xs);
     min-inline-size: 0;
     margin: 0;
+    border-radius: var(--radius-s);
     background: var(--_bf-nav-bg);
     visibility: hidden;
     pointer-events: none;
@@ -632,14 +647,22 @@ onBeforeUnmount(() => {
     clip-path: inset(-6px);
   }
 
+  .bf-nav__search-symbol {
+    position: absolute;
+    inset-inline-start: var(--space-xs);
+    color: var(--color-accent);
+    pointer-events: none;
+  }
+
   .bf-nav .bf-nav__search-input {
+    flex: 1;
     min-inline-size: 0;
     min-block-size: var(--_bf-nav-search-target);
-    padding: var(--space-2xs) var(--space-xs);
+    padding: var(--space-2xs) var(--space-s);
+    padding-inline-start: calc(var(--space-xs) * 2 + 1.4rem);
     border: 0;
-    border-block-end: var(--border-width-thin) solid var(--color-accent);
-    border-radius: 0;
-    background: var(--_bf-nav-bg);
+    border-radius: var(--radius-s) 0 0 var(--radius-s);
+    background: color-mix(in srgb, var(--color-accent) 6%, var(--_bf-nav-bg));
     color: var(--color-accent);
     caret-color: var(--color-accent);
     font: inherit;
@@ -652,9 +675,13 @@ onBeforeUnmount(() => {
     opacity: 1;
   }
 
-  .bf-nav .bf-nav__search-input:focus-visible {
-    outline: var(--border-width-medium) solid var(--color-accent);
-    outline-offset: var(--border-width-medium);
+  .bf-nav .bf-nav__search-input:focus {
+    outline: 0;
+    background: color-mix(in srgb, var(--color-accent) 10%, var(--_bf-nav-bg));
+  }
+
+  .bf-nav__search-input::-webkit-search-cancel-button {
+    appearance: none;
   }
 
   @container bf-nav (width > 60rem) {
@@ -668,7 +695,7 @@ onBeforeUnmount(() => {
 
     .bf-nav__search-form {
       inset-block: 0;
-      inset-inline: 0 calc(var(--_bf-nav-search-target) + var(--space-xs));
+      inset-inline: 0;
     }
 
     .bf-nav__entry {
@@ -688,6 +715,10 @@ onBeforeUnmount(() => {
       inset-inline: 0;
       padding: var(--space-s);
       box-shadow: var(--shadow-elevation-medium-deep);
+    }
+
+    .bf-nav__search-symbol {
+      inset-inline-start: calc(var(--space-s) + var(--space-xs));
     }
   }
 
