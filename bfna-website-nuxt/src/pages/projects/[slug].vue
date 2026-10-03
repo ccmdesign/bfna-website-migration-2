@@ -301,18 +301,18 @@ const related = (project ? insightsForProject(project.slug) : []).slice(0, 6)
       :heading="project.heading"
     >
       <!--
-        `alt` is the heading, as the frozen source sets it: these are editorial
-        lead images with no separate description in the source, and the heading
-        is the only honest text available. `bfMedia` renders an `aria-hidden`
-        placeholder rather than an unlabelled box for the 6 full rows with no
-        `image` at all.
+        The lead image with its alt text from the content. `project.alt` is
+        `string | null` from the schema (gh#234) and ships `null` for every row
+        pending real descriptions (a11y BRIEF D28, §8). `bfMedia` requires a
+        string, so the fallback is `''` — an empty alt, which declares the
+        image decorative. That is not true (these are editorial lead images),
+        but it is the honest render of "no description available yet", and
+        check-routes.ts will fail on any row carrying it (DoD-A3).
 
-        TODO(gh#234): the same defect as `insights/[slug].vue` and left alone
-        for the same reason — the lead image's `alt` duplicates the `<h1>`. Not
-        decorative, so `alt=""` would be a lie; gh#222 forbids inventing a
-        string (D28, §8). #234 fixes it with the real field.
+        `bfMedia` renders an `aria-hidden` placeholder rather than an unlabelled
+        box for the 6 full rows with no `image` at all.
       -->
-      <bfMedia :src="project.image" :alt="project.heading" ratio="21/9" />
+      <bfMedia :src="project.image" :alt="project.alt ?? ''" ratio="21/9" />
     </bfPageHeader>
 
     <!--

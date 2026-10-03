@@ -240,6 +240,7 @@ interface InsightDoc {
   excerpt: string | null
   content: string | null
   image: string | null
+  alt: string | null
   video_url: string | null
   download: string | null
   external_url: string | null
@@ -281,6 +282,7 @@ const toInsightDoc = (
     excerpt: plainOrNull(raw.excerpt),
     content: strOrNull(raw.content),
     image: strOrNull(raw.image),
+    alt: null,
     video_url: strOrNull(raw.video_url),
     download: strOrNull(raw.download),
     external_url: strOrNull(raw.external_url),
@@ -390,6 +392,7 @@ interface ProjectDoc {
   program: string | null
   external_url: string | null
   image: string | null
+  alt: string | null
   parent_project: string | null
   archived: boolean
   exclude_from_grid: boolean
@@ -468,6 +471,7 @@ const normaliseProjects = (): number => {
       program: strOrNull(raw.program),
       external_url: strOrNull(raw.external_url),
       image: strOrNull(raw.image),
+      alt: null,
       parent_project: strOrNull(raw.parent_project),
       archived: boolFlag(raw.archived),
       exclude_from_grid: boolFlag(raw.exclude_from_grid),
