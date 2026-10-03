@@ -107,10 +107,10 @@ const label = computed(() => {
     <template v-else>{{ label.text }}<span v-if="label.marker" aria-hidden="true">{{ label.marker }}</span></template>
   </NuxtLink>
   <a
-    v-else
+    v-else-if="item.href"
     class="bf-nav__item"
-    :href="item.href ?? '#'"
-    data-external
+    :href="item.href"
+    :data-external="item.external || undefined"
     v-bind="newTabAttrs(item.href)"
   >{{ label.text }}<span v-if="label.marker" aria-hidden="true">{{ label.marker }}</span></a>
 </template>

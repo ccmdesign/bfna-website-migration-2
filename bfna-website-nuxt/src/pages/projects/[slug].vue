@@ -199,11 +199,12 @@ const participation = project?.participation
 
 /**
  * The participation CTAs. Label only: the stored value is an array of strings
- * with no destinations yet, so each renders as `bfButton`'s no-destination
- * `<button>` branch — the frozen source's own shape, kept rather than pointed
- * at an invented URL.
+ * with no destinations yet. CTAs without a destination are omitted from the
+ * render rather than presented as handler-less buttons (gh#232).
  */
-const participationCtas: Cta[] = participation.ctas.map(label => ({ label }))
+const participationCtas: Cta[] = participation.ctas
+  .map(label => ({ label }))
+  .filter(cta => cta.to || cta.href)
 
 /**
  * The microsite CTA — one action, out to the project's own site. Built here
@@ -265,6 +266,7 @@ const related = (project ? insightsForProject(project.slug) : []).slice(0, 6)
     />
 
     <bfCtaSection
+      v-if="participationCtas.length"
       label="Participation path"
       :heading="participation.title"
       :ctas="participationCtas"
@@ -334,6 +336,7 @@ const related = (project ? insightsForProject(project.slug) : []).slice(0, 6)
     </bfSection>
 
     <bfCtaSection
+      v-if="participationCtas.length"
       label="Participation path"
       :heading="participation.title"
       :ctas="participationCtas"

@@ -238,20 +238,22 @@ const insightChips = (i: Insight): string[] | undefined =>
       :image="HERO_IMAGE[program.slug]"
     >
       <div>
-        <bfButton to="#projects" variant="primary">Explore our work</bfButton>
+        <bfButton to="#projects" variant="primary" @click="() => { setTimeout(() => document.getElementById('projects')?.focus(), 0) }">Explore our work</bfButton>
       </div>
     </bfPageHeader>
 
     <!--
       Zone 2 — the projects in this program. `id="projects"` is the CTA's
       anchor target and passes through `bfSection`'s attribute allowlist.
+      `tabindex="-1"` makes it programmatically focusable so the CTA can move
+      focus after navigating (gh#232, copying bf-default.vue:340).
 
       `bfGridProjects` brings its own `.grid[data-min-width]` (D9) — this page
       names no column count. `headingLevel="3"` keeps the card headings under
       the band's `<h2>` (BRIEF §5 rule 9); it is also the wrapper's default,
       stated so the next reader does not have to know that.
     -->
-    <bfSection id="projects" label="Projects in this area" heading="Projects">
+    <bfSection id="projects" label="Projects in this area" heading="Projects" tabindex="-1">
       <bfGridProjects :projects="projects" :heading-level="3" />
     </bfSection>
 
