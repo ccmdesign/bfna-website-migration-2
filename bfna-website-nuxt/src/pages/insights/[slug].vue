@@ -100,9 +100,10 @@ const programName = program?.name
 /**
  * The band's own title, added once by `bf-default`'s `titleTemplate`. A row
  * with no heading is a content defect, not a nameless page, so the fallback
- * names the route rather than leaving the site title alone.
+ * names the route rather than leaving the site title alone. The not-found
+ * branch uses the same title as its h1.
  */
-useHead({ title: () => insight?.heading ?? 'Insight' })
+useHead({ title: () => insight?.heading ?? 'Insight not found' })
 
 /**
  * The programme colour scope (gh#252). `data-program` lands on `<html>` — the
@@ -335,8 +336,11 @@ const crumbs = [
     <bfSection
       v-if="related.length"
       label="Related insights"
-      :heading="programName ? `More on ${programName}` : 'More insights'"
+      aria-labelledby="related-insights-heading"
     >
+      <h2 id="related-insights-heading" class="bf-section__heading">
+        {{ programName ? `More on ${programName}` : 'More insights' }}
+      </h2>
       <bfGridInsights :insights="related" :heading-level="3" />
     </bfSection>
   </template>

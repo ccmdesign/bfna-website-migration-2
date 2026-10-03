@@ -226,7 +226,7 @@ useHead({ title: () => about?.heading ?? 'About Us' })
     The `<h2>` is slot content rather than `bfSection`'s `heading` prop because
     the frozen source puts it *inside* the text column, beside the image rather
     than above both — passing the prop would render a third heading above the
-    switcher. `bfSection`'s `label` still names the band as a landmark.
+    switcher. `bfSection`'s `label` is for the accessible name, not the landmark.
 
     `bfMedia` replaces the frozen source's `<img>` and its five inline
     declarations (`min-width: 0; max-width: 100%; height: auto;

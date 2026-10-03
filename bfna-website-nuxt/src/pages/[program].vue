@@ -83,9 +83,10 @@ const program = programBySlug(route.params.program as string)
 /**
  * The band's own title, added once by `bf-default`'s `titleTemplate`. Set here
  * rather than left off (as `/` deliberately leaves it off) because the layout's
- * contract is that every page below the root states its own name.
+ * contract is that every page below the root states its own name. The not-found
+ * branch uses the same title as its h1 (latent: the route 404s before rendering).
  */
-useHead({ title: () => program?.name })
+useHead({ title: () => program?.name ?? 'Unknown program' })
 
 /**
  * The programme colour scope (gh#252). `data-program` lands on `<html>`, which

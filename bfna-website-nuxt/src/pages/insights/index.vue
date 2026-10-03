@@ -298,7 +298,7 @@ const remaining = computed<number>(() => Math.max(filtered.value.length - visibl
     `:model-value` + `@update:model-value` rather than `v-model`: the state is
     the URL, so the write is a navigation, not an assignment.
   -->
-  <bfSection label="Filters" gap="s">
+  <bfSection label="Filters" heading="Filters" gap="s">
     <div class="cluster" data-gap="xs">
       <span id="insights-facet-format">Format:</span>
       <bfFilterBar
@@ -344,7 +344,7 @@ const remaining = computed<number>(() => Math.max(filtered.value.length - visibl
     band's `<h2>` (BRIEF §5 rule 9) — the wrapper's default, stated so the next
     reader does not have to know that.
   -->
-  <bfSection label="Results">
+  <bfSection label="Results" heading="Results">
     <p>
       <strong>{{ filtered.length }}</strong> items<span v-if="includeArchived"> (including archive)</span>
     </p>

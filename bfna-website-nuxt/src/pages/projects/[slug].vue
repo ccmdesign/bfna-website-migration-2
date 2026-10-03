@@ -103,9 +103,10 @@ const project = projectBySlug(route.params.slug as string)
 /**
  * The band's own title, added once by `bf-default`'s `titleTemplate`. A row
  * with no heading is a content defect, not a nameless page, so the fallback
- * names the route rather than leaving the site title alone.
+ * names the route rather than leaving the site title alone. The not-found
+ * branch uses the same title as its h1.
  */
-useHead({ title: () => project?.heading ?? 'Project' })
+useHead({ title: () => project?.heading ?? 'Unknown project' })
 
 /**
  * The trail, root first. **Three entries, not the frozen source's two** —
@@ -408,8 +409,11 @@ const related = (project ? insightsForProject(project.slug) : []).slice(0, 6)
     <bfSection
       v-if="related.length"
       label="Related insights"
-      :heading="`From ${project.heading}`"
+      aria-labelledby="related-insights-heading"
     >
+      <h2 id="related-insights-heading" class="bf-section__heading">
+        From {{ project.heading }}
+      </h2>
       <bfGridInsights :insights="related" :heading-level="3" />
     </bfSection>
   </template>

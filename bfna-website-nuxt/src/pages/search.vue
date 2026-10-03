@@ -408,7 +408,7 @@ const rows = computed<SearchResultRow[]>(() =>
     element, so it becomes this stack's second band rather than collapsing the
     header band into it.
   -->
-  <bfSection label="Search">
+  <bfSection label="Search" heading="Search">
     <bfSearchShell
       class="bf-search"
       :data-bf-search="hasQuery ? 'active' : 'idle'"
