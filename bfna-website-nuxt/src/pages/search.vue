@@ -463,10 +463,4 @@ const rows = computed<SearchResultRow[]>(() =>
 
   No `:not()` anywhere (D-20.5, gh#29).
 */
-@layer overrides {
-  .bf-search[data-bf-search='idle'] :deep([data-bf-search-shell='count']),
-  .bf-search[data-bf-search='idle'] :deep([data-bf-search-shell='empty']) {
-    display: none;
-  }
-}
 </style>
