@@ -351,22 +351,23 @@ const remaining = computed<number>(() => Math.max(filtered.value.length - visibl
       :suffix="includeArchived ? ' (including archive)' : ''"
     />
 
-    <bfGridInsights v-if="filtered.length" :insights="shown" :heading-level="3" />
+    <template v-if="filtered.length">
+      <bfGridInsights :insights="shown" :heading-level="3" />
 
-    <!--
-      The label carries the remainder, as the frozen page's button does — the
-      arithmetic is the caller's and the component takes the finished string.
-      The two counts drive its live region, so a load announces what arrived
-      instead of appending items silently below the control. Moved outside the
-      grid's v-if so filtering to zero is announced (gh#233).
-    -->
-    <bfLoadMore
-      :has-more="remaining > 0"
-      :label="`Load more (${remaining} remaining)`"
-      :visible-count="shown.length"
-      :total-count="filtered.length"
-      @load="visible += 24"
-    />
+      <!--
+        The label carries the remainder, as the frozen page's button does — the
+        arithmetic is the caller's and the component takes the finished string.
+        The two counts drive its live region, so a load announces what arrived
+        instead of appending items silently below the control.
+      -->
+      <bfLoadMore
+        :has-more="remaining > 0"
+        :label="`Load more (${remaining} remaining)`"
+        :visible-count="shown.length"
+        :total-count="filtered.length"
+        @load="visible += 24"
+      />
+    </template>
 
     <!--
       Nothing matched. `heading-level="2"` because `bfPageHeader` above already
