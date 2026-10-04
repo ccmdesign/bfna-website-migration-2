@@ -1,0 +1,35 @@
+# robots.txt for BFNA (bfna-site-v2)
+# Generated at build time — production robots.txt should be updated
+# separately with any site-specific rules.
+
+User-agent: *
+Allow: /
+Allow: /about
+Allow: /insights
+Allow: /projects
+Allow: /programs
+Allow: /archive
+
+# Block developer docs and wireframe prototype
+Disallow: /docs/
+Disallow: /wireframes/
+Disallow: /search
+
+# AI crawlers — allow by default
+User-agent: GPTBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+# Sitemap
+Sitemap: https://www.bfna.org/sitemap.xml
+
+# Note: non-production Netlify deploys add X-Robots-Tag: noindex
+# via netlify.toml context headers.

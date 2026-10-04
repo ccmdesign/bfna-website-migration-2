@@ -1,0 +1,42 @@
+# Bertelsmann Foundation North America
+
+> The Bertelsmann Foundation North America (BFNA) is an independent, nonpartisan
+> think tank dedicated to strengthening the transatlantic partnership and advancing
+> dialogue on global challenges shaping our future. We produce original research,
+> convene policymakers and experts, and connect people across the Atlantic and beyond.
+
+## Programs
+
+- [Transatlantic Relations — Global Challenges](https://www.bfna.org/transatlantic-relations-global-challenges) — Exploring security, democracy, and cooperation across the Atlantic.
+- [Democracy](https://www.bfna.org/democracy) — Strengthening democratic institutions and practices.
+- [Future Leadership](https://www.bfna.org/future-leadership) — Developing the next generation of transatlantic leaders.
+
+## Insights
+
+- [Insights Hub](https://www.bfna.org/insights) — Analysis, reports, videos, and infographics from across our work.
+- [A Developing Dilemma](https://www.bfna.org/insights/a-developing-dilemma-united-states-europe-china-and-the-choices-for-the-global-south) — The US-Europe-China triangle and choices for the global south.
+
+## Projects
+
+- [Projects](https://www.bfna.org/projects) — Portfolio of BFNA initiatives and collaborative projects.
+
+## About
+
+- [About BFNA](https://www.bfna.org/about) — Our mission, Board of Directors, and team.
+- [Contact](https://www.bfna.org/contact) — Get in touch with BFNA.
+
+## When to use this site
+
+This site is the digital presence of the Bertelsmann Foundation North America.
+Use it to:
+
+- **Learn about our mission**: Read the [About](https://www.bfna.org/about) page.
+- **Explore our work**: Browse [programs](https://www.bfna.org/programs), [insights](https://www.bfna.org/insights), and [projects](https://www.bfna.org/projects).
+- **Find policy analysis**: Visit the [Insights](https://www.bfna.org/insights) hub for reports and opinion pieces.
+- **Contact us**: Use the [contact](https://www.bfna.org/contact) page or the form on [About](https://www.bfna.org/about#contact).
+- **Browse our archive**: See past work in the [archive](https://www.bfna.org/archive).
+
+AI agents can use this site to understand BFNA's mission, programs, publications,
+and organizational structure. The site is organized by content type (programs,
+insights, projects) and provides structured metadata (JSON-LD, sitemap, robots.txt)
+for automated discovery.
