@@ -1,0 +1,5 @@
+# It's About Time
+
+_Published: 2014-12-17_
+
+A surprise prisoner swap this morning between the US and Cuba has triggered a new era―and a major thaw―in bilateral relations, which have been frozen for more than five decades. By noon, US President Barack Obama announced significantly broadened diplomatic, financial and technological contact with Cuba, and he encouraged Congress to address the legal embargo against the Caribbean country. These are positive developments for both countries. The US stalemate with the island since the early 1960s had long lost its political efficacy. If anything, the unyielding US position proved counterproductive, leading to missed opportunities to normalize relations. A more open approach to the island will likely facilitate a more democratic Cuba. Continue to the full publication

@@ -62,6 +62,7 @@ import { useBfPrograms } from '~/composables/data/useBfPrograms'
 import { useBfProjects } from '~/composables/data/useBfProjects'
 import { useProgramTheme } from '~/composables/useProgramTheme'
 import { formatLabel, monthYear } from '~/utils/format'
+import { absoluteUrl, normalizeSiteUrl } from '~/utils/site-url'
 
 defineOptions({ name: 'InsightDetailPage' })
 
@@ -103,6 +104,25 @@ const programName = program?.name
  * names the route rather than leaving the site title alone.
  */
 useHead({ title: () => insight?.heading ?? 'Insight' })
+
+if (insight) {
+  const config = useRuntimeConfig()
+  const siteUrl = normalizeSiteUrl(config.public.siteUrl as string | undefined)
+  const canonicalPath = `/insights/${insight.slug}`
+  useBfSeo({
+    title: insight.heading,
+    description: insight.excerpt || undefined,
+    ogType: 'article',
+    canonicalPath
+  })
+  useArticleJsonLd({
+    headline: insight.heading,
+    description: insight.excerpt || undefined,
+    url: absoluteUrl(siteUrl, canonicalPath),
+    datePublished: insight.publish_date,
+    author: insight.authors?.[0] ?? null
+  })
+}
 
 /**
  * The programme colour scope (gh#252). `data-program` lands on `<html>` — the

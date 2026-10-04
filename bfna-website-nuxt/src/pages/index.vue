@@ -87,6 +87,11 @@ const featured = highlights().slice(0, 4)
  * private array (gh#91), so this slice cannot reach the payload.
  */
 const latest = active.slice(0, 6)
+
+useBfSeo({
+  description: home.description || home.excerpt || undefined
+})
+useOrganizationJsonLd()
 </script>
 
 <template>

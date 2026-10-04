@@ -1,0 +1,3 @@
+# Hidden Layers | EU’s AI Act, an AI task force from Congress, and a new Executive Order to protect Americans’ personal data
+
+In this issue, we discuss updates on the EU’s AI Act, the Biden administration’s AI executive order (EO) and a new AI task force from Congress. We also address the outcomes from the U.S.-EU Trade and Technology Council’s (TTC) fifth ministerial meeting and a new EO to protect Americans’ personal data.

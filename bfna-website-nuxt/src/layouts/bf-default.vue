@@ -189,6 +189,8 @@ const PageBands: FunctionalComponent = () => partitionedSlot().bands
 
 const { menus, announcement } = await useBfSite()
 
+useBfSeo()
+
 /**
  * Resolved once, at setup. Both sources are build-time static — `menus` is the
  * typed `menus.json` module and the announcement is a single prerendered

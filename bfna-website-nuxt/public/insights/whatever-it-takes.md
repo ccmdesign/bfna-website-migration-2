@@ -1,0 +1,7 @@
+# Whatever it Takes
+
+_Published: 2020-05-08_
+
+_Authors: Anthony T. Silberfeld_
+
+The COVID-19 pandemic has already taken a significant economic and human toll on nations around the world with no end in sight. As public health officials attempt to curb the spread of the virus, governments and central banks have taken unprecedented action to mitigate the impact on workers, businesses and the broader economy. In Germany and the United States, massive economic support packages have been passed in an effort to stave off economic collapse. How do the approaches of these transatlantic partners differ? Will these measures be sufficient? What do they tell us about the gulf between German and American values? What’s next? This webinar, co-hosted by the Bertelsmann Foundation and the Bertelsmann Stiftung, presents expert insights from both sides of the Atlantic on these pressing questions. Featured Speakers Professor Adam Tooze Kathryn and Shelby Cullom Davis Professor of History Columbia University Ms. Philippa Sigl-Glöckner Private Secretary to the State Secretary German Federal Ministry of Finance Dr. Christian Bluth Project Manager Program Megatrends Bertelsmann Stiftung Moderated by Mr. Anthony Silberfeld Director, Transatlantic Relations Bertelsmann Foundation

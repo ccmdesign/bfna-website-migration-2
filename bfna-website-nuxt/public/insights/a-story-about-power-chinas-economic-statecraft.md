@@ -1,0 +1,7 @@
+# A Story about Power: China’s Economic Statecraft
+
+_Published: 2022-01-11_
+
+_Authors: Anthony T. Silberfeld_
+
+In the latest installment of our Disrupting Democracy series, the Bertelsmann Foundation has created a collection of new digital animations examining how regional powers in Europe, Asia and the Middle East use specialized tools to project influence in their respective neighborhoods. To date, we've shared the story of Russian disinformation in Georgia and Iran's use of proxy militias in Iraq and beyond. Today, we'll offer you a case study in Chinese economic coercion through the lens of the THAAD episode in South Korea. In 2017, the South Korean government agreed to host the U.S. missile defense system, known as THAAD, in response to threats made and tests conducted by North Korea. Beijing viewed this weapons system as a threat to its interests and objected to its placement just outside of Seoul. South Korea pressed ahead over China's objections and incurred the economic retaliation that came with it. The Bertelsmann Foundation and the National Bureau of Asian Research developed this animation to show the importance of United States and other like-minded countries supporting one another against China’s economic statecraft.

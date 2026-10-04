@@ -1,0 +1,3 @@
+# NEW PODCAST: The Transponder - Astropolitics
+
+The Transponder, a new podcast from the Bertelsmann Foundation, explores how emerging global trends are reshaping democracy, geopolitics, economics, and everyday life. Hosted by the Director of Documentaries Dr. Samuel George, the show blends documentary field reporting with clear, grounded analysis to help listeners make sense of a noisy and fast-changing world.

@@ -1,0 +1,28 @@
+[build]
+  base = "bfna-website-nuxt"
+  command = "npm run generate"
+  publish = ".output/public"
+
+[build.environment]
+  NUXT_PUBLIC_SITE_URL = "https://www.bfna.org"
+
+[[edge_functions]]
+  function = "markdown"
+  path = "/*"
+
+# Keep branch deploys and previews out of search indexes while still publishing sitemap/robots for agent checks.
+[context.deploy-preview.headers.values]
+  X-Robots-Tag = "noindex, nofollow"
+
+[context.branch-deploy.headers.values]
+  X-Robots-Tag = "noindex, nofollow"
+
+[context.dev-preview.headers.values]
+  X-Robots-Tag = "noindex, nofollow"
+
+[context.dev.headers.values]
+  X-Robots-Tag = "noindex, nofollow"
+
+# Production (main) serves the public site without noindex.
+[context.production]
+  # Uses default headers only.

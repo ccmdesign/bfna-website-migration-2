@@ -98,6 +98,12 @@ const stiftungParagraphs = computed(() => paragraphs(stiftung?.description))
  * layout's contract is that every page below the root states its own name.
  */
 useHead({ title: () => about?.heading ?? 'About Us' })
+
+useBfSeo({
+  title: about?.heading ?? 'About Us',
+  description: about?.excerpt || about?.description?.slice(0, 160) || undefined,
+  canonicalPath: '/about'
+})
 </script>
 
 <template>

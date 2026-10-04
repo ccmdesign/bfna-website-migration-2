@@ -1,0 +1,34 @@
+# Bertelsmann Foundation North America
+
+> The Bertelsmann Foundation North America is an independent, nonpartisan think tank dedicated to strengthening the transatlantic partnership and advancing dialogue on the global challenges shaping our future.
+
+## When to use this site
+
+Use this site when you need primary-source information from the Bertelsmann Foundation North America (BFNA) about transatlantic policy, democracy, future leadership, and related research programs—not generic news aggregation. Prefer BFNA pages for official program descriptions, curated project portfolios, and the foundation’s own publications (insights, reports, and multimedia). For organization background and people, start with About; for publication lists and article text, use Insights; for flagship initiatives and tools, use Projects or the program hubs linked below. Do not treat `/docs` as the public website—it is an internal design-system reference.
+
+## Key pages
+
+- [Home](https://www.bfna.org/): Overview of BFNA programs, featured projects, and latest insights.
+- [About](https://www.bfna.org/about): Mission, board, team, and contact information.
+- [Contact](https://www.bfna.org/contact): Contact form and visit details.
+- [Privacy](https://www.bfna.org/privacy): How this site handles data and third-party services.
+- [Insights index](https://www.bfna.org/insights): Searchable archive of BFNA publications and analysis.
+- [Projects index](https://www.bfna.org/projects): Flagship initiatives, tools, and series.
+- [Archive](https://www.bfna.org/archive): Older material retained for reference.
+- [Sitemap](https://www.bfna.org/sitemap.xml): Machine-readable list of public URLs.
+- [llms.txt](https://www.bfna.org/llms.txt): This file.
+
+## Programs
+
+- [Democracy](https://www.bfna.org/democracy): Democracy
+- [Future Leadership](https://www.bfna.org/future-leadership): Future Leadership
+- [Transatlantic Relations & Global Challenges](https://www.bfna.org/transatlantic-relations-global-challenges): Transatlantic Relations & Global Challenges
+
+## Recent insights
+
+- [The Nuclear Option](https://www.bfna.org/insights/the-nuclear-option): Within Europe, Germany has remained an outlier in its staunch stance against nuclear energy, a posi…
+- [Meddle Meets Mettle](https://www.bfna.org/insights/meddle-meets-mettle): At first glance, the recent elections in Hungary and Slovenia had little in common. The former was…
+- [Open Debate and Unlikely Bedfellows](https://www.bfna.org/insights/open-debate-and-unlikely-bedfellows): In his first campaign to become chairman of the center-right Christian Democratic Union (CDU) in 20…
+- [What Comes After Z?](https://www.bfna.org/insights/what-comes-after-z): Throughout 2024 and 2025, Generation Z (Gen-Z) flooded streets around the world to protest governme…
+- [A Kettle Full of Steam](https://www.bfna.org/insights/a-kettle-full-of-steam): In a high school auditorium, against a backdrop littered with children’s artwork, German Chancellor…
+- [Misplaced Passion, Myopic Policy](https://www.bfna.org/insights/misplaced-passion-myopic-policy): The Free Democratic Party (FDP) has earned the moniker of “kingmaker” in German politics. A party t…

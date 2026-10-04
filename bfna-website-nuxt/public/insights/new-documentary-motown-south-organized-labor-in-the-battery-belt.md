@@ -1,0 +1,3 @@
+# New Documentary| Motown South: Organized Labor in the Battery Belt
+
+Our short documentary Motown South follows the rise of electric vehicle manufacturing in the American South — from the arrival of massive EV plants to a drive for unionization in a region where organized labor remains largely undeveloped. The film explores how global investment, U.S. industrial policy, and local labor movements are reshaping the landscape of opportunity in the South.

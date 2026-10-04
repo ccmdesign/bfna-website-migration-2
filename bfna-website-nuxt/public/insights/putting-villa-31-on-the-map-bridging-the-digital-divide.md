@@ -1,0 +1,7 @@
+# Putting Villa 31 on the Map: Bridging the Digital Divide
+
+_Published: 2020-04-30_
+
+_Authors: Samuel George_
+
+Villa 31 is so close. Perhaps Argentina’s most notorious informal barrio, Villa 31 spills out over downtown Buenos Aires’ historic train station. And yet, Villa 31 remains so far. Despite a long history dating back nearly a century, land rights remain informal. Access to basic utilities like water and electricity can be spotty and is often jerry-rigged by residents living off of the formal Buenos Aires grid. Villa 31 is precisely the kind of neighborhood most at risk by the digital transformation. While geographically it may be minutes’ walk from the country’s financial heart, it could become increasingly disconnected, with a digital gulf far greater than the physical distance. In this new animation, we follow local leaders as they push to have Villa 31 included on Google maps. On the one hand, this would give the neighborhood access to city services. On the other hand, in the 21st century, a digital presence may prove as important as physical presence. As major breakthroughs continue to occur in online technology, those that remain offline will be left further and further behind. This animation is part of the Bertelsmann Foundation’s [Our Digital World](https://www.youtube.com/playlist?list=PL36lfVkdVQqlMpF2-ZzhluO28KpILH8BQ) animation series.

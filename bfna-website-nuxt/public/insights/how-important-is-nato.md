@@ -1,0 +1,7 @@
+# How Important is NATO?
+
+_Published: 2023-02-02_
+
+_Authors: Brandon Bohrn_
+
+NATO, the North Atlantic Treaty Organization, is arguably the most resilient fixture of the transatlantic community. Since its founding in 1949, the alliance has faced many challenges and identity crises that have sparked questions about the organization’s relevance. Yet, time and time again, it has adapted to evolving security landscapes and geopolitical threats. In the wake of Russia’s February 2022 invasion of Ukraine, NATO’s importance and resilience has again become clear. NATO’s importance is also reflected in public opinion. Transatlantic Trends 2022, the Bertelsmann Foundation’s annual survey conducted in partnership with the German Marshall Fund of the United States, showed that 78% of those surveyed in 14 countries believe NATO is important to their country's national security. That's up from 67% in 2021. Furthermore, majorities in all countries surveyed, except for Turkey, support expanding NATO to include Sweden and Finland – 73% overall. The Transatlantic Trends data reveal an increasing appetite and appreciation for NATO to counter the threats of Russia’s ongoing aggression. Which countries show the greatest year-to-year increases? Does geography play a role in perceptions of NATO’s importance? In this infographic, we explore those and other questions to better understand public views of transatlantic defense and security cooperation.

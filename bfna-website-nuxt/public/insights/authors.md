@@ -1,0 +1,3 @@
+# Authors
+
+The U.S. and Europe have an opportunity to engage closely on a broad range of challenges in 2022. To that end, the Bertelsmann Foundation has produced Cross-Cutting Currents, a transatlantic primer, as a foundational and introductory resource for those who seek a better understanding of the transatlantic relationship. This publication addresses the most pressing issues affecting five of the transatlantic community’s key actors—the U.S., Germany, France, Italy, and the UK.

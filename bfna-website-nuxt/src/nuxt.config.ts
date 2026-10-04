@@ -90,6 +90,8 @@ const collectionSlugs = (collection: string): string[] => {
 const prerenderRoutes: string[] = [
   '/',
   '/about',
+  '/contact',
+  '/privacy',
   '/archive',
   '/insights',
   '/projects',
@@ -142,6 +144,7 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     public: {
+      siteUrl: process.env.NUXT_PUBLIC_SITE_URL || 'https://www.bfna.org'
     }
   },
   app: {

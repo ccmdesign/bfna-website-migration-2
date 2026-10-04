@@ -78,6 +78,7 @@ export const LEGACY_REDIRECT_EXACT: Readonly<Record<string, string>> = {
   '/digital-world': '/',
   '/future-of-work': '/future-leadership',
   '/people': '/about#team',
+  '/privacy-policy': '/privacy',
   '/politics-society': '/transatlantic-relations-global-challenges',
   '/team': '/about#team',
   '/updates': '/insights'

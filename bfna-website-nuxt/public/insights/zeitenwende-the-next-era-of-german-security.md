@@ -1,0 +1,7 @@
+# Zeitenwende: The Next Era of German Security
+
+_Published: 2024-02-26_
+
+_Authors: Courtney Flynn Martino_
+
+On the second anniversary of Olaf Scholz’s seminal Zeitenwende speech, we are excited to announce the launch of our explanatory animation on German security and defense. The animation gives a detailed overview of the three pillars comprising Germany’s June 2023 National Security Strategy: robust, resilient, and sustainable. The robust pillar emphasizes a commitment to NATO and the transatlantic alliance as the “indispensable foundation” of German and European security. The resilient pillar highlights Germany’s leadership in both democratic and economic resilience at the national and multilateral level. Finally, the sustainable pillar affirms the equal weight given to both defensive security and humanitarian efforts, in line with the European Green Deal and the UN Sustainable Development Goals. Russia’s invasion of Ukraine has ushered in a new era of German defense policy, which places Germany in a leading role for both European and transatlantic security. By illustrating the commitments made in the Zeitenwende speech and the roadmap outlined in the National Security Strategy, we hope the animation will shed light on this pivotal moment in German foreign and security policy. This animation is part of a larger series by the Bertelsmann Foundation on German politics.

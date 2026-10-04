@@ -1,0 +1,7 @@
+# The Curious Case of Billyjack Buzzard
+
+_Published: 2020-04-21_
+
+_Authors: Samuel George_
+
+Learn to Code! For some, this instruction has become a taunt of people who have lost their jobs in a rapidly shifting global economy. But what happens when we stop trolling and make a good faith effort to adapt? After losing his job in the coal mines of West Virginia, Billyjack Buzzard enrolled in a coding boot camp, and distinguished himself as the top student and a rising prospect in Silicon Holler. But even this wasn’t enough to land him a steady job as a computer programmer. Billyjack’s story, which we first learned about while filming the documentary __The Fight for West Virginia__, highlights the pressing riddle of how to create mass employment in the new digital economy. If we can’t solve this riddle, our society faces a deepening bifurcation between a small percentage of digital wunderkinds and the majority of people stuck on the outside looking in, trying to make ends meet, often in the gig economy. The Bertelsmann Foundation would like to thank Billyjack for sharing this important story. This animation is part of the Bertelsmann Foundation’s [Our Digital World](https://www.youtube.com/playlist?list=PL36lfVkdVQqlMpF2-ZzhluO28KpILH8BQ) animation series.

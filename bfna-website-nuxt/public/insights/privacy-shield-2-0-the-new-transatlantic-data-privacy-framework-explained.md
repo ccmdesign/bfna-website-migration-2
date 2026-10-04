@@ -1,0 +1,5 @@
+# Privacy Shield 2.0 – The New Transatlantic Data Privacy Framework Explained
+
+_Published: 2022-08-15_
+
+On March 25, 2022 U.S. President Biden and European Commission President Ursula von der Leyen signed a political agreement on a new transatlantic data privacy framework. This new framework renews the flow of personal data across the Atlantic and replaces a previous framework, the U.S.-EU Privacy Shield, struck down by the EU Court of Justice in 2020. Why did the EU strike down this agreement and what are the next steps for the European Commission and the Biden administration? The Bertelsmann Foundation answers these questions and more in our latest animation. To make a forecast on what you think will be the future of this new data transfer agreement, go to the technology section on [RANGE](https://www.rangeforecasting.org/), the Bertelsmann Foundation’s new transatlantic forecasting platform. RANGE uses the wisdom of the crowd to predict the outcome of a range of issues pertinent to the U.S. and European Union, from democracy and geopolitics to trade and technology policy.

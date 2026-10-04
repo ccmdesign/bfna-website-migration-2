@@ -1,0 +1,5 @@
+# Lithium Rising
+
+_Published: 2025-07-30_
+
+Journey to the frontlines of the 21st-century resource scramble—from Bolivian salt flats to Congolese cobalt mines—uncover how lithium, cobalt, and nickel have become central to clean energy, national security, and economic power. Through vivid storytelling, original photography, and information from over 100 interviews, explore the global power plays and local struggles shaping the battery revolution. Who profits, who pays—and can we mine our way to a greener future without repeating the past?

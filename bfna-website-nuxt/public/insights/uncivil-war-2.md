@@ -1,0 +1,7 @@
+# Uncivil War
+
+_Published: 2020-10-22_
+
+_Authors: Anthony T. Silberfeld_
+
+Americans are losing faith in democracy. In the lead-up to the 2020 election, our documentary Uncivil War explores three factors eroding democracy in the United States: gerrymandering, voter suppression, and disinformation. The film unravels a web of threats to American elections, separates truth from fiction, and exposes a hidden war against democracy itself. Accompanying this film is a guide for educators who would like to use this film as part of a course. __[Uncivil War Education Guide](https://assets.ctfassets.net/9vgcz0fppkl3/4JZIsYnN7RVYJFdKiGhrxm/26cdf533c180a362f616b1722bc1bbdf/Uncivil_War_Education_Guide_3.pdf)__.

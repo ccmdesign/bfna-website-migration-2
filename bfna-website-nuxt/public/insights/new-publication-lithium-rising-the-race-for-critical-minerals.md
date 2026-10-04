@@ -1,0 +1,3 @@
+# New Publication | Lithium Rising: The Race for Critical Minerals
+
+Journey to the frontlines of the 21st-century resource scramble—from Bolivian salt flats to Congolese cobalt mines—uncover how lithium, cobalt, and nickel have become central to clean energy, national security, and economic power. This is more than a policy report—it's a vivid, human-centered exploration of the communities, politics, and power plays behind the battery revolution.

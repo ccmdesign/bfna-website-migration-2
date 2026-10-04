@@ -1,0 +1,7 @@
+# The Berlin Wall's Power to Unify
+
+_Published: 2014-11-08_
+
+_Authors: Anthony T. Silberfeld_
+
+Twenty-five years have passed since the Berlin Wall fell, and a new era for Europe and the United States began. We live today in a starkly different world, one that was formed – in part, at least – by the dramatic events in central Europe in 1989. So strong was the impact of that year that even today there are lessons to be learned from it. These lessons are all the more important given the recent estrangement between Washington and Berlin that has coincided with the emergence of threats that challenge the West as a whole. The intervening quarter-century has certainly seen ups and downs for the German-American relationship. Differences over managing the eurozone crisis, American anger with German opposition to the war in Iraq, Berlin’s horror at the NSA’s hacking of Chancellor Angela Merkel’s mobile phone and, despite all that, unified approaches to dealing with Iran and Russia are a few of the highlights. We’ve been through a lot together, and our common values ensure we’ll go through a lot more. As German, American and, in fact, all trans-Atlantic leaders look towards the future, they would be well advised to peer into the past. The demise of the Berlin Wall and Germany’s subsequently peaceful reunification offer lessons for solidifying the German-American relationship that has served – and must continue to serve – as a fundament for freedom and progress. Continue to the full publication

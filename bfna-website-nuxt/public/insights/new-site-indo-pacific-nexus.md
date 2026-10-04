@@ -1,0 +1,3 @@
+# New Site | Indo-Pacific Nexus
+
+The Indo-Pacific is more central than ever to the United States and Europe. Home to half the world’s population and 60% of global GDP, the region drives key geopolitical, economic, and security trends. The Indo-Pacific Nexus is our new microsite offering timely analysis, crowd-sourced forecasting, and multimedia insights on how this dynamic region shapes the transatlantic world.

@@ -1,0 +1,5 @@
+# The Transition Compendium
+
+_Published: 2021-04-30_
+
+From the election of Joe Biden as the 46th American president to his 100th day in office, we provided monthly briefings offering the new administration European perspectives on the issues that will define a new transatlantic agenda in a period of significant volatility in the US, Europe, and beyond. As we mark 100 days of the Biden Administration, we are proud to release our compendium of solutions-oriented policy papers that provide a concrete roadmap to strengthen transatlantic coordination to address our common challenges. The Transition Compendium is comprised of six policy papers that provide contextual background, the state of play, and a way forward for transatlantic collaboration on policy issues that will impact politics and society in Europe and the United States for the foreseeable future. This volume examines a range of topics including: the digital economy, China, cybersecurity, green shipping, global health, and migration. ![](//images.ctfassets.net/9vgcz0fppkl3/6FAmsxTIUSEzFnWyRxQcBX/8bbfd136e4d759ce5da0896e32aa81ed/compendium-cover.png)
