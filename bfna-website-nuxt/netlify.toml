@@ -1,0 +1,17 @@
+# Netlify edge functions for bfna-site-v2.
+# Build command and publish directory stay configured in the Netlify UI
+# (base directory `bfna-website-nuxt`, publish `.output/public`).
+
+[[edge_functions]]
+  path = "/*"
+  function = "markdown"
+  excludedPath = [
+    "/_nuxt/*",
+    "/*.md",
+    "/images/*",
+    "/css/*",
+    "/sitemap.xml",
+    "/robots.txt",
+    "/llms.txt",
+    "/component-docs/*"
+  ]

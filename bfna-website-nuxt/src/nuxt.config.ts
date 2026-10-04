@@ -90,6 +90,7 @@ const collectionSlugs = (collection: string): string[] => {
 const prerenderRoutes: string[] = [
   '/',
   '/about',
+  '/privacy',
   '/archive',
   '/insights',
   '/projects',
@@ -114,7 +115,8 @@ export default defineNuxtConfig({
     '@nuxt/content',
     '@nuxt/eslint',
     '@vueuse/nuxt',
-    '@nuxt/image'
+    '@nuxt/image',
+    './src/modules/agent-build.ts'
   ],
   image: {
     // Allow external domains for images
@@ -142,6 +144,7 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     public: {
+      siteUrl: 'https://www.bfna.org'
     }
   },
   app: {

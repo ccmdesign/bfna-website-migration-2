@@ -47,10 +47,12 @@
  * page: a route that sets no title renders `Bertelsmann Foundation North
  * America` alone, rather than the site name twice.
  */
+import { useBfSiteSeo } from '~/composables/useBfSiteSeo'
 import { useBfInsights } from '~/composables/data/useBfInsights'
 import { useBfPages } from '~/composables/data/useBfPages'
 import { useBfPrograms } from '~/composables/data/useBfPrograms'
 import { useBfProjects } from '~/composables/data/useBfProjects'
+import { organizationJsonLd, webSiteJsonLd } from '~/utils/json-ld'
 
 defineOptions({ name: 'HomePage' })
 
@@ -71,6 +73,27 @@ const { active, highlights } = await useBfInsights()
  * inside a template expression that re-runs on every render.
  */
 const home = homePage()
+const homeDescription = home?.description ?? home?.excerpt ?? ''
+
+useBfSiteSeo({
+  description: homeDescription,
+  path: '/',
+  ogType: 'website'
+})
+
+useHead({
+  script: [
+    {
+      type: 'application/ld+json',
+      innerHTML: JSON.stringify(organizationJsonLd())
+    },
+    {
+      type: 'application/ld+json',
+      innerHTML: JSON.stringify(webSiteJsonLd())
+    }
+  ]
+})
+
 const programCards = programs()
 const projectCards = featuredProjects()
 const products = allProducts()

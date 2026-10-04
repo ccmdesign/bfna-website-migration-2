@@ -63,6 +63,7 @@
 import { Fragment } from 'vue'
 import type { FunctionalComponent, VNode } from 'vue'
 import { useBfSite } from '~/composables/data/useBfSite'
+import { useBfSiteSeo } from '~/composables/useBfSiteSeo'
 import { isExternal } from '~/utils/link'
 
 defineOptions({ name: 'BfDefaultLayout' })
@@ -188,6 +189,11 @@ const AppChrome: FunctionalComponent = () => partitionedSlot().chrome
 const PageBands: FunctionalComponent = () => partitionedSlot().bands
 
 const { menus, announcement } = await useBfSite()
+
+useBfSiteSeo({
+  description:
+    'Independent, nonpartisan think tank strengthening the transatlantic partnership through research, policy dialogue, and multimedia storytelling.'
+})
 
 /**
  * Resolved once, at setup. Both sources are build-time static — `menus` is the
