@@ -803,11 +803,12 @@ export interface HeroProps {
 }
 
 /**
- * The two scrim treatments, on one `data-scrim` attribute. gh#253.
+ * The shared scrim treatments, on one `data-scrim` attribute. gh#253.
  *
  * - `full` — a flat `--color-scrim` (navy at 0.70) over the whole band. The
  *   default, and the bold dark treatment: 0.70 is the first alpha at which
  *   white clears 4.5:1 over a blown-out white photograph.
+ * - `gradient` — transparent to neutral black, for bottom-aligned photo copy.
  * - `panel` — `--color-scrim-panel` (0.94) as a near-opaque column behind the
  *   copy, photograph uncovered either side.
  *
@@ -815,10 +816,10 @@ export interface HeroProps {
  * `HeroProps` (`HeroScrimMode` below), which is why it is declared here
  * rather than inline in either (BRIEF §5 rule 11).
  */
-export type ScrimMode = 'full' | 'panel'
+export type ScrimMode = 'full' | 'panel' | 'gradient'
 
 /**
- * `bfHero`'s scrim modes: the two above, plus `'none'` — the ink mode.
+ * `bfHero`'s scrim modes: the shared treatments above, plus `'none'` — the ink mode.
  *
  * - `none` — no scrim at all, and the band keeps the **page's ink**: dark
  *   type, the light-page focus ring, the controls' own paint. For a light

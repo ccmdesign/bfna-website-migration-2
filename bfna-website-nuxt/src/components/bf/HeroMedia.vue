@@ -69,6 +69,7 @@
  * an implementation detail one level down.
  *
  * - `full` (the default): a flat `--color-scrim` over the whole band.
+ * - `gradient`: transparent to neutral black behind bottom-aligned copy.
  * - `panel`: `--color-scrim-panel` (0.94, white at 9.817) as a near-opaque
  *   column the width of the content box, photograph uncovered either side.
  * - `none` (`bfHero` only): no fill — the photograph as it is, under the
@@ -516,6 +517,26 @@ onBeforeUnmount(() => {
     `min()` rather than a media query — below the measure the panel is simply
     the band, which is the right answer on a phone.
   */
+  [data-scrim="gradient"] .bf-hero-media__scrim {
+    --_bf-hero-media-scrim-clear: 20%;
+    --_bf-hero-media-scrim-dark: 48%;
+
+    background: linear-gradient(
+      to bottom,
+      transparent var(--_bf-hero-media-scrim-clear),
+      color-mix(in srgb, var(--color-surface-inverse) 60%, transparent) var(--_bf-hero-media-scrim-dark),
+      color-mix(in srgb, var(--color-surface-inverse) 72%, transparent) 72%,
+      color-mix(in srgb, var(--color-surface-inverse) 82%, transparent) 100%
+    );
+  }
+
+  @media (width < 40rem) {
+    [data-scrim="gradient"] .bf-hero-media__scrim {
+      --_bf-hero-media-scrim-clear: 10%;
+      --_bf-hero-media-scrim-dark: 36%;
+    }
+  }
+
   /*
     `none` — the ink mode (`HeroScrimMode`). No fill at all: the photograph
     as it is, and the host band keeps the page's dark ink. The element stays,
