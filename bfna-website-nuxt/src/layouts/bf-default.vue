@@ -64,6 +64,8 @@ import { Fragment } from 'vue'
 import type { FunctionalComponent, VNode } from 'vue'
 import { useBfSite } from '~/composables/data/useBfSite'
 import { isExternal } from '~/utils/link'
+import { useBfSeo } from '~/composables/useBfSeo'
+import { BFNA_NAME } from '~/utils/structured-data'
 
 defineOptions({ name: 'BfDefaultLayout' })
 
@@ -240,6 +242,11 @@ useHead({
     }
   ],
   link: [{ rel: 'stylesheet', href: '/css/styles.css' }]
+})
+
+useBfSeo({
+  title: BFNA_NAME,
+  description: 'The Bertelsmann Foundation North America is an independent, nonpartisan think tank dedicated to strengthening the transatlantic partnership and advancing dialogue on the global challenges shaping our future.',
 })
 </script>
 

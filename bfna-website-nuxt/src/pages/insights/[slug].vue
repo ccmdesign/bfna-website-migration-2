@@ -62,6 +62,9 @@ import { useBfPrograms } from '~/composables/data/useBfPrograms'
 import { useBfProjects } from '~/composables/data/useBfProjects'
 import { useProgramTheme } from '~/composables/useProgramTheme'
 import { formatLabel, monthYear } from '~/utils/format'
+import { useBfSeo } from '~/composables/useBfSeo'
+import { articleJsonLd } from '~/utils/structured-data'
+import { validPublishDate } from '~/utils/publish-date'
 
 defineOptions({ name: 'InsightDetailPage' })
 
@@ -103,6 +106,18 @@ const programName = program?.name
  * names the route rather than leaving the site title alone.
  */
 useHead({ title: () => insight?.heading ?? 'Insight' })
+const runtimeConfig = useRuntimeConfig()
+const siteOrigin = computed(() => String(runtimeConfig.public.siteUrl || 'https://www.bfna.org'))
+const insightPath = computed(() => `/insights/${insight?.slug ?? String(route.params.slug)}`)
+const articleSchema = computed(() => insight ? articleJsonLd(siteOrigin.value, {
+  path: insightPath.value,
+  headline: insight.heading ?? 'Insight',
+  description: insight.excerpt ?? insight.content ?? insight.heading ?? 'BFNA insight',
+  image: insight.image ?? undefined,
+  publishDate: validPublishDate(insight.publish_date),
+  authors: insight.authors.length ? insight.authors : undefined,
+}) : undefined)
+useBfSeo({ title: () => insight?.heading ?? 'Insight', description: () => insight?.excerpt ?? insight?.content ?? 'BFNA insight', image: () => insight?.image ?? undefined, type: 'article', schemas: [{ key: 'bfna-article', data: articleSchema }] })
 
 /**
  * The programme colour scope (gh#252). `data-program` lands on `<html>` — the

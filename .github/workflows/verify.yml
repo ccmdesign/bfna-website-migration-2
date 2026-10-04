@@ -120,6 +120,9 @@ jobs:
           echo "CHROME_PATH=$HOME/chrome-headless-shell-linux/chrome-headless-shell" >> "$GITHUB_ENV"
           "$bin" --version
 
+      - name: Agent-readiness tests
+        run: npm run test:agent
+
       # Not `exit 0` — see the header. The gate runs `nuxt typecheck` and
       # `typecheck:scripts` itself (npm chains them with `&&`, so the second
       # never runs today) and compares the merged diagnostics to the baseline.
@@ -130,6 +133,9 @@ jobs:
       # NEVER `npm run generate`.
       - name: Build (nuxt generate)
         run: npx nuxt generate
+
+      - name: Agent artifact check
+        run: npm run check:agent-artifacts
 
       - name: Route harness (check-routes)
         run: npx tsx scripts/check-routes.ts

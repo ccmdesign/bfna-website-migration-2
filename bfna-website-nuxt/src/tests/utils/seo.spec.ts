@@ -1,0 +1,9 @@
+import { describe, expect, it } from 'vitest'
+import { absoluteAssetUrl, canonicalUrl, normalizeSiteOrigin } from '../../utils/site-url'
+import { articleJsonLd, organizationJsonLd, websiteJsonLd } from '../../utils/structured-data'
+
+describe('BFNA SEO helpers', () => {
+  it('normalizes origins, route slashes, and assets', () => { expect(normalizeSiteOrigin('https://www.bfna.org/')).toBe('https://www.bfna.org'); expect(canonicalUrl('https://www.bfna.org/', '/insights/example/')).toBe('https://www.bfna.org/insights/example'); expect(absoluteAssetUrl('https://www.bfna.org', '/images/example.jpg')).toBe('https://www.bfna.org/images/example.jpg') })
+  it('uses the verified Organization facts and only real social profiles', () => { const schema = organizationJsonLd('https://www.bfna.org'); expect(schema.address).toMatchObject({ streetAddress: '1108 16th St, NW', addressLocality: 'Washington', addressRegion: 'DC', postalCode: '20036', addressCountry: 'US' }); expect(schema.email).toBe('info@bfna.org'); expect(schema.logo).toBe('https://www.bfna.org/images/bfna-og.jpg'); expect(schema.sameAs).not.toContain('#bluesky-profile-url'); expect(websiteJsonLd('https://www.bfna.org').publisher).toEqual({ '@id': 'https://www.bfna.org/#organization' }) })
+  it('omits unavailable Article facts rather than inventing them', () => { const minimal = articleJsonLd('https://www.bfna.org', { path: '/insights/example', headline: 'Example', description: 'Summary' }); expect(minimal).not.toHaveProperty('datePublished'); expect(minimal).not.toHaveProperty('author'); const complete = articleJsonLd('https://www.bfna.org', { path: '/insights/example', headline: 'Example', description: 'Summary', publishDate: '2025-02-24', authors: ['Example Author'], image: '/images/example.jpg' }); expect(complete).toMatchObject({ datePublished: '2025-02-24', author: [{ '@type': 'Person', name: 'Example Author' }], mainEntityOfPage: 'https://www.bfna.org/insights/example' }) })
+})

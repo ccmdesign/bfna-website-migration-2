@@ -1,0 +1,11 @@
+[build]
+  base = "bfna-website-nuxt"
+
+[[edge_functions]]
+  function = "markdown"
+  path = "/*"
+  excludedPath = [
+    "/*.md", "/*.xml", "/*.txt", "/*.ico", "/*.png", "/*.jpg", "/*.jpeg", "/*.gif", "/*.svg", "/*.webp", "/*.avif", "/*.pdf",
+    "/_nuxt/*", "/_ipx/*", "/.netlify/*", "/images/*", "/css/*", "/css-legacy/*", "/favicon/*", "/files/*", "/component-docs/*",
+    "/docs", "/docs/*", "/wireframes", "/wireframes/*", "/search", "/search/*"
+  ]

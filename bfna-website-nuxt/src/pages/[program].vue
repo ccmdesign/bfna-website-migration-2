@@ -52,6 +52,7 @@ import type { Insight } from '~/types/bf-contracts'
 import { useBfInsights } from '~/composables/data/useBfInsights'
 import { useBfPrograms } from '~/composables/data/useBfPrograms'
 import { useBfProjects } from '~/composables/data/useBfProjects'
+import { useBfSeo } from '~/composables/useBfSeo'
 import { useProgramTheme } from '~/composables/useProgramTheme'
 import { isProgramSlug } from '~/utils/bf-programs'
 import { paragraphs } from '~/utils/format'
@@ -86,6 +87,7 @@ const program = programBySlug(route.params.program as string)
  * contract is that every page below the root states its own name.
  */
 useHead({ title: () => program?.name })
+useBfSeo({ title: () => program?.name ?? 'Program', description: () => program?.tagline ?? program?.intro ?? 'BFNA program.' , image: () => program?.image ?? undefined })
 
 /**
  * The programme colour scope (gh#252). `data-program` lands on `<html>`, which

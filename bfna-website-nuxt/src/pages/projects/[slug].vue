@@ -80,6 +80,7 @@ import type { Cta } from '~/types/bf-contracts'
 import { useBfInsights } from '~/composables/data/useBfInsights'
 import { useBfPrograms } from '~/composables/data/useBfPrograms'
 import { useBfProjects } from '~/composables/data/useBfProjects'
+import { useBfSeo } from '~/composables/useBfSeo'
 import { useProgramTheme } from '~/composables/useProgramTheme'
 import { kindLabel, paragraphs } from '~/utils/format'
 
@@ -106,6 +107,7 @@ const project = projectBySlug(route.params.slug as string)
  * names the route rather than leaving the site title alone.
  */
 useHead({ title: () => project?.heading ?? 'Project' })
+useBfSeo({ title: () => project?.heading ?? 'Project', description: () => project?.description ?? project?.heading ?? 'BFNA project.', image: () => project?.image ?? undefined })
 
 /**
  * The trail, root first. **Three entries, not the frozen source's two** —

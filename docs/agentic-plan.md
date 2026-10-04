@@ -1349,3 +1349,9 @@ These do not block implementation unless counsel changes a factual statement use
 - Verified office address: `https://www.bertelsmann-stiftung.de/en/about-us/who-we-are/offices-1`.
 - Netlify Edge Function signature, `context.next`, request rewrite, and registration behavior: `https://docs.netlify.com/build/edge-functions/api/` and `https://docs.netlify.com/build/edge-functions/declarations/`.
 - Repository evidence: `bfna-website-nuxt/src/nuxt.config.ts`, `content/bf/**`, `src/pages/**`, `src/layouts/bf-default.vue`, `src/components/bf/{Footer,ContactSection}.vue`, `server/utils/legacy-redirect-rules.ts`, `scripts/**`, `.github/workflows/verify.yml`, `.github/typecheck-gate.mjs`, and current tests.
+
+## Implementation notes
+
+- The redirect source in this checkout is `bfna-website-nuxt/server/utils/legacy-redirect-rules.ts`, so the redirect changes were made there rather than under the plan's `src/server/utils/` path.
+- The repository's existing Nuxt/Vitest test-utils configuration fails before collecting tests under the installed Vitest/Rolldown stack; focused agent tests therefore use `vitest.agent.config.ts`. The existing full `npx vitest run` remains blocked by that pre-existing startup failure.
+- Adding the plan-required `@types/node` dependency exposed four nullability diagnostics in the existing `scripts/check-contrast.ts`; those values were narrowed without changing the helper's behavior so the baseline typecheck gate remains green.

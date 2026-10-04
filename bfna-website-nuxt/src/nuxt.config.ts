@@ -3,6 +3,8 @@ import { readdirSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { defineNuxtConfig } from 'nuxt/config'
+import { generateAgentArtifacts } from '../scripts/generate-agent-artifacts'
+import { prerenderRoutes } from '../scripts/lib/agent-routes'
 
 const currentDir = dirname(fileURLToPath(import.meta.url))
 const projectRoot = resolve(currentDir, '..')
@@ -25,85 +27,6 @@ try {
 } catch {
   dsComponentDirs = [dsRootDir]
 }
-
-/**
- * The document stems of one `content/bf/*` collection, e.g. `insights`.
- *
- * The stem **is** the route slug: `scripts/normalise-wireframe-data.ts` writes
- * each document as `<slug>.json`, and `pages/insights/[slug].vue` /
- * `pages/projects/[slug].vue` resolve `params.slug` against the same field.
- * Reading the directory rather than parsing every file keeps this synchronous —
- * a Nuxt config is evaluated before anything async is available — and it is the
- * same source `scripts/generate-legacy-redirects.ts` builds the redirect map
- * from, which is precisely why the two used to disagree (see below).
- *
- * A missing directory yields `[]` rather than throwing: a checkout without the
- * generated content should still be able to load a config.
- */
-const collectionSlugs = (collection: string): string[] => {
-  try {
-    return readdirSync(resolve(projectRoot, 'content/bf', collection), { withFileTypes: true })
-      .filter(entry => entry.isFile() && entry.name.endsWith('.json'))
-      .map(entry => entry.name.replace(/\.json$/, ''))
-      .sort()
-  } catch {
-    return []
-  }
-}
-
-/**
- * Every route BRIEF §7 promises, seeded explicitly rather than discovered by
- * the crawler (gh#68, residuals #194 and #210).
- *
- * `crawlLinks` is still on and still does most of the work, but it can only
- * reach a detail page that some other page links to — and a document that
- * appears in no grid, no featured band and no related list is linked from
- * nowhere. Three separate defects came out of that one gap:
- *
- * - **#194** — `/projects/wisdom-of-the-crowd` (external, not grid-eligible,
- *   not featured, not in the nav) and `/projects/cepi-2011` (archived child of
- *   an orphaned parent) answered correctly in dev and were simply absent from
- *   `.output/public`, i.e. 404 on a static host.
- * - **#210** — 51 of the 433 rows in the generated `public/_redirects` pointed
- *   at a target with no file behind it, so a legacy URL answered `301` and the
- *   destination then answered `404`. `generate-legacy-redirects.ts` builds the
- *   map from `content/bf/**` on disk, which knows nothing about what got
- *   crawled; seeding from the *same* source is what makes the two agree by
- *   construction. `scripts/verify-legacy-redirects.ts --targets` asserts it.
- * - the ordering fragility the retired `probeRoutes` block documented: Nitro
- *   hands the seeded list to the crawler ten at a time, one batch per
- *   successfully rendered page, so a batch spliced during a failing render is
- *   dropped with that response. There are no failing renders left (#114 went
- *   with the legacy pages in gh#67), and the `--targets` check is the standing
- *   assertion that this stays true.
- *
- * Enumerated from the content, never hand-listed: the counts move whenever
- * curation flags change, and a hand-written list of 371 slugs is a list that is
- * wrong by the next content import.
- *
- * `/wireframes` is **kept** (D2 — the frozen prototype must still crawl), and
- * its six static pages are seeded for the same robustness reason. The
- * `/wireframes/{area}` hubs and the `wf-*` detail routes stay on the crawler,
- * exactly as before: the prototype links the subset it means to show, and this
- * config may not reach into that layer to decide otherwise.
- */
-const prerenderRoutes: string[] = [
-  '/',
-  '/about',
-  '/archive',
-  '/insights',
-  '/projects',
-  '/search',
-  ...collectionSlugs('programs').map(slug => `/${slug}`),
-  ...collectionSlugs('insights').map(slug => `/insights/${slug}`),
-  ...collectionSlugs('projects').map(slug => `/projects/${slug}`),
-  '/wireframes',
-  '/wireframes/about',
-  '/wireframes/archive',
-  '/wireframes/insights',
-  '/wireframes/projects',
-  '/wireframes/search'
-]
 
 export default defineNuxtConfig({
   rootDir: projectRoot,
@@ -142,6 +65,7 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     public: {
+      siteUrl: process.env.NUXT_PUBLIC_SITE_URL || 'https://www.bfna.org'
     }
   },
   app: {
@@ -269,8 +193,14 @@ export default defineNuxtConfig({
     prerender: {
       // Every BRIEF §7 route, enumerated from `content/bf/**` — see
       // `prerenderRoutes` above for why the crawler alone is not enough.
-      routes: prerenderRoutes,
+      crawlLinks: true,
+      routes: prerenderRoutes(projectRoot),
       failOnError: false
+    },
+    hooks: {
+      'prerender:done': async () => {
+        await generateAgentArtifacts(projectRoot, resolve(projectRoot, '.output/public'))
+      }
     }
   },
   experimental: {

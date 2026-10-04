@@ -52,6 +52,7 @@
 import { useBfPages } from '~/composables/data/useBfPages'
 import { useBfPeople } from '~/composables/data/useBfPeople'
 import { paragraphs } from '~/utils/format'
+import { useBfSeo } from '~/composables/useBfSeo'
 
 defineOptions({ name: 'AboutPage' })
 
@@ -98,6 +99,7 @@ const stiftungParagraphs = computed(() => paragraphs(stiftung?.description))
  * layout's contract is that every page below the root states its own name.
  */
 useHead({ title: () => about?.heading ?? 'About Us' })
+useBfSeo({ title: () => about?.heading ?? 'About Us', description: () => about?.subheading ?? about?.description ?? 'About Bertelsmann Foundation North America.' })
 </script>
 
 <template>

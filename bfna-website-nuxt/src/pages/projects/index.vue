@@ -51,6 +51,7 @@
 import { useBfPages } from '~/composables/data/useBfPages'
 import { useBfPrograms } from '~/composables/data/useBfPrograms'
 import { useBfProjects } from '~/composables/data/useBfProjects'
+import { useBfSeo } from '~/composables/useBfSeo'
 
 defineOptions({ name: 'ProjectsIndexPage' })
 
@@ -114,6 +115,7 @@ const retag = projectsPendingRetag()
  * layout's contract is that every page below the root states its own name.
  */
 useHead({ title: () => indexPage?.heading ?? 'All Projects' })
+useBfSeo({ title: () => indexPage?.heading ?? 'All Projects', description: () => indexPage?.subheading ?? 'BFNA projects and initiatives.' })
 </script>
 
 <template>

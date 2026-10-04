@@ -787,7 +787,7 @@ export type Program = z.infer<typeof bfProgramSchema>
 /** One person document, as stored in the `bfPeople` collection (13 rows). */
 export type Person = z.infer<typeof bfPersonSchema>
 
-/** One static-page document, as stored in the `bfPages` collection (7 rows). */
+/** One static-page document, as stored in the `bfPages` collection (8 rows). */
 export type Page = z.infer<typeof bfPageSchema>
 
 /** The site-wide announcement — `bfAnnouncements` holds exactly one document. */

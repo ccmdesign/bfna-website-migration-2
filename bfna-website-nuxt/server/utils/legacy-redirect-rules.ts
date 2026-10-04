@@ -74,11 +74,13 @@ export const LEGACY_REDIRECT_EXACT: Readonly<Record<string, string>> = {
   '/archives': '/archive',
   '/bertelsmann-stiftung': '/about',
   '/blog': '/insights',
+  '/contact': '/about#contact',
   '/digital-economy': '/transatlantic-relations-global-challenges',
   '/digital-world': '/',
   '/future-of-work': '/future-leadership',
   '/people': '/about#team',
   '/politics-society': '/transatlantic-relations-global-challenges',
+  '/privacy-policy': '/privacy',
   '/team': '/about#team',
   '/updates': '/insights'
 }

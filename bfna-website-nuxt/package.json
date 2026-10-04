@@ -24,6 +24,8 @@
     "check:contrast:ci": "tsx scripts/check-contrast.ts --allow-known",
     "check:contrast:self-check": "tsx scripts/check-contrast.ts --self-check",
     "check:links": "tsx scripts/check-links.ts",
+    "test:agent": "vitest run --config vitest.agent.config.ts src/tests/agent/markdown-edge.spec.ts src/tests/agent/agent-artifacts.spec.ts src/tests/utils/seo.spec.ts",
+    "check:agent-artifacts": "tsx scripts/verify-agent-artifacts.ts",
     "check:routes": "tsx scripts/check-routes.ts",
     "redirects:generate": "tsx scripts/generate-legacy-redirects.ts",
     "redirects:check": "tsx scripts/generate-legacy-redirects.ts --check",
@@ -66,6 +68,8 @@
     "zod": "^4.0.0"
   },
   "devDependencies": {
+    "@netlify/edge-functions": "^4.0.2",
+    "@types/node": "^26.6.4",
     "@types/stylelint": "^13.13.3",
     "@types/vimeo__player": "^2.18.3",
     "@vitest/coverage-v8": "^3.2.4",

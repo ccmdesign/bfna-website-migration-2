@@ -16,7 +16,7 @@
  * + const { aboutPage } = await useBfPages()
  * ```
  *
- * ## The 7 documents
+ * ## The 8 documents
  *
  * `about`, `stiftung`, `home`, `insights`, `projects`, `archive`,
  * `archive-banner` — the copy decks behind the About page, the Stiftung block,
@@ -43,7 +43,7 @@ export const useBfPages = async () => {
     queryCollection('bfPages').all()
   )
 
-  /** All 7 documents. */
+  /** All 8 documents. */
   const all: Page[] = data.value ?? []
 
   /** The page with this slug, or `undefined` — `useWfContent.ts:266`. */

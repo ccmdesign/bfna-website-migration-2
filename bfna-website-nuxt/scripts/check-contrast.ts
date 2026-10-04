@@ -351,17 +351,17 @@ function parseColorMix(inner: string): Rgba {
   const right = splitColorAndPercent(parts[2] as string)
 
   let p = left.pct
-  let q = right.pct
+  let q: number | null = right.pct
   if (p === null && q === null) {
     p = 0.5
     q = 0.5
   } else if (p === null) p = Math.max(0, 1 - (q as number))
   else if (q === null) q = Math.max(0, 1 - p)
 
-  const total = p + q
+  const total = p + (q ?? 0)
   if (total <= 0) throw new ResolveError(`color-mix() percentages sum to zero: "${inner}"`)
   p /= total
-  q /= total
+  q = (q ?? 0) / total
 
   const ca = parseColor(left.color)
   const cb = parseColor(right.color)
@@ -369,7 +369,7 @@ function parseColorMix(inner: string): Rgba {
   const mixedAlpha = p * ca.a + q * cb.a
   if (mixedAlpha === 0) return { r: 0, g: 0, b: 0, a: 0 }
   const mix = (x: number, y: number): number =>
-    Math.round(((p * ca.a * (x / 255) + q * cb.a * (y / 255)) / mixedAlpha) * 255)
+    Math.round(((p * ca.a * (x / 255) + (q ?? 0) * cb.a * (y / 255)) / mixedAlpha) * 255)
 
   return {
     r: mix(ca.r, cb.r),

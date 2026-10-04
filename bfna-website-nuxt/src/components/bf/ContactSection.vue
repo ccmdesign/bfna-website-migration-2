@@ -196,7 +196,7 @@ withDefaults(defineProps<Props>(), {
   email: 'info@bfna.org',
   heading: 'Contact',
   visitHeading: 'Visit us',
-  address: '[street address — Directus contact singleton]',
+  address: '1108 16th St, NW, Washington, DC 20036',
   /*
     A factory, because an object default shared across every instance of a
     component is the classic mutable-default bug — and `''` for the status, not

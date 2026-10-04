@@ -58,6 +58,7 @@ import { useBfPeople } from '~/composables/data/useBfPeople'
 import { useBfPrograms } from '~/composables/data/useBfPrograms'
 import { useBfProjects } from '~/composables/data/useBfProjects'
 import { formatLabel } from '~/utils/format'
+import { useBfSeo } from '~/composables/useBfSeo'
 
 defineOptions({ name: 'SearchPage' })
 
@@ -71,6 +72,7 @@ const { people } = await useBfPeople()
 const { programs, programBySlug } = await useBfPrograms()
 
 useHead({ title: 'Search' })
+useBfSeo({ title: 'Search', description: 'Search BFNA insights, projects, and people.', robots: 'noindex,follow' })
 
 /* --- the facet vocabulary ------------------------------------------------ */
 

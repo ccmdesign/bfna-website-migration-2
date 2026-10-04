@@ -53,6 +53,7 @@
 import type { Insight } from '~/types/bf-contracts'
 import { useBfInsights } from '~/composables/data/useBfInsights'
 import { useBfPages } from '~/composables/data/useBfPages'
+import { useBfSeo } from '~/composables/useBfSeo'
 
 defineOptions({ name: 'ArchivePage' })
 
@@ -64,6 +65,7 @@ const { pageBySlug } = await useBfPages()
 const indexPage = pageBySlug('archive')
 
 useHead({ title: indexPage?.heading ?? 'Archive' })
+useBfSeo({ title: () => indexPage?.heading ?? 'Archive', description: () => indexPage?.subheading ?? 'Archived BFNA insights.' })
 
 /** One calendar year and the archived items published in it. */
 interface ArchiveYear {
@@ -317,4 +319,3 @@ const setYearOpen = (year: ArchiveYear, open: boolean): void => {
     </bfAccordion>
   </bfSection>
 </template>
-

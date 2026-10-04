@@ -51,6 +51,8 @@ import { useBfInsights } from '~/composables/data/useBfInsights'
 import { useBfPages } from '~/composables/data/useBfPages'
 import { useBfPrograms } from '~/composables/data/useBfPrograms'
 import { useBfProjects } from '~/composables/data/useBfProjects'
+import { useBfSeo } from '~/composables/useBfSeo'
+import { organizationJsonLd, websiteJsonLd, BFNA_NAME } from '~/utils/structured-data'
 
 defineOptions({ name: 'HomePage' })
 
@@ -74,6 +76,16 @@ const home = homePage()
 const programCards = programs()
 const projectCards = featuredProjects()
 const products = allProducts()
+const runtimeConfig = useRuntimeConfig()
+const siteOrigin = computed(() => String(runtimeConfig.public.siteUrl || 'https://www.bfna.org'))
+useBfSeo({
+  title: BFNA_NAME,
+  description: () => home?.excerpt ?? home?.description ?? 'Bertelsmann Foundation North America',
+  schemas: [
+    { key: 'bfna-organization', data: computed(() => organizationJsonLd(siteOrigin.value)) },
+    { key: 'bfna-website', data: computed(() => websiteJsonLd(siteOrigin.value)) },
+  ],
+})
 
 /**
  * Four, as the wireframe takes — `highlights()` returns all eight of the

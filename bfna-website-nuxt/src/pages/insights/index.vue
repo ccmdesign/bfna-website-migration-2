@@ -55,6 +55,7 @@ import type { Filter, Insight } from '~/types/bf-contracts'
 import { useBfInsights } from '~/composables/data/useBfInsights'
 import { useBfPages } from '~/composables/data/useBfPages'
 import { useBfPrograms } from '~/composables/data/useBfPrograms'
+import { useBfSeo } from '~/composables/useBfSeo'
 
 defineOptions({ name: 'InsightsIndexPage' })
 
@@ -71,6 +72,7 @@ const feedPage = pageBySlug('insights')
 
 /** The band's own title, added once by `bf-default`'s `titleTemplate`. */
 useHead({ title: () => feedPage?.heading ?? 'Insights' })
+useBfSeo({ title: () => feedPage?.heading ?? 'Insights', description: () => feedPage?.subheading ?? 'Published BFNA insights and analysis.' })
 
 /**
  * The format facet, ported verbatim from the frozen page (and identical to the

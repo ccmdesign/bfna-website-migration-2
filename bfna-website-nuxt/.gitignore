@@ -29,5 +29,12 @@ logs
 /content/*
 !/content/bf/
 
+# Agent-readiness artifacts are generated into .output/public.
+/.output/public/**/*.md
+/.output/public/sitemap.xml
+/.output/public/llms.txt
+/.output/public/robots.txt
+/.output/public/_headers
+
 
 _archive/
