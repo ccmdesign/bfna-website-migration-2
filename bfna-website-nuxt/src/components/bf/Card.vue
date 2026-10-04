@@ -761,7 +761,8 @@ if (import.meta.dev) {
       display: flex;
       padding: var(--_bf-card-padding);
       overflow: hidden;
-      background-color: var(--color-surface-inverse);
+      /* Match the page under antialiased corners; the media scrim supplies contrast. */
+      background-color: var(--_bf-card-bg);
       /* Keep the raised stacking order until the exit fade has finished. */
       transition:
         transform var(--_bf-card-motion),
