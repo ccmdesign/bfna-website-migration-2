@@ -783,7 +783,9 @@ if (import.meta.dev) {
       z-index: -1;
       display: flex;
       margin: 0;
-      border-radius: inherit;
+      /* The card clips the corners. A second rounded clip exposes a dark seam
+         under light screenshots such as Indo-Pacific Nexus. */
+      border-radius: 0;
     }
 
     .bf-card:is(.bf-card--insight-media, .bf-card--project-media, .bf-card--program-media) > .bf-card__media .bf-media {

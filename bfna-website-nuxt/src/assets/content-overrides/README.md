@@ -88,7 +88,7 @@ accurate excerpt can be written. Titles alone were not used to infer summaries.
 
 ## Project card framing
 
-Six legacy project images contain a white browser mockup around their artwork.
+Seven legacy project images contain a white browser mockup around their artwork.
 `src/utils/projectCardCrop.ts` identifies those exact source URLs; `bfCardProject`
 uses an SVG viewport to show only the inner artwork at the card's aspect ratio.
 The source files and project-detail images remain intact. Matching by source URL
@@ -96,3 +96,8 @@ prevents a future CMS image replacement from inheriting an obsolete crop.
 
 Indo-Pacific Nexus uses a 1280 × 720 browser capture of its public homepage,
 recorded in `project-images.json`, following the HTFD card treatment.
+
+Barometer's header is rendered in two inset strips so its logo and menu retain
+their size while clearing rounded card corners. The card provides the single
+outer clip; its cover layer has no second radius, avoiding fine dark seams on
+light artwork such as Nexus.

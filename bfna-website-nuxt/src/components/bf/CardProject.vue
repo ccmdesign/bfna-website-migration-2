@@ -241,6 +241,27 @@ if (import.meta.dev) {
         focusable="false"
       >
         <image :href="project.image" :width="imageCrop.width" :height="imageCrop.height" />
+        <template v-if="imageCrop.header">
+          <rect
+            :x="imageCrop.header.x"
+            :y="imageCrop.header.y"
+            :width="imageCrop.header.width"
+            :height="imageCrop.header.height"
+            fill="#fff"
+          />
+          <svg
+            v-for="part in imageCrop.header.parts"
+            :key="part.sourceX"
+            :x="part.x"
+            :y="imageCrop.header.y"
+            :width="part.width"
+            :height="imageCrop.header.height"
+            :viewBox="`${part.sourceX} ${imageCrop.header.y} ${part.width} ${imageCrop.header.height}`"
+            overflow="hidden"
+          >
+            <image :href="project.image" :width="imageCrop.width" :height="imageCrop.height" />
+          </svg>
+        </template>
       </svg>
       <bfMedia v-else :src="project.image" alt="" :ratio="mediaRatio" />
     </template>
