@@ -71,6 +71,7 @@
  */
 import type { CardWrapperProps, Project } from '~/types/bf-contracts'
 import { kindLabel } from '~/utils/format'
+import { projectCardCrop } from '~/utils/projectCardCrop'
 
 defineOptions({
   name: 'BfCardProject',
@@ -127,6 +128,7 @@ const props = withDefaults(defineProps<Props>(), {
 const headingText = computed(() => (props.project.heading ?? '').trim())
 
 const hasHeading = computed(() => headingText.value !== '')
+const imageCrop = computed(() => projectCardCrop(props.project.image))
 
 /**
  * The mapped `kind` label, computed once rather than called three times from
@@ -227,7 +229,20 @@ if (import.meta.dev) {
         `bfMedia` requires `alt`, so omitting it is a typecheck error rather
         than a silent `alt=""` (gh#222, D25).
       -->
-      <bfMedia :src="project.image" alt="" :ratio="mediaRatio" />
+      <!-- Crop the old browser frame without altering the source photograph. -->
+      <svg
+        v-if="imageCrop"
+        class="bf-media"
+        :viewBox="imageCrop.viewBox"
+        :style="{ aspectRatio: mediaRatio }"
+        width="100%"
+        preserveAspectRatio="xMidYMid slice"
+        aria-hidden="true"
+        focusable="false"
+      >
+        <image :href="project.image" :width="imageCrop.width" :height="imageCrop.height" />
+      </svg>
+      <bfMedia v-else :src="project.image" alt="" :ratio="mediaRatio" />
     </template>
   </bfCard>
 </template>
