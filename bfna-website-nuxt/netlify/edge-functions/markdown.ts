@@ -27,6 +27,9 @@ export default async (request: Request, context: Context) => {
   }
 
   const url = new URL(request.url)
+  if (url.pathname.includes('..')) {
+    return new Response('Bad Request', { status: 400 })
+  }
   const mdPath = pathnameToMdPath(url.pathname)
   const mdUrl = new URL(mdPath, url.origin)
 
