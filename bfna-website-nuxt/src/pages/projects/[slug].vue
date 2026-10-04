@@ -106,6 +106,11 @@ const project = projectBySlug(route.params.slug as string)
  * names the route rather than leaving the site title alone.
  */
 useHead({ title: () => project?.heading ?? 'Project' })
+useBfPageSeo(() => ({
+  title: project?.heading ?? 'Project',
+  description: project?.excerpt || project?.description || undefined,
+  image: project?.image || undefined
+}))
 
 /**
  * The trail, root first. **Three entries, not the frozen source's two** —

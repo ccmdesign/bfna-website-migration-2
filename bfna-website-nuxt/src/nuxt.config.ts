@@ -90,6 +90,8 @@ const collectionSlugs = (collection: string): string[] => {
 const prerenderRoutes: string[] = [
   '/',
   '/about',
+  '/contact',
+  '/privacy',
   '/archive',
   '/insights',
   '/projects',
@@ -142,6 +144,16 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     public: {
+      /*
+       * Canonical origin for `<link rel="canonical">`, Open Graph URLs, JSON-LD,
+       * `sitemap.xml`, and `robots.txt`. Preview hosts stay noindex via a
+       * generated `_headers` file (see `scripts/write-agent-artifacts.ts`);
+       * they still advertise this origin so the canonical host is not
+       * `*.netlify.app`. Nuxt maps `NUXT_PUBLIC_SITE_URL` onto this key.
+       * The value is not read from `process.env` here: this file already has
+       * its one allowed `process` diagnostic, and a second fails the gate.
+       */
+      siteUrl: 'https://www.bfna.org'
     }
   },
   app: {
@@ -271,6 +283,22 @@ export default defineNuxtConfig({
       // `prerenderRoutes` above for why the crawler alone is not enough.
       routes: prerenderRoutes,
       failOnError: false
+    }
+  },
+  hooks: {
+    /*
+     * After prerender, write markdown twins, sitemap.xml, llms.txt, robots.txt,
+     * and (when Netlify CONTEXT is not production) `_headers`. `prerender:done`
+     * runs for `nuxt generate`, which is what CI and Netlify both execute.
+     * The import stays a string literal so the generate bundler includes the
+     * writer. The writer starts with `@ts-nocheck` because this app project
+     * has no Node types — see that file.
+     */
+    'nitro:init'(nitro) {
+      nitro.hooks.hook('prerender:done', async () => {
+        const { writeAgentArtifacts } = await import('../scripts/write-agent-artifacts')
+        await writeAgentArtifacts(nitro.options.output.publicDir)
+      })
     }
   },
   experimental: {

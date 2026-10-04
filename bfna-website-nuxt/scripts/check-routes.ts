@@ -2259,7 +2259,19 @@ const READ_ERROR_ROUTE = `(async () => {
   while (Date.now() < deadline && !document.querySelector('main .bf-empty-state')) {
     await new Promise(ok => setTimeout(ok, 50))
   }
-  await new Promise(ok => setTimeout(ok, 50))
+  /*
+   * The outgoing page unmounts a tick after the error layout mounts. A single
+   * 50ms pause reads both headings and the first main (the page that is
+   * leaving). Wait until one main and one heading remain, or two seconds,
+   * then read whatever is left.
+   */
+  const settled = Date.now() + 2000
+  while (Date.now() < settled) {
+    const mains = document.querySelectorAll('main')
+    const h1s = document.querySelectorAll('h1')
+    if (mains.length === 1 && h1s.length === 1 && mains[0].querySelector('.bf-empty-state')) break
+    await new Promise(ok => setTimeout(ok, 50))
+  }
 
   const main = document.querySelector('main')
   if (!main) return { pushed: true, path: location.pathname, main: false }

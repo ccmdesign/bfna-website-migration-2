@@ -57,6 +57,7 @@
  */
 import type { Insight } from '~/types/bf-contracts'
 import { useBfInsights } from '~/composables/data/useBfInsights'
+import { articleJsonLd, jsonLdScript, siteOrigin } from '~/utils/site'
 import { useBfPages } from '~/composables/data/useBfPages'
 import { useBfPrograms } from '~/composables/data/useBfPrograms'
 import { useBfProjects } from '~/composables/data/useBfProjects'
@@ -102,7 +103,34 @@ const programName = program?.name
  * with no heading is a content defect, not a nameless page, so the fallback
  * names the route rather than leaving the site title alone.
  */
+const origin = siteOrigin(useRuntimeConfig().public.siteUrl)
+
 useHead({ title: () => insight?.heading ?? 'Insight' })
+useBfPageSeo(() => ({
+  title: insight?.heading ?? 'Insight',
+  description: insight?.excerpt || insight?.content || undefined,
+  type: insight ? 'article' : 'website',
+  image: insight?.image || undefined
+}))
+useHead(() => {
+  if (!insight?.heading) return {}
+  return {
+    script: [
+      {
+        type: 'application/ld+json',
+        key: 'bf-article',
+        innerHTML: jsonLdScript(articleJsonLd(origin, {
+          path: `/insights/${insight.slug}`,
+          headline: insight.heading,
+          description: insight.excerpt || insight.content || undefined,
+          datePublished: insight.publish_date,
+          authors: insight.authors,
+          image: insight.image
+        }))
+      }
+    ]
+  }
+})
 
 /**
  * The programme colour scope (gh#252). `data-program` lands on `<html>` — the

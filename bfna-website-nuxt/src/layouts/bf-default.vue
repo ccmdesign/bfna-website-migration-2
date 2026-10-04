@@ -62,8 +62,18 @@
  */
 import { Fragment } from 'vue'
 import type { FunctionalComponent, VNode } from 'vue'
+import { useBfSeoForRoute } from '~/composables/useBfPageSeo'
 import { useBfSite } from '~/composables/data/useBfSite'
 import { isExternal } from '~/utils/link'
+import {
+  DEFAULT_DESCRIPTION,
+  DEFAULT_OG_IMAGE_PATH,
+  absoluteUrl,
+  canonicalUrl,
+  documentTitle,
+  oneLine,
+  siteOrigin
+} from '~/utils/site'
 
 defineOptions({ name: 'BfDefaultLayout' })
 
@@ -214,6 +224,24 @@ const siteMenus = menus()
 const doc = announcement()
 const banner = doc?.message ? doc : undefined
 
+const route = useRoute()
+const seo = useBfSeoForRoute()
+const origin = siteOrigin(useRuntimeConfig().public.siteUrl)
+
+/*
+ * Canonical host is the production origin, including on a Netlify preview.
+ * Preview noindex is a response header written at build time, not a meta tag,
+ * so this layout still does not emit `robots: noindex`.
+ */
+useSeoMeta({
+  description: computed(() => oneLine(seo.value.description) || DEFAULT_DESCRIPTION),
+  ogDescription: computed(() => oneLine(seo.value.description) || DEFAULT_DESCRIPTION),
+  ogType: computed(() => (seo.value.type === 'article' ? 'article' : 'website')),
+  ogTitle: computed(() => documentTitle(seo.value.title)),
+  ogUrl: computed(() => canonicalUrl(origin, route.path)),
+  ogImage: computed(() => absoluteUrl(origin, seo.value.image || DEFAULT_OG_IMAGE_PATH))
+})
+
 useHead({
   /*
    * No `htmlAttrs: { lang: 'en' }` here — it moved to `nuxt.config.ts`
@@ -239,7 +267,10 @@ useHead({
       tagPriority: 'critical'
     }
   ],
-  link: [{ rel: 'stylesheet', href: '/css/styles.css' }]
+  link: computed(() => [
+    { rel: 'canonical', href: canonicalUrl(origin, route.path) },
+    { rel: 'stylesheet', href: '/css/styles.css' }
+  ])
 })
 </script>
 

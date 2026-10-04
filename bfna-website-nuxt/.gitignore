@@ -1,5 +1,14 @@
 # Nuxt dev/build outputs
 .output
+
+# Agent-facing files are written into .output/public by
+# scripts/write-agent-artifacts.ts. Do not commit a copy under public/.
+/public/sitemap.xml
+/public/llms.txt
+/public/robots.txt
+/public/_headers
+/public/*.md
+/public/**/*.md
 .data
 .nuxt
 .nitro

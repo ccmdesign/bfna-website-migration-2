@@ -51,6 +51,7 @@ import { useBfInsights } from '~/composables/data/useBfInsights'
 import { useBfPages } from '~/composables/data/useBfPages'
 import { useBfPrograms } from '~/composables/data/useBfPrograms'
 import { useBfProjects } from '~/composables/data/useBfProjects'
+import { homepageJsonLd, jsonLdScript, siteOrigin } from '~/utils/site'
 
 defineOptions({ name: 'HomePage' })
 
@@ -71,6 +72,20 @@ const { active, highlights } = await useBfInsights()
  * inside a template expression that re-runs on every render.
  */
 const home = homePage()
+
+useBfPageSeo(() => ({
+  description: home?.excerpt || home?.description || undefined
+}))
+
+useHead({
+  script: [
+    {
+      type: 'application/ld+json',
+      key: 'bf-org',
+      innerHTML: jsonLdScript(homepageJsonLd(siteOrigin(useRuntimeConfig().public.siteUrl)))
+    }
+  ]
+})
 const programCards = programs()
 const projectCards = featuredProjects()
 const products = allProducts()

@@ -71,6 +71,10 @@ const feedPage = pageBySlug('insights')
 
 /** The band's own title, added once by `bf-default`'s `titleTemplate`. */
 useHead({ title: () => feedPage?.heading ?? 'Insights' })
+useBfPageSeo(() => ({
+  title: feedPage?.heading ?? 'Insights',
+  description: feedPage?.excerpt || feedPage?.description || undefined
+}))
 
 /**
  * The format facet, ported verbatim from the frozen page (and identical to the

@@ -71,6 +71,10 @@ const { people } = await useBfPeople()
 const { programs, programBySlug } = await useBfPrograms()
 
 useHead({ title: 'Search' })
+useBfPageSeo(() => ({
+  title: 'Search',
+  description: 'Search insights, projects, and people at the Bertelsmann Foundation North America.'
+}))
 
 /* --- the facet vocabulary ------------------------------------------------ */
 

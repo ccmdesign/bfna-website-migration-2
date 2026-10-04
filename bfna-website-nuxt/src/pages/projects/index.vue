@@ -114,6 +114,10 @@ const retag = projectsPendingRetag()
  * layout's contract is that every page below the root states its own name.
  */
 useHead({ title: () => indexPage?.heading ?? 'All Projects' })
+useBfPageSeo(() => ({
+  title: indexPage?.heading ?? 'All Projects',
+  description: indexPage?.excerpt || indexPage?.description || undefined
+}))
 </script>
 
 <template>

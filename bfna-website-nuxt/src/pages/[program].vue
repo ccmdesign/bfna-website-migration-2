@@ -86,6 +86,10 @@ const program = programBySlug(route.params.program as string)
  * contract is that every page below the root states its own name.
  */
 useHead({ title: () => program?.name })
+useBfPageSeo(() => ({
+  title: program?.name || undefined,
+  description: program?.tagline || undefined
+}))
 
 /**
  * The programme colour scope (gh#252). `data-program` lands on `<html>`, which

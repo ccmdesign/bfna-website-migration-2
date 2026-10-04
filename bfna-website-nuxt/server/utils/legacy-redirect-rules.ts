@@ -71,6 +71,12 @@ export const LEGACY_GONE_EXACT: readonly string[] = [
  * target directly, and one hop is better than two for a permanent redirect.
  */
 export const LEGACY_REDIRECT_EXACT: Readonly<Record<string, string>> = {
+  /*
+   * Production publishes its privacy policy at `/privacy-policy/`
+   * (www.bfna.org). The v2 page is `/privacy`. Trailing slashes are normalised
+   * by the middleware before this table is consulted.
+   */
+  '/privacy-policy': '/privacy',
   '/archives': '/archive',
   '/bertelsmann-stiftung': '/about',
   '/blog': '/insights',

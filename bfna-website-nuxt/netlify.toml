@@ -1,0 +1,48 @@
+# Netlify site: bfna-site-v2
+# Base directory (Netlify UI): bfna-website-nuxt
+#
+# This file lives in that base directory so the edge function is deployed
+# with the site. It deliberately has no [build] table. Build command, publish
+# directory, and base directory stay in the Netlify UI; a [build] table here
+# would override them.
+#
+# The function is registered only in this file. netlify/edge-functions/markdown.ts
+# does not export `config`.
+#
+# Non-production noindex is not a [[headers]] context block. Netlify does not
+# apply per-context headers from netlify.toml. scripts/write-agent-artifacts.ts
+# writes public/_headers when CONTEXT is set and is not "production"
+# (branch deploy `dev-preview` included).
+
+[[edge_functions]]
+  function = "markdown"
+  path = "/*"
+  excludedPath = [
+    "/*.md",
+    "/**/*.md",
+    "/_nuxt/*",
+    "/_nuxt/**",
+    "/css/**",
+    "/images/**",
+    "/favicon/**",
+    "/files/**",
+    "/component-docs/**",
+    "/*.ico",
+    "/*.png",
+    "/*.jpg",
+    "/*.jpeg",
+    "/*.webp",
+    "/*.svg",
+    "/*.gif",
+    "/*.avif",
+    "/*.woff",
+    "/*.woff2",
+    "/*.js",
+    "/*.mjs",
+    "/*.css",
+    "/*.map",
+    "/*.xml",
+    "/*.txt",
+    "/*.json",
+    "/*.pdf"
+  ]
