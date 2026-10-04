@@ -54,6 +54,9 @@ jobs:
       - name: Install (npm ci)
         run: npm ci
 
+      - name: Agent-readiness unit checks
+        run: npx tsx scripts/check-agent-readiness.ts
+
       # gh#250. Cheapest gate in the file — no build, no browser — so it runs
       # first and a palette regression fails in seconds rather than after a
       # `nuxt generate`.

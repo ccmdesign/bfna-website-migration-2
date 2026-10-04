@@ -358,6 +358,10 @@ function parseColorMix(inner: string): Rgba {
   } else if (p === null) p = Math.max(0, 1 - (q as number))
   else if (q === null) q = Math.max(0, 1 - p)
 
+  if (p === null || q === null) {
+    throw new ResolveError(`color-mix() percentage missing: "${inner}"`)
+  }
+
   const total = p + q
   if (total <= 0) throw new ResolveError(`color-mix() percentages sum to zero: "${inner}"`)
   p /= total

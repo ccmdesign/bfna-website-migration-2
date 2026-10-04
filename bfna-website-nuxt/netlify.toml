@@ -1,0 +1,38 @@
+# UI owns the build. Do not add [build], command, publish, or base.
+# Base directory in the Netlify UI: bfna-website-nuxt
+# Build command: npm run generate
+# Publish directory: .output/public
+# Headers are not here. Netlify has no per-context [[headers]] support;
+# noindex is written to .output/public/_headers by the prerender hook.
+
+[[edge_functions]]
+  function = "markdown"
+  path = "/*"
+  excludedPath = [
+    "/*.md",
+    "/*/*.md",
+    "/_nuxt/*",
+    "/_ipx/*",
+    "/css/*",
+    "/images/*",
+    "/favicon/*",
+    "/component-docs/*",
+    "/files/*",
+    "/*.css",
+    "/*.js",
+    "/*.mjs",
+    "/*.svg",
+    "/*.png",
+    "/*.jpg",
+    "/*.jpeg",
+    "/*.webp",
+    "/*.gif",
+    "/*.ico",
+    "/*.woff",
+    "/*.woff2",
+    "/*.ttf",
+    "/*.xml",
+    "/*.txt",
+    "/*.map",
+    "/*.json"
+  ]

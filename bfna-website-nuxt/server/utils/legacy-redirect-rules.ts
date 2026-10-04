@@ -71,6 +71,9 @@ export const LEGACY_GONE_EXACT: readonly string[] = [
  * target directly, and one hop is better than two for a permanent redirect.
  */
 export const LEGACY_REDIRECT_EXACT: Readonly<Record<string, string>> = {
+  '/contact': '/about#contact',
+  '/privacy-policy': '/privacy',
+  '/privacy-policy/': '/privacy',
   '/archives': '/archive',
   '/bertelsmann-stiftung': '/about',
   '/blog': '/insights',

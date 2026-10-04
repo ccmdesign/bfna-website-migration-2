@@ -3,6 +3,7 @@ import { readdirSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { defineNuxtConfig } from 'nuxt/config'
+import { registerAgentFilesHook } from '../server/utils/register-agent-files-hook'
 
 const currentDir = dirname(fileURLToPath(import.meta.url))
 const projectRoot = resolve(currentDir, '..')
@@ -90,6 +91,7 @@ const collectionSlugs = (collection: string): string[] => {
 const prerenderRoutes: string[] = [
   '/',
   '/about',
+  '/privacy',
   '/archive',
   '/insights',
   '/projects',
@@ -106,6 +108,9 @@ const prerenderRoutes: string[] = [
 ]
 
 export default defineNuxtConfig({
+  hooks: {
+    'nitro:init': registerAgentFilesHook
+  },
   rootDir: projectRoot,
   srcDir: currentDir,
   compatibilityDate: '2024-11-01',

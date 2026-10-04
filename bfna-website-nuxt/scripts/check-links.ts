@@ -32,6 +32,7 @@ async function checkLinks(options: CheckOptions = {}) {
     'https://bfnadocs.org',
     'https://bfna.us20.list-manage.com',
     'https://ccmdesign.ca',
+    'https://www.bfna.org',
     'mailto:',
   ]
 
