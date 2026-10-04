@@ -189,6 +189,11 @@ const PageBands: FunctionalComponent = () => partitionedSlot().bands
 
 const { menus, announcement } = await useBfSite()
 
+// Head helpers — called in setup context so they resolve during prerender.
+const config = useRuntimeConfig()
+const siteUrl = config?.public?.siteUrl || 'https://www.bfna.org'
+const currentPath = useRoute().path
+
 /**
  * Resolved once, at setup. Both sources are build-time static — `menus` is the
  * typed `menus.json` module and the announcement is a single prerendered
@@ -229,7 +234,16 @@ useHead({
   titleTemplate: title =>
     title ? `${title} | Bertelsmann Foundation North America` : 'Bertelsmann Foundation North America',
   meta: [
-    { name: 'viewport', content: 'width=device-width, initial-scale=1' }
+    { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+    // Open Graph defaults (pages may override via their own useHead)
+    { property: 'og:type', content: 'website' },
+    { property: 'og:title', content: 'Bertelsmann Foundation North America' },
+    {
+      property: 'og:description',
+      content: 'The Bertelsmann Foundation North America is an independent, nonpartisan think tank dedicated to strengthening the transatlantic partnership.'
+    },
+    { property: 'og:image', content: siteUrl + '/images/hero/about@2x.jpg' },
+    { property: 'og:url', content: siteUrl + (currentPath === '/' ? '' : currentPath) }
     /* No `robots: noindex` — see the block comment above. */
   ],
   style: [
@@ -239,7 +253,61 @@ useHead({
       tagPriority: 'critical'
     }
   ],
-  link: [{ rel: 'stylesheet', href: '/css/styles.css' }]
+  link: [
+    { rel: 'stylesheet', href: '/css/styles.css' },
+    // Canonical URL — use production origin as base
+    { rel: 'canonical', href: siteUrl + (currentPath === '/' ? '' : currentPath) }
+  ],
+  script: [
+    // Organization JSON-LD
+    {
+      type: 'application/ld+json',
+      innerHTML: JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'Organization',
+        name: 'Bertelsmann Foundation North America',
+        alternateName: 'BFNA',
+        url: 'https://www.bfna.org',
+        logo: 'https://www.bfna.org/images/hero/about@2x.jpg',
+        description: 'The Bertelsmann Foundation North America (BFNA) is an independent, nonpartisan think tank dedicated to strengthening the transatlantic partnership and advancing dialogue on global challenges shaping our future.',
+        sameAs: [
+          'https://www.linkedin.com/company/bertelsmann-foundation-north-america-inc.',
+          'https://www.facebook.com/BertelsmannFoundation/',
+          'https://www.youtube.com/channel/UCZZdgI5F7KjUCW0fCKUOAAg',
+          'https://www.instagram.com/bertelsmannfoundation/',
+          'https://vimeo.com/bfna',
+        ],
+        contactPoint: {
+          '@type': 'ContactPoint',
+          contactType: 'customer service',
+          availableLanguage: ['English', 'German']
+        },
+        address: {
+          '@type': 'PostalAddress',
+          addressCountry: 'US',
+          // TODO(owner): Add BFNA street address
+          addressLocality: 'New York',
+          addressRegion: 'NY'
+        }
+      })
+    },
+    // WebSite JSON-LD
+    {
+      type: 'application/ld+json',
+      innerHTML: JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'WebSite',
+        name: 'Bertelsmann Foundation North America',
+        url: 'https://www.bfna.org',
+        description: 'Official website of the Bertelsmann Foundation North America.',
+        publisher: {
+          '@type': 'Organization',
+          name: 'Bertelsmann Foundation North America',
+          url: 'https://www.bfna.org'
+        }
+      })
+    }
+  ]
 })
 </script>
 
