@@ -38,11 +38,11 @@ describe('useExternalImage - isPng (BF-60 PNG passthrough)', () => {
   })
 })
 
-describe('useExternalImage - isExternalImage (Q2: Directus host is treated external)', () => {
-  it('treats the Directus asset host as external (renders plain <img>, not <NuxtImg>)', () => {
-    // This is load-bearing for BF-60 Q2: product Directus URLs take the
-    // raw <img> fallback branch, so @nuxt/image never processes them.
-    expect(isExternalImage('https://bfna.simplyas.com/assets/abc')).toBe(true)
+describe('useExternalImage - isExternalImage (BF-62: Directus host now treated as internal)', () => {
+  it('treats the Directus asset host as internal (renders <NuxtImg> for blur fix)', () => {
+    // BF-62: Directus URLs now use <NuxtImg> so @nuxt/image can apply
+    // the BF-51 blur fix (quality: 90, responsive srcset)
+    expect(isExternalImage('https://bfna.simplyas.com/assets/abc')).toBe(false)
   })
 
   it('treats the site netlify host as internal', () => {
