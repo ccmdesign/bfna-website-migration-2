@@ -90,7 +90,9 @@ const { active, highlights } = await useBfInsights()
  * inside a template expression that re-runs on every render.
  */
 const home = homePage()
-const programCards = programs()
+const programCards = programs().map(program => program.slug === 'future-leadership'
+  ? { ...program, image: '/images/hero/future-leadership.jpg' }
+  : program)
 const projectCards = featuredProjects()
 const products = allProducts()
 
