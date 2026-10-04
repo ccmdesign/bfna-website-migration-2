@@ -1,0 +1,37 @@
+# netlify.toml — Non-production noindex headers + Markdown Edge Function
+#
+# - [context.deploy-preview] / [context.branch-deploy]: X-Robots-Tag: noindex
+# - Edge function handles Accept: text/markdown negotiation (Finding 1) and
+#   agent-friendly 404s (Finding 2).
+#
+# Build uses the root-level package.json (bfna-website-nuxt is the rootDir).
+
+[build]
+  command = "npm ci && npx nuxt generate"
+  publish = ".output/public"
+  ignore = "git diff --quiet HEAD^ HEAD -- ."
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# ── Noindex on deploy previews and branch deploys ──────────────────────
+[context.deploy-preview]
+  [context.deploy-preview.headers]
+    [[context.deploy-preview.headers.values]]
+      key = "X-Robots-Tag"
+      value = "noindex, nofollow"
+
+[context.branch-deploy]
+  [context.branch-deploy.headers]
+    [[context.branch-deploy.headers.values]]
+      key = "X-Robots-Tag"
+      value = "noindex, nofollow"
+
+# ── Production context: allow indexing ─────────────────────────────────
+[context.production]
+  # No X-Robots-Tag here — production is indexable.
+
+# ── Edge Function: Markdown negotiation & 404 markdown ─────────────────
+[[edge_functions]]
+  function = "markdown"
+  path = "/*"

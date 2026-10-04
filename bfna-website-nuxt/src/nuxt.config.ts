@@ -91,8 +91,12 @@ const prerenderRoutes: string[] = [
   '/',
   '/about',
   '/archive',
+  '/contact',
   '/insights',
+  '/privacy',
   '/projects',
+  '/robots.txt',
+  '/sitemap.xml',
   '/search',
   ...collectionSlugs('programs').map(slug => `/${slug}`),
   ...collectionSlugs('insights').map(slug => `/insights/${slug}`),
@@ -114,7 +118,8 @@ export default defineNuxtConfig({
     '@nuxt/content',
     '@nuxt/eslint',
     '@vueuse/nuxt',
-    '@nuxt/image'
+    '@nuxt/image',
+    './modules/markdown-gen'
   ],
   image: {
     // Allow external domains for images
@@ -275,6 +280,13 @@ export default defineNuxtConfig({
   },
   experimental: {
     clientFallback: true
+  },
+  runtimeConfig: {
+    // Canonical site URL — overridden in production via environment variable.
+    // Deploy previews use the default (production origin).
+    public: {
+      siteUrl: process.env.SITE_URL || 'https://www.bfna.org'
+    }
   },
   components: [
     ...dsComponentDirs.map(path => ({
