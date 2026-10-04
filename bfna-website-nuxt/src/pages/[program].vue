@@ -85,7 +85,13 @@ const program = programBySlug(route.params.program as string)
  * rather than left off (as `/` deliberately leaves it off) because the layout's
  * contract is that every page below the root states its own name.
  */
-useHead({ title: () => program?.name })
+useHead({
+  title: () => program?.name,
+  meta: [
+    { name: 'description', content: () => program?.intro ?? '' },
+    { property: 'og:title', content: () => program?.name ?? 'Program' }
+  ]
+})
 
 /**
  * The programme colour scope (gh#252). `data-program` lands on `<html>`, which

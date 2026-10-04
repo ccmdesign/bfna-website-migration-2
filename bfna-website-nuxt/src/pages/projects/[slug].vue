@@ -105,7 +105,13 @@ const project = projectBySlug(route.params.slug as string)
  * with no heading is a content defect, not a nameless page, so the fallback
  * names the route rather than leaving the site title alone.
  */
-useHead({ title: () => project?.heading ?? 'Project' })
+useHead({
+  title: () => project?.heading ?? 'Project',
+  meta: [
+    { name: 'description', content: () => project?.excerpt ?? project?.description ?? '' },
+    { property: 'og:title', content: () => project?.heading ?? 'Project' }
+  ]
+})
 
 /**
  * The trail, root first. **Three entries, not the frozen source's two** —

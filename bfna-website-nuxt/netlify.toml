@@ -1,0 +1,13 @@
+[build]
+command = "npx nuxt generate"
+publish = ".output/public"
+
+[context.deploy-preview]
+command = "node scripts/write-context-headers.mjs && npx nuxt generate"
+
+[context.branch-deploy]
+command = "node scripts/write-context-headers.mjs && npx nuxt generate"
+
+[[edge_functions]]
+function = "markdown"
+path = "/*"

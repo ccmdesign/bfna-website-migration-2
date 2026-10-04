@@ -3,9 +3,11 @@ import { readdirSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { defineNuxtConfig } from 'nuxt/config'
+import { generateAgentFiles, writeStatic404 } from '../scripts/generate-agent-files'
 
 const currentDir = dirname(fileURLToPath(import.meta.url))
 const projectRoot = resolve(currentDir, '..')
+const buildEnv = (globalThis as { process?: { env?: Record<string, string | undefined> } }).process?.env
 
 const dsRootDir = resolve(currentDir, 'components/ds')
 
@@ -90,6 +92,8 @@ const collectionSlugs = (collection: string): string[] => {
 const prerenderRoutes: string[] = [
   '/',
   '/about',
+  '/contact',
+  '/privacy',
   '/archive',
   '/insights',
   '/projects',
@@ -142,7 +146,11 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     public: {
+      siteUrl: buildEnv?.NUXT_PUBLIC_SITE_URL || buildEnv?.SITE_URL || 'https://www.bfna.org'
     }
+  },
+  hooks: {
+    'build:before': () => generateAgentFiles(projectRoot)
   },
   app: {
     head: {
@@ -271,6 +279,9 @@ export default defineNuxtConfig({
       // `prerenderRoutes` above for why the crawler alone is not enough.
       routes: prerenderRoutes,
       failOnError: false
+    },
+    hooks: {
+      'prerender:done': () => writeStatic404(resolve(projectRoot, '.output/public'))
     }
   },
   experimental: {

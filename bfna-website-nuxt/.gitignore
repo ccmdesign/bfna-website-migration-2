@@ -29,5 +29,13 @@ logs
 /content/*
 !/content/bf/
 
+# Generated agent-facing files, written by the Nuxt build hook.
+/public/_headers
+/public/llms.txt
+/public/robots.txt
+/public/sitemap.xml
+/public/index.md
+/public/**/index.md
+
 
 _archive/

@@ -68,6 +68,8 @@ defineOptions({ name: 'InsightDetailPage' })
 definePageMeta({ layout: 'bf-default' })
 
 const route = useRoute()
+const runtimeConfig = useRuntimeConfig()
+const siteUrl = String(runtimeConfig.public.siteUrl).replace(/\/$/, '')
 
 const { bySlug, activeByProgram } = await useBfInsights()
 const { pageBySlug } = await useBfPages()
@@ -102,7 +104,28 @@ const programName = program?.name
  * with no heading is a content defect, not a nameless page, so the fallback
  * names the route rather than leaving the site title alone.
  */
-useHead({ title: () => insight?.heading ?? 'Insight' })
+useHead({
+  title: () => insight?.heading ?? 'Insight',
+  meta: [
+    { name: 'description', content: () => insight?.excerpt ?? insight?.content ?? undefined },
+    { property: 'og:title', content: () => insight?.heading ?? 'Insight' },
+    { property: 'og:type', content: 'article' }
+  ],
+  script: [
+    {
+      type: 'application/ld+json',
+      innerHTML: computed(() => JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'Article',
+        headline: insight?.heading ?? 'Insight',
+        description: insight?.excerpt ?? insight?.content ?? undefined,
+        url: `${siteUrl}/insights/${route.params.slug}/`,
+        datePublished: insight?.publish_date ?? undefined,
+        author: (insight?.authors ?? []).map(name => ({ '@type': 'Person', name }))
+      }))
+    }
+  ]
+})
 
 /**
  * The programme colour scope (gh#252). `data-program` lands on `<html>` — the

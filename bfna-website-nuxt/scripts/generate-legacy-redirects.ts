@@ -72,6 +72,8 @@ const PUBLIC_ROOT = resolve(appRoot, 'public')
 const SLUG_MAP_FILE = resolve(appRoot, 'server/utils/legacy-slug-map.ts')
 const REDIRECTS_FILE = resolve(PUBLIC_ROOT, '_redirects')
 
+const GENERATED_PUBLIC_FILES = new Set(['_headers', 'index.md', 'llms.txt', 'robots.txt', 'sitemap.xml'])
+
 /** One `content/bf/<collection>/*.json` document, only the fields used here. */
 interface BfDocument {
   slug?: string
@@ -108,6 +110,7 @@ function reservedSegments(): Set<string> {
   }
 
   for (const entry of readdirSync(PUBLIC_ROOT, { withFileTypes: true })) {
+    if (GENERATED_PUBLIC_FILES.has(entry.name)) continue
     reserved.add(entry.name)
   }
 

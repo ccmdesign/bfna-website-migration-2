@@ -188,6 +188,11 @@ const AppChrome: FunctionalComponent = () => partitionedSlot().chrome
 const PageBands: FunctionalComponent = () => partitionedSlot().bands
 
 const { menus, announcement } = await useBfSite()
+const route = useRoute()
+const runtimeConfig = useRuntimeConfig()
+const siteUrl = String(runtimeConfig.public.siteUrl).replace(/\/$/, '')
+const canonicalUrl = computed(() => `${siteUrl}${route.path === '/' ? '/' : `${route.path}/`}`)
+const defaultDescription = 'The Bertelsmann Foundation North America is an independent, nonpartisan think tank dedicated to strengthening the transatlantic partnership and advancing dialogue on global challenges.'
 
 /**
  * Resolved once, at setup. Both sources are build-time static — `menus` is the
@@ -228,10 +233,7 @@ useHead({
    */
   titleTemplate: title =>
     title ? `${title} | Bertelsmann Foundation North America` : 'Bertelsmann Foundation North America',
-  meta: [
-    { name: 'viewport', content: 'width=device-width, initial-scale=1' }
-    /* No `robots: noindex` — see the block comment above. */
-  ],
+  /* No `robots: noindex` — preview noindex is supplied by Netlify headers. */
   style: [
     {
       innerHTML: `@layer ${LAYER_ORDER};`,
@@ -239,7 +241,61 @@ useHead({
       tagPriority: 'critical'
     }
   ],
-  link: [{ rel: 'stylesheet', href: '/css/styles.css' }]
+  link: [
+    { rel: 'stylesheet', href: '/css/styles.css' },
+    { rel: 'canonical', href: canonicalUrl }
+  ],
+  meta: [
+    { name: 'description', content: defaultDescription },
+    { property: 'og:title', content: 'Bertelsmann Foundation North America' },
+    { property: 'og:description', content: defaultDescription },
+    { property: 'og:url', content: canonicalUrl },
+    { property: 'og:type', content: 'website' },
+    { property: 'og:image', content: `${siteUrl}/images/bfna-og.jpg` }
+  ],
+  script: route.path === '/'
+    ? [{
+      type: 'application/ld+json',
+        innerHTML: computed(() => JSON.stringify({
+          '@context': 'https://schema.org',
+          '@graph': [
+            {
+              '@type': 'Organization',
+              name: 'Bertelsmann Foundation North America',
+              url: siteUrl,
+              logo: `${siteUrl}/images/bfna-og.jpg`,
+              description: defaultDescription,
+              sameAs: [
+                'https://www.linkedin.com/company/bertelsmann-foundation-north-america-inc.',
+                'https://www.instagram.com/bertelsmannfoundation/',
+                'https://www.facebook.com/BertelsmannFoundation/',
+                'https://www.youtube.com/channel/UCZZdgI5F7KjUCW0fCKUOAAg',
+                'https://vimeo.com/bfna'
+              ],
+              contactPoint: {
+                '@type': 'ContactPoint',
+                contactType: 'general inquiries',
+                email: 'info@bfna.org',
+                telephone: '+1.202.621.1725'
+              },
+              address: {
+                '@type': 'PostalAddress',
+                addressLocality: 'Washington',
+                addressRegion: 'DC',
+                addressCountry: 'US'
+                // TODO(owner): Confirm the street address before adding it to structured data.
+              }
+            },
+            {
+              '@type': 'WebSite',
+              name: 'Bertelsmann Foundation North America',
+              url: siteUrl,
+              description: defaultDescription
+            }
+          ]
+        }))
+      }]
+    : []
 })
 </script>
 

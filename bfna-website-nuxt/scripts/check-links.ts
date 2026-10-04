@@ -20,6 +20,7 @@ async function checkLinks(options: CheckOptions = {}) {
   const url = options.url || DEFAULT_URL
   
   const skipPatterns = [
+    'https://www.bfna.org',
     'https://www.facebook.com',
     'https://twitter.com',
     'https://www.youtube.com',
@@ -90,4 +91,3 @@ checkLinks(options)
     console.error('❌ Error running link check:', error.message)
     process.exit(1)
   })
-
