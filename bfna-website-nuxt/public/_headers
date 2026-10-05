@@ -1,6 +1,6 @@
 # Content types for machine-readable files.
 # The published copy gains a site-wide robots header outside production.
-# server/plugins/agent-output.ts writes that rule. This source file does not.
+# src/nuxt.config.ts writes that rule on prerender:done. This source file does not.
 /llms.txt
   Content-Type: text/plain; charset=utf-8
   X-Content-Type-Options: nosniff

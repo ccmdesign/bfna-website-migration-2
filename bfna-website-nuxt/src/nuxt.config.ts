@@ -1,12 +1,50 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
-import { readdirSync } from 'node:fs'
-import { dirname, resolve } from 'node:path'
+import { existsSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs'
+import { dirname, join, relative, resolve, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { defineNuxtConfig } from 'nuxt/config'
-import { organizationJsonLd } from '../utils/agentContent'
+import { SITE_URL, headersForContext, isIndexablePath, organizationJsonLd, sitemapXml } from '../utils/agentContent'
 
 const currentDir = dirname(fileURLToPath(import.meta.url))
 const projectRoot = resolve(currentDir, '..')
+
+/**
+ * Sitemap plus the non-production noindex rule, written into Nitro's real
+ * public dir after prerender. A runtime server plugin cannot do this: its
+ * `close` hook runs inside the prerender worker, where `nitro.options` is
+ * absent, and that throw aborts `nuxt generate`.
+ */
+function writeAgentOutput(publicDir: string): void {
+  const urls = agentHtmlRoutes(publicDir)
+  if (urls.length > 0) writeFileSync(join(publicDir, 'sitemap.xml'), sitemapXml(urls))
+  const headersPath = join(publicDir, '_headers')
+  const base = existsSync(headersPath) ? readFileSync(headersPath, 'utf8') : ''
+  const context = (globalThis as { process?: { env?: { CONTEXT?: string } } }).process?.env?.CONTEXT
+  writeFileSync(headersPath, headersForContext(base, context))
+}
+
+function agentHtmlRoutes(publicDir: string): { loc: string; lastmod: string }[] {
+  const urls: { loc: string; lastmod: string }[] = []
+  const walk = (dir: string): void => {
+    for (const entry of readdirSync(dir, { withFileTypes: true })) {
+      const full = join(dir, entry.name)
+      if (entry.isDirectory()) {
+        walk(full)
+        continue
+      }
+      if (!entry.isFile() || !entry.name.endsWith('.html')) continue
+      const rel = relative(publicDir, full).split(sep).join('/')
+      let route = `/${rel.replace(/index\.html$/, '').replace(/\.html$/, '')}`
+      if (route.length > 1) route = route.replace(/\/$/, '')
+      if (!isIndexablePath(route)) continue
+      const lastmod = statSync(full).mtime.toISOString().slice(0, 10)
+      urls.push({ loc: route === '/' ? `${SITE_URL}/` : `${SITE_URL}${route}`, lastmod })
+    }
+  }
+  walk(publicDir)
+  urls.sort((a, b) => a.loc.localeCompare(b.loc))
+  return urls
+}
 
 const dsRootDir = resolve(currentDir, 'components/ds')
 
@@ -269,6 +307,16 @@ export default defineNuxtConfig({
     }
   },
   vite: {
+  },
+  hooks: {
+    'nitro:init'(nitro) {
+      nitro.hooks.hook('prerender:done', () => {
+        if (nitro.options.dev) return
+        const publicDir = nitro.options.output.publicDir
+        if (!publicDir || !existsSync(publicDir)) return
+        writeAgentOutput(publicDir)
+      })
+    }
   },
   plugins: [
 

@@ -7,7 +7,7 @@
 # The edge function is registered by its own `export const config`.
 # Do not also declare [[edge_functions]] here.
 # Do not add per-context headers. Non-production noindex is a generated
-# `_headers` rule (server/plugins/agent-output.ts).
+# `_headers` rule (src/nuxt.config.ts `prerender:done`).
 [build]
   command = "npm run generate"
   publish = "dist"
