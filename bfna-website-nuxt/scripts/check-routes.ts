@@ -482,7 +482,6 @@ const routeSet = ((): string[] => {
     '/about',
     '/contact',
     '/privacy',
-    '/developers',
     '/search',
     '/archive'
   ]

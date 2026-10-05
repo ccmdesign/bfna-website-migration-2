@@ -1,11 +1,8 @@
 import {
   MARKDOWN_CONTENT_TYPE,
-  MCP_PATH,
   VARY_ACCEPT,
-  apiResult,
   classifyAgentRequest,
-  markdownForUpstreamMiss,
-  mcpResult,
+  markdownBodyForUpstream,
   normalizePath,
 } from '../../utils/agentContent.ts'
 
@@ -24,29 +21,6 @@ export default async function handler(
   context: { next: () => Promise<Response> },
 ): Promise<Response> {
   const url = new URL(request.url)
-  const path = normalizePath(url.pathname)
-
-  if (path === MCP_PATH) {
-    const result = mcpResult({
-      method: request.method,
-      body: request.method === 'POST' ? await request.text() : null,
-    })
-    if (result) {
-      return new Response(request.method === 'HEAD' || result.body === null ? null : result.body, {
-        status: result.status,
-        headers: result.headers,
-      })
-    }
-  }
-
-  const api = apiResult(request.method, url.pathname, url.searchParams.get('section'))
-  if (api) {
-    return new Response(request.method === 'HEAD' ? null : api.body, {
-      status: api.status,
-      headers: api.headers,
-    })
-  }
-
   const decision = classifyAgentRequest({
     method: request.method,
     pathname: url.pathname,
@@ -63,11 +37,17 @@ export default async function handler(
   }
 
   const upstream = await context.next()
-  const miss = markdownForUpstreamMiss(url.pathname, upstream.status)
-  if (!miss) return upstream
+  const html = await upstream.text()
+  const body = markdownBodyForUpstream(url.pathname, upstream.status, html)
+  if (!body) {
+    return new Response(request.method === 'HEAD' ? null : html, {
+      status: upstream.status,
+      headers: upstream.headers,
+    })
+  }
 
-  return new Response(request.method === 'HEAD' ? null : miss.body, {
-    status: miss.status,
+  return new Response(request.method === 'HEAD' ? null : body.body, {
+    status: body.status,
     headers: MARKDOWN_HEADERS,
   })
 }

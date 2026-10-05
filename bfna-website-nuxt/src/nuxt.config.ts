@@ -1,9 +1,9 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
-import { existsSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs'
+import { existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname, join, relative, resolve, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { defineNuxtConfig } from 'nuxt/config'
-import { SITE_URL, headersForContext, isIndexablePath, organizationJsonLd, sitemapXml } from '../utils/agentContent'
+import { SITE_URL, headersForContext, isIndexablePath, latestContentDay, organizationJsonLd, sitemapXml } from '../utils/agentContent'
 
 const currentDir = dirname(fileURLToPath(import.meta.url))
 const projectRoot = resolve(currentDir, '..')
@@ -32,8 +32,47 @@ function writeAgentOutput(publicDir: string): void {
   writeFileSync(join(publicDir, '_headers'), headersForContext(committedHeaders(), context))
 }
 
+interface DatedItem {
+  slug?: string
+  publish_date?: unknown
+  date_updated?: unknown
+  updatedAt?: unknown
+}
+
+function rememberDate(dates: Map<string, string>, route: string, item: DatedItem): void {
+  const day = latestContentDay(item.publish_date, item.date_updated ?? item.updatedAt)
+  if (!day) return
+  const prev = dates.get(route)
+  if (!prev || day > prev) dates.set(route, day)
+}
+
+/** Published or updated day from the Directus-derived content. Build date fills the rest. */
+function contentDates(): Map<string, string> {
+  const dates = new Map<string, string>()
+  const insightsDir = join(projectRoot, 'content/bf/insights')
+  if (existsSync(insightsDir)) {
+    for (const name of readdirSync(insightsDir)) {
+      if (!name.endsWith('.json')) continue
+      const doc = JSON.parse(readFileSync(join(insightsDir, name), 'utf8')) as DatedItem
+      const slug = typeof doc.slug === 'string' ? doc.slug : name.replace(/\.json$/, '')
+      rememberDate(dates, `/insights/${slug}`, doc)
+    }
+  }
+  const projectsSnap = join(projectRoot, 'src/assets/wireframe-data/projects.json')
+  if (existsSync(projectsSnap)) {
+    const snap = JSON.parse(readFileSync(projectsSnap, 'utf8')) as { items?: DatedItem[] }
+    for (const item of snap.items ?? []) {
+      if (!item.slug) continue
+      rememberDate(dates, `/projects/${item.slug}`, item)
+    }
+  }
+  return dates
+}
+
 function agentHtmlRoutes(publicDir: string): { loc: string; lastmod: string }[] {
   const urls: { loc: string; lastmod: string }[] = []
+  const dates = contentDates()
+  const buildDate = new Date().toISOString().slice(0, 10)
   const walk = (dir: string): void => {
     for (const entry of readdirSync(dir, { withFileTypes: true })) {
       const full = join(dir, entry.name)
@@ -46,7 +85,7 @@ function agentHtmlRoutes(publicDir: string): { loc: string; lastmod: string }[] 
       let route = `/${rel.replace(/index\.html$/, '').replace(/\.html$/, '')}`
       if (route.length > 1) route = route.replace(/\/$/, '')
       if (!isIndexablePath(route)) continue
-      const lastmod = statSync(full).mtime.toISOString().slice(0, 10)
+      const lastmod = dates.get(route) ?? buildDate
       urls.push({ loc: route === '/' ? `${SITE_URL}/` : `${SITE_URL}${route}`, lastmod })
     }
   }
@@ -140,7 +179,6 @@ const prerenderRoutes: string[] = [
   '/about',
   '/contact',
   '/privacy',
-  '/developers',
   '/archive',
   '/insights',
   '/projects',

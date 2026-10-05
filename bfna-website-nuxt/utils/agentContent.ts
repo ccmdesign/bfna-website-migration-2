@@ -1,5 +1,5 @@
 /**
- * Machine-readable site copy, Accept negotiation, the public API, and the MCP card.
+ * Machine-readable site copy and Accept negotiation.
  *
  * Shared by the Netlify edge function, Nitro dev middleware, pages, and tests.
  * No Node or Nuxt imports: the Deno edge bundle loads this file by its `.ts` path.
@@ -17,14 +17,12 @@
 export const SITE_URL = 'https://www.bfna.org'
 export const SITE_NAME = 'Bertelsmann Foundation North America'
 export const CONTACT_EMAIL = 'info@bfna.org'
-export const OG_IMAGE_PATH = '/images/logo.svg'
+export const OG_IMAGE_PATH = '/images/og.png'
 export const OG_IMAGE_URL = `${SITE_URL}${OG_IMAGE_PATH}`
+export const LOGO_PATH = '/images/logo.svg'
+export const LOGO_URL = `${SITE_URL}${LOGO_PATH}`
 export const MARKDOWN_CONTENT_TYPE = 'text/markdown; charset=utf-8'
-export const JSON_CONTENT_TYPE = 'application/json; charset=utf-8'
 export const VARY_ACCEPT = 'Accept'
-export const MCP_PROTOCOL_VERSION = '2025-06-18'
-export const MCP_PATH = '/.well-known/mcp'
-export const MCP_SESSION_ID = 'bfna-public'
 
 /** Locality as published. No streetAddress. TODO(owner): street address. */
 export const POSTAL_ADDRESS = {
@@ -90,10 +88,6 @@ export interface AgentPage {
 
 export const homeSections: ProseSection[] = [
   {
-    heading: HOME_HEADING,
-    paragraphs: [HOME_DESCRIPTION],
-  },
-  {
     heading: 'What the foundation publishes',
     paragraphs: ABOUT_PARAGRAPHS,
   },
@@ -154,42 +148,10 @@ export const privacyPage: AgentPage = {
   ],
 }
 
-export const developersPage: AgentPage = {
-  title: 'Bertelsmann Foundation North America API',
-  description: 'Public read-only HTTP API. No API key. Authentication: none.',
-  sections: [
-    {
-      heading: 'Authentication',
-      paragraphs: [
-        `The ${SITE_NAME} API is public and read-only. Authentication: none. There is no API key, no account, and no OAuth flow. Every operation in ${SITE_URL}/openapi.json is an unauthenticated GET. POST, PUT, PATCH, and DELETE return a JSON error with code method_not_allowed.`,
-      ],
-    },
-    {
-      heading: 'Endpoints',
-      paragraphs: [
-        `GET ${SITE_URL}/api/v1/organization returns the name, canonical URL, email, and the Washington, DC locality. operationId: getOrganization.`,
-        `GET ${SITE_URL}/api/v1/navigation returns the public sections (programs, work, trust, developer). An optional section query filters the list. Allowed values: programs, work, trust, developer. operationId: listNavigation.`,
-        `GET ${SITE_URL}/api/v1/health returns {"status":"ok"}. operationId: getHealth.`,
-        `An unknown path under /api returns HTTP 404 and a JSON body with error.code, error.message, and error.hint. The hint points at ${SITE_URL}/openapi.json. The design-system pages under /docs, the /wireframes prototype, and /search are not part of this API.`,
-      ],
-    },
-    {
-      heading: 'Example requests',
-      paragraphs: [
-        `curl -sS -H 'Accept: application/json' ${SITE_URL}/api/v1/organization`,
-        `curl -sS -H 'Accept: application/json' '${SITE_URL}/api/v1/navigation?section=programs'`,
-        `curl -sS -i -X POST ${SITE_URL}/api/v1/organization`,
-        `The machine-readable description is ${SITE_URL}/openapi.json. A Model Context Protocol endpoint with Streamable HTTP lives at ${SITE_URL}${MCP_PATH}: POST a JSON-RPC initialize request. Agents should read ${SITE_URL}/llms.txt first.`,
-      ],
-    },
-  ],
-}
-
 const PAGES: Record<string, AgentPage> = {
   '/about': aboutPage,
   '/contact': contactPage,
   '/privacy': privacyPage,
-  '/developers': developersPage,
 }
 
 export const MARKDOWN_PAGES = ['/', ...Object.keys(PAGES)] as const
@@ -214,9 +176,17 @@ export function homePlainText(): string {
 
 export function homeMarkdown(): string {
   const parts = [`# ${SITE_NAME}`, '', HOME_DESCRIPTION, '']
-  for (const section of homeSections) {
-    parts.push(`## ${section.heading}`, '', ...section.paragraphs.flatMap(paragraph => [paragraph, '']))
-  }
+  homeSections.forEach((section, index) => {
+    const paragraphs = index === 0
+      ? section.paragraphs.flatMap((paragraph, paragraphIndex) => {
+          if (paragraphIndex !== 0 || !paragraph.startsWith(HOME_DESCRIPTION)) return [paragraph]
+          const rest = paragraph.slice(HOME_DESCRIPTION.length).trim()
+          return rest ? [rest] : []
+        })
+      : section.paragraphs
+    if (paragraphs.length === 0) return
+    parts.push(`## ${section.heading}`, '', ...paragraphs.flatMap(paragraph => [paragraph, '']))
+  })
   parts.push(
     '## Where to go next',
     '',
@@ -225,8 +195,6 @@ export function homeMarkdown(): string {
     `- [Privacy](${SITE_URL}/privacy)`,
     `- [Insights](${SITE_URL}/insights)`,
     `- [Projects](${SITE_URL}/projects)`,
-    `- [Developer API](${SITE_URL}/developers)`,
-    `- [OpenAPI](${SITE_URL}/openapi.json)`,
     `- [llms.txt](${SITE_URL}/llms.txt)`,
     '',
   )
@@ -237,7 +205,7 @@ export const llmsTxt = `# ${SITE_NAME}
 
 > ${SITE_NAME} is an independent, nonpartisan think tank based in Washington, DC. The site publishes research, programs, and projects on the transatlantic relationship. Canonical host: ${SITE_URL}. Public contact: ${CONTACT_EMAIL}.
 
-When to use this: reach for ${SITE_NAME} when the job is citing or briefing the foundation's published work on democracy, transatlantic relations and global challenges, or future leadership, including the Bertelsmann Foundation Fellowship. An agent should call this site when a user asks what the foundation works on, who is on the board or team, how to contact it, or how to read the public API. Fetch ${SITE_URL}/llms.txt first. Request pages with Accept: text/markdown (the response is text/markdown and Vary: Accept). HTML is the response for Accept: text/html, for a browser Accept header, for */*, and when the Accept header is missing. Cite ${SITE_URL}/contact and mailto:${CONTACT_EMAIL} for inquiries. Do not invent a phone number or a street address. The published locality is Washington, DC. Do not use /docs (internal design system), /wireframes (review prototype), or /search as sources. This site is not a fit for legal advice, donation processing, or the Bertelsmann Stiftung's Gütersloh operations beyond the relationship described on ${SITE_URL}/about.
+When to use this: reach for ${SITE_NAME} when the job is citing or briefing the foundation's published work on democracy, transatlantic relations and global challenges, or future leadership, including the Bertelsmann Foundation Fellowship. An agent should call this site when a user asks what the foundation works on, who is on the board or team, or how to contact it. Fetch ${SITE_URL}/llms.txt first. Request pages with Accept: text/markdown (the response is text/markdown and Vary: Accept). HTML is the response for Accept: text/html, for a browser Accept header, for */*, and when the Accept header is missing. Cite ${SITE_URL}/contact and mailto:${CONTACT_EMAIL} for inquiries. Do not invent a phone number or a street address. The published locality is Washington, DC. Do not use /docs (internal design system), /wireframes (review prototype), or /search as sources. This site is not a fit for legal advice, donation processing, or the Bertelsmann Stiftung's Gütersloh operations beyond the relationship described on ${SITE_URL}/about.
 
 ## Programs
 
@@ -257,14 +225,6 @@ When to use this: reach for ${SITE_NAME} when the job is citing or briefing the 
 - [Contact](${SITE_URL}/contact): Email ${CONTACT_EMAIL}. Locality: Washington, DC.
 - [Privacy](${SITE_URL}/privacy): What the site collects today, and what is still waiting on a published policy.
 
-## Developer
-
-- [Developer API](${SITE_URL}/developers): Authentication, endpoints, and example requests. No API key.
-- [OpenAPI](${SITE_URL}/openapi.json): Operation ids, parameters, and response schemas.
-- [Organization](${SITE_URL}/api/v1/organization): JSON record for the foundation.
-- [Navigation](${SITE_URL}/api/v1/navigation): Public section list.
-- [MCP](${SITE_URL}${MCP_PATH}): Streamable HTTP handshake.
-
 ## Optional
 
 - [Agent instructions](${SITE_URL}/agent-instructions.md): When to use the foundation and how to request Markdown.
@@ -280,7 +240,6 @@ Use ${SITE_NAME} when the task is one of these:
 - Cite the foundation's published work on democracy, transatlantic relations, or future leadership.
 - Name a program, a flagship project, or an insight that is on this site.
 - Point a person at the board, the team, or the contact email ${CONTACT_EMAIL}.
-- Call the public read-only API or the MCP endpoint for structured fields.
 
 Do not use this site for legal advice, donation processing, design-system component documentation, the wireframe prototype, or a telephone number. TODO(owner): no phone number is published.
 
@@ -288,12 +247,11 @@ Do not use this site for legal advice, donation processing, design-system compon
 
 1. Read ${SITE_URL}/llms.txt before crawling further.
 2. Request a page with \`Accept: text/markdown\`. The same URL returns HTML for \`Accept: text/html\`, for a browser Accept header, for \`*/*\`, and when Accept is absent. Markdown responses use \`Content-Type: text/markdown\` and \`Vary: Accept\`.
-3. Prefer these URLs: ${SITE_URL}/ , ${SITE_URL}/about , ${SITE_URL}/contact , ${SITE_URL}/privacy , ${SITE_URL}/insights , ${SITE_URL}/projects , ${SITE_URL}/developers .
+3. Prefer these URLs: ${SITE_URL}/ , ${SITE_URL}/about , ${SITE_URL}/contact , ${SITE_URL}/privacy , ${SITE_URL}/insights , ${SITE_URL}/projects .
 4. Send inquiries to mailto:${CONTACT_EMAIL} or ${SITE_URL}/contact . The contact form does not submit to a server.
 5. Do not invent a telephone number or a street address. The published locality is Washington, DC. The published contact is ${CONTACT_EMAIL}.
-6. For structured data, GET ${SITE_URL}/api/v1/organization or read ${SITE_URL}/openapi.json. Errors are JSON objects with error.code, error.message, and error.hint.
-7. On a 404, follow the links in the Markdown error to ${SITE_URL}/llms.txt or ${SITE_URL}/sitemap.xml .
-8. Skip /docs, /wireframes, and /search. They are disallowed in robots.txt and omitted from the sitemap and from this file's link lists.
+6. On a 404, follow the links in the Markdown error to ${SITE_URL}/llms.txt or ${SITE_URL}/sitemap.xml .
+7. Skip /docs, /wireframes, and /search. They are disallowed in robots.txt and omitted from the sitemap and from this file's link lists.
 `
 
 export const organizationJsonLd = {
@@ -302,7 +260,7 @@ export const organizationJsonLd = {
   name: SITE_NAME,
   description: HOME_DESCRIPTION,
   url: SITE_URL,
-  logo: OG_IMAGE_URL,
+  logo: LOGO_URL,
   image: OG_IMAGE_URL,
   email: CONTACT_EMAIL,
   sameAs: [
@@ -333,545 +291,8 @@ Read the agent map or the sitemap, then try one of these:
 
 - [llms.txt](${SITE_URL}/llms.txt)
 - [Sitemap](${SITE_URL}/sitemap.xml)
-- [Developer API](${SITE_URL}/developers)
 - [Home](${SITE_URL}/)
 `
-}
-
-export interface ApiErrorBody {
-  error: {
-    code: string
-    message: string
-    hint: string
-  }
-}
-
-export function apiError(code: string, message: string, hint: string): ApiErrorBody {
-  return { error: { code, message, hint } }
-}
-
-const API_HINT = `Read ${SITE_URL}/openapi.json for getOrganization, listNavigation, and getHealth. Developer docs: ${SITE_URL}/developers.`
-
-export interface NavLink {
-  section: 'programs' | 'work' | 'trust' | 'developer'
-  title: string
-  url: string
-  description: string
-}
-
-export const NAV_LINKS: NavLink[] = [
-  ...PROGRAMS.map(program => ({
-    section: 'programs' as const,
-    title: program.name,
-    url: `${SITE_URL}/${program.slug}`,
-    description: program.tagline,
-  })),
-  {
-    section: 'work',
-    title: 'Insights',
-    url: `${SITE_URL}/insights`,
-    description: 'Research, analysis, and multimedia.',
-  },
-  {
-    section: 'work',
-    title: 'Projects',
-    url: `${SITE_URL}/projects`,
-    description: 'Flagship projects, including the fellowship, RANGE, and the Transatlantic Barometer.',
-  },
-  {
-    section: 'trust',
-    title: 'About',
-    url: `${SITE_URL}/about`,
-    description: 'Mission, board, team, and the Stiftung relationship.',
-  },
-  {
-    section: 'trust',
-    title: 'Contact',
-    url: `${SITE_URL}/contact`,
-    description: `Email ${CONTACT_EMAIL}. Locality: Washington, DC.`,
-  },
-  {
-    section: 'trust',
-    title: 'Privacy',
-    url: `${SITE_URL}/privacy`,
-    description: 'What the site collects today.',
-  },
-  {
-    section: 'developer',
-    title: 'Developer API',
-    url: `${SITE_URL}/developers`,
-    description: 'Authentication, endpoints, and example requests. No API key.',
-  },
-  {
-    section: 'developer',
-    title: 'OpenAPI',
-    url: `${SITE_URL}/openapi.json`,
-    description: 'Operation ids, typed parameters, and response schemas.',
-  },
-]
-
-export const NAV_SECTIONS = ['programs', 'work', 'trust', 'developer'] as const
-
-export interface OrganizationDocument {
-  name: string
-  url: string
-  email: string
-  description: string
-  address: {
-    addressLocality: string
-    addressRegion: string
-    addressCountry: string
-  }
-}
-
-export function organizationDocument(): OrganizationDocument {
-  return {
-    name: SITE_NAME,
-    url: SITE_URL,
-    email: CONTACT_EMAIL,
-    description: HOME_DESCRIPTION,
-    address: {
-      addressLocality: POSTAL_ADDRESS.addressLocality,
-      addressRegion: POSTAL_ADDRESS.addressRegion,
-      addressCountry: POSTAL_ADDRESS.addressCountry,
-    },
-  }
-}
-
-export function healthDocument(): { status: 'ok'; service: string } {
-  return { status: 'ok', service: SITE_NAME }
-}
-
-export function navigationDocument(section: string | null): { links: NavLink[] } {
-  const links = section ? NAV_LINKS.filter(link => link.section === section) : NAV_LINKS
-  return { links }
-}
-
-export interface DirectHttpResult {
-  status: number
-  body: string | null
-  headers: Record<string, string>
-}
-
-const JSON_HEADERS: Record<string, string> = {
-  'content-type': JSON_CONTENT_TYPE,
-}
-
-export function apiResult(method: string, pathname: string, section: string | null): DirectHttpResult | null {
-  const path = normalizePath(pathname)
-  if (path !== '/api' && !path.startsWith('/api/')) return null
-
-  if (method !== 'GET' && method !== 'HEAD') {
-    return {
-      status: 405,
-      body: JSON.stringify(apiError(
-        'method_not_allowed',
-        `${method} is not allowed on ${path}.`,
-        `${API_HINT} Use GET.`,
-      )),
-      headers: { ...JSON_HEADERS, allow: 'GET, HEAD' },
-    }
-  }
-
-  if (path === '/api/v1/organization') {
-    return { status: 200, body: `${JSON.stringify(organizationDocument())}\n`, headers: JSON_HEADERS }
-  }
-  if (path === '/api/v1/health') {
-    return { status: 200, body: `${JSON.stringify(healthDocument())}\n`, headers: JSON_HEADERS }
-  }
-  if (path === '/api/v1/navigation') {
-    if (section && !NAV_SECTIONS.includes(section as typeof NAV_SECTIONS[number])) {
-      return {
-        status: 400,
-        body: JSON.stringify(apiError(
-          'invalid_section',
-          `section must be one of ${NAV_SECTIONS.join(', ')}.`,
-          API_HINT,
-        )),
-        headers: JSON_HEADERS,
-      }
-    }
-    return {
-      status: 200,
-      body: `${JSON.stringify(navigationDocument(section))}\n`,
-      headers: JSON_HEADERS,
-    }
-  }
-
-  return {
-    status: 404,
-    body: JSON.stringify(apiError(
-      'not_found',
-      `No API resource is published at ${path}.`,
-      API_HINT,
-    )),
-    headers: JSON_HEADERS,
-  }
-}
-
-export const mcpServerCard = {
-  protocolVersion: MCP_PROTOCOL_VERSION,
-  serverInfo: {
-    name: SITE_NAME,
-    title: SITE_NAME,
-    version: '1.0.0',
-  },
-  description: `Public read-only tools for ${SITE_NAME}. No authentication. Locality: Washington, DC. Contact: ${CONTACT_EMAIL}.`,
-  documentationUrl: `${SITE_URL}/developers`,
-  transport: {
-    type: 'streamable-http',
-    endpoint: MCP_PATH,
-  },
-  capabilities: {
-    tools: { listChanged: false },
-  },
-  authentication: {
-    required: false,
-    schemes: [] as string[],
-  },
-}
-
-const MCP_TOOLS = [
-  {
-    name: 'get_organization',
-    description: `Return the public ${SITE_NAME} record: name, canonical URL, email, description, and the Washington, DC locality. No telephone or street address is published.`,
-    inputSchema: {
-      type: 'object',
-      properties: {},
-      additionalProperties: false,
-    },
-  },
-  {
-    name: 'list_public_pages',
-    description: 'List public sections of the site. Optional section filter: programs, work, trust, or developer. Does not include /docs, /wireframes, or /search.',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        section: {
-          type: 'string',
-          enum: [...NAV_SECTIONS],
-          description: 'Limit the list to one section.',
-        },
-      },
-      additionalProperties: false,
-    },
-  },
-]
-
-const MCP_CORS: Record<string, string> = {
-  'access-control-allow-origin': '*',
-  'access-control-expose-headers': 'Mcp-Session-Id',
-}
-
-function jsonRpcResult(id: unknown, result: unknown): string {
-  return JSON.stringify({ jsonrpc: '2.0', id, result })
-}
-
-function jsonRpcError(id: unknown, code: number, message: string): string {
-  return JSON.stringify({
-    jsonrpc: '2.0',
-    id,
-    error: { code, message, data: { hint: `POST an initialize request to ${SITE_URL}${MCP_PATH}. See ${SITE_URL}/developers.` } },
-  })
-}
-
-export function mcpResult(input: { method: string; body: string | null }): DirectHttpResult | null {
-  const method = input.method.toUpperCase()
-  if (method === 'OPTIONS') {
-    return {
-      status: 204,
-      body: null,
-      headers: {
-        ...MCP_CORS,
-        'access-control-allow-methods': 'GET, POST, DELETE, OPTIONS',
-        'access-control-allow-headers': 'content-type, accept, mcp-session-id, mcp-protocol-version, last-event-id',
-        'access-control-max-age': '86400',
-      },
-    }
-  }
-  if (method === 'GET' || method === 'HEAD') {
-    return {
-      status: 200,
-      body: `${JSON.stringify(mcpServerCard, null, 2)}\n`,
-      headers: { ...JSON_HEADERS, ...MCP_CORS },
-    }
-  }
-  if (method === 'DELETE') {
-    return { status: 204, body: null, headers: MCP_CORS }
-  }
-  if (method !== 'POST') {
-    return {
-      status: 405,
-      body: jsonRpcError(null, -32601, `${method} is not allowed on ${MCP_PATH}.`),
-      headers: { ...JSON_HEADERS, ...MCP_CORS, allow: 'GET, POST, DELETE, OPTIONS, HEAD' },
-    }
-  }
-
-  let message: unknown
-  try {
-    message = JSON.parse(input.body || '')
-  } catch {
-    return {
-      status: 400,
-      body: jsonRpcError(null, -32700, 'Parse error'),
-      headers: { ...JSON_HEADERS, ...MCP_CORS },
-    }
-  }
-  if (!message || typeof message !== 'object' || Array.isArray(message)) {
-    return {
-      status: 400,
-      body: jsonRpcError(null, -32600, 'Invalid Request'),
-      headers: { ...JSON_HEADERS, ...MCP_CORS },
-    }
-  }
-  const record = message as { id?: unknown; method?: unknown; params?: unknown }
-  const id = record.id ?? null
-  const rpcMethod = typeof record.method === 'string' ? record.method : ''
-  const hasId = Object.prototype.hasOwnProperty.call(record, 'id')
-
-  if (rpcMethod === 'notifications/initialized' || rpcMethod.startsWith('notifications/')) {
-    return { status: 202, body: null, headers: MCP_CORS }
-  }
-
-  if (rpcMethod === 'initialize') {
-    return {
-      status: 200,
-      body: jsonRpcResult(id, {
-        protocolVersion: MCP_PROTOCOL_VERSION,
-        capabilities: { tools: { listChanged: false } },
-        serverInfo: { name: SITE_NAME, version: '1.0.0' },
-        instructions: `Public read-only tools for ${SITE_NAME}. No authentication. Use get_organization and list_public_pages. Contact ${CONTACT_EMAIL}. Locality: Washington, DC. Do not invent a phone number.`,
-      }),
-      headers: { ...JSON_HEADERS, ...MCP_CORS, 'mcp-session-id': MCP_SESSION_ID },
-    }
-  }
-
-  if (rpcMethod === 'ping') {
-    return {
-      status: 200,
-      body: jsonRpcResult(id, {}),
-      headers: { ...JSON_HEADERS, ...MCP_CORS },
-    }
-  }
-
-  if (rpcMethod === 'tools/list') {
-    return {
-      status: 200,
-      body: jsonRpcResult(id, { tools: MCP_TOOLS }),
-      headers: { ...JSON_HEADERS, ...MCP_CORS },
-    }
-  }
-
-  if (rpcMethod === 'tools/call') {
-    const params = (record.params && typeof record.params === 'object') ? record.params as { name?: unknown; arguments?: unknown } : {}
-    const name = typeof params.name === 'string' ? params.name : ''
-    const args = (params.arguments && typeof params.arguments === 'object') ? params.arguments as { section?: unknown } : {}
-    if (name === 'get_organization') {
-      return {
-        status: 200,
-        body: jsonRpcResult(id, {
-          content: [{ type: 'text', text: JSON.stringify(organizationDocument()) }],
-          isError: false,
-        }),
-        headers: { ...JSON_HEADERS, ...MCP_CORS },
-      }
-    }
-    if (name === 'list_public_pages') {
-      const section = typeof args.section === 'string' ? args.section : null
-      if (section && !NAV_SECTIONS.includes(section as typeof NAV_SECTIONS[number])) {
-        return {
-          status: 200,
-          body: jsonRpcResult(id, {
-            content: [{ type: 'text', text: `section must be one of ${NAV_SECTIONS.join(', ')}.` }],
-            isError: true,
-          }),
-          headers: { ...JSON_HEADERS, ...MCP_CORS },
-        }
-      }
-      return {
-        status: 200,
-        body: jsonRpcResult(id, {
-          content: [{ type: 'text', text: JSON.stringify(navigationDocument(section)) }],
-          isError: false,
-        }),
-        headers: { ...JSON_HEADERS, ...MCP_CORS },
-      }
-    }
-    return {
-      status: 200,
-      body: jsonRpcResult(id, {
-        content: [{ type: 'text', text: `Unknown tool ${name}. Tools: get_organization, list_public_pages.` }],
-        isError: true,
-      }),
-      headers: { ...JSON_HEADERS, ...MCP_CORS },
-    }
-  }
-
-  if (!hasId) return { status: 202, body: null, headers: MCP_CORS }
-
-  return {
-    status: 200,
-    body: jsonRpcError(id, -32601, `Method not found: ${rpcMethod || '(missing)'}`),
-    headers: { ...JSON_HEADERS, ...MCP_CORS },
-  }
-}
-
-export const openapiDocument = {
-  openapi: '3.1.0',
-  info: {
-    title: `${SITE_NAME} API`,
-    version: '1.0.0',
-    description: `Public read-only API for ${SITE_NAME}, a think tank based in Washington, DC. Authentication: none. No API key. Contact: ${CONTACT_EMAIL}.`,
-  },
-  servers: [{ url: SITE_URL, description: 'Canonical host' }],
-  paths: {
-    '/api/v1/organization': {
-      get: {
-        operationId: 'getOrganization',
-        summary: 'Organization record',
-        description: `Name, canonical URL, email, description, and the Washington, DC locality for ${SITE_NAME}. No telephone or street address is published.`,
-        responses: {
-          '200': {
-            description: 'The organization record.',
-            content: {
-              'application/json': {
-                schema: { $ref: '#/components/schemas/Organization' },
-              },
-            },
-          },
-          '405': { $ref: '#/components/responses/MethodNotAllowed' },
-        },
-      },
-    },
-    '/api/v1/navigation': {
-      get: {
-        operationId: 'listNavigation',
-        summary: 'Public section list',
-        description: 'Public programs, work, trust, and developer links. Does not include /docs, /wireframes, or /search.',
-        parameters: [
-          {
-            name: 'section',
-            in: 'query',
-            required: false,
-            description: 'Filter the list to one section.',
-            schema: { type: 'string', enum: [...NAV_SECTIONS] },
-          },
-        ],
-        responses: {
-          '200': {
-            description: 'Matching links.',
-            content: {
-              'application/json': {
-                schema: { $ref: '#/components/schemas/Navigation' },
-              },
-            },
-          },
-          '400': { $ref: '#/components/responses/InvalidSection' },
-          '405': { $ref: '#/components/responses/MethodNotAllowed' },
-        },
-      },
-    },
-    '/api/v1/health': {
-      get: {
-        operationId: 'getHealth',
-        summary: 'Health check',
-        description: 'Returns status ok when the API document is being served.',
-        responses: {
-          '200': {
-            description: 'The service is serving this document.',
-            content: {
-              'application/json': {
-                schema: { $ref: '#/components/schemas/Health' },
-              },
-            },
-          },
-          '405': { $ref: '#/components/responses/MethodNotAllowed' },
-        },
-      },
-    },
-  },
-  components: {
-    schemas: {
-      Organization: {
-        type: 'object',
-        required: ['name', 'url', 'email', 'description', 'address'],
-        properties: {
-          name: { type: 'string' },
-          url: { type: 'string', format: 'uri' },
-          email: { type: 'string', format: 'email' },
-          description: { type: 'string' },
-          address: { $ref: '#/components/schemas/PostalAddress' },
-        },
-      },
-      PostalAddress: {
-        type: 'object',
-        required: ['addressLocality', 'addressRegion', 'addressCountry'],
-        properties: {
-          addressLocality: { type: 'string' },
-          addressRegion: { type: 'string' },
-          addressCountry: { type: 'string' },
-        },
-      },
-      NavLink: {
-        type: 'object',
-        required: ['section', 'title', 'url', 'description'],
-        properties: {
-          section: { type: 'string', enum: [...NAV_SECTIONS] },
-          title: { type: 'string' },
-          url: { type: 'string', format: 'uri' },
-          description: { type: 'string' },
-        },
-      },
-      Navigation: {
-        type: 'object',
-        required: ['links'],
-        properties: {
-          links: { type: 'array', items: { $ref: '#/components/schemas/NavLink' } },
-        },
-      },
-      Health: {
-        type: 'object',
-        required: ['status', 'service'],
-        properties: {
-          status: { type: 'string', const: 'ok' },
-          service: { type: 'string' },
-        },
-      },
-      Error: {
-        type: 'object',
-        required: ['error'],
-        properties: {
-          error: {
-            type: 'object',
-            required: ['code', 'message', 'hint'],
-            properties: {
-              code: { type: 'string' },
-              message: { type: 'string' },
-              hint: { type: 'string' },
-            },
-          },
-        },
-      },
-    },
-    responses: {
-      MethodNotAllowed: {
-        description: 'This API is read-only. Use GET.',
-        content: {
-          'application/json': { schema: { $ref: '#/components/schemas/Error' } },
-        },
-      },
-      InvalidSection: {
-        description: 'The section query is not one of the published values.',
-        content: {
-          'application/json': { schema: { $ref: '#/components/schemas/Error' } },
-        },
-      },
-    },
-  },
-}
-
-export function openapiJson(): string {
-  return `${JSON.stringify(openapiDocument, null, 2)}\n`
 }
 
 /** Paths that must not appear in the sitemap or in llms.txt. */
@@ -1017,6 +438,125 @@ export type AgentDecision =
   | { action: 'markdown'; status: number; body: string }
   | { action: 'check-upstream' }
 
+const ARTICLE_PATH = /^\/(?:insights|projects)\/[^/]+$/
+
+export function isArticlePath(pathname: string): boolean {
+  return ARTICLE_PATH.test(normalizePath(pathname))
+}
+
+/** Later of the published and updated days, or null when the content has neither. */
+export function latestContentDay(published: unknown, updated: unknown): string | null {
+  const days: string[] = []
+  for (const value of [published, updated]) {
+    if (typeof value !== 'string') continue
+    const match = /^(\d{4}-\d{2}-\d{2})/.exec(value.trim())
+    if (match?.[1]) days.push(match[1])
+  }
+  if (days.length === 0) return null
+  days.sort()
+  return days[days.length - 1] ?? null
+}
+
+export interface ArticleJsonLdInput {
+  headline: string
+  url: string
+  datePublished?: string | null
+  dateModified?: string | null
+  authors?: readonly string[] | null
+  image?: string | null
+}
+
+export function articleJsonLd(input: ArticleJsonLdInput): Record<string, unknown> {
+  const published = latestContentDay(input.datePublished, null)
+  const modified = latestContentDay(input.datePublished, input.dateModified)
+  const names = (input.authors ?? []).map(name => name.trim()).filter(Boolean)
+  const image = input.image?.trim() || OG_IMAGE_URL
+  const doc: Record<string, unknown> = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: input.headline,
+    url: input.url,
+    image,
+    author: names.length > 0
+      ? names.map(name => ({ '@type': 'Person', name }))
+      : { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
+    publisher: {
+      '@type': 'Organization',
+      name: SITE_NAME,
+      url: SITE_URL,
+      logo: { '@type': 'ImageObject', url: LOGO_URL },
+    },
+  }
+  if (published) doc.datePublished = published
+  if (modified) doc.dateModified = modified
+  return doc
+}
+
+function decodeEntities(value: string): string {
+  return value
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;|&apos;/g, "'")
+    .replace(/&#(\d+);/g, (_, code: string) => String.fromCodePoint(Number(code)))
+    .replace(/&#x([0-9a-f]+);/gi, (_, code: string) => String.fromCodePoint(parseInt(code, 16)))
+}
+
+function inlineText(html: string): string {
+  return decodeEntities(html.replace(/<[^>]+>/g, ' ')).replace(/\s+/g, ' ').trim()
+}
+
+function htmlFragmentToMarkdown(html: string): string {
+  let source = html
+  source = source.replace(/<!--[\s\S]*?-->/g, '')
+  source = source.replace(/<script\b[\s\S]*?<\/script>/gi, '')
+  source = source.replace(/<style\b[\s\S]*?<\/style>/gi, '')
+  source = source.replace(/<nav\b[\s\S]*?<\/nav>/gi, '')
+  source = source.replace(/<h([1-6])\b[^>]*>([\s\S]*?)<\/h\1>/gi, (_, level: string, inner: string) => {
+    return `\n\n${'#'.repeat(Number(level))} ${inlineText(inner)}\n\n`
+  })
+  source = source.replace(/<a\b[^>]*href="([^"]*)"[^>]*>([\s\S]*?)<\/a>/gi, (_, href: string, inner: string) => {
+    const label = inlineText(inner)
+    if (!label) return ''
+    return `[${label}](${decodeEntities(href)})`
+  })
+  source = source.replace(/<li\b[^>]*>([\s\S]*?)<\/li>/gi, (_, inner: string) => `\n- ${inlineText(inner)}`)
+  source = source.replace(/<time\b[^>]*datetime="([^"]*)"[^>]*>[\s\S]*?<\/time>/gi, (_, stamp: string) => stamp.slice(0, 10))
+  source = source.replace(/<br\s*\/?>/gi, '\n')
+  source = source.replace(/<\/(p|div|section|blockquote|figcaption)>/gi, '\n\n')
+  source = source.replace(/<[^>]+>/g, '')
+  source = decodeEntities(source).replace(/\r/g, '')
+  source = source.replace(/[ \t]+\n/g, '\n').replace(/[ \t]{2,}/g, ' ').replace(/\n{3,}/g, '\n\n')
+  return source.trim()
+}
+
+/** Markdown for one insight or project, from the HTML the static host already rendered. */
+export function articleMarkdownFromHtml(pathname: string, html: string): string | null {
+  if (!isArticlePath(pathname)) return null
+  const main = html.match(/<main\b[^>]*>([\s\S]*?)<\/main>/i)
+  const markdown = htmlFragmentToMarkdown(main?.[1] ?? html)
+  if (markdown.trim().length < 20) return null
+  return markdown.endsWith('\n') ? markdown : `${markdown}\n`
+}
+
+/**
+ * Markdown body after the upstream response.
+ * Articles become Markdown. A real 404 becomes a Markdown error. Other statuses stay HTML.
+ */
+export function markdownBodyForUpstream(
+  pathname: string,
+  upstreamStatus: number,
+  html: string,
+): { status: number; body: string } | null {
+  if (upstreamStatus === 200) {
+    const article = articleMarkdownFromHtml(pathname, html)
+    return article ? { status: 200, body: article } : null
+  }
+  return markdownForUpstreamMiss(pathname, upstreamStatus)
+}
+
 export function classifyAgentRequest(input: {
   method: string
   pathname: string
@@ -1025,7 +565,6 @@ export function classifyAgentRequest(input: {
   if (input.method !== 'GET' && input.method !== 'HEAD') return { action: 'delegate' }
   if (isStaticAsset(input.pathname)) return { action: 'delegate' }
   const path = normalizePath(input.pathname)
-  if (path === MCP_PATH || path === '/api' || path.startsWith('/api/')) return { action: 'delegate' }
   const choice = negotiate(input.accept, ['text/html', 'text/markdown'])
   if (choice !== 'text/markdown') return { action: 'delegate' }
 

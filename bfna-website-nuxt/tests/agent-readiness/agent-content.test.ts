@@ -5,34 +5,27 @@ import { describe, expect, it } from 'vitest'
 import handler from '../../netlify/edge-functions/markdown-negotiate'
 import {
   CONTACT_EMAIL,
+  HOME_DESCRIPTION,
   MARKDOWN_CONTENT_TYPE,
-  MCP_PATH,
-  MCP_PROTOCOL_VERSION,
   SITE_NAME,
   SITE_URL,
   SITEMAP_EXCLUDED_PREFIXES,
   VARY_ACCEPT,
   aboutPage,
   agentInstructions,
-  apiResult,
+  articleJsonLd,
+  articleMarkdownFromHtml,
   classifyAgentRequest,
   contactPage,
-  developersPage,
   headersForContext,
-  healthDocument,
   homeMarkdown,
-  navigationDocument,
   homePlainText,
   isIndexablePath,
+  latestContentDay,
   llmsTxt,
   markdownForUpstreamMiss,
-  mcpResult,
-  mcpServerCard,
   negotiate,
   notFoundMarkdown,
-  openapiDocument,
-  openapiJson,
-  organizationDocument,
   organizationJsonLd,
   pagePlainText,
   privacyPage,
@@ -172,10 +165,30 @@ describe('markdown negotiation', () => {
 
     const article = await handler(
       new Request(`${SITE_URL}/insights/example`, { headers: { accept: 'text/markdown' } }),
-      { next: async () => new Response('<html><h1>Example</h1></html>', { status: 200, headers: { 'content-type': 'text/html' } }) },
+      {
+        next: async () => new Response(
+          '<html><body><main><nav>Skip</nav><h1>The Gambler</h1><time datetime="2024-06-17">Jun 2024</time><p>Macron dissolved the National Assembly tonight.</p></main></body></html>',
+          { status: 200, headers: { 'content-type': 'text/html' } },
+        ),
+      },
     )
     expect(article.status).toBe(200)
-    expect(await article.text()).toContain('<h1>Example</h1>')
+    expect(article.headers.get('content-type')).toContain('text/markdown')
+    expect(article.headers.get('vary')).toBe('Accept')
+    const articleBody = await article.text()
+    expect(articleBody).toContain('# The Gambler')
+    expect(articleBody).toContain('2024-06-17')
+    expect(articleBody).toContain('Macron dissolved the National Assembly tonight.')
+    expect(articleBody).not.toContain('Skip')
+    expect(articleBody).not.toContain('<h1>')
+
+    const index = await handler(
+      new Request(`${SITE_URL}/insights`, { headers: { accept: 'text/markdown' } }),
+      { next: async () => new Response('<html><h1>Insights</h1></html>', { status: 200, headers: { 'content-type': 'text/html' } }) },
+    )
+    expect(index.status).toBe(200)
+    expect(index.headers.get('content-type')).toContain('text/html')
+    expect(await index.text()).toContain('<h1>Insights</h1>')
   })
 
   it('is the only edge function and does not fetch the site', () => {
@@ -188,110 +201,65 @@ describe('markdown negotiation', () => {
   })
 })
 
-describe('public api and mcp', () => {
-  it('returns JSON for the published operations and JSON errors otherwise', async () => {
-    const org = await handler(
-      new Request(`${SITE_URL}/api/v1/organization`, { headers: { accept: 'application/json' } }),
-      { next: async () => { throw new Error('api must not fall through') } },
-    )
-    expect(org.status).toBe(200)
-    expect(org.headers.get('content-type')).toContain('application/json')
-    expect(JSON.parse(await org.text())).toEqual(organizationDocument())
+describe('articles and removed developer surface', () => {
+  it('builds article markdown from the rendered HTML and does not publish an API', () => {
+    const html = '<main><h1>The Gambler</h1><p>By <span>Courtney Flynn Martino</span></p><time datetime="2024-06-17">Jun 2024</time><p>Macron dissolved the National Assembly.</p><h3>Scenarios</h3><ul><li><a href="https://www.bfna.org/insights">More</a></li></ul></main>'
+    const markdown = articleMarkdownFromHtml('/insights/the-gambler', html)
+    expect(markdown).toContain('# The Gambler')
+    expect(markdown).toContain('### Scenarios')
+    expect(markdown).toContain('[More](https://www.bfna.org/insights)')
+    expect(articleMarkdownFromHtml('/insights', html)).toBeNull()
+    expect(articleMarkdownFromHtml('/about', html)).toBeNull()
 
-    const missing = await handler(
-      new Request(`${SITE_URL}/api/v1/does-not-exist`),
-      { next: async () => { throw new Error('api 404 must not fall through') } },
-    )
-    expect(missing.status).toBe(404)
-    expect(missing.headers.get('content-type')).toContain('application/json')
-    const error = JSON.parse(await missing.text())
-    expect(error.error.code).toBe('not_found')
-    expect(error.error.message.length).toBeGreaterThan(10)
-    expect(error.error.hint).toContain('/openapi.json')
+    const home = homeMarkdown()
+    expect(home.split(HOME_DESCRIPTION).length - 1).toBe(1)
+    expect(home).not.toContain('/developers')
+    expect(home).not.toContain('/openapi.json')
+    expect(home).not.toContain('/api/v1')
 
-    const posted = await handler(
-      new Request(`${SITE_URL}/api/v1/organization`, { method: 'POST' }),
-      { next: async () => { throw new Error('api 405 must not fall through') } },
-    )
-    expect(posted.status).toBe(405)
-    const postedBody = JSON.parse(await posted.text())
-    expect(postedBody.error.code).toBe('method_not_allowed')
-    expect(posted.headers.get('allow')).toContain('GET')
-
-    const badSection = apiResult('GET', '/api/v1/navigation', 'docs')
-    expect(badSection?.status).toBe(400)
-    expect(JSON.parse(badSection?.body || '').error.code).toBe('invalid_section')
-    expect(healthDocument().status).toBe('ok')
-    expect(readFileSync(resolve(root, 'public/api/v1/organization'), 'utf8')).toBe(`${JSON.stringify(organizationDocument())}\n`)
-    expect(readFileSync(resolve(root, 'public/api/v1/navigation'), 'utf8')).toBe(`${JSON.stringify(navigationDocument(null))}\n`)
-    expect(readFileSync(resolve(root, 'public/api/v1/health'), 'utf8')).toBe(`${JSON.stringify(healthDocument())}\n`)
-    expect(readFileSync(resolve(root, 'public/.well-known/mcp'), 'utf8')).toBe(`${JSON.stringify(mcpServerCard, null, 2)}\n`)
-  })
-
-  it('answers an MCP initialize handshake at /.well-known/mcp', async () => {
-    const card = await handler(
-      new Request(`${SITE_URL}${MCP_PATH}`),
-      { next: async () => { throw new Error('mcp must not fall through') } },
-    )
-    expect(card.status).toBe(200)
-    expect(card.headers.get('content-type')).toContain('application/json')
-    const cardBody = JSON.parse(await card.text())
-    expect(cardBody.transport.type).toBe('streamable-http')
-    expect(cardBody.transport.endpoint).toBe(MCP_PATH)
-    expect(cardBody.protocolVersion).toBe(MCP_PROTOCOL_VERSION)
-
-    const init = await handler(
-      new Request(`${SITE_URL}${MCP_PATH}`, {
-        method: 'POST',
-        headers: { 'content-type': 'application/json', accept: 'application/json, text/event-stream' },
-        body: JSON.stringify({
-          jsonrpc: '2.0',
-          id: 1,
-          method: 'initialize',
-          params: {
-            protocolVersion: MCP_PROTOCOL_VERSION,
-            capabilities: {},
-            clientInfo: { name: 'ora', version: '1.0.0' },
-          },
-        }),
-      }),
-      { next: async () => { throw new Error('mcp initialize must not fall through') } },
-    )
-    expect(init.status).toBe(200)
-    expect(init.headers.get('mcp-session-id')).toBeTruthy()
-    const payload = JSON.parse(await init.text())
-    expect(payload.result.protocolVersion).toBe(MCP_PROTOCOL_VERSION)
-    expect(payload.result.serverInfo.name).toBe(SITE_NAME)
-    expect(payload.result.capabilities.tools).toBeTruthy()
-
-    const tools = mcpResult({
-      method: 'POST',
-      body: JSON.stringify({ jsonrpc: '2.0', id: 2, method: 'tools/list' }),
-    })
-    const listed = JSON.parse(tools?.body || '')
-    const names = listed.result.tools.map((tool: { name: string }) => tool.name)
-    expect(names).toContain('get_organization')
-    expect(listed.result.tools.every((tool: { description: string; inputSchema: object }) => tool.description && tool.inputSchema)).toBe(true)
-    expect(mcpServerCard.authentication.required).toBe(false)
-  })
-
-  it('describes every operation with an id, a description, and a schema', () => {
-    const paths = Object.values(openapiDocument.paths)
-    expect(paths.length).toBeGreaterThan(0)
-    const ids = new Set<string>()
-    for (const path of paths) {
-      for (const operation of Object.values(path)) {
-        expect(operation.operationId).toBeTruthy()
-        expect(ids.has(operation.operationId)).toBe(false)
-        ids.add(operation.operationId)
-        expect(operation.description.length).toBeGreaterThan(20)
-        expect(operation.responses['200'].content['application/json'].schema).toBeTruthy()
-      }
+    expect(llmsTxt).not.toMatch(/\/developers|\/openapi\.json|\/api\/v1|\/\.well-known\/mcp/)
+    expect(agentInstructions).not.toMatch(/\/developers|\/openapi\.json|\/api\/v1|\/\.well-known\/mcp/)
+    expect(notFoundMarkdown('/missing')).not.toContain('/developers')
+    for (const gone of ['public/openapi.json', 'public/api/v1/organization', 'public/.well-known/mcp', 'src/pages/developers.vue']) {
+      expect(() => readFileSync(resolve(root, gone))).toThrow()
     }
-    const sectionParam = openapiDocument.paths['/api/v1/navigation']?.get.parameters?.[0]
-    expect(sectionParam && 'schema' in sectionParam && sectionParam.schema && 'enum' in sectionParam.schema ? sectionParam.schema.enum : []).toContain('programs')
-    const file = readFileSync(resolve(root, 'public/openapi.json'), 'utf8')
-    expect(file).toBe(openapiJson())
+  })
+
+  it('uses the later content date and falls back only when both are missing', () => {
+    expect(latestContentDay('2024-06-17', '2025-01-02')).toBe('2025-01-02')
+    expect(latestContentDay('2024-06-17T15:00:00Z', null)).toBe('2024-06-17')
+    expect(latestContentDay(null, undefined)).toBeNull()
+  })
+
+  it('describes an article with the published fields', () => {
+    const doc = articleJsonLd({
+      headline: 'The Gambler',
+      url: `${SITE_URL}/insights/the-gambler`,
+      datePublished: '2024-06-17',
+      dateModified: null,
+      authors: ['Courtney Flynn Martino'],
+      image: 'https://bfna.simplyas.com/assets/example',
+    })
+    expect(doc['@type']).toBe('Article')
+    expect(doc.headline).toBe('The Gambler')
+    expect(doc.datePublished).toBe('2024-06-17')
+    expect(doc.dateModified).toBe('2024-06-17')
+    expect(doc.url).toBe(`${SITE_URL}/insights/the-gambler`)
+    expect(doc.image).toBe('https://bfna.simplyas.com/assets/example')
+    expect(doc.author).toEqual([{ '@type': 'Person', name: 'Courtney Flynn Martino' }])
+    expect((doc.publisher as { name: string }).name).toBe(SITE_NAME)
+
+    const undated = articleJsonLd({
+      headline: 'Untitled',
+      url: `${SITE_URL}/insights/untitled`,
+      datePublished: null,
+      authors: [],
+      image: null,
+    })
+    expect(undated.datePublished).toBeUndefined()
+    expect(undated.dateModified).toBeUndefined()
+    expect(undated.image).toBe(`${SITE_URL}/images/og.png`)
+    expect(undated.author).toMatchObject({ '@type': 'Organization', name: SITE_NAME })
   })
 })
 
@@ -345,7 +313,6 @@ describe('trust pages, sitemap filter, and organization schema', () => {
     expect(pagePlainText(aboutPage).length).toBeGreaterThanOrEqual(500)
     expect(pagePlainText(contactPage).length).toBeGreaterThanOrEqual(500)
     expect(pagePlainText(privacyPage).length).toBeGreaterThanOrEqual(500)
-    expect(pagePlainText(developersPage).length).toBeGreaterThanOrEqual(500)
     expect(homePlainText().length).toBeGreaterThanOrEqual(500)
     expect(homeMarkdown()).toContain(SITE_NAME)
     const privacyLead = privacyPage.sections[0]

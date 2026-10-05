@@ -243,6 +243,9 @@ useHead(() => ({
     /* No `robots: noindex` — previews get that from a generated `_headers` file. */
     { property: 'og:type', content: 'website' },
     { property: 'og:image', content: OG_IMAGE_URL },
+    { property: 'og:image:type', content: 'image/png' },
+    { property: 'og:image:width', content: '1200' },
+    { property: 'og:image:height', content: '630' },
     { property: 'og:url', content: canonicalHref.value },
     { property: 'og:site_name', content: SITE_NAME },
   ],

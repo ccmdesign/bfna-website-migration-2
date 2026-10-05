@@ -9,23 +9,8 @@
   Content-Type: text/markdown; charset=utf-8
   X-Content-Type-Options: nosniff
 
-/openapi.json
-  Content-Type: application/json; charset=utf-8
-
 /robots.txt
   Content-Type: text/plain; charset=utf-8
 
 /sitemap.xml
   Content-Type: application/xml; charset=utf-8
-
-/.well-known/mcp
-  Content-Type: application/json; charset=utf-8
-
-/api/v1/organization
-  Content-Type: application/json; charset=utf-8
-
-/api/v1/navigation
-  Content-Type: application/json; charset=utf-8
-
-/api/v1/health
-  Content-Type: application/json; charset=utf-8
