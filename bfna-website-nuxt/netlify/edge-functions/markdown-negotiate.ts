@@ -1,14 +1,30 @@
 import {
   MARKDOWN_CONTENT_TYPE,
   VARY_ACCEPT,
+  appendVaryAccept,
   classifyAgentRequest,
   markdownBodyForUpstream,
-  normalizePath,
 } from '../../utils/agentContent.ts'
 
 const MARKDOWN_HEADERS = {
   'content-type': MARKDOWN_CONTENT_TYPE,
   vary: VARY_ACCEPT,
+}
+
+function isHtml(headers: Headers): boolean {
+  return (headers.get('content-type') ?? '').toLowerCase().includes('text/html')
+}
+
+/** HTML from upstream must vary on Accept, or a cache can serve it to a markdown client. */
+function htmlWithVary(response: Response): Response {
+  if (!isHtml(response.headers)) return response
+  const headers = new Headers(response.headers)
+  appendVaryAccept(headers)
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  })
 }
 
 /**
@@ -27,7 +43,7 @@ export default async function handler(
     accept: request.headers.get('accept'),
   })
 
-  if (decision.action === 'delegate') return context.next()
+  if (decision.action === 'delegate') return htmlWithVary(await context.next())
 
   if (decision.action === 'markdown') {
     return new Response(request.method === 'HEAD' ? null : decision.body, {
@@ -40,9 +56,11 @@ export default async function handler(
   const html = await upstream.text()
   const body = markdownBodyForUpstream(url.pathname, upstream.status, html)
   if (!body) {
+    const headers = new Headers(upstream.headers)
+    if (isHtml(headers)) appendVaryAccept(headers)
     return new Response(request.method === 'HEAD' ? null : html, {
       status: upstream.status,
-      headers: upstream.headers,
+      headers,
     })
   }
 

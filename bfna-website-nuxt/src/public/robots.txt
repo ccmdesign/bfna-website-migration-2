@@ -1,7 +1,5 @@
 User-Agent: *
 Allow: /
-Disallow: /docs
-Disallow: /docs/
 Disallow: /wireframes
 Disallow: /wireframes/
 Disallow: /search

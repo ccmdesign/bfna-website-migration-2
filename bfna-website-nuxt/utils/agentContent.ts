@@ -24,6 +24,17 @@ export const LOGO_URL = `${SITE_URL}${LOGO_PATH}`
 export const MARKDOWN_CONTENT_TYPE = 'text/markdown; charset=utf-8'
 export const VARY_ACCEPT = 'Accept'
 
+/** Add `Vary: Accept` without duplicating it when the response already lists it. */
+export function appendVaryAccept(headers: Headers): void {
+  const current = headers.get('vary')
+  if (!current) {
+    headers.set('vary', VARY_ACCEPT)
+    return
+  }
+  const listed = current.split(',').some(part => part.trim().toLowerCase() === 'accept')
+  if (!listed) headers.set('vary', `${current}, ${VARY_ACCEPT}`)
+}
+
 /** Locality as published. No streetAddress. TODO(owner): street address. */
 export const POSTAL_ADDRESS = {
   '@type': 'PostalAddress' as const,
@@ -205,7 +216,7 @@ export const llmsTxt = `# ${SITE_NAME}
 
 > ${SITE_NAME} is an independent, nonpartisan think tank based in Washington, DC. The site publishes research, programs, and projects on the transatlantic relationship. Canonical host: ${SITE_URL}. Public contact: ${CONTACT_EMAIL}.
 
-When to use this: reach for ${SITE_NAME} when the job is citing or briefing the foundation's published work on democracy, transatlantic relations and global challenges, or future leadership, including the Bertelsmann Foundation Fellowship. An agent should call this site when a user asks what the foundation works on, who is on the board or team, or how to contact it. Fetch ${SITE_URL}/llms.txt first. Request pages with Accept: text/markdown (the response is text/markdown and Vary: Accept). HTML is the response for Accept: text/html, for a browser Accept header, for */*, and when the Accept header is missing. Cite ${SITE_URL}/contact and mailto:${CONTACT_EMAIL} for inquiries. Do not invent a phone number or a street address. The published locality is Washington, DC. Do not use /docs (internal design system), /wireframes (review prototype), or /search as sources. This site is not a fit for legal advice, donation processing, or the Bertelsmann Stiftung's Gütersloh operations beyond the relationship described on ${SITE_URL}/about.
+When to use this: reach for ${SITE_NAME} when the job is citing or briefing the foundation's published work on democracy, transatlantic relations and global challenges, or future leadership, including the Bertelsmann Foundation Fellowship. An agent should call this site when a user asks what the foundation works on, who is on the board or team, or how to contact it. Fetch ${SITE_URL}/llms.txt first. Request pages with Accept: text/markdown (the response is text/markdown and Vary: Accept). HTML is the response for Accept: text/html, for a browser Accept header, for */*, and when the Accept header is missing. Cite ${SITE_URL}/contact and mailto:${CONTACT_EMAIL} for inquiries. Do not invent a phone number or a street address. The published locality is Washington, DC. Do not use /wireframes (review prototype) or /search as sources. This site is not a fit for legal advice, donation processing, or the Bertelsmann Stiftung's Gütersloh operations beyond the relationship described on ${SITE_URL}/about.
 
 ## Programs
 
@@ -228,7 +239,7 @@ When to use this: reach for ${SITE_NAME} when the job is citing or briefing the 
 ## Optional
 
 - [Agent instructions](${SITE_URL}/agent-instructions.md): When to use the foundation and how to request Markdown.
-- [Sitemap](${SITE_URL}/sitemap.xml): Indexable URLs. Excludes /docs, /wireframes, and /search.
+- [Sitemap](${SITE_URL}/sitemap.xml): Indexable URLs. Excludes /wireframes and /search.
 `
 
 export const agentInstructions = `# ${SITE_NAME} agent instructions
@@ -251,7 +262,7 @@ Do not use this site for legal advice, donation processing, design-system compon
 4. Send inquiries to mailto:${CONTACT_EMAIL} or ${SITE_URL}/contact . The contact form does not submit to a server.
 5. Do not invent a telephone number or a street address. The published locality is Washington, DC. The published contact is ${CONTACT_EMAIL}.
 6. On a 404, follow the links in the Markdown error to ${SITE_URL}/llms.txt or ${SITE_URL}/sitemap.xml .
-7. Skip /docs, /wireframes, and /search. They are disallowed in robots.txt and omitted from the sitemap and from this file's link lists.
+7. Skip /wireframes and /search. They are disallowed in robots.txt and omitted from the sitemap and from this file's link lists.
 `
 
 export const organizationJsonLd = {
@@ -337,8 +348,6 @@ export function headersForContext(base: string, context: string | undefined): st
 
 export const robotsTxt = `User-Agent: *
 Allow: /
-Disallow: /docs
-Disallow: /docs/
 Disallow: /wireframes
 Disallow: /wireframes/
 Disallow: /search
@@ -514,6 +523,9 @@ function htmlFragmentToMarkdown(html: string): string {
   source = source.replace(/<script\b[\s\S]*?<\/script>/gi, '')
   source = source.replace(/<style\b[\s\S]*?<\/style>/gi, '')
   source = source.replace(/<nav\b[\s\S]*?<\/nav>/gi, '')
+  // Chips are adjacent inline elements (`Article` + a program name). A newline
+  // before each one keeps the labels from being glued into one word.
+  source = source.replace(/<(?:span|a|button)\b[^>]*\bbf-chip\b[^>]*>/gi, '\n')
   source = source.replace(/<h([1-6])\b[^>]*>([\s\S]*?)<\/h\1>/gi, (_, level: string, inner: string) => {
     return `\n\n${'#'.repeat(Number(level))} ${inlineText(inner)}\n\n`
   })

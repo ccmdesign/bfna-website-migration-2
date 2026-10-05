@@ -134,6 +134,7 @@ describe('markdown negotiation', () => {
     )
     expect(html.status).toBe(200)
     expect(html.headers.get('content-type')).toContain('text/html')
+    expect(html.headers.get('vary')).toBe('Accept')
     expect(await html.text()).toContain('<html>ok</html>')
 
     const star = await handler(
@@ -141,6 +142,7 @@ describe('markdown negotiation', () => {
       { next: async () => new Response('<html>star</html>', { status: 200, headers: { 'content-type': 'text/html' } }) },
     )
     expect(star.status).toBe(200)
+    expect(star.headers.get('vary')).toBe('Accept')
     expect(await star.text()).toContain('star')
 
     const missing = await handler(
@@ -161,6 +163,7 @@ describe('markdown negotiation', () => {
     )
     expect(html404.status).toBe(404)
     expect(html404.headers.get('content-type')).toContain('text/html')
+    expect(html404.headers.get('vary')).toBe('Accept')
     expect(await html404.text()).toContain('missing')
 
     const article = await handler(
@@ -188,6 +191,7 @@ describe('markdown negotiation', () => {
     )
     expect(index.status).toBe(200)
     expect(index.headers.get('content-type')).toContain('text/html')
+    expect(index.headers.get('vary')).toBe('Accept')
     expect(await index.text()).toContain('<h1>Insights</h1>')
   })
 
@@ -203,9 +207,11 @@ describe('markdown negotiation', () => {
 
 describe('articles and removed developer surface', () => {
   it('builds article markdown from the rendered HTML and does not publish an API', () => {
-    const html = '<main><h1>The Gambler</h1><p>By <span>Courtney Flynn Martino</span></p><time datetime="2024-06-17">Jun 2024</time><p>Macron dissolved the National Assembly.</p><h3>Scenarios</h3><ul><li><a href="https://www.bfna.org/insights">More</a></li></ul></main>'
+    const html = '<main><span class="bf-chip">Article</span><span class="bf-chip">Transatlantic Relations &amp; Global Challenges</span><h1>The Gambler</h1><p>By <span>Courtney Flynn Martino</span></p><time datetime="2024-06-17">Jun 2024</time><p>Macron dissolved the National Assembly.</p><h3>Scenarios</h3><ul><li><a href="https://www.bfna.org/insights">More</a></li></ul></main>'
     const markdown = articleMarkdownFromHtml('/insights/the-gambler', html)
     expect(markdown).toContain('# The Gambler')
+    expect(markdown).not.toContain('ArticleTransatlantic')
+    expect(markdown).toMatch(/Article\n+Transatlantic Relations & Global Challenges/)
     expect(markdown).toContain('### Scenarios')
     expect(markdown).toContain('[More](https://www.bfna.org/insights)')
     expect(articleMarkdownFromHtml('/insights', html)).toBeNull()
@@ -219,6 +225,9 @@ describe('articles and removed developer surface', () => {
 
     expect(llmsTxt).not.toMatch(/\/developers|\/openapi\.json|\/api\/v1|\/\.well-known\/mcp/)
     expect(agentInstructions).not.toMatch(/\/developers|\/openapi\.json|\/api\/v1|\/\.well-known\/mcp/)
+    expect(llmsTxt).not.toMatch(/\/docs\b/)
+    expect(agentInstructions).not.toMatch(/\/docs\b/)
+    expect(robotsTxt).not.toMatch(/\/docs\b/)
     expect(notFoundMarkdown('/missing')).not.toContain('/developers')
     for (const gone of ['public/openapi.json', 'public/api/v1/organization', 'public/.well-known/mcp', 'src/pages/developers.vue']) {
       expect(() => readFileSync(resolve(root, gone))).toThrow()
@@ -300,7 +309,7 @@ describe('agent instructions', () => {
 
     const robots = readFileSync(resolve(root, 'public/robots.txt'), 'utf8')
     expect(robots).toBe(robotsTxt)
-    expect(robots).toContain('Disallow: /docs')
+    expect(robots).not.toMatch(/\/docs\b/)
     expect(robots).toContain('Disallow: /wireframes')
     expect(robots).toContain('Disallow: /search')
     expect(robots).toContain(`Sitemap: ${SITE_URL}/sitemap.xml`)

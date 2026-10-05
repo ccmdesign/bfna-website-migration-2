@@ -18,4 +18,4 @@ Do not use this site for legal advice, donation processing, design-system compon
 4. Send inquiries to mailto:info@bfna.org or https://www.bfna.org/contact . The contact form does not submit to a server.
 5. Do not invent a telephone number or a street address. The published locality is Washington, DC. The published contact is info@bfna.org.
 6. On a 404, follow the links in the Markdown error to https://www.bfna.org/llms.txt or https://www.bfna.org/sitemap.xml .
-7. Skip /docs, /wireframes, and /search. They are disallowed in robots.txt and omitted from the sitemap and from this file's link lists.
+7. Skip /wireframes and /search. They are disallowed in robots.txt and omitted from the sitemap and from this file's link lists.

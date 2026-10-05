@@ -1,5 +1,5 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
-import { existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { existsSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { dirname, join, relative, resolve, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { defineNuxtConfig } from 'nuxt/config'
@@ -26,6 +26,8 @@ function committedHeaders(): string {
  * absent, and that throw aborts `nuxt generate`.
  */
 function writeAgentOutput(publicDir: string): void {
+  // The design system stays on `nuxt dev`. A generated deploy must not ship it.
+  rmSync(join(publicDir, 'docs'), { recursive: true, force: true })
   const urls = agentHtmlRoutes(publicDir)
   if (urls.length > 0) writeFileSync(join(publicDir, 'sitemap.xml'), sitemapXml(urls))
   const context = (globalThis as { process?: { env?: { CONTEXT?: string } } }).process?.env?.CONTEXT
@@ -369,12 +371,23 @@ export default defineNuxtConfig({
 
   ],
   ssr: true,
+  /*
+   * `/docs` is the internal design system. `nuxt dev` still serves it.
+   * `nuxt generate` (Netlify production and deploy previews) does not write
+   * those files; `prerender:done` also deletes `docs/` if a crawl created it.
+   * A missing file is a real 404 on the static host.
+   */
+  routeRules: {
+    '/docs': { prerender: false },
+    '/docs/**': { prerender: false },
+  },
   nitro: {
     prerender: {
       // Every BRIEF §7 route, enumerated from `content/bf/**` — see
       // `prerenderRoutes` above for why the crawler alone is not enough.
       routes: prerenderRoutes,
-      failOnError: false
+      failOnError: false,
+      ignore: [/^\/docs(?:\/|$)/],
     }
   },
   experimental: {

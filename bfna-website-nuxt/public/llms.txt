@@ -2,7 +2,7 @@
 
 > Bertelsmann Foundation North America is an independent, nonpartisan think tank based in Washington, DC. The site publishes research, programs, and projects on the transatlantic relationship. Canonical host: https://www.bfna.org. Public contact: info@bfna.org.
 
-When to use this: reach for Bertelsmann Foundation North America when the job is citing or briefing the foundation's published work on democracy, transatlantic relations and global challenges, or future leadership, including the Bertelsmann Foundation Fellowship. An agent should call this site when a user asks what the foundation works on, who is on the board or team, or how to contact it. Fetch https://www.bfna.org/llms.txt first. Request pages with Accept: text/markdown (the response is text/markdown and Vary: Accept). HTML is the response for Accept: text/html, for a browser Accept header, for */*, and when the Accept header is missing. Cite https://www.bfna.org/contact and mailto:info@bfna.org for inquiries. Do not invent a phone number or a street address. The published locality is Washington, DC. Do not use /docs (internal design system), /wireframes (review prototype), or /search as sources. This site is not a fit for legal advice, donation processing, or the Bertelsmann Stiftung's Gütersloh operations beyond the relationship described on https://www.bfna.org/about.
+When to use this: reach for Bertelsmann Foundation North America when the job is citing or briefing the foundation's published work on democracy, transatlantic relations and global challenges, or future leadership, including the Bertelsmann Foundation Fellowship. An agent should call this site when a user asks what the foundation works on, who is on the board or team, or how to contact it. Fetch https://www.bfna.org/llms.txt first. Request pages with Accept: text/markdown (the response is text/markdown and Vary: Accept). HTML is the response for Accept: text/html, for a browser Accept header, for */*, and when the Accept header is missing. Cite https://www.bfna.org/contact and mailto:info@bfna.org for inquiries. Do not invent a phone number or a street address. The published locality is Washington, DC. Do not use /wireframes (review prototype) or /search as sources. This site is not a fit for legal advice, donation processing, or the Bertelsmann Stiftung's Gütersloh operations beyond the relationship described on https://www.bfna.org/about.
 
 ## Programs
 
@@ -25,4 +25,4 @@ When to use this: reach for Bertelsmann Foundation North America when the job is
 ## Optional
 
 - [Agent instructions](https://www.bfna.org/agent-instructions.md): When to use the foundation and how to request Markdown.
-- [Sitemap](https://www.bfna.org/sitemap.xml): Indexable URLs. Excludes /docs, /wireframes, and /search.
+- [Sitemap](https://www.bfna.org/sitemap.xml): Indexable URLs. Excludes /wireframes and /search.
