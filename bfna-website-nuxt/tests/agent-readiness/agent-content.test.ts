@@ -391,9 +391,12 @@ describe('trust pages, sitemap filter, and organization schema', () => {
     expect(xml).not.toContain('/search')
 
     const base = readFileSync(resolve(root, 'public/_headers'), 'utf8')
+    expect(base).toContain('Content-Type: text/markdown')
     expect(base).not.toContain('X-Robots-Tag')
+    const preview = headersForContext(base, 'deploy-preview')
+    expect(preview).toContain('Content-Type: text/plain')
+    expect(preview).toContain('X-Robots-Tag: noindex')
     expect(headersForContext(base, 'production')).not.toContain('noindex')
-    expect(headersForContext(base, 'deploy-preview')).toContain('X-Robots-Tag: noindex')
     expect(headersForContext(base, undefined)).toContain('X-Robots-Tag: noindex')
     expect(headersForContext(headersForContext(base, 'deploy-preview'), 'branch-deploy').match(/noindex/g)?.length).toBe(1)
   })

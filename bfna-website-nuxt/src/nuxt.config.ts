@@ -9,6 +9,17 @@ const currentDir = dirname(fileURLToPath(import.meta.url))
 const projectRoot = resolve(currentDir, '..')
 
 /**
+ * Committed Netlify header rules. Nitro copies `public/` after
+ * `prerender:done`, and that copy does not replace a `_headers` this hook
+ * already created — so the published file has to be written here in full,
+ * from this source, not from whatever is already in the output dir.
+ */
+function committedHeaders(): string {
+  const path = join(projectRoot, 'public', '_headers')
+  return existsSync(path) ? readFileSync(path, 'utf8') : ''
+}
+
+/**
  * Sitemap plus the non-production noindex rule, written into Nitro's real
  * public dir after prerender. A runtime server plugin cannot do this: its
  * `close` hook runs inside the prerender worker, where `nitro.options` is
@@ -17,10 +28,8 @@ const projectRoot = resolve(currentDir, '..')
 function writeAgentOutput(publicDir: string): void {
   const urls = agentHtmlRoutes(publicDir)
   if (urls.length > 0) writeFileSync(join(publicDir, 'sitemap.xml'), sitemapXml(urls))
-  const headersPath = join(publicDir, '_headers')
-  const base = existsSync(headersPath) ? readFileSync(headersPath, 'utf8') : ''
   const context = (globalThis as { process?: { env?: { CONTEXT?: string } } }).process?.env?.CONTEXT
-  writeFileSync(headersPath, headersForContext(base, context))
+  writeFileSync(join(publicDir, '_headers'), headersForContext(committedHeaders(), context))
 }
 
 function agentHtmlRoutes(publicDir: string): { loc: string; lastmod: string }[] {
