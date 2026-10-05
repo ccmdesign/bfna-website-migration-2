@@ -62,6 +62,7 @@ import { useBfPrograms } from '~/composables/data/useBfPrograms'
 import { useBfProjects } from '~/composables/data/useBfProjects'
 import { useProgramTheme } from '~/composables/useProgramTheme'
 import { formatLabel, monthYear } from '~/utils/format'
+import { SITE_URL, articleJsonLd } from '../../../utils/agentContent'
 
 defineOptions({ name: 'InsightDetailPage' })
 
@@ -103,6 +104,24 @@ const programName = program?.name
  * names the route rather than leaving the site title alone.
  */
 useHead({ title: () => insight?.heading ?? 'Insight' })
+
+useHead(() => {
+  if (!insight?.heading) return {}
+  return {
+    script: [{
+      key: 'article-jsonld',
+      type: 'application/ld+json',
+      innerHTML: JSON.stringify(articleJsonLd({
+        headline: insight.heading,
+        url: `${SITE_URL}/insights/${insight.slug}`,
+        datePublished: insight.publish_date,
+        dateModified: insight.publish_date,
+        authors: insight.authors,
+        image: insight.image,
+      })).replace(/</g, '\\u003c'),
+    }],
+  }
+})
 
 /**
  * The programme colour scope (gh#252). `data-program` lands on `<html>` — the

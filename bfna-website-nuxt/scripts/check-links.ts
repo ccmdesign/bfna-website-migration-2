@@ -33,6 +33,13 @@ async function checkLinks(options: CheckOptions = {}) {
     'https://bfna.us20.list-manage.com',
     'https://ccmdesign.ca',
     'mailto:',
+    /*
+     * Canonical links point at https://www.bfna.org while that host is still
+     * the previous production site. Checking them against this generate would
+     * follow the old site, not the pages this build just wrote.
+     */
+    'https://www.bfna.org',
+    'https://bfna.org',
   ]
 
   console.log(`🔍 Checking links on ${url}...`)

@@ -77,6 +77,8 @@
  * `composables/data/useBf*.ts`.
  */
 import type { Cta } from '~/types/bf-contracts'
+import projectsSnapshot from '~/assets/wireframe-data/projects.json'
+import { SITE_URL, articleJsonLd } from '../../../utils/agentContent'
 import { useBfInsights } from '~/composables/data/useBfInsights'
 import { useBfPrograms } from '~/composables/data/useBfPrograms'
 import { useBfProjects } from '~/composables/data/useBfProjects'
@@ -106,6 +108,28 @@ const project = projectBySlug(route.params.slug as string)
  * names the route rather than leaving the site title alone.
  */
 useHead({ title: () => project?.heading ?? 'Project' })
+
+const projectDates = new Map(
+  (projectsSnapshot.items ?? []).map(item => [item.slug, item.publish_date ?? null] as const),
+)
+
+useHead(() => {
+  if (!project?.heading) return {}
+  const published = projectDates.get(project.slug) ?? null
+  return {
+    script: [{
+      key: 'article-jsonld',
+      type: 'application/ld+json',
+      innerHTML: JSON.stringify(articleJsonLd({
+        headline: project.heading,
+        url: `${SITE_URL}/projects/${project.slug}`,
+        datePublished: published,
+        dateModified: published,
+        image: project.image,
+      })).replace(/</g, '\\u003c'),
+    }],
+  }
+})
 
 /**
  * The trail, root first. **Three entries, not the frozen source's two** —

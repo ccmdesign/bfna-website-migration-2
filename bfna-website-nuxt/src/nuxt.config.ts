@@ -1,11 +1,100 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
-import { readdirSync } from 'node:fs'
-import { dirname, resolve } from 'node:path'
+import { existsSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import { dirname, join, relative, resolve, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { defineNuxtConfig } from 'nuxt/config'
+import { SITE_URL, headersForContext, isIndexablePath, latestContentDay, organizationJsonLd, sitemapXml } from '../utils/agentContent'
 
 const currentDir = dirname(fileURLToPath(import.meta.url))
 const projectRoot = resolve(currentDir, '..')
+
+/**
+ * Committed Netlify header rules. Nitro copies `public/` after
+ * `prerender:done`, and that copy does not replace a `_headers` this hook
+ * already created — so the published file has to be written here in full,
+ * from this source, not from whatever is already in the output dir.
+ */
+function committedHeaders(): string {
+  const path = join(projectRoot, 'public', '_headers')
+  return existsSync(path) ? readFileSync(path, 'utf8') : ''
+}
+
+/**
+ * Sitemap plus the non-production noindex rule, written into Nitro's real
+ * public dir after prerender. A runtime server plugin cannot do this: its
+ * `close` hook runs inside the prerender worker, where `nitro.options` is
+ * absent, and that throw aborts `nuxt generate`.
+ */
+function writeAgentOutput(publicDir: string): void {
+  // The design system stays on `nuxt dev`. A generated deploy must not ship it.
+  rmSync(join(publicDir, 'docs'), { recursive: true, force: true })
+  const urls = agentHtmlRoutes(publicDir)
+  if (urls.length > 0) writeFileSync(join(publicDir, 'sitemap.xml'), sitemapXml(urls))
+  const context = (globalThis as { process?: { env?: { CONTEXT?: string } } }).process?.env?.CONTEXT
+  writeFileSync(join(publicDir, '_headers'), headersForContext(committedHeaders(), context))
+}
+
+interface DatedItem {
+  slug?: string
+  publish_date?: unknown
+  date_updated?: unknown
+  updatedAt?: unknown
+}
+
+function rememberDate(dates: Map<string, string>, route: string, item: DatedItem): void {
+  const day = latestContentDay(item.publish_date, item.date_updated ?? item.updatedAt)
+  if (!day) return
+  const prev = dates.get(route)
+  if (!prev || day > prev) dates.set(route, day)
+}
+
+/** Published or updated day from the Directus-derived content. Build date fills the rest. */
+function contentDates(): Map<string, string> {
+  const dates = new Map<string, string>()
+  const insightsDir = join(projectRoot, 'content/bf/insights')
+  if (existsSync(insightsDir)) {
+    for (const name of readdirSync(insightsDir)) {
+      if (!name.endsWith('.json')) continue
+      const doc = JSON.parse(readFileSync(join(insightsDir, name), 'utf8')) as DatedItem
+      const slug = typeof doc.slug === 'string' ? doc.slug : name.replace(/\.json$/, '')
+      rememberDate(dates, `/insights/${slug}`, doc)
+    }
+  }
+  const projectsSnap = join(projectRoot, 'src/assets/wireframe-data/projects.json')
+  if (existsSync(projectsSnap)) {
+    const snap = JSON.parse(readFileSync(projectsSnap, 'utf8')) as { items?: DatedItem[] }
+    for (const item of snap.items ?? []) {
+      if (!item.slug) continue
+      rememberDate(dates, `/projects/${item.slug}`, item)
+    }
+  }
+  return dates
+}
+
+function agentHtmlRoutes(publicDir: string): { loc: string; lastmod: string }[] {
+  const urls: { loc: string; lastmod: string }[] = []
+  const dates = contentDates()
+  const buildDate = new Date().toISOString().slice(0, 10)
+  const walk = (dir: string): void => {
+    for (const entry of readdirSync(dir, { withFileTypes: true })) {
+      const full = join(dir, entry.name)
+      if (entry.isDirectory()) {
+        walk(full)
+        continue
+      }
+      if (!entry.isFile() || !entry.name.endsWith('.html')) continue
+      const rel = relative(publicDir, full).split(sep).join('/')
+      let route = `/${rel.replace(/index\.html$/, '').replace(/\.html$/, '')}`
+      if (route.length > 1) route = route.replace(/\/$/, '')
+      if (!isIndexablePath(route)) continue
+      const lastmod = dates.get(route) ?? buildDate
+      urls.push({ loc: route === '/' ? `${SITE_URL}/` : `${SITE_URL}${route}`, lastmod })
+    }
+  }
+  walk(publicDir)
+  urls.sort((a, b) => a.loc.localeCompare(b.loc))
+  return urls
+}
 
 const dsRootDir = resolve(currentDir, 'components/ds')
 
@@ -90,6 +179,8 @@ const collectionSlugs = (collection: string): string[] => {
 const prerenderRoutes: string[] = [
   '/',
   '/about',
+  '/contact',
+  '/privacy',
   '/archive',
   '/insights',
   '/projects',
@@ -176,7 +267,12 @@ export default defineNuxtConfig({
         // google icons
         { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" },
       ],
-      script: [],
+      script: [
+        {
+          type: 'application/ld+json',
+          innerHTML: JSON.stringify(organizationJsonLd).replace(/</g, '\\u003c'),
+        },
+      ],
     }
   },
   /*
@@ -261,16 +357,37 @@ export default defineNuxtConfig({
   },
   vite: {
   },
+  hooks: {
+    'nitro:init'(nitro) {
+      nitro.hooks.hook('prerender:done', () => {
+        if (nitro.options.dev) return
+        const publicDir = nitro.options.output.publicDir
+        if (!publicDir || !existsSync(publicDir)) return
+        writeAgentOutput(publicDir)
+      })
+    }
+  },
   plugins: [
 
   ],
   ssr: true,
+  /*
+   * `/docs` is the internal design system. `nuxt dev` still serves it.
+   * `nuxt generate` (Netlify production and deploy previews) does not write
+   * those files; `prerender:done` also deletes `docs/` if a crawl created it.
+   * A missing file is a real 404 on the static host.
+   */
+  routeRules: {
+    '/docs': { prerender: false },
+    '/docs/**': { prerender: false },
+  },
   nitro: {
     prerender: {
       // Every BRIEF §7 route, enumerated from `content/bf/**` — see
       // `prerenderRoutes` above for why the crawler alone is not enough.
       routes: prerenderRoutes,
-      failOnError: false
+      failOnError: false,
+      ignore: [/^\/docs(?:\/|$)/],
     }
   },
   experimental: {
