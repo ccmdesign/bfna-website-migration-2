@@ -480,6 +480,9 @@ const routeSet = ((): string[] => {
     '/projects',
     ...(project === undefined ? [] : [`/projects/${project}`]),
     '/about',
+    '/contact',
+    '/privacy',
+    '/developers',
     '/search',
     '/archive'
   ]

@@ -262,5 +262,10 @@ useHead({ title: () => about?.heading ?? 'About Us' })
     `bfContactSection` to its `bfSection` root and out through that
     allow-list.
   -->
-  <bfContactSection id="contact" />
+  <!--
+    Washington, DC is the locality the site already publishes (stiftung copy).
+    The component default is still the Directus placeholder. TODO(owner): street
+    address and telephone, when a contact record exists.
+  -->
+  <bfContactSection id="contact" address="Washington, DC" />
 </template>

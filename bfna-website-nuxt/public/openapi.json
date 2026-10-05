@@ -1,0 +1,263 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Bertelsmann Foundation North America API",
+    "version": "1.0.0",
+    "description": "Public read-only API for Bertelsmann Foundation North America, a think tank based in Washington, DC. Authentication: none. No API key. Contact: info@bfna.org."
+  },
+  "servers": [
+    {
+      "url": "https://www.bfna.org",
+      "description": "Canonical host"
+    }
+  ],
+  "paths": {
+    "/api/v1/organization": {
+      "get": {
+        "operationId": "getOrganization",
+        "summary": "Organization record",
+        "description": "Name, canonical URL, email, description, and the Washington, DC locality for Bertelsmann Foundation North America. No telephone or street address is published.",
+        "responses": {
+          "200": {
+            "description": "The organization record.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Organization"
+                }
+              }
+            }
+          },
+          "405": {
+            "$ref": "#/components/responses/MethodNotAllowed"
+          }
+        }
+      }
+    },
+    "/api/v1/navigation": {
+      "get": {
+        "operationId": "listNavigation",
+        "summary": "Public section list",
+        "description": "Public programs, work, trust, and developer links. Does not include /docs, /wireframes, or /search.",
+        "parameters": [
+          {
+            "name": "section",
+            "in": "query",
+            "required": false,
+            "description": "Filter the list to one section.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "programs",
+                "work",
+                "trust",
+                "developer"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Matching links.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Navigation"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidSection"
+          },
+          "405": {
+            "$ref": "#/components/responses/MethodNotAllowed"
+          }
+        }
+      }
+    },
+    "/api/v1/health": {
+      "get": {
+        "operationId": "getHealth",
+        "summary": "Health check",
+        "description": "Returns status ok when the API document is being served.",
+        "responses": {
+          "200": {
+            "description": "The service is serving this document.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Health"
+                }
+              }
+            }
+          },
+          "405": {
+            "$ref": "#/components/responses/MethodNotAllowed"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Organization": {
+        "type": "object",
+        "required": [
+          "name",
+          "url",
+          "email",
+          "description",
+          "address"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "description": {
+            "type": "string"
+          },
+          "address": {
+            "$ref": "#/components/schemas/PostalAddress"
+          }
+        }
+      },
+      "PostalAddress": {
+        "type": "object",
+        "required": [
+          "addressLocality",
+          "addressRegion",
+          "addressCountry"
+        ],
+        "properties": {
+          "addressLocality": {
+            "type": "string"
+          },
+          "addressRegion": {
+            "type": "string"
+          },
+          "addressCountry": {
+            "type": "string"
+          }
+        }
+      },
+      "NavLink": {
+        "type": "object",
+        "required": [
+          "section",
+          "title",
+          "url",
+          "description"
+        ],
+        "properties": {
+          "section": {
+            "type": "string",
+            "enum": [
+              "programs",
+              "work",
+              "trust",
+              "developer"
+            ]
+          },
+          "title": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      },
+      "Navigation": {
+        "type": "object",
+        "required": [
+          "links"
+        ],
+        "properties": {
+          "links": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NavLink"
+            }
+          }
+        }
+      },
+      "Health": {
+        "type": "object",
+        "required": [
+          "status",
+          "service"
+        ],
+        "properties": {
+          "status": {
+            "type": "string",
+            "const": "ok"
+          },
+          "service": {
+            "type": "string"
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "required": [
+          "error"
+        ],
+        "properties": {
+          "error": {
+            "type": "object",
+            "required": [
+              "code",
+              "message",
+              "hint"
+            ],
+            "properties": {
+              "code": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              },
+              "hint": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "responses": {
+      "MethodNotAllowed": {
+        "description": "This API is read-only. Use GET.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "InvalidSection": {
+        "description": "The section query is not one of the published values.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,13 @@
+# Netlify UI for this site (base directory bfna-website-nuxt) sets:
+#   command: npm run generate
+#   publish: bfna-website-nuxt/dist
+# Restated here so `netlify build` and the UI agree. `nuxt generate` writes
+# `.output/public` and links `dist` at that folder.
+#
+# The edge function is registered by its own `export const config`.
+# Do not also declare [[edge_functions]] here.
+# Do not add per-context headers. Non-production noindex is a generated
+# `_headers` rule (server/plugins/agent-output.ts).
+[build]
+  command = "npm run generate"
+  publish = "dist"

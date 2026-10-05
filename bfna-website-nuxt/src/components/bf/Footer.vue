@@ -308,7 +308,8 @@ const year = new Date().getFullYear()
       <div class="bf-footer__legal | cluster" data-gap="m">
         <p>© {{ year }} Copyright Bertelsmann Foundation.</p>
         <div class="cluster" data-gap="m">
-          <p><a href="#" class="bf-footer__link">Privacy Policy</a></p>
+          <p><NuxtLink to="/privacy" class="bf-footer__link">Privacy Policy</NuxtLink></p>
+          <p><NuxtLink to="/developers" class="bf-footer__link">Developer API</NuxtLink></p>
           <p>Site by <a href="https://ccm.design" class="bf-footer__link" data-external v-bind="newTabAttrs('https://ccm.design')">ccm.design</a></p>
         </div>
       </div>

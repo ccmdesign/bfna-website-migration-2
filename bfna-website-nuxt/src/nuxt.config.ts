@@ -3,6 +3,7 @@ import { readdirSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { defineNuxtConfig } from 'nuxt/config'
+import { organizationJsonLd } from '../utils/agentContent'
 
 const currentDir = dirname(fileURLToPath(import.meta.url))
 const projectRoot = resolve(currentDir, '..')
@@ -90,6 +91,9 @@ const collectionSlugs = (collection: string): string[] => {
 const prerenderRoutes: string[] = [
   '/',
   '/about',
+  '/contact',
+  '/privacy',
+  '/developers',
   '/archive',
   '/insights',
   '/projects',
@@ -176,7 +180,12 @@ export default defineNuxtConfig({
         // google icons
         { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" },
       ],
-      script: [],
+      script: [
+        {
+          type: 'application/ld+json',
+          innerHTML: JSON.stringify(organizationJsonLd).replace(/</g, '\\u003c'),
+        },
+      ],
     }
   },
   /*

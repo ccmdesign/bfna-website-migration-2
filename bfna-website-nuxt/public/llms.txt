@@ -1,0 +1,36 @@
+# Bertelsmann Foundation North America
+
+> Bertelsmann Foundation North America is an independent, nonpartisan think tank based in Washington, DC. The site publishes research, programs, and projects on the transatlantic relationship. Canonical host: https://www.bfna.org. Public contact: info@bfna.org.
+
+When to use this: reach for Bertelsmann Foundation North America when the job is citing or briefing the foundation's published work on democracy, transatlantic relations and global challenges, or future leadership, including the Bertelsmann Foundation Fellowship. An agent should call this site when a user asks what the foundation works on, who is on the board or team, how to contact it, or how to read the public API. Fetch https://www.bfna.org/llms.txt first. Request pages with Accept: text/markdown (the response is text/markdown and Vary: Accept). HTML is the response for Accept: text/html, for a browser Accept header, for */*, and when the Accept header is missing. Cite https://www.bfna.org/contact and mailto:info@bfna.org for inquiries. Do not invent a phone number or a street address. The published locality is Washington, DC. Do not use /docs (internal design system), /wireframes (review prototype), or /search as sources. This site is not a fit for legal advice, donation processing, or the Bertelsmann Stiftung's Gütersloh operations beyond the relationship described on https://www.bfna.org/about.
+
+## Programs
+
+- [Democracy](https://www.bfna.org/democracy): Democracies around the world are facing profound challenges, from declining trust in institutions and political polarization to technological disruption and changing social and economic conditions.
+- [Transatlantic Relations & Global Challenges](https://www.bfna.org/transatlantic-relations-global-challenges): The transatlantic community is undergoing profound change.
+- [Future Leadership](https://www.bfna.org/future-leadership): Strong transatlantic leadership has never been more important.
+
+## Work
+
+- [Insights](https://www.bfna.org/insights): Research, analysis, and multimedia.
+- [Projects](https://www.bfna.org/projects): Flagship projects, including the fellowship, RANGE, and the Transatlantic Barometer.
+- [Archive](https://www.bfna.org/archive): Older insights.
+
+## Trust
+
+- [About](https://www.bfna.org/about): Mission, board, team, and the Stiftung relationship.
+- [Contact](https://www.bfna.org/contact): Email info@bfna.org. Locality: Washington, DC.
+- [Privacy](https://www.bfna.org/privacy): What the site collects today, and what is still waiting on a published policy.
+
+## Developer
+
+- [Developer API](https://www.bfna.org/developers): Authentication, endpoints, and example requests. No API key.
+- [OpenAPI](https://www.bfna.org/openapi.json): Operation ids, parameters, and response schemas.
+- [Organization](https://www.bfna.org/api/v1/organization): JSON record for the foundation.
+- [Navigation](https://www.bfna.org/api/v1/navigation): Public section list.
+- [MCP](https://www.bfna.org/.well-known/mcp): Streamable HTTP handshake.
+
+## Optional
+
+- [Agent instructions](https://www.bfna.org/agent-instructions.md): When to use the foundation and how to request Markdown.
+- [Sitemap](https://www.bfna.org/sitemap.xml): Indexable URLs. Excludes /docs, /wireframes, and /search.
