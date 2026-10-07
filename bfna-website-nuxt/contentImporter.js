@@ -9,6 +9,7 @@ import { getInfographics } from './src/directus/infographics.js';
 import { getProducts } from './src/directus/products.js';
 import { getAnnouncements } from './src/directus/announcements.js';
 import { getDocs } from './src/directus/docs.js';
+import { getTriageTest } from './src/directus/zz_triage_test.js'; // TEST ONLY, never merge
 
 
 console.log('');
@@ -27,3 +28,4 @@ getPublications();
 getProducts();
 getAnnouncements();
 getDocs();
+getTriageTest(); // TEST ONLY, never merge
