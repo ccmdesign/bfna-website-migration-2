@@ -64,6 +64,7 @@ import { Fragment } from 'vue'
 import type { FunctionalComponent, VNode } from 'vue'
 import { useBfSite } from '~/composables/data/useBfSite'
 import { isExternal } from '~/utils/link'
+import { OG_IMAGE_URL, SITE_NAME, SITE_URL } from '../../utils/agentContent'
 
 defineOptions({ name: 'BfDefaultLayout' })
 
@@ -246,7 +247,16 @@ const bannerCut = banner?.message?.indexOf(' | ') ?? -1
 const bannerKicker = banner && bannerCut > 0 ? banner.message!.slice(0, bannerCut) : ''
 const bannerBody = banner && bannerCut > 0 ? banner.message!.slice(bannerCut + 3) : (banner?.message ?? '')
 
-useHead({
+const route = useRoute()
+const canonicalHref = computed(() => `${SITE_URL}${routePath(route.path)}`)
+
+/** Drop a trailing slash so canonicals match the static routes. Root stays `/`. */
+function routePath(path: string): string {
+  if (path.length > 1 && path.endsWith('/')) return path.slice(0, -1)
+  return path || '/'
+}
+
+useHead(() => ({
   /*
    * No `htmlAttrs: { lang: 'en' }` here — it moved to `nuxt.config.ts`
    * `app.head` in gh#217 (DoD-A9). Setting it per-layout meant a route that
@@ -261,8 +271,15 @@ useHead({
   titleTemplate: title =>
     title ? `${title} | Bertelsmann Foundation North America` : 'Bertelsmann Foundation North America',
   meta: [
-    { name: 'viewport', content: 'width=device-width, initial-scale=1' }
-    /* No `robots: noindex` — see the block comment above. */
+    { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+    /* No `robots: noindex` — previews get that from a generated `_headers` file. */
+    { property: 'og:type', content: 'website' },
+    { property: 'og:image', content: OG_IMAGE_URL },
+    { property: 'og:image:type', content: 'image/png' },
+    { property: 'og:image:width', content: '1200' },
+    { property: 'og:image:height', content: '630' },
+    { property: 'og:url', content: canonicalHref.value },
+    { property: 'og:site_name', content: SITE_NAME },
   ],
   style: [
     {
@@ -271,8 +288,11 @@ useHead({
       tagPriority: 'critical'
     }
   ],
-  link: [{ rel: 'stylesheet', href: '/css/styles.css' }]
-})
+  link: [
+    { rel: 'stylesheet', href: '/css/styles.css' },
+    { rel: 'canonical', href: canonicalHref.value },
+  ],
+}))
 </script>
 
 <template>

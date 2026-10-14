@@ -109,6 +109,7 @@ import {
 import { newTabAttrs } from '~/utils/link'
 import { programChipLabel } from '~/utils/bf-card-program'
 import { youtubeEmbedUrl, youtubeId, youtubePoster, youtubeWatchUrl } from '~/utils/youtube'
+import { SITE_URL, articleJsonLd } from '../../../utils/agentContent'
 
 defineOptions({ name: 'InsightDetailPage' })
 
@@ -168,6 +169,24 @@ const headingSplit = splitHeadingKicker(insight?.heading)
 
 /** The format chip, unless the kicker already says it (kicker "Infographic" on an infographic). */
 const showFormatChip = insight ? !kickerHidesFormatChip(headingSplit, insight.format) : false
+
+useHead(() => {
+  if (!insight?.heading) return {}
+  return {
+    script: [{
+      key: 'article-jsonld',
+      type: 'application/ld+json',
+      innerHTML: JSON.stringify(articleJsonLd({
+        headline: insight.heading,
+        url: `${SITE_URL}/insights/${insight.slug}`,
+        datePublished: insight.publish_date,
+        dateModified: insight.publish_date,
+        authors: insight.authors,
+        image: insight.image,
+      })).replace(/</g, '\\u003c'),
+    }],
+  }
+})
 
 /**
  * The programme colour scope (gh#252). `data-program` lands on `<html>` — the

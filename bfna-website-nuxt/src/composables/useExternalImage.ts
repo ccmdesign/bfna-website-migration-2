@@ -11,10 +11,11 @@ export const useExternalImage = () => {
       try {
         const urlObj = new URL(url)
         const hostname = urlObj.hostname
-        // Consider external if not localhost or same domain
+        // Consider external if not localhost, same domain, or Directus host
         return !hostname.includes('localhost') && 
                !hostname.includes('127.0.0.1') &&
-               !hostname.includes('bfna-site-v2.netlify.app')
+               !hostname.includes('bfna-site-v2.netlify.app') &&
+               !hostname.includes('bfna.simplyas.com')
       } catch {
         // If URL parsing fails, treat as external if it starts with http
         return true
