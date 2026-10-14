@@ -34,9 +34,9 @@
  *   as a broken image. A photograph on the `insights` page document still
  *   wins, under the navy scrim, exactly as on `bfPageHeader`.
  * - **Toolbar.** The two facets side by side, each under a quiet caption,
- *   and under them one status line: the count (`bfResultCount`, a live
- *   region, so a filter change is announced and not only repainted), the
- *   archive toggle, and "Clear filters" once there is something to clear.
+ *   followed by an archive toggle and grid/list controls. The live result
+ *   count and "Clear filters" sit under the introduction, leaving the sticky
+ *   bar for controls only.
  * - **Feed, by year.** The rows are grouped under a heading per publication
  *   year. A chronological feed of ~100 pieces (354 with the archive) is
  *   otherwise eight identical rows of cards with nothing to hold on to; the
@@ -247,9 +247,8 @@ const statusLine = ref<HTMLElement | null>(null)
  * element that has focus, and a keyboard or screen-reader reader was dropped
  * onto `<body>` at the top of the page with no word about what changed.
  * `/search` had the same defect and settled it the same way (`clearFacets`).
- * Here focus goes to the result count: it is the toolbar's own statement of
- * the new state ("354 items"), it is never unmounted, and it sits right where
- * the link was, so the reader keeps their place in the toolbar. It carries
+ * Here focus goes to the result count: it states the new result total,
+ * is never unmounted, and sits beside the link above the toolbar. It carries
  * `tabindex="-1"` in the template — focusable from script, never a tab stop.
  *
  * The link stays a real link to `/insights`, so it works without JavaScript
@@ -439,12 +438,26 @@ const byYear = computed<YearGroup[]>(() => {
     <p v-if="feedPage?.description" data-measure="normal">
       {{ feedPage.description }}
     </p>
+    <!-- Keep the live count mounted above the sticky controls. -->
+    <div ref="statusLine" class="cluster bf-insights-status" data-gap="m">
+      <bfResultCount
+        tabindex="-1"
+        :count="filtered.length"
+        noun="result"
+        :suffix="includeArchived ? ' (including archive)' : ''"
+      />
+      <NuxtLink
+        v-if="hasFilters"
+        class="bf-insights-action"
+        to="/insights"
+        aria-current="false"
+        @click="clearFilters"
+      >Clear filters</NuxtLink>
+    </div>
   </bfSection>
 
   <!--
-    Zone 2 — the toolbar: facets, then one status line. One band, because
-    the count and the archive toggle describe and change the same pool the
-    chips do; the feed below is the next band, at the shell's step.
+    Zone 2 — the sticky toolbar: facets, archive inclusion, then view controls.
 
     Each bar gets a visible caption — `.bf-facet-caption`
     (`public/css/components/facet-caption.css`), the one `/search` and
@@ -481,96 +494,52 @@ const byYear = computed<YearGroup[]>(() => {
         </div>
       </div>
 
-      <div class="bf-insights-views" role="group" aria-label="Results view">
+      <div class="bf-insights-controls">
         <button
           type="button"
-          class="bf-insights-views__button"
-          aria-label="Grid view"
-          title="Grid view"
-          :aria-pressed="selectedView === 'grid'"
-          @click="selectedView = 'grid'"
+          class="bf-insights-icon-button bf-insights-archive"
+          aria-label="Include archived insights"
+          :title="includeArchived ? 'Hide archived insights' : `Include archived insights (${archived.length})`"
+          :aria-pressed="includeArchived"
+          @click="onArchive"
         >
           <svg viewBox="0 0 24 24" aria-hidden="true">
-            <rect x="3" y="3" width="7" height="7" rx="1" />
-            <rect x="14" y="3" width="7" height="7" rx="1" />
-            <rect x="3" y="14" width="7" height="7" rx="1" />
-            <rect x="14" y="14" width="7" height="7" rx="1" />
+            <rect x="3" y="3" width="18" height="5" rx="1" />
+            <path d="M5 8v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8" />
+            <path v-if="includeArchived" d="m8 14 3 3 5-5" />
+            <path v-else d="M10 12h4" />
           </svg>
         </button>
-        <button
-          type="button"
-          class="bf-insights-views__button"
-          aria-label="List view"
-          title="List view"
-          :aria-pressed="selectedView === 'list'"
-          @click="selectedView = 'list'"
-        >
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M9 5h12M9 12h12M9 19h12M3 5h1M3 12h1M3 19h1" />
-          </svg>
-        </button>
+        <div class="bf-insights-views" role="group" aria-label="Results view">
+          <button
+            type="button"
+            class="bf-insights-icon-button"
+            aria-label="Grid view"
+            title="Grid view"
+            :aria-pressed="selectedView === 'grid'"
+            @click="selectedView = 'grid'"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <rect x="3" y="3" width="7" height="7" rx="1" />
+              <rect x="14" y="3" width="7" height="7" rx="1" />
+              <rect x="3" y="14" width="7" height="7" rx="1" />
+              <rect x="14" y="14" width="7" height="7" rx="1" />
+            </svg>
+          </button>
+          <button
+            type="button"
+            class="bf-insights-icon-button"
+            aria-label="List view"
+            title="List view"
+            :aria-pressed="selectedView === 'list'"
+            @click="selectedView = 'list'"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M9 5h12M9 12h12M9 19h12M3 5h1M3 12h1M3 19h1" />
+            </svg>
+          </button>
+        </div>
       </div>
-    </div>
-
-    <!--
-      The status line. `bfResultCount` rather than a bare `<p>`: it is a live
-      region, mounted in every state, so the new count is announced when a
-      chip narrows the feed — the chip itself only announces "pressed".
-
-      The toggle is a real toggle button (`aria-pressed`) drawn as the
-      checkbox it behaves like: an empty box off, a filled box with a tick on.
-      The glyph used to be a tick when the archive was *excluded* and a cross
-      when it was included, which is the opposite of what either mark means.
-    -->
-    <div ref="statusLine" class="cluster bf-insights-status" data-gap="m">
-      <bfResultCount
-        tabindex="-1"
-        :count="filtered.length"
-        noun="item"
-        :suffix="includeArchived ? ' (including archive)' : ''"
-      />
-
-      <button
-        type="button"
-        class="bf-insights-action bf-insights-archive"
-        :aria-pressed="includeArchived"
-        @click="onArchive"
-      >
-        <svg
-          class="bf-insights-archive__icon"
-          viewBox="0 0 16 16"
-          aria-hidden="true"
-        >
-          <rect
-            class="bf-insights-archive__box"
-            x="1.75"
-            y="1.75"
-            width="12.5"
-            height="12.5"
-            rx="3"
-          />
-          <path
-            class="bf-insights-archive__tick"
-            d="M4.75 8.25 7 10.5l4.25-5"
-          />
-        </svg>
-        Include archived ({{ archived.length }})
-      </button>
-
-      <!--
-        `aria-current="false"`: the router matches on path alone, so from any
-        filtered URL this link counts as exact-active and would be announced
-        as "current page". Reaching it means the page is not `/insights`
-        unfiltered, so it never is. `@click` moves focus to the count once
-        the filters are gone (`clearFilters`).
-      -->
-      <NuxtLink
-        v-if="hasFilters"
-        class="bf-insights-action"
-        to="/insights"
-        aria-current="false"
-        @click="clearFilters"
-      >Clear filters</NuxtLink>
     </div>
   </bfSection>
 
@@ -706,6 +675,10 @@ const byYear = computed<YearGroup[]>(() => {
     outline-color: var(--color-text-inverse);
   }
 
+  .bf-insights-masthead--media .bf-insights-status :is(.bf-result-count, strong, a) {
+    color: var(--color-text-inverse);
+  }
+
   /*
     ## Toolbar
 
@@ -714,7 +687,8 @@ const byYear = computed<YearGroup[]>(() => {
     secondary voice; the three list templates set them alike.
 
     The facet rows keep their tops aligned when the Program row wraps under
-    Format on a narrow screen, and the status line sits on one baseline.
+    Format on a narrow screen. Archive inclusion stays available on mobile,
+    where the grid/list choices are hidden.
   */
   .bf-insights-facets {
     flex: 1;
@@ -729,13 +703,21 @@ const byYear = computed<YearGroup[]>(() => {
     gap: var(--space-m);
   }
 
+  .bf-insights-controls {
+    display: flex;
+    flex: none;
+    gap: var(--space-xs);
+  }
+
   .bf-insights-views {
     display: none;
     flex: none;
     gap: var(--space-3xs);
+    padding-inline-start: var(--space-xs);
+    border-inline-start: var(--border-width-thin) solid var(--color-rule);
   }
 
-  .bf-insights-views__button {
+  .bf-insights-icon-button {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -749,16 +731,16 @@ const byYear = computed<YearGroup[]>(() => {
     cursor: pointer;
   }
 
-  .bf-insights-views__button:hover {
+  .bf-insights-icon-button:hover {
     border-color: var(--color-rule);
   }
 
-  .bf-insights-views__button[aria-pressed="true"] {
+  .bf-insights-icon-button[aria-pressed="true"] {
     background: var(--color-accent);
     color: var(--color-text-inverse);
   }
 
-  .bf-insights-views__button svg {
+  .bf-insights-icon-button svg {
     inline-size: 1.25rem;
     block-size: 1.25rem;
     fill: none;
@@ -793,8 +775,8 @@ const byYear = computed<YearGroup[]>(() => {
   }
 
   /*
-    The two text controls — the archive toggle and "Clear filters" — in the
-    voice of `bfLoadMore` and the home page's "All … →" links: 14/18 medium,
+    "Clear filters" sits beside the result count in the voice of
+    `bfLoadMore` and the home page's "All … →" links: 14/18 medium,
     the link blue, no box, and sentence case like them.
 
     `min-block-size` keeps a 24px target (WCAG 2.5.8) around 18px of type;
@@ -821,49 +803,6 @@ const byYear = computed<YearGroup[]>(() => {
 
   .bf-insights-action:hover {
     text-decoration-line: underline;
-  }
-
-  /*
-    The checkbox glyph. Off: an outlined box in the label's blue. On: the
-    box fills with it and a tick in the page ground appears inside. Stroke
-    and fill come from `currentcolor`, so the glyph follows the label.
-  */
-  .bf-insights-archive__icon {
-    flex: none;
-    inline-size: 1.1em;
-    block-size: 1.1em;
-  }
-
-  .bf-insights-archive__box {
-    fill: transparent;
-    stroke: currentcolor;
-    stroke-width: 1.5;
-    transition: fill 160ms cubic-bezier(0.16, 1, 0.3, 1);
-  }
-
-  .bf-insights-archive__tick {
-    fill: none;
-    stroke: var(--color-surface-page);
-    stroke-width: 1.75;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    opacity: 0;
-    transition: opacity 160ms cubic-bezier(0.16, 1, 0.3, 1);
-  }
-
-  .bf-insights-archive[aria-pressed="true"] .bf-insights-archive__box {
-    fill: currentcolor;
-  }
-
-  .bf-insights-archive[aria-pressed="true"] .bf-insights-archive__tick {
-    opacity: 1;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .bf-insights-archive__box,
-    .bf-insights-archive__tick {
-      transition: none;
-    }
   }
 
   /*

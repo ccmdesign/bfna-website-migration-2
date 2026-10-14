@@ -4,7 +4,7 @@
 set -u
 NAME=$1
 cd "$(dirname "$0")/out"
-SRC=$SRC; [[ -f $SRC ]] || SRC=$NAME.webp
+SRC=$NAME.png; [[ -f $SRC ]] || SRC=$NAME.webp
 H=$(magick identify -format '%h' $SRC); W=$(magick identify -format '%w' $SRC)
 # mean luminance per row; gutter rows are near-white (>250 of 255)
 ROWS=$(magick $SRC -colorspace Gray -scale "1x${H}!" -depth 8 txt:- | awk -F'[(),: ]+' 'NR>1{ if ($4>250) print $2 }')

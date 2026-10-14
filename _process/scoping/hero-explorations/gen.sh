@@ -37,6 +37,6 @@ Reference photos are attached for architectural accuracy only, not for framing o
 Use the image generation tool. Then copy the generated PNG to $OUT/$NAME.png using a shell command and reply with only the final path."
 
 cd $DIR
-codex exec -s workspace-write -C $DIR -i ${REFS[@]} --skip-git-repo-check -o $OUT/$NAME.log "$PROMPT" > $OUT/$NAME.stdout 2>&1
+codex exec -s workspace-write -C $DIR -i ${REFS[@]} --skip-git-repo-check -o $OUT/$NAME.log "$PROMPT" < /dev/null > $OUT/$NAME.stdout 2>&1
 echo "exit=$? $NAME"
 [[ -f $OUT/$NAME.png ]] && magick $OUT/$NAME.png -quality 92 $OUT/$NAME.webp && rm $OUT/$NAME.png && ls -la $OUT/$NAME.webp
