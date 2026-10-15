@@ -1,3 +1,4 @@
+// @vitest-environment nuxt
 import { describe, it, expect } from 'vitest'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import ccmTable from '../../components/ds/organisms/ccmTable.vue'
