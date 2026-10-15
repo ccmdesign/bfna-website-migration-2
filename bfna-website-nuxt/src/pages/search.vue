@@ -1,7 +1,7 @@
 <template>
   <div
     id="search__loading"
-    class=""
+    :class="{ 'search--loading': search.isLoading.value }"
     style="min-height: calc(100vh - 72px); padding: 24px"
   >
     <div class="search-form-container">
@@ -13,7 +13,15 @@
           class="search-input"
           placeholder="Search"
         />
+        <!-- space is always reserved so showing the bar never shifts the layout -->
+        <div class="search-progress" aria-hidden="true">
+          <span class="search-progress__bar" />
+        </div>
       </form>
+
+      <p class="sr-only" role="status">
+        {{ search.isLoading.value ? 'Searching…' : '' }}
+      </p>
 
       <!-- live region so screen readers hear the count change on "Show more" -->
       <div class="result-section" aria-live="polite">
@@ -31,6 +39,7 @@
         v-if="search.visibleResults.value.length"
         id="search-results-list"
         class="search-cards--list cards-section cards-section--updates"
+        :aria-busy="search.isLoading.value"
       >
         <div
           v-for="(result, index) in search.visibleResults.value"
@@ -192,6 +201,76 @@ useHead({
 </script>
 
 <style scoped>
+/* Loading feedback: thin indeterminate bar under the input and dimmed
+   results. Both wait 200ms before appearing so fast responses don't flash. */
+.search-progress {
+  /* the legacy .search-input is 50% wide plus its padding and 1px borders
+     (content-box), so add those to line the bar up with the input edges */
+  width: calc(50% + var(--s3) + var(--s0) + 2px);
+  height: 3px;
+  margin-top: var(--s-2);
+  overflow: hidden;
+  border-radius: 2px;
+  background-color: hsl(var(--navy-hsl), 0.1);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.search-progress__bar {
+  display: block;
+  width: 40%;
+  height: 100%;
+  border-radius: inherit;
+  background-color: var(--color-navy);
+  transform: translateX(-100%);
+}
+
+.search--loading .search-progress {
+  opacity: 1;
+  transition-delay: 0.2s;
+}
+
+.search--loading .search-progress__bar {
+  animation: search-progress 1.2s ease-in-out infinite;
+}
+
+@keyframes search-progress {
+  from {
+    transform: translateX(-100%);
+  }
+
+  to {
+    transform: translateX(250%);
+  }
+}
+
+.search-cards--list {
+  transition: opacity 0.2s ease;
+}
+
+.search--loading .search-cards--list {
+  opacity: 0.5;
+  transition-delay: 0.2s;
+}
+
+/* no sliding motion: show a full-width bar that gently pulses instead */
+@media (prefers-reduced-motion: reduce) {
+  .search-progress__bar {
+    width: 100%;
+    transform: none;
+  }
+
+  .search--loading .search-progress__bar {
+    animation: search-progress-pulse 1.6s ease-in-out infinite;
+  }
+
+  @keyframes search-progress-pulse {
+    50% {
+      opacity: 0.4;
+    }
+  }
+}
+
 .search-results__more {
   font-weight: normal;
   color: var(--color-gray-70);
