@@ -1,6 +1,5 @@
 import dotenv from 'dotenv';
 import { createDirectus, rest, readItems } from '@directus/sdk';
-import { createClient } from 'contentful'
 
 import showdown from 'showdown';
 import { JSDOM } from 'jsdom';
@@ -25,13 +24,7 @@ export const getDirectusData = async (collectionName, junctionFields=undefined) 
   return { data: content };
 }
 
-// Contentful Client for Docs
-
-export const contentfulClientDocs = createClient({
-  space: process.env.DOCS_CONTENTFUL_SPACE,
-  accessToken: process.env.DOCS_CONTENTFUL_ACCESS_TOKEN,
-});
-
+// map legacy workstream keys to theme names
 export const getThemeFromWorkspaceKey = (workspaceKey) => {
   switch (workspaceKey) {
     case "archives":
@@ -44,19 +37,6 @@ export const getThemeFromWorkspaceKey = (workspaceKey) => {
       return workspaceKey;
   }
 };
-
-export const getImageAssetUrl = (url) => {
-  if (url && !url.startsWith('https://')) {
-    url = 'https:' + url.replace(/^https?:\/\//, '');
-  }
-  return `${url}?w=800&fm=webp&q=80&fit=fill`;
-};
-
-// -- Contentful Ends --
-
-
-
-
 
 // getImageUrl
 export const getImage = (imageId) => {

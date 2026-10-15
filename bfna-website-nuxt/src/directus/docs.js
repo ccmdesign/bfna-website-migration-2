@@ -2,99 +2,68 @@ import fs from 'fs';
 import { rimraf } from 'rimraf';
 import * as common from './common.js';
 
-// TODO: UPDATE THIS FILE TO GET BFNA DOCS DATA FROM DIRECTUS WHEN THE MIGRATION IS COMPLETE.
-
 const getSource = (url) => {
+  if (!url) return null;
   if (url.includes("youtu")) {
     return 'youtube'
   } else if(url.includes("vimeo")){
     return 'vimeo'
   }
+  return null;
 }
 
-const getManagedDocs = async () => {
-  const response = await common.contentfulClientDocs.getEntries({
-    content_type: 'bfnaDocsDisplayManagement',
-    include: 1,
-    limit: 4,
-  })
-  return response
+// workstream may come through as a relation object or a plain key
+const getWorkstreamKey = (workstream) => {
+  if (!workstream) return 'default';
+  if (typeof workstream === 'string') return workstream;
+  return workstream.slug || common.slugify(workstream.heading || '') || 'default';
 }
 
-const getDocumentaries = async () => {
-  const docs =[]
-  const data = await getManagedDocs()
-  data.items.map(( { fields }, index) => {
-    
-    let featured = fields.featured
-    let featuredItem = {
-      order: index,
-      workstream: common.getThemeFromWorkspaceKey(featured.fields.workstream),
-      theme: common.getThemeFromWorkspaceKey(featured.fields.workstream),
-      heading: featured.fields.title,
-      subheading: featured.fields.subtitle,
-      by: featured.fields.by,
-      button: {
-        label: 'Watch',
-        url: featured.fields.video_url,
-      },
-      description: featured.fields.description,
-      backgroundImage: common.getImageAssetUrl(featured.fields.background_image.fields.file.url),
-      tags: featured.fields.tags,
-      transcript: featured.fields.transcript,
-      screenings: featured.fields.screenings,
-      videoInfo: featured.fields.video_info,
-      awards: featured.fields.awards,
-      source: getSource(featured.fields.video_url),
-      objectType: 'docs'
-    }
-    docs.push(featuredItem)
-
-    fields.featuredOrder.map((item, index) => {
-      let fields = item.fields
-      let featuredOrderItem = {
-        order: index+1,
-        workstream: common.getThemeFromWorkspaceKey(fields.workstream),
-        theme: common.getThemeFromWorkspaceKey(fields.workstream),
-        heading: fields.title,
-        subheading: fields.subtitle,
-        by: fields.by,
-        button: {
-          label: 'Watch',
-          url: fields.video_url,
-        },
-        description: fields.description,
-        backgroundImage: common.getImageAssetUrl(fields.background_image.fields.file.url),
-        tags: fields.tags,
-        transcript: fields.transcript,
-        screenings: fields.screenings,
-        videoInfo: fields.video_info,
-        awards: fields.awards,
-        source: getSource(fields.video_url),
-        objectType: 'docs'
-      }
-      docs.push(featuredOrderItem)
-    })
-  })
-  
-  return docs
+// background_image may come through as a file object (*.*) or a file id
+const getBackgroundImage = (image) => {
+  if (!image) return null;
+  return common.getImage(typeof image === 'object' ? image.id : image);
 }
 
 const objectContructor = async (dir, fs) => {
   try {
     // use this list to add fields from junction tables
     const junctionFields = [
-      'image.*',
+      'workstream.*',
+      'background_image.*',
     ]
 
-    const items = await getDocumentaries();
+    const items = await common.getDirectusData("docs_documentaries", junctionFields);
 
-    await items.forEach((item) => {
-      let i = item;
-      i.slug = common.slugify(item.heading);
-      // i.image = item.image ? common.getImage(item.image.id) : null;
-      // i.buttonLabel = item.button_label || "Read More";
-      
+    // keep the manual ordering set in Directus
+    const docs = [...items.data].sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0));
+
+    docs.forEach((item, index) => {
+      const theme = common.getThemeFromWorkspaceKey(getWorkstreamKey(item.workstream));
+
+      const i = {
+        order: index,
+        workstream: theme,
+        theme: theme,
+        heading: item.title,
+        subheading: item.subtitle,
+        by: item.by,
+        button: {
+          label: 'Watch',
+          url: item.video_url,
+        },
+        description: item.description,
+        backgroundImage: getBackgroundImage(item.background_image),
+        tags: item.tags,
+        transcript: item.transcript,
+        screenings: item.screenings,
+        videoInfo: item.video_info,
+        awards: item.awards,
+        source: getSource(item.video_url),
+        objectType: 'docs',
+        slug: item.slug || common.slugify(item.title),
+      };
+
       fs.writeFile(
         dir + "/" + i.slug + ".json",
         JSON.stringify(i),

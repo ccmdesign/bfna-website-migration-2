@@ -73,5 +73,11 @@
     "tsx": "^4.20.6",
     "typescript": "^5.0.0",
     "vue-tsc": "^2.0.0"
+  },
+  "allowScripts": {
+    "better-sqlite3@12.11.1": true,
+    "esbuild@0.28.2": true,
+    "unrs-resolver@1.12.2": true,
+    "core-js": false
   }
 }
