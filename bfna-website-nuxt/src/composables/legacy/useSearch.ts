@@ -1,5 +1,6 @@
 import { computed, ref, watch } from 'vue'
 import { useDebounceFn } from '@vueuse/core'
+import { useRuntimeConfig } from '#imports'
 
 export interface SearchRelatedItem {
   url: string
@@ -19,68 +20,127 @@ export interface SearchCard {
   related?: SearchRelatedItem[]
 }
 
-export interface SearchResult {
-  item: SearchCard
-}
-
 export interface SearchResponse {
   // matches at or above the API's relevance threshold
-  results: SearchResult[]
+  results: SearchCard[]
   // matches below the threshold, shown on demand
-  weaker: SearchResult[]
-  minRelevance: number | null
+  weaker: SearchCard[]
 }
 
-const EMPTY_RESPONSE: SearchResponse = { results: [], weaker: [], minRelevance: null }
+// Shape returned by the search API (SEARCH_BASE_URL, /search-enhanced)
+interface SearchApiRelatedItem {
+  id: string
+  heading: string
+  type?: string
+  theme?: string
+  slug?: string
+  url?: string
+  // why the API linked it, e.g. "Similar topic" or "Shared: Hungary"
+  reason?: string
+}
 
-const getSearchData = async (term: string): Promise<SearchResponse> => {
-  // Trim whitespace from search term
-  const trimmedTerm = term.trim()
+interface SearchApiItem {
+  id: string
+  collection: string
+  type?: string
+  heading: string
+  subheading?: string
+  excerpt?: string
+  theme?: string
+  slug?: string
+  url?: string
+  related?: SearchApiRelatedItem[]
+}
 
-  // Handle empty queries by returning zero results without API call
-  if (!trimmedTerm) {
-    return EMPTY_RESPONSE
+interface SearchApiResult {
+  item: SearchApiItem
+  score?: number
+  relevance?: number
+}
+
+interface SearchApiResponse {
+  total: number
+  results: SearchApiResult[]
+  weaker?: SearchApiResult[]
+  min_relevance?: number
+}
+
+// the API caps results + weaker at 25 combined
+const SEARCH_LIMIT = 25
+const SEARCH_TIMEOUT_MS = 10000
+
+const EMPTY_RESPONSE: SearchResponse = { results: [], weaker: [] }
+
+// the API returns absolute URLs for external content (docs, podcasts)
+// and site-relative URLs for internal pages
+const getItemUrl = (item: SearchApiItem | SearchApiRelatedItem) => {
+  if (item.url) return item.url
+  if (item.theme && item.slug) return `/${item.theme}/${item.slug}`
+  return ''
+}
+
+const toCards = (matches: SearchApiResult[] = []): SearchCard[] =>
+  matches
+    .map(({ item }) => ({
+      url: getItemUrl(item),
+      heading: item.heading,
+      subheading: item.subheading,
+      excerpt: item.excerpt,
+      theme: item.theme,
+      type: item.type,
+      related: (item.related || [])
+        .map((related) => ({
+          url: getItemUrl(related),
+          heading: related.heading,
+          type: related.type,
+          theme: related.theme,
+          reason: related.reason,
+        }))
+        .filter((related) => related.url),
+    }))
+    .filter((card) => card.url)
+
+// Calls the search API directly from the browser; the site is deployed
+// statically, so there is no server route to proxy through.
+// Throws on failure so the page can tell an outage apart from "no results".
+const getSearchData = async (apiUrl: string, term: string): Promise<SearchResponse> => {
+  if (!apiUrl) {
+    throw new Error('Search API URL is not configured (NUXT_PUBLIC_SEARCH_API_URL / SEARCH_BASE_URL)')
   }
 
-  try {
-    const res = await fetch(`/api/search?term=${encodeURIComponent(trimmedTerm)}`)
+  const params = new URLSearchParams({ term, format: 'full', limit: String(SEARCH_LIMIT) })
+  const res = await fetch(`${apiUrl}?${params}`, {
+    signal: AbortSignal.timeout(SEARCH_TIMEOUT_MS),
+  })
 
+  if (!res.ok) {
+    throw new Error(`Search API error: ${res.status}`)
+  }
+  const data: SearchApiResponse = await res.json()
 
-    if (!res.ok) {
-      throw new Error(`Search API error: ${res.status}`)
-    }
-    const data = await res.json()
-
-    return {
-      results: data?.results || [],
-      weaker: data?.weaker || [],
-      minRelevance: data?.minRelevance ?? null,
-    }
-
-  } catch (error) {
-    // Log error in dev mode
-    if (process.dev) {
-      console.error('Search error:', error)
-    }
-    // Return empty results on error
-    return EMPTY_RESPONSE
+  return {
+    results: toCards(data?.results),
+    weaker: toCards(data?.weaker),
   }
 }
 
-const toCards = (results: SearchResult[]) =>
-  results
-    .filter((result) => Boolean(result.item?.url))
-    .map(({ item }) => item)
+export interface UseSearchOptions {
+  // defaults to runtimeConfig.public.searchApiUrl
+  apiUrl?: string
+}
 
-export const useSearch = () => {
+export const useSearch = (options: UseSearchOptions = {}) => {
+  const apiUrl = options.apiUrl ?? (useRuntimeConfig().public.searchApiUrl as string)
+
   const query = ref('')
   const results = ref<SearchCard[]>([])
   const weakerResults = ref<SearchCard[]>([])
-  const minRelevance = ref<number | null>(null)
   const showWeaker = ref(false)
   const isLoading = ref(false)
   // true once a non-empty search has returned, to drive the empty-state messages
   const hasSearched = ref(false)
+  // true when the last search failed, so the page can say so instead of "no results"
+  const hasError = ref(false)
 
   // relevant results first, then the weaker ones when expanded
   const visibleResults = computed(() =>
@@ -98,9 +158,8 @@ export const useSearch = () => {
   let displayedTerm = ''
 
   const setResponse = (response: SearchResponse, term: string) => {
-    results.value = toCards(response.results)
-    weakerResults.value = toCards(response.weaker)
-    minRelevance.value = response.minRelevance
+    results.value = response.results
+    weakerResults.value = response.weaker
     // every new search starts collapsed
     if (term !== displayedTerm) {
       showWeaker.value = false
@@ -126,26 +185,28 @@ export const useSearch = () => {
     if (!trimmedTerm) {
       setResponse(EMPTY_RESPONSE, '')
       hasSearched.value = false
+      hasError.value = false
       isLoading.value = false
       return
     }
 
     isLoading.value = true
     try {
-      const data = await getSearchData(trimmedTerm)
+      const data = await getSearchData(apiUrl, trimmedTerm)
       if (searchId !== latestSearchId) return
 
       setResponse(data, trimmedTerm)
+      hasError.value = false
       hasSearched.value = true
     } catch (error) {
       if (searchId !== latestSearchId) return
 
       // Log error in dev mode
-      if (process.dev) {
+      if (import.meta.dev) {
         console.error('Search error:', error)
       }
-      // Show empty results on error
       setResponse(EMPTY_RESPONSE, trimmedTerm)
+      hasError.value = true
       hasSearched.value = true
     } finally {
       // leave the loading state to the newer search if one is in flight
@@ -163,7 +224,7 @@ export const useSearch = () => {
   })
 
   const initializeFromStorage = () => {
-    if (process.client) {
+    if (import.meta.client) {
       const storedQuery = localStorage.getItem('bfna-search')
       if (storedQuery) {
         query.value = storedQuery
@@ -178,15 +239,14 @@ export const useSearch = () => {
     results,
     weakerResults,
     visibleResults,
-    minRelevance,
     showWeaker,
     toggleWeaker,
     resultCount,
     hiddenCount,
     isLoading,
     hasSearched,
+    hasError,
     performSearch: debouncedSearch,
     initializeFromStorage,
   }
 }
-

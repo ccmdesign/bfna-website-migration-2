@@ -63,6 +63,11 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     public: {
+      // Search API called directly from the browser (the site is deployed
+      // statically, so there is no server route to proxy it). Set
+      // NUXT_PUBLIC_SEARCH_API_URL to override; falls back to SEARCH_BASE_URL.
+      // Static builds bake this in, so it must be set in the build environment.
+      searchApiUrl: process.env.SEARCH_BASE_URL || ''
     }
   },
   app: {

@@ -125,8 +125,11 @@
       </div>
 
       <template v-if="search.hasSearched.value && !search.isLoading.value">
+        <p v-if="search.hasError.value" class="search-message" role="alert">
+          Search is unavailable right now. Please try again in a moment.
+        </p>
         <p
-          v-if="!search.results.value.length && !search.weakerResults.value.length"
+          v-else-if="!search.results.value.length && !search.weakerResults.value.length"
           class="search-message"
         >
           No results. Try fewer or different words.
