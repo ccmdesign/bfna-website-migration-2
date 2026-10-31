@@ -11,3 +11,10 @@
 [build]
   command = "npm run generate"
   publish = "dist"
+
+# `nuxt generate` prerenders ~1,550 routes and outgrows Node's default heap.
+# The UI sets this only for deploy previews, so branch deploys (dev) died
+# with "JavaScript heap out of memory". Set here for every context; a value
+# in this file overrides the UI's.
+[build.environment]
+  NODE_OPTIONS = "--max-old-space-size=6144"
