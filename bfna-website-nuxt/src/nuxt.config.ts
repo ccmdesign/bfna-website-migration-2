@@ -233,6 +233,14 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     public: {
+      /*
+       * The search API `/search` calls from the browser (`useSearchApi`).
+       * Static builds bake this in, so it must be set in the build
+       * environment: `NUXT_PUBLIC_SEARCH_API_URL`, falling back to
+       * `SEARCH_BASE_URL` (already set on the Netlify site for the legacy
+       * search). Empty means no API, and `/search` ranks in the page.
+       */
+      searchApiUrl: process.env.NUXT_PUBLIC_SEARCH_API_URL || process.env.SEARCH_BASE_URL || ''
     }
   },
   app: {
