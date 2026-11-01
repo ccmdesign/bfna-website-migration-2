@@ -19,43 +19,32 @@ const DEFAULT_URL = 'http://localhost:3000'
 async function checkLinks(options: CheckOptions = {}) {
   const url = options.url || DEFAULT_URL
   
-  const skipPatterns = [
-    'https://www.facebook.com',
-    'https://twitter.com',
-    'https://www.youtube.com',
-    'https://www.instagram.com',
-    'https://vimeo.com',
-    'https://www.linkedin.com',
-    'https://transatlanticperiscope.org',
-    'https://www.rangeforecasting.org',
-    'https://www.transatlanticbarometer.org',
-    'https://bfnadocs.org',
-    'https://bfna.us20.list-manage.com',
-    'https://ccmdesign.ca',
-    'mailto:',
-    /*
-     * Canonical links point at https://www.bfna.org while that host is still
-     * the previous production site. Checking them against this generate would
-     * follow the old site, not the pages this build just wrote.
-     */
-    'https://www.bfna.org',
-    'https://bfna.org',
-  ]
+  /*
+   * Internal links only: skip every URL that is not on the site being checked.
+   * The imported article bodies link to thousands of news and research pages,
+   * and from a CI runner those fail for reasons that say nothing about this
+   * build — paywalls and bot walls (401/403), timeouts, and pages that moved
+   * years after the article was written. A list of skipped domains (what was
+   * here before) cannot keep up with content. This also covers the canonical
+   * links to https://www.bfna.org, which is still the previous production site.
+   */
+  const escapedUrl = url.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  const skipExternal = `^(?!${escapedUrl}(/|$))`
 
   console.log(`🔍 Checking links on ${url}...`)
-  console.log(`   Skipping external domains: ${skipPatterns.join(', ')}`)
+  console.log(`   Skipping everything outside ${url}`)
   console.log('')
 
   return new Promise<void>((resolve, reject) => {
     const args = [
       url,
       '--recurse',
-      '--skip', skipPatterns.join(','),
+      '--skip', skipExternal,
     ]
 
+    /* No shell: the skip pattern's parentheses would be shell syntax. */
     const proc = spawn('npx', ['linkinator', ...args], {
       stdio: 'inherit',
-      shell: true,
     })
 
     proc.on('close', (code) => {

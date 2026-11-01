@@ -196,6 +196,14 @@ const prerenderRoutes: string[] = [
   '/wireframes/search'
 ]
 
+/**
+ * The search API URL for `runtimeConfig.public.searchApiUrl`. Read through
+ * `globalThis`, as `writeAgentOutput` reads `CONTEXT`, because this config is
+ * typechecked without Node's types and a bare `process` is a new TS2591.
+ */
+const buildEnv = (globalThis as { process?: { env?: Record<string, string | undefined> } }).process?.env ?? {}
+const searchApiUrl = buildEnv.NUXT_PUBLIC_SEARCH_API_URL || buildEnv.SEARCH_BASE_URL || ''
+
 export default defineNuxtConfig({
   rootDir: projectRoot,
   srcDir: currentDir,
@@ -240,7 +248,7 @@ export default defineNuxtConfig({
        * `SEARCH_BASE_URL` (already set on the Netlify site for the legacy
        * search). Empty means no API, and `/search` ranks in the page.
        */
-      searchApiUrl: process.env.NUXT_PUBLIC_SEARCH_API_URL || process.env.SEARCH_BASE_URL || ''
+      searchApiUrl
     }
   },
   app: {

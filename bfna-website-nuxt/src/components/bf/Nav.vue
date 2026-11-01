@@ -70,6 +70,16 @@
  * Hidden controls are inert, Escape returns focus, and submission uses /search?q=.
  * On small screens the same field opens in a row below the bar.
  *
+ * Two constraints from `scripts/check-routes.ts` shape the markup:
+ *
+ * - **The icon is a link, `<a href="/search">`.** DoD-3 needs `/search` linked
+ *   from the menus, and without scripting the link simply goes there. Once
+ *   hydrated, a click is intercepted and opens the field instead.
+ * - **The field is not a `<form role="search">`.** gh#227 requires `/search`
+ *   to have exactly one search landmark and one `<form>`, both the page's own.
+ *   The nav renders on `/search` too, so — as in `bfFooter` — Enter in the
+ *   field and the Search button both call `submitSearch()` directly.
+ *
  * No Subscribe button — removed with the newsletter band (D2, and the frozen
  * source's own comment says so).
  *
@@ -139,8 +149,8 @@ const open = ref(false)
 const searchOpen = ref(false)
 const searchQuery = ref('')
 const searchInput = ref<HTMLInputElement | null>(null)
-const searchForm = ref<HTMLFormElement | null>(null)
-const searchButton = ref<HTMLButtonElement | null>(null)
+const searchForm = ref<HTMLElement | null>(null)
+const searchButton = ref<HTMLAnchorElement | null>(null)
 const searchId = useId()
 
 const root = ref<HTMLElement | null>(null)
@@ -168,7 +178,9 @@ async function closeSearch(returnFocus = false) {
   }
 }
 
-async function openSearch() {
+/** The icon's click: open the field rather than follow the link to /search. */
+async function openSearch(e?: Event) {
+  e?.preventDefault()
   open.value = false
   for (const details of root.value?.querySelectorAll<HTMLDetailsElement>('details[open]') ?? []) {
     details.open = false
@@ -336,17 +348,12 @@ onBeforeUnmount(() => {
           </template>
         </div>
 
-        <form
+        <div
           :id="`${searchId}-form`"
           ref="searchForm"
           class="bf-nav__search-form"
-          role="search"
-          aria-label="Site search"
-          action="/search"
-          method="get"
           :inert="!searchOpen"
           :aria-hidden="!searchOpen || undefined"
-          @submit.prevent="submitSearch"
         >
           <svg class="bf-nav__search-symbol" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
             <circle cx="10.5" cy="10.5" r="6.5" />
@@ -362,14 +369,15 @@ onBeforeUnmount(() => {
             name="q"
             placeholder="Search…"
             enterkeyhint="search"
+            @keydown.enter.prevent="submitSearch"
           >
-          <button class="bf-nav__search-submit" type="submit">Search</button>
-        </form>
+          <button class="bf-nav__search-submit" type="button" @click="submitSearch">Search</button>
+        </div>
 
-        <button
+        <a
           ref="searchButton"
+          href="/search"
           class="bf-nav__search-toggle"
-          type="button"
           aria-label="Search"
           :inert="searchOpen"
           :aria-hidden="searchOpen || undefined"
@@ -381,7 +389,7 @@ onBeforeUnmount(() => {
             <circle cx="10.5" cy="10.5" r="6.5" />
             <path d="m15.5 15.5 5 5" />
           </svg>
-        </button>
+        </a>
       </div>
     </nav>
   </header>
