@@ -34,10 +34,15 @@
  *    and a person to `/about#team`, which is an anchor into a *different*
  *    page. An entity-typed row would recompute `to` from the entity and send
  *    every person to a 404 that typechecks.
- * 2. **The ranking.** `score()` and its three computeds, ported from the
- *    frozen source. It lives **here**, never inside `bfSearchShell` (D8 — the
- *    shell renders `score`, it does not compute it, and its own block comment
- *    says so at length).
+ * 2. **The ranking.** The BFNA search API's matches first, in its order
+ *    (`useSearchApi` — an embedding search, so "how do citizens vote from
+ *    abroad" finds "Democracy at a Distance"), then the in-page `score()`
+ *    ported from the frozen source for everything the API did not return.
+ *    Without the API — no URL in the build, a failed request, or the moment
+ *    before it answers — the in-page ranking stands alone, so the page never
+ *    waits on the network to show something. Either way the ranking lives
+ *    **here**, never inside `bfSearchShell` (D8 — the shell renders `score`,
+ *    it does not compute it, and its own block comment says so at length).
  * 3. **The URL.** `q`, `program` and `format` are read from `route.query` and
  *    written back through `navigateTo`, so `/search?q=democracy` deep-links,
  *    survives a reload and prerenders. The wireframe's three page-local `ref`s
@@ -65,6 +70,7 @@ import { useBfInsights } from '~/composables/data/useBfInsights'
 import { useBfPeople } from '~/composables/data/useBfPeople'
 import { useBfPrograms } from '~/composables/data/useBfPrograms'
 import { useBfProjects } from '~/composables/data/useBfProjects'
+import { useSearchApi, type SearchApiMatch } from '~/composables/useSearchApi'
 import { programChipLabel } from '~/utils/bf-card-program'
 import { formatLabel } from '~/utils/format'
 import { displayHeading, kickerHidesFormatChip, splitHeadingKicker } from '~/utils/headingKicker'
@@ -309,7 +315,8 @@ const pool: PoolRow[] = [
  * Simulated relevance: lexical scoring dressed as a semantic rank (**D4** —
  * the pattern, not a vector index). Full-phrase and heading hits weigh above
  * body hits, so the ordering reads as relevance rather than as a raw substring
- * match. A real embedding search is Front 4 and is **not** built here.
+ * match. The real embedding search is the API below; this is what ranks
+ * whatever the API did not return, and everything when there is no API.
  *
  * The weights are the frozen source's, unchanged: phrase-in-heading 8,
  * phrase-in-body 4, term-in-heading 3, term-in-body 1, and a term that hit the
@@ -328,7 +335,9 @@ function score(row: PoolRow, phrase: string, terms: string[]): number {
   return s
 }
 
-const ranked = computed<Array<PoolRow & { score: number }>>(() => {
+type RankedRow = PoolRow & { score: number }
+
+const lexical = computed<RankedRow[]>(() => {
   if (!hasQuery.value) return []
 
   const phrase = query.value.trim().toLowerCase()
@@ -338,6 +347,80 @@ const ranked = computed<Array<PoolRow & { score: number }>>(() => {
     .map(row => ({ ...row, score: score(row, phrase, terms) }))
     .filter(row => row.score > 0)
     .sort((a, b) => b.score - a.score)
+})
+
+/* --- the search API ------------------------------------------------------ */
+
+const api = useSearchApi(query, useRuntimeConfig().public.searchApiUrl as string)
+
+const poolBySlug = new Map(pool.map(row => [row.slug, row]))
+
+/**
+ * One API match as a pool row, or nothing.
+ *
+ * - On-site content is matched by slug to the insight or project it became
+ *   (the API indexes the same Directus records the snapshot was taken from),
+ *   so the row carries this site's route, format, program and date, and the
+ *   facets filter it like any other.
+ * - Off-site content (an absolute `url` — HTFD episodes, Barometer topics,
+ *   documentaries) links out, chipped with the API's type. It has no program
+ *   or format here, so either facet hides it.
+ * - A legacy path that matches nothing on this site is dropped rather than
+ *   linked to a page the new site does not have.
+ */
+const fromMatch = (match: SearchApiMatch): PoolRow | undefined => {
+  if (/^https?:\/\//.test(match.url)) {
+    return {
+      slug: `x-${match.collection}-${match.slug}`,
+      heading: match.heading,
+      haystack: '',
+      chip: match.type ?? '',
+      archived: false,
+      program: '',
+      format: '',
+      to: match.url,
+      date: undefined,
+      excerpt: match.excerpt || match.subheading
+    }
+  }
+  return poolBySlug.get(`i-${match.slug}`) ?? poolBySlug.get(`p-${match.slug}`)
+}
+
+/**
+ * The API's matches for the current query, or `null` while there are none to
+ * use — no API, a failed request, or an answer still on its way for this
+ * query. `null` is "rank in the page"; an empty array is "the API answered
+ * and nothing on this site matched", which still falls through to the
+ * in-page ranking below.
+ */
+const semantic = computed<RankedRow[] | null>(() => {
+  if (!hasQuery.value) return null
+  if (api.status.value !== 'ready' || api.forTerm.value !== query.value.trim()) return null
+
+  const seen = new Set<string>()
+  return api.matches.value.flatMap((match) => {
+    const row = fromMatch(match)
+    if (!row || seen.has(row.slug)) return []
+    seen.add(row.slug)
+    return [{ ...row, score: match.relevance }]
+  })
+})
+
+/**
+ * The API's matches, then every in-page match the API did not return. The
+ * in-page scores are rescaled to sit under the API's lowest relevance, so the
+ * shell's score bars keep reading as one ranking from top to bottom.
+ */
+const ranked = computed<RankedRow[]>(() => {
+  const first = semantic.value
+  if (!first?.length) return lexical.value
+
+  const taken = new Set(first.map(row => row.slug))
+  const rest = lexical.value.filter(row => !taken.has(row.slug))
+  const floor = Math.min(...first.map(row => row.score)) * 0.9
+  const top = rest[0]?.score || 1
+
+  return [...first, ...rest.map(row => ({ ...row, score: (row.score / top) * floor }))]
 })
 
 /**

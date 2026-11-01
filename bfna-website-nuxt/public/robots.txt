@@ -1,0 +1,8 @@
+User-Agent: *
+Allow: /
+Disallow: /wireframes
+Disallow: /wireframes/
+Disallow: /search
+Disallow: /search/
+
+Sitemap: https://www.bfna.org/sitemap.xml

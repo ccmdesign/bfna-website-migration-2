@@ -24,6 +24,7 @@
     "check:contrast:ci": "tsx scripts/check-contrast.ts --allow-known",
     "check:contrast:self-check": "tsx scripts/check-contrast.ts --self-check",
     "check:links": "tsx scripts/check-links.ts",
+    "test:agent": "vitest run --config vitest.agent.config.ts",
     "check:routes": "tsx scripts/check-routes.ts",
     "redirects:generate": "tsx scripts/generate-legacy-redirects.ts",
     "redirects:check": "tsx scripts/generate-legacy-redirects.ts --check",

@@ -1,0 +1,20 @@
+# Netlify UI for this site (base directory bfna-website-nuxt) sets:
+#   command: npm run generate
+#   publish: bfna-website-nuxt/dist
+# Restated here so `netlify build` and the UI agree. `nuxt generate` writes
+# `.output/public` and links `dist` at that folder.
+#
+# The edge function is registered by its own `export const config`.
+# Do not also declare [[edge_functions]] here.
+# Do not add per-context headers. Non-production noindex is a generated
+# `_headers` rule (src/nuxt.config.ts `prerender:done`).
+[build]
+  command = "npm run generate"
+  publish = "dist"
+
+# `nuxt generate` prerenders ~1,550 routes and outgrows Node's default heap.
+# The UI sets this only for deploy previews, so branch deploys (dev) died
+# with "JavaScript heap out of memory". Set here for every context; a value
+# in this file overrides the UI's.
+[build.environment]
+  NODE_OPTIONS = "--max-old-space-size=6144"
