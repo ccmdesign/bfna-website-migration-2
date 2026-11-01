@@ -90,7 +90,9 @@ const { active, highlights } = await useBfInsights()
  * inside a template expression that re-runs on every render.
  */
 const home = homePage()
-const programCards = programs()
+const programCards = programs().map(program => program.slug === 'future-leadership'
+  ? { ...program, image: '/images/hero/future-leadership.jpg' }
+  : program)
 const projectCards = featuredProjects()
 const products = allProducts()
 
@@ -128,7 +130,7 @@ const latest = active.slice(0, 6)
     `/democracy`, not `/wireframes/democracy`: the hub route of BRIEF §7.
 
     Photographic architectural pairs from hero-images.json, kept adjacent
-    in the loop. The program-page navy overlay protects white copy at the bottom.
+    in the loop. A neutral bottom gradient protects the white copy while leaving the top clear.
     Per-image positions preserve columns and pediments in cover crops.
   -->
   <bfHero
@@ -139,7 +141,7 @@ const latest = active.slice(0, 6)
     :image-sequence="heroImages.slice(1)"
     :style="{ '--_bf-hero-media-image-position': heroImages[0]?.position }"
     image-sizes="xs:864px sm:960px md:100vw lg:100vw xl:100vw xxl:100vw"
-    scrim="full"
+    scrim="gradient"
   >
     <bfButton to="/democracy" variant="primary" size="l">Explore our work</bfButton>
   </bfHero>
@@ -327,7 +329,7 @@ const latest = active.slice(0, 6)
     padding-block: var(--space-2xl);
   }
 
-  /* Match the program heroes' white action against the shared navy overlay. */
+  /* A white action stays distinct against the dark base of the photograph. */
   .bf-home-hero :deep(.bf-button[data-variant='primary']) {
     border-color: var(--color-text-inverse);
     background: var(--color-surface-page);

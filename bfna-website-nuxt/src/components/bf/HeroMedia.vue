@@ -69,6 +69,7 @@
  * an implementation detail one level down.
  *
  * - `full` (the default): a flat `--color-scrim` over the whole band.
+ * - `gradient`: transparent to neutral black behind bottom-aligned copy.
  * - `panel`: `--color-scrim-panel` (0.94, white at 9.817) as a near-opaque
  *   column the width of the content box, photograph uncovered either side.
  * - `none` (`bfHero` only): no fill — the photograph as it is, under the
@@ -178,21 +179,56 @@ async function startSequence() {
   const loaded = images.filter((_, index) => ready[index])
   if (loaded.length < 2) return
 
-  const step = 10000
-  const fade = 3000
+  const step = 8000
+  const transition = 1400
   const duration = loaded.length * step
   const startTime = document.timeline.currentTime
+  // A shared bell-shaped blur peaks during the fastest part of the dissolve.
+  // Sampling both curves together keeps their timing identical on both layers.
+  const dissolve = Array.from({ length: 25 }, (_, index) => {
+    const progress = index / 24
+    const exchange = Math.max(0, Math.min(1, (progress - 0.15) / 0.7))
+    return {
+      time: progress * transition,
+      opacity: exchange * exchange * (3 - 2 * exchange),
+      filter: `blur(${(18 * Math.sin(Math.PI * progress) ** 2).toFixed(3)}px)`
+    }
+  })
+  const sharp = { filter: 'blur(0px)' }
   animations = loaded.map((image, index) => {
-    // Incoming frames fade over an opaque outgoing frame. The outgoing frame
-    // disappears only after the next is opaque, including the final-to-first seam.
+    // Drift steadily across the full visible interval, including both fades.
+    // Alternate direction and keep scale fixed so the movement feels like a pan.
+    const direction = index % 2 === 0 ? 1 : -1
+    const pan = (time: number) => {
+      const progress = time / (step + transition) - 0.5
+      const x = progress * 3 * direction
+      const y = progress * 1.2 * (index % 3 === 0 ? -1 : 1)
+      // Overscan leaves room to pan without exposing the photograph's edges.
+      return `translate3d(${x}%, ${y}%, 0) scale(1.08)`
+    }
+    const incoming = dissolve.map(frame => ({
+      offset: frame.time / duration,
+      opacity: frame.opacity,
+      filter: frame.filter,
+      transform: pan(frame.time),
+      zIndex: 2
+    }))
+    // Keep the outgoing photograph opaque underneath the incoming layer so
+    // the crossfade never exposes the background, including at the loop seam.
+    const outgoing = dissolve.map(frame => ({
+      offset: (step + frame.time) / duration,
+      opacity: 1,
+      filter: frame.filter,
+      transform: pan(step + frame.time),
+      zIndex: 1
+    }))
     const animation = image.animate([
-      { offset: 0, opacity: 0, zIndex: 2, easing: 'ease-in-out' },
-      { offset: fade / duration, opacity: 1, zIndex: 2 },
-      { offset: (fade + 1) / duration, opacity: 1, zIndex: 1 },
-      { offset: (step + fade) / duration, opacity: 1, zIndex: 1 },
-      { offset: (step + fade + 1) / duration, opacity: 0, zIndex: 0 },
-      { offset: 1, opacity: 0, zIndex: 0 }
-    ], { duration, delay: index * step - fade, iterations: Infinity, fill: 'both' })
+      ...incoming,
+      { offset: (transition + 1) / duration, opacity: 1, zIndex: 1, transform: pan(transition + 1), ...sharp },
+      ...outgoing,
+      { offset: (step + transition + 1) / duration, opacity: 0, zIndex: 0, transform: pan(step + transition), ...sharp },
+      { offset: 1, opacity: 0, zIndex: 0, transform: pan(step + transition), ...sharp }
+    ], { duration, delay: index * step - transition, iterations: Infinity, fill: 'both' })
     animation.startTime = startTime
     return animation
   })
@@ -481,6 +517,26 @@ onBeforeUnmount(() => {
     `min()` rather than a media query — below the measure the panel is simply
     the band, which is the right answer on a phone.
   */
+  [data-scrim="gradient"] .bf-hero-media__scrim {
+    --_bf-hero-media-scrim-clear: 20%;
+    --_bf-hero-media-scrim-dark: 48%;
+
+    background: linear-gradient(
+      to bottom,
+      transparent var(--_bf-hero-media-scrim-clear),
+      color-mix(in srgb, var(--color-surface-inverse) 60%, transparent) var(--_bf-hero-media-scrim-dark),
+      color-mix(in srgb, var(--color-surface-inverse) 72%, transparent) 72%,
+      color-mix(in srgb, var(--color-surface-inverse) 82%, transparent) 100%
+    );
+  }
+
+  @media (width < 40rem) {
+    [data-scrim="gradient"] .bf-hero-media__scrim {
+      --_bf-hero-media-scrim-clear: 10%;
+      --_bf-hero-media-scrim-dark: 36%;
+    }
+  }
+
   /*
     `none` — the ink mode (`HeroScrimMode`). No fill at all: the photograph
     as it is, and the host band keeps the page's dark ink. The element stays,

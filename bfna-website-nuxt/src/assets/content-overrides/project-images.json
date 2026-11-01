@@ -16,8 +16,8 @@
   },
   "indo-pacific-nexus": {
     "source_image": null,
-    "image": "https://bfna.simplyas.com/assets/b9199fea-11e6-413a-8f3a-4f4a8894ea13",
-    "provenance": "Existing BFNA artwork: New Site | Indo-Pacific Nexus (insights/new-site-indo-pacific-nexus); selected 2026-10-01."
+    "image": "/images/projects/indo-pacific-nexus-2026.png",
+    "provenance": "Browser screenshot of https://www.indo-pacificnexus.org/ on 2026-10-04, 1280 \u00d7 720; card-ratio capture matching the HTFD treatment."
   },
   "critical-minerals": {
     "source_image": null,
@@ -27,6 +27,6 @@
   "how-to-fix-democracy": {
     "source_image": "https://bfna.simplyas.com/assets/57132cc8-5ebd-4e2c-a8c2-73ec6c1c014e",
     "image": "/images/projects/how-to-fix-democracy-2026.jpg",
-    "provenance": "Browser screenshot of https://www.howtofixdemocracy.org/ on 2026-10-01, 1280 × 720; requested replacement for the old microsite screenshot."
+    "provenance": "Browser screenshot of https://www.howtofixdemocracy.org/ on 2026-10-01, 1280 \u00d7 720; requested replacement for the old microsite screenshot."
   }
 }

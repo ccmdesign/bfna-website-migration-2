@@ -248,7 +248,7 @@ const insightChips = (i: Insight): string[] | undefined =>
       class="bf-hub-hero"
       label="Hub header"
       aria-labelledby="program-heading"
-      data-scrim="full"
+      data-scrim="gradient"
       gap="m"
       padded
     >
@@ -379,7 +379,7 @@ const insightChips = (i: Insight): string[] | undefined =>
     position: relative;
     isolation: isolate;
     display: grid;
-    align-content: center;
+    align-content: end;
     color: var(--color-text-inverse);
   }
 
@@ -432,6 +432,11 @@ const insightChips = (i: Insight): string[] | undefined =>
   }
 
   @media (width < 48rem) {
+    .bf-hub-hero {
+      /* Leave a clear photo above the stacked copy, as on the homepage. */
+      padding-block-start: clamp(18rem, 40svh, 24rem);
+    }
+
     .bf-hub-hero__columns {
       flex-flow: column nowrap;
       align-items: stretch;

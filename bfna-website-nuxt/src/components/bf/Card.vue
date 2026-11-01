@@ -761,7 +761,8 @@ if (import.meta.dev) {
       display: flex;
       padding: var(--_bf-card-padding);
       overflow: hidden;
-      background-color: var(--color-surface-inverse);
+      /* Match the page under antialiased corners; the media scrim supplies contrast. */
+      background-color: var(--_bf-card-bg);
       /* Keep the raised stacking order until the exit fade has finished. */
       transition:
         transform var(--_bf-card-motion),
@@ -783,7 +784,9 @@ if (import.meta.dev) {
       z-index: -1;
       display: flex;
       margin: 0;
-      border-radius: inherit;
+      /* The card clips the corners. A second rounded clip exposes a dark seam
+         under light screenshots such as Indo-Pacific Nexus. */
+      border-radius: 0;
     }
 
     .bf-card:is(.bf-card--insight-media, .bf-card--project-media, .bf-card--program-media) > .bf-card__media .bf-media {
