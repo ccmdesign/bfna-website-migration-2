@@ -188,6 +188,9 @@ const prerenderRoutes: string[] = [
   ...collectionSlugs('programs').map(slug => `/${slug}`),
   ...collectionSlugs('insights').map(slug => `/insights/${slug}`),
   ...collectionSlugs('projects').map(slug => `/projects/${slug}`),
+  // RSS 2.0 and JSON Feed of the newest insights (server/routes/feed.*.ts)
+  '/feed.xml',
+  '/feed.json',
   '/wireframes',
   '/wireframes/about',
   '/wireframes/archive',
@@ -282,6 +285,9 @@ export default defineNuxtConfig({
       link: [
         // google icons
         { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" },
+        // Feed autodiscovery (server/routes/feed.*.ts)
+        { rel: "alternate", type: "application/rss+xml", title: "Bertelsmann Foundation North America", href: "/feed.xml" },
+        { rel: "alternate", type: "application/feed+json", title: "Bertelsmann Foundation North America", href: "/feed.json" },
       ],
       script: [
         {
