@@ -346,6 +346,7 @@ import { createServer, type Server } from 'node:http'
 import { homedir, tmpdir } from 'node:os'
 import { dirname, extname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { feedOutputProblems } from '../utils/siteFeed'
 
 const appRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const publicDir = join(appRoot, '.output/public')
@@ -1211,6 +1212,23 @@ const langRows = (): Row[] => {
       : `expected 0 without lang · actual ${offenders.length} of ${files.length}: `
         + `${offenders.slice(0, 5).join(', ')}${offenders.length > 5 ? ', …' : ''}`
         + ' — set it once in nuxt.config.ts app.head.htmlAttrs, not per layout (gh#217)'
+  }]
+}
+
+/**
+ * The site feeds (`docs/feeds.md`): `/feed.xml` and `/feed.json` were written
+ * and each carries items. The same check runs in the `prerender:done` hook and
+ * fails the build there; this row keeps it visible in CI if that hook changes.
+ */
+const feedRows = (): Row[] => {
+  const problems = feedOutputProblems((route) => {
+    const file = join(publicDir, route)
+    return existsSync(file) ? readFileSync(file, 'utf8') : null
+  })
+  return [{
+    label: 'site feeds — /feed.xml (RSS 2.0) and /feed.json (JSON Feed) generated with items',
+    ok: problems.length === 0,
+    detail: problems.length === 0 ? 'expected 0 problems · actual 0' : `expected 0 problems · actual ${problems.join('; ')}`
   }]
 }
 
@@ -4773,6 +4791,16 @@ const run = async (): Promise<void> => {
       )
       for (const row of langFailing) console.log(`      ✗ ${row.label} — ${row.detail}`)
       if (verbose) for (const row of langGate.filter(r => r.ok)) console.log(`      · ${row.label}`)
+
+      const feedGate = feedRows()
+      const feedFailing = feedGate.filter(r => !r.ok)
+      results.push({ slug: 'site feeds', rows: feedGate, failing: feedFailing })
+      console.log(
+        `${feedFailing.length === 0 ? '  ✓ PASS' : '  ✗ FAIL'}  `
+        + `${'site feeds'.padEnd(44)} ${feedGate.length - feedFailing.length}/${feedGate.length} rows`
+      )
+      for (const row of feedFailing) console.log(`      ✗ ${row.label} — ${row.detail}`)
+      if (verbose) for (const row of feedGate.filter(r => r.ok)) console.log(`      · ${row.label}`)
 
       const motionGate = reducedMotionRows()
       const motionFailing = motionGate.filter(r => !r.ok)

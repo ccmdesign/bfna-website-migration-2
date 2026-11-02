@@ -44,8 +44,19 @@ in the `bf*` collections.
 - `src/nuxt.config.ts` adds `/feed.xml` and `/feed.json` to the prerender
   routes, so `nuxt generate` writes them as static files for Netlify.
 - `public/_headers` sets their content types on Netlify.
+- **They regenerate on every build.** Netlify runs `npm run generate`
+  (`nuxt generate`) for every deploy of every branch, and the feeds are rendered
+  from the committed `content/bf/**` snapshot inside that build. No separate
+  command or schedule.
+- **A build without them fails.** The `prerender:done` hook in
+  `src/nuxt.config.ts` runs `feedOutputProblems()` over the output and throws if
+  either file is missing, malformed or empty, so `nuxt generate` exits non-zero
+  and Netlify keeps the previous deploy. CI's route harness
+  (`scripts/check-routes.ts`, "site feeds" row) runs the same check on every PR
+  into `dev`.
 - Tests: `tests/agent-readiness/site-feed.test.ts` (`npm run test:agent`), which also
-  runs the feed over the committed snapshot and checks well-formed XML.
+  runs the feed over the committed snapshot, checks well-formed XML, and
+  covers the build gate.
 
 The site URL is `SITE_URL` in `utils/agentContent.ts`, the same constant the
 sitemap uses, so a deploy preview's feed still links to www.bfna.org.

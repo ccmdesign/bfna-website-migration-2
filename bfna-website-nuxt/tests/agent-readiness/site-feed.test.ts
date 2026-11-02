@@ -6,6 +6,8 @@ import { describe, expect, it } from 'vitest'
 import { SITE_URL } from '../../utils/agentContent'
 import {
   FEED_ITEM_LIMIT,
+  FEED_ROUTES,
+  feedOutputProblems,
   feedItems,
   jsonFeed,
   parseFeedDate,
@@ -167,5 +169,32 @@ describe('the committed content snapshot', () => {
     const doc = parseXml(rssXml(items))
     expect(doc.getElementsByTagName('parsererror')).toHaveLength(0)
     expect(doc.getElementsByTagName('item')).toHaveLength(FEED_ITEM_LIMIT)
+  })
+})
+
+describe('feedOutputProblems (the build gate)', () => {
+  const output = (files: Record<string, string>) => (route: string): string | null => files[route] ?? null
+  const items = feedItems([insight()], PROGRAMS, NOW)
+
+  it('seeds both feed routes for prerender', () => {
+    expect([...FEED_ROUTES]).toEqual(['/feed.xml', '/feed.json'])
+  })
+
+  it('passes a build that wrote both feeds', () => {
+    expect(feedOutputProblems(output({ '/feed.xml': rssXml(items), '/feed.json': jsonFeed(items) }))).toEqual([])
+  })
+
+  it('fails a build that is missing either feed', () => {
+    expect(feedOutputProblems(output({}))).toEqual([
+      '/feed.xml missing from the build output',
+      '/feed.json missing from the build output'
+    ])
+  })
+
+  it('fails empty or malformed feeds', () => {
+    expect(feedOutputProblems(output({ '/feed.xml': rssXml([]), '/feed.json': '{' })))
+      .toEqual(['/feed.xml has no items', '/feed.json is not valid JSON'])
+    expect(feedOutputProblems(output({ '/feed.xml': '<html></html>', '/feed.json': jsonFeed([]) })))
+      .toEqual(['/feed.xml is not an RSS 2.0 document', '/feed.json has no items'])
   })
 })

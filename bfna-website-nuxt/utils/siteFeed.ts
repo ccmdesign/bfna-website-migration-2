@@ -21,6 +21,8 @@ import { SITE_NAME, SITE_URL } from './agentContent'
 
 export const FEED_PATH = '/feed.xml'
 export const JSON_FEED_PATH = '/feed.json'
+/** Seeded into `nitro.prerender.routes`; `feedOutputProblems` asserts both were written. */
+export const FEED_ROUTES = [FEED_PATH, JSON_FEED_PATH] as const
 export const FEED_ITEM_LIMIT = 50
 export const FEED_SUMMARY_LENGTH = 300
 export const FEED_DESCRIPTION =
@@ -185,4 +187,43 @@ export function jsonFeed(items: FeedItem[]): string {
       tags: item.categories
     }))
   }, null, 2)}\n`
+}
+
+/**
+ * What is wrong with the feeds in a generated site, or `[]`. `read` returns a
+ * published file's text by route (`/feed.xml`), or null when it is missing;
+ * callers pass one over their output dir, which keeps this module free of Node
+ * imports. Run by the `prerender:done` hook in `src/nuxt.config.ts`, which
+ * fails the build on any problem, and by `scripts/check-routes.ts` in CI. A
+ * deploy without a feed, or with an empty one, is a broken deploy: the feeds
+ * sensor reads these files.
+ */
+export function feedOutputProblems(read: (route: string) => string | null): string[] {
+  const problems: string[] = []
+
+  const xml = read(FEED_PATH)
+  if (xml === null) {
+    problems.push(`${FEED_PATH} missing from the build output`)
+  } else if (!xml.startsWith('<?xml') || !/<rss version="2\.0"/.test(xml) || !xml.trimEnd().endsWith('</rss>')) {
+    problems.push(`${FEED_PATH} is not an RSS 2.0 document`)
+  } else if (!xml.includes('<item>')) {
+    problems.push(`${FEED_PATH} has no items`)
+  } else if (!xml.includes(`<atom:link href="${SITE_URL}${FEED_PATH}"`)) {
+    problems.push(`${FEED_PATH} has no self link to ${SITE_URL}${FEED_PATH}`)
+  }
+
+  const json = read(JSON_FEED_PATH)
+  if (json === null) {
+    problems.push(`${JSON_FEED_PATH} missing from the build output`)
+  } else {
+    try {
+      const feed = JSON.parse(json) as { version?: string, items?: unknown[] }
+      if (feed.version !== 'https://jsonfeed.org/version/1.1') problems.push(`${JSON_FEED_PATH} is not JSON Feed 1.1`)
+      else if (!feed.items?.length) problems.push(`${JSON_FEED_PATH} has no items`)
+    } catch {
+      problems.push(`${JSON_FEED_PATH} is not valid JSON`)
+    }
+  }
+
+  return problems
 }
