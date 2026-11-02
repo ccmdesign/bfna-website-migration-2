@@ -4,6 +4,7 @@ import { dirname, join, relative, resolve, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { defineNuxtConfig } from 'nuxt/config'
 import { SITE_URL, headersForContext, isIndexablePath, latestContentDay, organizationJsonLd, sitemapXml } from '../utils/agentContent'
+import { FEED_ROUTES, feedOutputProblems } from '../utils/siteFeed'
 
 const currentDir = dirname(fileURLToPath(import.meta.url))
 const projectRoot = resolve(currentDir, '..')
@@ -32,6 +33,12 @@ function writeAgentOutput(publicDir: string): void {
   if (urls.length > 0) writeFileSync(join(publicDir, 'sitemap.xml'), sitemapXml(urls))
   const context = (globalThis as { process?: { env?: { CONTEXT?: string } } }).process?.env?.CONTEXT
   writeFileSync(join(publicDir, '_headers'), headersForContext(committedHeaders(), context))
+  // The RSS/JSON feeds ship with every build or the build fails (docs/feeds.md).
+  const feedProblems = feedOutputProblems((route) => {
+    const file = join(publicDir, route)
+    return existsSync(file) ? readFileSync(file, 'utf8') : null
+  })
+  if (feedProblems.length > 0) throw new Error(`Site feed check failed: ${feedProblems.join('; ')}`)
 }
 
 interface DatedItem {
@@ -188,6 +195,8 @@ const prerenderRoutes: string[] = [
   ...collectionSlugs('programs').map(slug => `/${slug}`),
   ...collectionSlugs('insights').map(slug => `/insights/${slug}`),
   ...collectionSlugs('projects').map(slug => `/projects/${slug}`),
+  // RSS 2.0 and JSON Feed of the newest insights (server/routes/feed.*.ts)
+  ...FEED_ROUTES,
   '/wireframes',
   '/wireframes/about',
   '/wireframes/archive',
@@ -282,6 +291,9 @@ export default defineNuxtConfig({
       link: [
         // google icons
         { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" },
+        // Feed autodiscovery (server/routes/feed.*.ts)
+        { rel: "alternate", type: "application/rss+xml", title: "Bertelsmann Foundation North America", href: "/feed.xml" },
+        { rel: "alternate", type: "application/feed+json", title: "Bertelsmann Foundation North America", href: "/feed.json" },
       ],
       script: [
         {

@@ -49,6 +49,7 @@ Maintain parity between prompts and guidelines: update governance docs when proc
 ## Content & Styling
 - Content entries live in `src/content/` and are defined through `content.config.ts` collections.
 - Layered CSS originates from `src/public/css/styles.css`, with individual files wrapping declarations in `@layer` to preserve cascade order.
+- Public feeds: `/feed.xml` (RSS 2.0) and `/feed.json` (JSON Feed) list the 50 newest insights. See [docs/feeds.md](docs/feeds.md).
 - Static assets are served from `src/public/`; Vercel/Netlify builds keep `.output/` at the repository root.
 
 For rollback steps, follow Section 7 of the quickstart guide.
