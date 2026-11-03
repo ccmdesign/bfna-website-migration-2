@@ -139,7 +139,7 @@ import type { HeroProps } from '~/types/bf-contracts'
 
 defineOptions({ name: 'BfHero' })
 
-const props = withDefaults(defineProps<HeroProps>(), { imageAlt: '', imageSizes: undefined, scrim: 'full' })
+const props = withDefaults(defineProps<HeroProps>(), { imageAlt: '', imageSizes: undefined, imageQuality: undefined, scrim: 'full' })
 
 const slots = useSlots()
 
@@ -259,6 +259,7 @@ const showActions = (): boolean => hasRenderedContent(slots.default?.())
       :paused="paused"
       :alt="imageAlt"
       :sizes="imageSizes"
+      :quality="imageQuality"
     >
       <!--
         On the scrim, not in the content column: a child of `.bf-hero-media`

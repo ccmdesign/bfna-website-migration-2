@@ -796,6 +796,13 @@ export interface HeroProps {
    */
   imageSizes?: string
   /**
+   * The photographs' `@nuxt/image` quality, handed to `bfHeroMedia`. Omitted,
+   * the global `image.quality` (90) applies. `/` passes 75: at 1536px a
+   * side-by-side against 90 showed no banding in the flat skies and no loss
+   * in the stonework, and the 22-photograph loop roughly halves in bytes.
+   */
+  imageQuality?: number
+  /**
    * Which scrim treatment the band wears. Ignored without an `image`.
    * `bfHero` alone also takes `'none'` — see `HeroScrimMode`.
    */

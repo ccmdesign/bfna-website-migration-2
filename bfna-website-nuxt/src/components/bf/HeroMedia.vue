@@ -141,10 +141,17 @@ interface Props {
    * behind a `screen:` prefix — the template comment has why.
    */
   sizes?: string
+  /**
+   * The photographs' `@nuxt/image` quality, `0`–`100`. Omitted, the global
+   * `image.quality` in `nuxt.config.ts` applies (90). `bfHero` passes its
+   * own (`HeroProps.imageQuality`); the page headers keep the global value.
+   */
+  quality?: number
 }
 
 const props = withDefaults(defineProps<Props>(), {
   alt: '',
+  quality: undefined,
   sizes: 'xs:100vw sm:100vw md:100vw lg:100vw xl:100vw xxl:100vw'
 })
 
@@ -153,40 +160,96 @@ const photographs = computed<HeroImage[]>(() => props.src
   ? [{ src: props.src }, ...(props.srcSecondary ? [{ src: props.srcSecondary }] : []), ...(props.sequence ?? [])]
   : [])
 const hasSequence = computed(() => Boolean(props.sequence?.length))
+
+/*
+  A sequence is fetched just in time rather than all at mount (it was 22
+  photographs, ~5.6 MB, before the page was interactive). Only the first is in
+  the server HTML; the rest join the DOM as the loop nears them, `lookahead`
+  ahead of the one on screen. A photograph is never shown before it has
+  decoded: if the next one is late, the loop holds on the current one until
+  it arrives, so a slow connection gets a longer hold, never a blank band.
+  The two-photograph pair (`srcSecondary` alone) is a CSS loop and renders
+  both up front, as before.
+*/
+const step = 8000
+const transition = 1400
+const lookahead = 2
+const rendered = ref(1)
+const shown = computed(() => hasSequence.value ? photographs.value.slice(0, rendered.value) : photographs.value)
+
+/*
+  `nuxt generate` with the static ipx provider writes only the image URLs the
+  server rendered, so the photographs left out of the HTML are named to the
+  prerenderer here. On Netlify the URLs are Image CDN ones and this is a no-op.
+  The modifiers repeat `NuxtImg`'s own, key order included, because the order
+  is part of the URL (`w_864&q_75`, not `q_75&w_864`).
+*/
+if (import.meta.server && import.meta.prerender && hasSequence.value) {
+  const $img = useImage()
+  const modifiers = { width: undefined, quality: props.quality || $img.options.quality }
+  for (const photograph of photographs.value.slice(1)) {
+    $img.getSizes(photograph.src, { sizes: props.sizes, densities: '1x', modifiers })
+  }
+}
+
 let animations: Animation[] = []
+let pending: Promise<boolean>[] = []
+let started = false
+let held = false
+let timer: ReturnType<typeof setTimeout> | undefined
 let motionPreference: MediaQueryList | undefined
 let generation = 0
 let mounted = false
 
+const playing = () => !props.paused && !held && document.visibilityState !== 'hidden'
+
 function syncPlayback() {
   for (const animation of animations) {
-    if (props.paused) animation.pause()
-    else animation.play()
+    if (!animation) continue
+    if (playing()) animation.play()
+    else animation.pause()
   }
+  scheduleNext()
 }
 
-async function startSequence() {
-  const currentGeneration = ++generation
-  animations.forEach(animation => animation.cancel())
-  animations = []
-  if (!mounted || !hasSequence.value || motionPreference?.matches) return
+function imageAt(index: number) {
+  return media.value?.querySelectorAll<HTMLImageElement>('img.bf-hero-media__image')[index]
+}
 
-  await nextTick()
-  const images = [...(media.value?.querySelectorAll<HTMLImageElement>('img.bf-hero-media__image') ?? [])]
-  // Decode before starting so slow connections keep the first photograph visible.
-  const ready = await Promise.all(images.map(image => image.decode().then(() => true, () => false)))
-  if (currentGeneration !== generation) return
-  const loaded = images.filter((_, index) => ready[index])
-  if (loaded.length < 2) return
+/** Puts the photograph in the DOM and resolves once it can be painted. */
+function prepare(index: number) {
+  pending[index] ??= (async () => {
+    rendered.value = Math.max(rendered.value, index + 1)
+    await nextTick()
+    const image = imageAt(index)
+    if (!image) return false
+    try {
+      await image.decode()
+      return true
+    } catch {
+      // `decode()` also rejects when the srcset candidate changes mid-decode;
+      // an image that loaded anyway is still fit to show.
+      if (!image.complete) {
+        await new Promise(resolve => {
+          image.addEventListener('load', resolve, { once: true })
+          image.addEventListener('error', resolve, { once: true })
+        })
+      }
+      return image.naturalWidth > 0
+    }
+  })()
+  const currentGeneration = generation
+  return pending[index].then((ok) => {
+    if (ok && started && currentGeneration === generation) attach(index)
+    return ok
+  })
+}
 
-  const step = 8000
-  const transition = 1400
-  const duration = loaded.length * step
-  const startTime = document.timeline.currentTime
+function keyframes(index: number, duration: number): Keyframe[] {
   // A shared bell-shaped blur peaks during the fastest part of the dissolve.
   // Sampling both curves together keeps their timing identical on both layers.
-  const dissolve = Array.from({ length: 25 }, (_, index) => {
-    const progress = index / 24
+  const dissolve = Array.from({ length: 25 }, (_, frame) => {
+    const progress = frame / 24
     const exchange = Math.max(0, Math.min(1, (progress - 0.15) / 0.7))
     return {
       time: progress * transition,
@@ -195,43 +258,121 @@ async function startSequence() {
     }
   })
   const sharp = { filter: 'blur(0px)' }
-  animations = loaded.map((image, index) => {
-    // Drift steadily across the full visible interval, including both fades.
-    // Alternate direction and keep scale fixed so the movement feels like a pan.
-    const direction = index % 2 === 0 ? 1 : -1
-    const pan = (time: number) => {
-      const progress = time / (step + transition) - 0.5
-      const x = progress * 3 * direction
-      const y = progress * 1.2 * (index % 3 === 0 ? -1 : 1)
-      // Overscan leaves room to pan without exposing the photograph's edges.
-      return `translate3d(${x}%, ${y}%, 0) scale(1.08)`
-    }
-    const incoming = dissolve.map(frame => ({
-      offset: frame.time / duration,
-      opacity: frame.opacity,
-      filter: frame.filter,
-      transform: pan(frame.time),
-      zIndex: 2
-    }))
-    // Keep the outgoing photograph opaque underneath the incoming layer so
-    // the crossfade never exposes the background, including at the loop seam.
-    const outgoing = dissolve.map(frame => ({
-      offset: (step + frame.time) / duration,
-      opacity: 1,
-      filter: frame.filter,
-      transform: pan(step + frame.time),
-      zIndex: 1
-    }))
-    const animation = image.animate([
-      ...incoming,
-      { offset: (transition + 1) / duration, opacity: 1, zIndex: 1, transform: pan(transition + 1), ...sharp },
-      ...outgoing,
-      { offset: (step + transition + 1) / duration, opacity: 0, zIndex: 0, transform: pan(step + transition), ...sharp },
-      { offset: 1, opacity: 0, zIndex: 0, transform: pan(step + transition), ...sharp }
-    ], { duration, delay: index * step - transition, iterations: Infinity, fill: 'both' })
-    animation.startTime = startTime
-    return animation
+  // Drift steadily across the full visible interval, including both fades.
+  // Alternate direction and keep scale fixed so the movement feels like a pan.
+  const direction = index % 2 === 0 ? 1 : -1
+  const pan = (time: number) => {
+    const progress = time / (step + transition) - 0.5
+    const x = progress * 3 * direction
+    const y = progress * 1.2 * (index % 3 === 0 ? -1 : 1)
+    // Overscan leaves room to pan without exposing the photograph's edges.
+    return `translate3d(${x}%, ${y}%, 0) scale(1.08)`
+  }
+  const incoming = dissolve.map(frame => ({
+    offset: frame.time / duration,
+    opacity: frame.opacity,
+    filter: frame.filter,
+    transform: pan(frame.time),
+    zIndex: 2
+  }))
+  // Keep the outgoing photograph opaque underneath the incoming layer so
+  // the crossfade never exposes the background, including at the loop seam.
+  const outgoing = dissolve.map(frame => ({
+    offset: (step + frame.time) / duration,
+    opacity: 1,
+    filter: frame.filter,
+    transform: pan(step + frame.time),
+    zIndex: 1
+  }))
+  return [
+    ...incoming,
+    { offset: (transition + 1) / duration, opacity: 1, zIndex: 1, transform: pan(transition + 1), ...sharp },
+    ...outgoing,
+    { offset: (step + transition + 1) / duration, opacity: 0, zIndex: 0, transform: pan(step + transition), ...sharp },
+    { offset: 1, opacity: 0, zIndex: 0, transform: pan(step + transition), ...sharp }
+  ]
+}
+
+/**
+ * Gives a decoded photograph its place on the loop's one clock. Every
+ * animation shares the first one's time, so a photograph that arrives late
+ * joins exactly where the loop already is.
+ */
+function attach(index: number) {
+  const image = imageAt(index)
+  if (!image || animations[index]) return
+  const duration = photographs.value.length * step
+  const animation = image.animate(keyframes(index, duration), {
+    duration, delay: index * step - transition, iterations: Infinity, fill: 'both'
   })
+  const clock = animations.find(Boolean)
+  if (!clock) animation.startTime = document.timeline.currentTime
+  else if (clock.startTime !== null) animation.startTime = clock.startTime
+  // Paused, or resuming and not yet re-anchored: match its time instead.
+  else animation.currentTime = clock.currentTime
+  if (!playing()) animation.pause()
+  animations[index] = animation
+}
+
+/**
+ * Fetches ahead and guards the next crossfade. Photograph `k` fades in at
+ * `k * step - transition` on the clock; just before that moment it must be
+ * attached, or every animation is held until it is.
+ */
+function scheduleNext() {
+  clearTimeout(timer)
+  const clock = animations[0]
+  if (!started || !clock || !playing()) return
+  const count = photographs.value.length
+  const time = Number(clock.currentTime ?? 0)
+  const upcoming = Math.floor((time + transition) / step) + 1
+  const next = upcoming % count
+  for (let ahead = 0; ahead < lookahead; ahead++) prepare((upcoming + ahead) % count)
+  const until = upcoming * step - transition - time
+  if (animations[next]) {
+    timer = setTimeout(scheduleNext, until + 50)
+    return
+  }
+  timer = setTimeout(() => {
+    if (animations[next]) return scheduleNext()
+    held = true
+    syncPlayback()
+    const currentGeneration = generation
+    prepare(next).then((ok) => {
+      // A photograph that never loads leaves the loop holding on the one
+      // before it, which is a still hero rather than a broken one.
+      if (!ok || currentGeneration !== generation) return
+      held = false
+      syncPlayback()
+    })
+  }, Math.max(0, until - 250))
+}
+
+const pageLoaded = () => document.readyState === 'complete'
+  ? Promise.resolve()
+  : new Promise(resolve => window.addEventListener('load', resolve, { once: true }))
+
+async function startSequence() {
+  const currentGeneration = ++generation
+  clearTimeout(timer)
+  animations.forEach(animation => animation?.cancel())
+  animations = []
+  pending = []
+  started = false
+  held = false
+  if (!mounted || !hasSequence.value || motionPreference?.matches) return
+
+  // The first photograph is the page's LCP and is in the HTML; nothing else
+  // is fetched until it has decoded and the page has loaded. Then the second
+  // is fetched, and the loop starts once it can be shown, so a slow
+  // connection keeps the first photograph visible.
+  if (!(await prepare(0))) return
+  await pageLoaded()
+  if (currentGeneration !== generation || !(await prepare(1))) return
+  if (currentGeneration !== generation) return
+  started = true
+  attach(0)
+  attach(1)
   syncPlayback()
 }
 
@@ -241,13 +382,18 @@ onMounted(() => {
   mounted = true
   motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)')
   motionPreference.addEventListener('change', startSequence)
+  // A hidden tab holds the loop, so throttled timers cannot let a crossfade
+  // run ahead of the photograph it needs.
+  document.addEventListener('visibilitychange', syncPlayback)
   startSequence()
 })
 onBeforeUnmount(() => {
   mounted = false
   generation++
-  animations.forEach(animation => animation.cancel())
+  clearTimeout(timer)
+  animations.forEach(animation => animation?.cancel())
   motionPreference?.removeEventListener('change', startSequence)
+  document.removeEventListener('visibilitychange', syncPlayback)
 })
 </script>
 
@@ -280,7 +426,10 @@ onBeforeUnmount(() => {
       the largest contentful paint on every route that renders it, and
       `bfMedia` hard-codes `loading="lazy"` for the card grids it was built
       for. Fallthrough attributes are merged after the child's own bindings,
-      so these win — verified in the generated markup, not assumed.
+      so these win — verified in the generated markup, not assumed. The rest
+      of a sequence is `eager` too but at `low` priority: `shown` adds each one
+      only when the loop wants it (see the script), and `lazy` would not
+      defer them anyway, since every layer sits inside the viewport.
 
       `sizes` is what makes the srcset real, and review is the reason it is
       here. Without it `NuxtImg` emits a **density** srcset with nothing to
@@ -316,7 +465,7 @@ onBeforeUnmount(() => {
       to produce files no display needs.
     -->
     <bfMedia
-      v-for="(photograph, index) in photographs"
+      v-for="(photograph, index) in shown"
       :key="photograph.src"
       class="bf-hero-media__image"
       :class="{ 'bf-hero-media__image--secondary': !hasSequence && index === 1 }"
@@ -328,6 +477,7 @@ onBeforeUnmount(() => {
       :alt="index === 0 ? alt : ''"
       ratio="auto"
       :sizes="sizes"
+      :quality="quality"
       densities="1x"
       loading="eager"
       :fetchpriority="index === 0 ? 'high' : 'low'"
