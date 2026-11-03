@@ -261,8 +261,14 @@ const insightChips = (i: Insight): string[] | undefined =>
       <div class="switcher bf-hub-hero__columns" data-threshold="s" data-gap="xl">
         <div class="stack bf-hub-hero__identity" data-gap="m">
           <h1 id="program-heading" class="bf-hub-hero__heading">{{ program.name }}</h1>
-          <div v-if="projects.length">
-            <bfButton to="#projects" variant="primary" size="l">Explore our work</bfButton>
+          <!--
+            One button per band below, as GGS's closeout notes (Nov 2026)
+            asked, in place of a single "Explore our work". Each shows only
+            when its band renders, under the band's own condition.
+          -->
+          <div v-if="projects.length || (showInsights && insightsHasFeed)" class="cluster" data-gap="s">
+            <bfButton v-if="projects.length" to="#projects" variant="primary" size="l">Projects</bfButton>
+            <bfButton v-if="showInsights && insightsHasFeed" to="#insights" variant="primary" size="l">Insights</bfButton>
           </div>
         </div>
         <p v-if="intro.length" class="bf-hub-hero__intro">{{ intro[0] }}</p>
