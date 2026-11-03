@@ -132,6 +132,14 @@ const latest = active.slice(0, 6)
     Photographic architectural pairs from hero-images.json, kept adjacent
     in the loop. A neutral bottom gradient protects the white copy while leaving the top clear.
     Per-image positions preserve columns and pediments in cover crops.
+
+    `xs:864px` is the drawn width, not the viewport: at 375x812 the band is
+    375x576 (its 36rem floor), so `cover` draws a 3:2 photograph at
+    576 x 1.5 = 864px, and the pan's 1.08 overscan makes it 933px. Most of
+    the loop is landscape, so a DPR-2 phone needs the 1536 candidate. The
+    portrait photographs are drawn ~415px wide and would do with 960; that
+    needs per-photograph `sizes`, which needs their dimensions in
+    `hero-images.json`. Quality 75: see `HeroProps.imageQuality`.
   -->
   <bfHero
     class="bf-home-hero"
@@ -141,6 +149,7 @@ const latest = active.slice(0, 6)
     :image-sequence="heroImages.slice(1)"
     :style="{ '--_bf-hero-media-image-position': heroImages[0]?.position }"
     image-sizes="xs:864px sm:960px md:100vw lg:100vw xl:100vw xxl:100vw"
+    :image-quality="75"
     scrim="gradient"
   >
     <bfButton to="/democracy" variant="primary" size="l">Explore our work</bfButton>
