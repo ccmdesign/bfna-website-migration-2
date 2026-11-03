@@ -26,9 +26,12 @@
  * internal overview page: `pages/wireframes/projects/[slug].vue` renders a
  * compact template for it whose whole job is the "Visit …" CTA to the
  * microsite. So the card's heading points at `/projects/<slug>` for every
- * project, external or not, and the `↗` is a *description of the destination's
- * content* ("this project lives on an external platform") rather than a promise
- * that this link leaves the site.
+ * project, external or not, and the "External platform" chip is what tells
+ * the reader the project itself lives elsewhere.
+ *
+ * The heading no longer carries a `↗` for external projects. It read as a
+ * promise that the link leaves the site, which it does not; GGS's closeout
+ * notes (Nov 2026) asked for `↗` only on links that actually go off-site.
  *
  * That is also why the anchor carries **no `[data-external]`**, though the
  * spec's Scope paragraph asks for it in the same breath as asking the heading
@@ -201,15 +204,8 @@ if (import.meta.dev) {
         One link per card, stretched over the whole card by `bfCard`'s
         `::after`, with the heading text as its accessible name — no "Explore"
         CTA repeated down a grid (inclusive-components.design/cards/).
-
-        The `↗` is `aria-hidden`, so the link's accessible name stays the
-        project title: an arrow read aloud as "north east arrow" after every
-        external project would be noise. It sits **inside** the anchor and on
-        one source line with the interpolation, because Vue's whitespace
-        condensing would otherwise eat the separating space and the marker
-        would touch the last word.
       -->
-      <NuxtLink :to="`/projects/${project.slug}`">{{ headingText }}<span v-if="project.external_url" aria-hidden="true"> ↗</span></NuxtLink>
+      <NuxtLink :to="`/projects/${project.slug}`">{{ headingText }}</NuxtLink>
     </component>
 
     <p v-if="excerptText" class="bf-card__excerpt">
